@@ -27,7 +27,7 @@ namespace SunHavenAccess.Patches
         private static string _lastText = "";
         private static float _lastTime = -10f;
 
-        private static void Postfix(string text)
+        private static void Postfix(string text, bool error)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
 
@@ -39,7 +39,11 @@ namespace SunHavenAccess.Patches
             _lastText = clean;
             _lastTime = now;
 
-            TolkSpeech.Speak(clean, interrupt: false);
+            // Une erreur ("action impossible", boutique fermée...) est en général la réaction
+            // directe à ce que le joueur vient de tenter : plus utile de l'entendre tout de
+            // suite, quitte à couper une annonce de fond, qu'en attendant son tour derrière
+            // d'autres annonces non prioritaires.
+            TolkSpeech.Speak(clean, interrupt: error);
         }
     }
 }
