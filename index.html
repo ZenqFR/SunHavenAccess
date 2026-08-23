@@ -28,7 +28,12 @@
      rester lisible quel que soit l'endroit du dégradé visible derrière.
      Note : la palette --sky/--leaf/--accent reste utilisée en dur dans les schémas de contraste ;
      pas de bloc dark-mode ici, contrairement aux autres pages du site (hub, docs.html) qui
-     gardent, elles, leur bascule clair/sombre. */
+     gardent, elles, leur bascule clair/sombre.
+     Contrôle de contraste (23/08/2026) : --accent-strong et --text-faint assombris par
+     rapport à leurs valeurs d'origine (#c97a00, #5e747a) — calculées au ratio WCAG réel contre
+     le pire cas (panneau verre à 0.55 par-dessus chaque étape du dégradé), pas juste contre du
+     blanc pur. Les liens et titres de carte utilisaient l'ancien --accent-strong à seulement
+     ~2.5:1, bien sous le minimum de 4,5:1 pour du texte normal. */
   :root {
     --bg-card: rgba(255, 255, 255, 0.88);
     --bg-card-border: rgba(255, 255, 255, 0.7);
@@ -36,9 +41,9 @@
     --glass-border: rgba(255, 255, 255, 0.75);
     --text: #1f2b30;
     --text-dim: #3d5158;
-    --text-faint: #5e747a;
+    --text-faint: #48606a;
     --accent: #ffb400;
-    --accent-strong: #c97a00;
+    --accent-strong: #8a5300;
     --accent-text: #241500;
     --leaf: #2fa83e;
     --leaf-text: #1c7a28;
