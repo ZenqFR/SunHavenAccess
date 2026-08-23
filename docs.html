@@ -132,15 +132,25 @@
   .quick-nav a:hover { color: var(--text); background: var(--pill-bg); }
   .quick-nav a[aria-current="true"] { color: var(--accent-text); background: var(--accent); }
 
+  /* Même bandeau "ciel de ferme" à couleurs FIXES que la page principale (index.html), pour
+     une identité visuelle cohérente entre les deux pages du mod. */
   header {
-    max-width: 820px; margin: 0 auto; padding: 2.5em 1.5em 1.2em; text-align: center;
+    max-width: 820px;
+    margin: 1.2em auto 0;
+    padding: 2.4em 1.5em 2em;
+    text-align: center;
+    position: relative;
+    background: linear-gradient(160deg, #48c6f4 0%, #7fd9ce 32%, #ffd766 68%, #ffa72e 100%);
+    border-radius: 28px;
+    box-shadow: 0 10px 30px rgba(255, 167, 46, 0.25), 0 2px 8px rgba(31, 43, 48, 0.12);
   }
-  header .emoji { font-size: clamp(2.2rem, 5vw, 3rem); display: block; margin-bottom: 0.2em; }
+  header .emoji { font-size: clamp(2.2rem, 5vw, 3rem); display: block; margin-bottom: 0.2em; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15)); }
   header h1 {
     margin: 0 0 0.3em; font-size: clamp(1.9rem, 5vw, 2.6rem);
-    font-weight: 600; letter-spacing: -0.01em; color: var(--accent-strong);
+    font-weight: 700; letter-spacing: -0.01em; color: #1c2e17;
+    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3);
   }
-  header p.tagline { margin: 0 auto; max-width: 56ch; color: var(--text-dim); font-size: 1.02rem; }
+  header p.tagline { margin: 0 auto; max-width: 56ch; color: #253b2a; font-size: 1.02rem; font-weight: 500; }
 
   .lang-switch { max-width: 900px; margin: 1.2em auto 0; padding: 0 1.5em; text-align: right; }
   .lang-switch button {
@@ -275,13 +285,13 @@
   <table class="keys">
     <thead><tr><th><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th><th><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th></tr></thead>
     <tbody>
-      <tr><td>H</td><td><span data-lang="fr">Rappelle la liste des touches principales.</span><span data-lang="en" hidden>Reminds you of the main keys.</span></td></tr>
+      <tr><td>F1</td><td><span data-lang="fr">Rappelle la liste des touches principales. ⚠️ déclenche aussi l'émote 1 du jeu (touche gardée sur demande explicite malgré ce conflit).</span><span data-lang="en" hidden>Reminds you of the main keys. ⚠️ also triggers the game's emote 1 (kept on explicit request despite this conflict).</span></td></tr>
       <tr><td>F10</td><td><span data-lang="fr">Décrit la case devant vous (terrain, culture, objet, PNJ...), même si l'annonce automatique est désactivée.</span><span data-lang="en" hidden>Describes the tile in front of you (terrain, crop, object, NPC...), even if automatic announcement is off.</span></td></tr>
       <tr><td>P</td><td><span data-lang="fr">Annonce votre position (coordonnées) et la direction regardée.</span><span data-lang="en" hidden>Announces your position (coordinates) and the direction you're facing.</span></td></tr>
       <tr><td>O</td><td><span data-lang="fr">Annonce l'heure, le jour de la semaine, le jour du mois, la saison, l'année et la météo actuelle.</span><span data-lang="en" hidden>Announces the time, day of the week, day of the month, season, year, and current weather.</span></td></tr>
       <tr><td>N</td><td><span data-lang="fr">Passe au personnage proche suivant et l'annonce (nom, direction, distance).</span><span data-lang="en" hidden>Moves to the next nearby character and announces it (name, direction, distance).</span></td></tr>
       <tr><td>B</td><td><span data-lang="fr">Répète la dernière chose annoncée par le mod.</span><span data-lang="en" hidden>Repeats the last thing the mod announced.</span></td></tr>
-      <tr><td>F8</td><td><span data-lang="fr">Annonce votre santé et votre mana actuels.</span><span data-lang="en" hidden>Announces your current health and mana.</span></td></tr>
+      <tr><td>H</td><td><span data-lang="fr">Annonce votre santé et votre mana actuels.</span><span data-lang="en" hidden>Announces your current health and mana.</span></td></tr>
       <tr><td>F9</td><td><span data-lang="fr">Active/désactive l'annonce automatique de la case devant vous en marchant.</span><span data-lang="en" hidden>Toggles automatic announcement of the tile ahead while walking.</span></td></tr>
       <tr><td>F11</td><td><span data-lang="fr">Test sonore de diagnostic (joue un son Windows, indépendant de la synthèse vocale).</span><span data-lang="en" hidden>Diagnostic sound test (plays a Windows sound, independent of speech synthesis).</span></td></tr>
     </tbody>
@@ -304,6 +314,7 @@
       <tr><td><span data-lang="fr">Flèches directionnelles</span><span data-lang="en" hidden>Arrow keys</span></td><td><span data-lang="fr">Élément précédent/suivant dans un menu (haut/gauche = précédent, bas/droite = suivant). Fonctionne même sur les écrans que le jeu ne rend jamais accessibles au clavier nativement.</span><span data-lang="en" hidden>Previous/next item in a menu (up/left = previous, down/right = next). Works even on screens the game never makes keyboard-accessible natively.</span></td></tr>
       <tr><td><span data-lang="fr">Entrée</span><span data-lang="en" hidden>Enter</span></td><td><span data-lang="fr">Active l'élément de menu sélectionné (équivalent clic gauche). <strong>Exige d'avoir déjà sélectionné un élément aux flèches</strong> — une pression à froid ne clique jamais rien au hasard.</span><span data-lang="en" hidden>Activates the selected menu item (equivalent to a left click). <strong>Requires an item already selected with arrow keys</strong> — a cold press never clicks anything at random.</span></td></tr>
       <tr><td>Ctrl + Entrée</td><td><span data-lang="fr">Action secondaire sur l'élément sélectionné (équivalent clic droit).</span><span data-lang="en" hidden>Secondary action on the selected item (equivalent to a right click).</span></td></tr>
+      <tr><td><span data-lang="fr">Ctrl + Flèche gauche / droite</span><span data-lang="en" hidden>Ctrl + Left / Right arrow</span></td><td><span data-lang="fr">Diminue/augmente un curseur (slider) sélectionné, par exemple les couleurs à la création de personnage.</span><span data-lang="en" hidden>Decreases/increases a selected slider, for example the colors in character creation.</span></td></tr>
     </tbody>
   </table>
 
