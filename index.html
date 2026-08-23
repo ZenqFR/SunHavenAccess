@@ -103,23 +103,48 @@
   }
   .skip-link:focus { left: 0; }
 
-  /* ---------- Barre de navigation entre mes différents projets/pages ---------- */
+  /* ---------- Barre d'identité : mes autres projets + langue ---------- */
   .portfolio-bar {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 0.5em;
-    padding: 0.5em 1em;
+    gap: 0.6em;
+    padding: 0.55em 1.1em;
     font-size: 0.82rem;
     background: var(--glass-bg);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--glass-border);
     color: var(--text-faint);
   }
+  .portfolio-bar ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .portfolio-bar li:not(:last-child)::after {
+    content: "·";
+    margin-left: 0.5em;
+    color: var(--text-faint);
+  }
   .portfolio-bar a { color: var(--text-dim); text-decoration: none; }
-  .portfolio-bar a:hover { color: var(--accent-strong); text-decoration: underline; }
+  .portfolio-bar a:hover, .portfolio-bar a:focus-visible { color: var(--accent-strong); text-decoration: underline; }
   .portfolio-bar [aria-current="page"] { color: var(--accent-strong); font-weight: 600; }
+  .portfolio-bar #lang-toggle {
+    background: transparent;
+    border: 1px solid var(--glass-border);
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    padding: 0.3em 0.8em;
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .portfolio-bar #lang-toggle:hover, .portfolio-bar #lang-toggle:focus-visible { border-color: var(--accent); color: var(--accent-strong); }
 
   /* ---------- Nav de section (barre collante + scrollspy) ---------- */
   .quick-nav {
@@ -128,12 +153,14 @@
     z-index: 15;
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 0.3em;
     flex-wrap: wrap;
-    padding: 0.6em 1em;
+    padding: 0.65em 1em;
     background: var(--nav-bg-translucent);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--bg-card-border);
+    box-shadow: 0 2px 12px rgba(31, 43, 48, 0.1);
     min-height: var(--nav-h);
   }
   .quick-nav a {
@@ -141,13 +168,20 @@
     text-decoration: none;
     font-size: 0.85rem;
     font-weight: 600;
-    padding: 0.4em 0.8em;
+    padding: 0.45em 0.9em;
     border-radius: 999px;
-    transition: background 0.15s ease, color 0.15s ease;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
     white-space: nowrap;
   }
-  .quick-nav a:hover { color: var(--text); background: var(--pill-bg); }
-  .quick-nav a[aria-current="true"] { color: var(--accent-text); background: var(--accent); }
+  .quick-nav a:hover, .quick-nav a:focus-visible { color: var(--text); background: var(--pill-bg); }
+  .quick-nav a[aria-current="true"] {
+    color: var(--accent-text);
+    background: var(--accent);
+    box-shadow: 0 2px 8px rgba(255, 180, 0, 0.35);
+  }
+  /* Petite séparation visuelle avant le lien vers l'autre page (docs.html) : contrairement
+     aux autres, ce n'est pas un saut dans la page mais un vrai changement de page. */
+  .quick-nav a[href="docs.html"] { margin-left: 0.5em; border-left: 1px solid var(--bg-card-border); padding-left: 1em; border-radius: 0 999px 999px 0; }
 
   /* Le bandeau n'a plus son propre fond dégradé : il flotte directement sur le dégradé de
      body, désormais commun à toute la page. Les couleurs de texte restent fixes (pas les
@@ -218,24 +252,6 @@
   @media (max-width: 560px) {
     .stat-strip { grid-template-columns: 1fr; }
   }
-
-  .lang-switch {
-    max-width: 820px;
-    margin: 1.5em auto 0;
-    padding: 0 1.5em;
-    text-align: right;
-  }
-  .lang-switch button {
-    background: var(--glass-bg);
-    backdrop-filter: blur(6px);
-    border: 1px solid var(--glass-border);
-    color: var(--text-dim);
-    font-size: 0.85rem;
-    padding: 0.4em 0.9em;
-    border-radius: 999px;
-    cursor: pointer;
-  }
-  .lang-switch button:hover { border-color: var(--accent); color: var(--accent-strong); }
 
   .intro {
     max-width: 820px;
@@ -412,7 +428,8 @@
   .to-top:hover { transform: translateY(-2px); }
 
   @media (max-width: 600px) {
-    .lang-switch { text-align: center; }
+    .portfolio-bar { justify-content: center; }
+    .portfolio-bar ul { justify-content: center; }
     .quick-nav { justify-content: flex-start; overflow-x: auto; }
   }
 </style>
@@ -423,13 +440,13 @@
 </a>
 
 <nav class="portfolio-bar" aria-label="Mes autres projets">
-  <a href="https://zenqfr.github.io/">🏠 ZenqFR</a>
-  <span aria-hidden="true">·</span>
-  <span aria-current="page">Sun Haven Access</span>
-  <span aria-hidden="true">·</span>
-  <a href="https://zenqfr.github.io/sku-addons/">Sku Addons</a>
-  <span aria-hidden="true">·</span>
-  <a href="https://zenqfr.github.io/petopiafr/">PetopiaFR</a>
+  <ul>
+    <li><a href="https://zenqfr.github.io/">🏠 ZenqFR</a></li>
+    <li aria-current="page">Sun Haven Access</li>
+    <li><a href="https://zenqfr.github.io/sku-addons/">Sku Addons</a></li>
+    <li><a href="https://zenqfr.github.io/petopiafr/">PetopiaFR</a></li>
+  </ul>
+  <button type="button" id="lang-toggle" aria-label="Switch language / Changer de langue">English</button>
 </nav>
 
 <nav class="quick-nav" aria-label="Navigation rapide">
@@ -466,10 +483,6 @@
   <div class="stat"><strong>7</strong><span data-lang="fr">Catégories de repérage</span><span data-lang="en" hidden>Tracker categories</span></div>
   <div class="stat"><strong>15+</strong><span data-lang="fr">Raccourcis personnalisables</span><span data-lang="en" hidden>Customizable shortcuts</span></div>
   <div class="stat"><strong>100%</strong><span data-lang="fr">Gratuit &amp; open-source</span><span data-lang="en" hidden>Free &amp; open-source</span></div>
-</div>
-
-<div class="lang-switch">
-  <button type="button" id="lang-toggle" aria-label="Switch language / Changer de langue">English</button>
 </div>
 
 <p class="intro">
