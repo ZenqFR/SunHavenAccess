@@ -1,0 +1,155 @@
+using UnityEngine;
+using SunHavenAccess.Speech;
+using SunHavenAccess.Cursor;
+using SunHavenAccess.Navigation;
+using SunHavenAccess.Menus;
+using SunHavenAccess.Localization;
+using SunHavenAccess.Config;
+using SunHavenAccess.Info;
+
+namespace SunHavenAccess.Input
+{
+    /// <summary>
+    /// Touches d'accessibilité. Chaque action utilise la touche définie dans le fichier de
+    /// config du mod (voir Config/ModConfig.cs, modifiable dans
+    /// BepInEx/config/com.kleitz.sunhavenaccess.cfg ou en jeu via le menu des raccourcis),
+    /// vérifiée à la fois via UnityEngine.Input et via Rewired (le système d'input du jeu a sa
+    /// propre lecture du clavier, séparée de celle d'Unity). Deux combinaisons Ctrl+touche
+    /// (clic droit monde, action secondaire de menu) sont gérées ici directement, en dehors du
+    /// système de config à touche unique.
+    /// </summary>
+    public static class HotkeyManager
+    {
+        public static void Tick()
+        {
+            // Le menu des raccourcis a la main exclusive tant qu'il est ouvert, pour que les
+            // touches de navigation/validation ne déclenchent pas aussi les actions normales.
+            if (Pressed(ModConfig.ShortcutsMenuToggle.Value))
+            {
+                ShortcutsMenu.Toggle();
+                return;
+            }
+            if (ShortcutsMenu.IsOpen)
+            {
+                ShortcutsMenu.Tick();
+                return;
+            }
+
+            if (Pressed(ModConfig.Repeat.Value)) TolkSpeech.Repeat();
+            if (Pressed(ModConfig.DescribeFront.Value)) TileCursor.AnnounceFront();
+            if (Pressed(ModConfig.Position.Value)) TileCursor.AnnouncePosition();
+            if (Pressed(ModConfig.NextNpc.Value)) NPCFinder.AnnounceNext();
+            if (Pressed(ModConfig.ToggleVerbosity.Value)) TileCursor.ToggleVerbosity();
+            if (Pressed(ModConfig.Help.Value)) AnnounceHelp();
+            if (Pressed(ModConfig.TurnLeft.Value)) TileCursor.Turn(-1);
+            if (Pressed(ModConfig.TurnRight.Value)) TileCursor.Turn(1);
+            if (Pressed(ModConfig.TestTone.Value)) TestTone.Play(Plugin.Log);
+            if (Pressed(ModConfig.MouseFollowToggle.Value)) MouseCursor.Toggle();
+            if (Pressed(ModConfig.Clock.Value)) ClockAnnouncer.Announce();
+            if (Pressed(ModConfig.Status.Value)) StatusAnnouncer.Announce();
+
+            // Navigation de menu : flèches directionnelles (Haut/Gauche = précédent,
+            // Bas/Droite = suivant, quelle que soit la touche exacte choisie en config, pour
+            // que les deux paires fonctionnent par défaut). Ctrl+Entrée = clic droit,
+            // vérifié EN PREMIER pour ne pas aussi déclencher le simple clic gauche.
+            bool ctrl = CtrlHeld();
+            if (Pressed(ModConfig.MenuPrevious.Value) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.Previous();
+            if (Pressed(ModConfig.MenuNext.Value) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.Next();
+            if (ctrl && UnityEngine.Input.GetKeyDown(ModConfig.MenuActivate.Value))
+            {
+                MenuNavigator.SecondaryActivate();
+            }
+            else if (Pressed(ModConfig.MenuActivate.Value))
+            {
+                MenuNavigator.Activate();
+            }
+
+            // Clic droit dans le monde (souris directionnelle) : Ctrl + la touche configurée
+            // (":" par défaut sur AZERTY) ou Ctrl+Slash ("/", même touche physique sur QWERTY).
+            if (ctrl && (UnityEngine.Input.GetKeyDown(ModConfig.SimulateRightClick.Value) || UnityEngine.Input.GetKeyDown(KeyCode.Slash)))
+            {
+                MouseCursor.SimulateRightClick();
+            }
+            if (Pressed(ModConfig.SimulateLeftClick.Value)) MouseCursor.SimulateLeftClick();
+
+            // Scanner par catégories (PNJ, plantations, ressources, bâtiments...), même
+            // convention que stardew-access : Page seule = élément, Ctrl+Page = catégorie,
+            // Origine seule = info sur l'élément sélectionné, Ctrl+Origine = s'y rendre à pied
+            // automatiquement, Fin = nombre trouvé.
+            if (Pressed(ModConfig.ScannerPageUp.Value))
+            {
+                if (ctrl) Scanner.PreviousCategory(); else Scanner.PreviousItem();
+            }
+            if (Pressed(ModConfig.ScannerPageDown.Value))
+            {
+                if (ctrl) Scanner.NextCategory(); else Scanner.NextItem();
+            }
+            if (Pressed(ModConfig.ScannerNearest.Value))
+            {
+                if (ctrl) Scanner.TravelToCurrent(); else Scanner.AnnounceInfo();
+            }
+            if (Pressed(ModConfig.ScannerCount.Value)) Scanner.AnnounceCount();
+
+            // Échap annule un cheminement automatique en cours, où qu'on soit (ne fait rien si
+            // aucun cheminement n'est en cours, donc n'interfère pas avec les autres usages
+            // d'Échap ailleurs dans le jeu).
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape) && PathingController.IsPathing)
+            {
+                PathingController.Cancel();
+            }
+        }
+
+        private static bool CtrlHeld() =>
+            UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl);
+
+        private static bool Pressed(KeyCode key)
+        {
+            if (key == KeyCode.None) return false;
+            return UnityEngine.Input.GetKeyDown(key) || RewiredKeyDown(key);
+        }
+
+        /// <summary>
+        /// Sun Haven utilise Rewired pour tout son input clavier/manette, qui a sa PROPRE
+        /// lecture du clavier, séparée de celle d'UnityEngine.Input. Si Rewired a la main
+        /// exclusive dessus, Input.GetKeyDown peut ne jamais rien voir passer alors même que
+        /// le jeu répond normalement aux touches. On interroge donc aussi directement le
+        /// clavier de Rewired, en repli.
+        /// </summary>
+        private static bool RewiredKeyDown(KeyCode key)
+        {
+            try
+            {
+                if (!Rewired.ReInput.isReady) return false;
+                Rewired.Keyboard kb = Rewired.ReInput.controllers.Keyboard;
+                return kb != null && kb.GetKeyDown(key);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static void AnnounceHelp()
+        {
+            TolkSpeech.Speak(
+                "Touches d'accessibilité : " +
+                $"{Strings.KeyName(ModConfig.DescribeFront.Value)}, décrire la case devant vous. " +
+                $"{Strings.KeyName(ModConfig.Position.Value)}, votre position. " +
+                $"{Strings.KeyName(ModConfig.Clock.Value)}, l'heure, le jour, la saison et la météo. " +
+                $"{Strings.KeyName(ModConfig.Status.Value)}, votre santé et votre mana. " +
+                $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
+                $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +
+                $"{Strings.KeyName(ModConfig.ToggleVerbosity.Value)}, activer ou désactiver l'annonce automatique des déplacements. " +
+                $"{Strings.KeyName(ModConfig.TurnLeft.Value)} et {Strings.KeyName(ModConfig.TurnRight.Value)}, tourner sans vous déplacer. " +
+                $"{Strings.KeyName(ModConfig.MouseFollowToggle.Value)}, activer ou désactiver la souris qui pointe vers la case devant vous. " +
+                $"{Strings.KeyName(ModConfig.SimulateLeftClick.Value)}, clic gauche. Contrôle plus {Strings.KeyName(ModConfig.SimulateRightClick.Value)}, clic droit. " +
+                "Dans les menus : flèches directionnelles pour parcourir, Entrée pour un clic gauche, Contrôle plus Entrée pour un clic droit. " +
+                "Scanner : Page précédente et Page suivante pour parcourir les éléments trouvés, Contrôle plus Page précédente ou suivante pour changer de catégorie " +
+                "parmi personnages, plantations, ressources, bâtiments et portails, animaux et compagnons, ennemis, mobilier et rangement. " +
+                "Origine pour annoncer l'élément sélectionné, Contrôle plus Origine pour vous y rendre automatiquement, Échap pour annuler le trajet, Fin pour connaître le nombre trouvé. " +
+                $"{Strings.KeyName(ModConfig.ChatOpenKey.Value)}, ouvrir le tchat ou la console du jeu (remplace Entrée, qui entrait en conflit avec la validation de menu). " +
+                $"{Strings.KeyName(ModConfig.Help.Value)}, cette aide. " +
+                $"{Strings.KeyName(ModConfig.ShortcutsMenuToggle.Value)}, ouvre le menu complet des raccourcis, qui permet aussi de changer chaque touche.", true);
+        }
+    }
+}

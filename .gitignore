@@ -1,0 +1,11 @@
+bin/
+obj/
+
+# DLL d'une ancienne piste abandonnée (CrossSpeak), non référencées par le csproj actuel —
+# seuls lib/Tolk.dll et lib/nvdaControllerClient64.dll sont utilisés (voir README).
+lib/CrossSpeak.dll
+lib/SAAPI64.dll
+lib/TolkDotNet.dll
+
+*.user
+.vs/
