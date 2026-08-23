@@ -103,6 +103,13 @@
   }
   .skip-link:focus { left: 0; }
 
+  /* Contenu présent pour les lecteurs d'écran uniquement (légendes de tableaux, contexte
+     supplémentaire) — invisible à l'écran sans être ignoré par les technologies d'assistance. */
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+
   /* ---------- Barre d'identité : mes autres projets + langue ---------- */
   .portfolio-bar {
     display: flex;
@@ -303,12 +310,19 @@
   .install-steps li { margin-bottom: 0.5em; }
 
   /* ---------- Grille de cartes de fonctionnalités ---------- */
+  /* Vraie liste (ul/li) plutôt qu'une simple div : un lecteur d'écran annonce "liste de 14
+     éléments" en y entrant, et permet de sauter d'une fonctionnalité à l'autre au lieu de
+     n'avoir aucun repère de structure entre les 14 cartes. */
   .feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1em;
     align-items: start;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
+  .feature-grid > li { margin: 0; }
 
   .card {
     background: var(--bg-card);
@@ -328,10 +342,14 @@
   .card h3 { margin: 0 0 0.4em; color: var(--accent-strong); font-size: 1.1rem; }
   .card p { margin: 0.4em 0; color: var(--text-dim); }
 
-  /* Animation d'apparition au défilement (IntersectionObserver) — neutre par défaut si JS
-     désactivé ou reduced-motion, voir script en bas. */
-  .reveal { opacity: 0; translate: 0 12px; }
-  .reveal.is-visible { opacity: 1; translate: 0 0; }
+  /* Animation d'apparition au défilement (IntersectionObserver). Visible par défaut
+     (opacity:1) : c'est le script en bas qui ajoute .js-reveal-active sur <html> UNIQUEMENT
+     s'il va effectivement piloter l'animation — sans JS (ou JS en échec), rien ne masque ces
+     cartes, qui contiennent toute la doc du mod. Avant, .reveal partait de opacity:0 en CSS
+     pur : sans JS, ces cartes restaient invisibles pour toujours, un vrai bug. */
+  .reveal { transition: opacity 0.4s ease, translate 0.4s ease; }
+  html.js-reveal-active .reveal { opacity: 0; translate: 0 12px; }
+  html.js-reveal-active .reveal.is-visible { opacity: 1; translate: 0 0; }
 
   details.card summary {
     cursor: pointer;
@@ -514,8 +532,9 @@
     <span data-lang="fr">Fonctionnalités</span><span data-lang="en" hidden>Features</span>
   </h2>
 
-  <div class="feature-grid">
+  <ul class="feature-grid">
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">🔊 Lecteur d'écran &amp; synthèse vocale</span><span data-lang="en" hidden>🔊 Screen reader &amp; speech</span></summary>
     <ul>
@@ -524,7 +543,9 @@
       <li><span data-lang="fr">Notifications du jeu (bulle éphémère en haut à gauche) lues automatiquement dès qu'elles apparaissent : boutique fermée, action impossible, et potentiellement bien d'autres messages jamais rencontrés individuellement — un seul point d'accroche générique les couvre toutes.</span><span data-lang="en" hidden>In-game notifications (ephemeral top-left toast) read automatically as soon as they appear: shop closed, action not possible, and potentially many other messages never individually encountered — a single generic hook covers them all.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">🚶 Déplacement, curseur de case &amp; terrain</span><span data-lang="en" hidden>🚶 Movement, tile cursor &amp; terrain</span></summary>
     <ul>
@@ -533,7 +554,9 @@
       <li><span data-lang="fr">Verbosité des déplacements activable/désactivable, et position consultable à la demande.</span><span data-lang="en" hidden>Movement verbosity can be toggled, and your position can be checked on demand.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">📋 Menus, inventaire, dialogues</span><span data-lang="en" hidden>📋 Menus, inventory, dialogue</span></summary>
     <ul>
@@ -543,7 +566,9 @@
       <li><span data-lang="fr">Bulles de dialogue lues dès le début de la ligne, pas à la fin de l'animation machine à écrire.</span><span data-lang="en" hidden>Dialogue lines are read from the start, not after the typewriter animation finishes.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">🌾 Agriculture</span><span data-lang="en" hidden>🌾 Farming</span></summary>
     <ul>
@@ -551,7 +576,9 @@
       <li><span data-lang="fr">Description enrichie des cultures et des parcelles labourées sans rien de planté.</span><span data-lang="en" hidden>Enriched description of crops and tilled-but-empty plots.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">🖱️ Souris directionnelle &amp; clics simulés</span><span data-lang="en" hidden>🖱️ Directional mouse &amp; simulated clicks</span></summary>
     <ul>
@@ -559,7 +586,9 @@
       <li><span data-lang="fr">Simulation de clic gauche et de clic droit à la position actuelle de la souris.</span><span data-lang="en" hidden>Simulated left and right click at the mouse's current position.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">🛒 Boutiques &amp; artisanat</span><span data-lang="en" hidden>🛒 Shops &amp; crafting</span></summary>
     <ul>
@@ -567,14 +596,18 @@
       <li><span data-lang="fr">En artisanat : quantité possédée/requise de chaque ingrédient, nom de l'objet fabriqué, temps de fabrication.</span><span data-lang="en" hidden>In crafting: owned/required amount for each ingredient, crafted item's name, craft time.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">✉️ Courrier</span><span data-lang="en" hidden>✉️ Mail</span></summary>
     <ul>
       <li><span data-lang="fr">Contenu complet d'une lettre (message, signature, post-scriptum) lu automatiquement dès l'ouverture de la boîte aux lettres, comme les dialogues.</span><span data-lang="en" hidden>A letter's full content (message, sign-off, postscript) is read automatically as soon as the mailbox opens, just like dialogue.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">🎣 Pêche</span><span data-lang="en" hidden>🎣 Fishing</span></summary>
     <ul>
@@ -583,7 +616,9 @@
       <li><span data-lang="fr">⚠️ Fonctionnalité toute nouvelle, jamais entendue en conditions réelles — fréquences et tempo choisis au jugé.</span><span data-lang="en" hidden>⚠️ Brand new feature, never heard under real conditions — frequencies and tempo chosen by best guess.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">⛏️ Minage &amp; coupe de bois</span><span data-lang="en" hidden>⛏️ Mining &amp; woodcutting</span></summary>
     <ul>
@@ -591,7 +626,9 @@
       <li><span data-lang="fr">Confirmation vocale quand un rocher se brise ou qu'un arbre est abattu.</span><span data-lang="en" hidden>Voice confirmation when a rock breaks or a tree is felled.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">⚔️ Donjon de combat</span><span data-lang="en" hidden>⚔️ Combat dungeon</span></summary>
     <ul>
@@ -599,7 +636,9 @@
       <li><span data-lang="fr">Annonce du numéro d'étage à l'entrée d'une salle, et confirmation quand elle est nettoyée (porte ouverte).</span><span data-lang="en" hidden>Announces the floor number on entering a room, and confirms when it's cleared (door opens).</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">🧭 Scanner par catégories &amp; cheminement automatique</span><span data-lang="en" hidden>🧭 Category scanner &amp; auto-pathing</span></summary>
     <ul>
@@ -608,7 +647,9 @@
       <li><span data-lang="fr"><strong>Cheminement automatique</strong> vers l'élément sélectionné (A* maison tenant compte des vrais obstacles) — si la destination exacte est bloquée, avance quand même jusqu'au point le plus proche atteignable.</span><span data-lang="en" hidden><strong>Automatic pathing</strong> to the selected item (custom A* accounting for real obstacles) — if the exact destination is blocked, still walks as far as it can reach.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">⚔️ Combat</span><span data-lang="en" hidden>⚔️ Combat</span></summary>
     <ul>
@@ -616,14 +657,18 @@
       <li><span data-lang="fr">Entrée/sortie de combat, défaite d'un ennemi et mort du personnage annoncées ; santé et mana consultables à la demande.</span><span data-lang="en" hidden>Entering/leaving combat, an enemy's defeat, and your character's death are all announced; health and mana can be checked on demand.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">☀️ Horloge, calendrier &amp; météo</span><span data-lang="en" hidden>☀️ Clock, calendar &amp; weather</span></summary>
     <ul>
       <li><span data-lang="fr">Une touche annonce l'heure, le jour de la semaine, le jour du mois, la saison, l'année et la météo actuelle.</span><span data-lang="en" hidden>One key announces the time, day of the week, day of the month, season, year, and current weather.</span></li>
     </ul>
   </details>
+  </li>
 
+  <li>
   <details class="card reveal">
     <summary><span data-lang="fr">⌨️ Raccourcis — tous personnalisables</span><span data-lang="en" hidden>⌨️ Keybindings — fully customizable</span></summary>
     <p>
@@ -631,9 +676,13 @@
       <span data-lang="en" hidden>Every key can be changed in the config file, or in-game through a dedicated voice menu. All verified conflict-free with the game's default keybindings (checked directly against the decompiled code).</span>
     </p>
     <table class="keys">
+      <caption class="sr-only">
+        <span data-lang="fr">Raccourcis clavier de Sun Haven Access et leur action</span>
+        <span data-lang="en" hidden>Sun Haven Access keybindings and what they do</span>
+      </caption>
       <thead><tr>
-        <th><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th>
-        <th><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th>
+        <th scope="col"><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th>
+        <th scope="col"><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th>
       </tr></thead>
       <tbody>
         <tr><td>F1</td><td><span data-lang="fr">Aide (⚠️ déclenche aussi l'émote 1 du jeu)</span><span data-lang="en" hidden>Help (⚠️ also triggers the game's emote 1)</span></td></tr>
@@ -657,8 +706,9 @@
       </tbody>
     </table>
   </details>
+  </li>
 
-  </div>
+  </ul>
 
   <h2 class="section-title" id="progress">
     <span data-lang="fr">Progression</span><span data-lang="en" hidden>Progress</span>
@@ -751,6 +801,9 @@
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealEls.forEach(function (el) { el.classList.add("is-visible"); });
   } else {
+    // N'active le masquage CSS (html.js-reveal-active) qu'ici, une fois sûr de pouvoir
+    // effectivement révéler les cartes ensuite — sinon elles restent visibles par défaut.
+    document.documentElement.classList.add("js-reveal-active");
     var revealObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {

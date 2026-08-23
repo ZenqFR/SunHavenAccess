@@ -86,6 +86,11 @@
   }
   .skip-link:focus { left: 0; }
 
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+
   .portfolio-bar {
     display: flex; justify-content: space-between; align-items: center;
     flex-wrap: wrap; gap: 0.6em; padding: 0.55em 1.1em;
@@ -277,7 +282,8 @@
 
   <h3 class="sub-title"><span data-lang="fr">Informations &amp; annonces</span><span data-lang="en" hidden>Information &amp; announcements</span></h3>
   <table class="keys">
-    <thead><tr><th><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th><th><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th></tr></thead>
+    <caption class="sr-only"><span data-lang="fr">Informations &amp; annonces</span><span data-lang="en" hidden>Information &amp; announcements</span></caption>
+    <thead><tr><th scope="col"><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th><th scope="col"><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th></tr></thead>
     <tbody>
       <tr><td>F1</td><td><span data-lang="fr">Rappelle la liste des touches principales. ⚠️ déclenche aussi l'émote 1 du jeu (touche gardée sur demande explicite malgré ce conflit).</span><span data-lang="en" hidden>Reminds you of the main keys. ⚠️ also triggers the game's emote 1 (kept on explicit request despite this conflict).</span></td></tr>
       <tr><td>F10</td><td><span data-lang="fr">Décrit la case devant vous (terrain, culture, objet, PNJ...), même si l'annonce automatique est désactivée.</span><span data-lang="en" hidden>Describes the tile in front of you (terrain, crop, object, NPC...), even if automatic announcement is off.</span></td></tr>
@@ -293,6 +299,8 @@
 
   <h3 class="sub-title"><span data-lang="fr">Déplacement &amp; souris</span><span data-lang="en" hidden>Movement &amp; mouse</span></h3>
   <table class="keys">
+    <caption class="sr-only"><span data-lang="fr">Déplacement &amp; souris</span><span data-lang="en" hidden>Movement &amp; mouse</span></caption>
+    <thead><tr><th scope="col"><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th><th scope="col"><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th></tr></thead>
     <tbody>
       <tr><td><span data-lang="fr">Pavé 4 / Pavé 6</span><span data-lang="en" hidden>Numpad 4 / 6</span></td><td><span data-lang="fr">Tourne le personnage à gauche/à droite <strong>sans se déplacer</strong>, avec annonce immédiate de la nouvelle case en face.</span><span data-lang="en" hidden>Turns the character left/right <strong>without moving</strong>, with an immediate announcement of the new tile ahead.</span></td></tr>
       <tr><td>J</td><td><span data-lang="fr">Active/désactive la souris directionnelle : le curseur Windows pointe alors en permanence vers la case devant vous (beaucoup d'actions du jeu — arroser, labourer, récolter, miner, attaquer — se déclenchent par clic souris, pas par touche d'interaction).</span><span data-lang="en" hidden>Toggles the directional mouse: the Windows cursor then constantly points at the tile ahead of you (many game actions — watering, tilling, harvesting, mining, attacking — trigger on mouse click, not an interact key).</span></td></tr>
@@ -304,6 +312,8 @@
 
   <h3 class="sub-title"><span data-lang="fr">Navigation dans les menus</span><span data-lang="en" hidden>Menu navigation</span></h3>
   <table class="keys">
+    <caption class="sr-only"><span data-lang="fr">Navigation dans les menus</span><span data-lang="en" hidden>Menu navigation</span></caption>
+    <thead><tr><th scope="col"><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th><th scope="col"><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th></tr></thead>
     <tbody>
       <tr><td><span data-lang="fr">Flèches directionnelles</span><span data-lang="en" hidden>Arrow keys</span></td><td><span data-lang="fr">Élément précédent/suivant dans un menu (haut/gauche = précédent, bas/droite = suivant). Fonctionne même sur les écrans que le jeu ne rend jamais accessibles au clavier nativement.</span><span data-lang="en" hidden>Previous/next item in a menu (up/left = previous, down/right = next). Works even on screens the game never makes keyboard-accessible natively.</span></td></tr>
       <tr><td><span data-lang="fr">Entrée</span><span data-lang="en" hidden>Enter</span></td><td><span data-lang="fr">Active l'élément de menu sélectionné (équivalent clic gauche). <strong>Exige d'avoir déjà sélectionné un élément aux flèches</strong> — une pression à froid ne clique jamais rien au hasard.</span><span data-lang="en" hidden>Activates the selected menu item (equivalent to a left click). <strong>Requires an item already selected with arrow keys</strong> — a cold press never clicks anything at random.</span></td></tr>
@@ -314,6 +324,8 @@
 
   <h3 class="sub-title"><span data-lang="fr">Scanner (repérage d'objets/PNJ)</span><span data-lang="en" hidden>Scanner (object/NPC tracker)</span></h3>
   <table class="keys">
+    <caption class="sr-only"><span data-lang="fr">Scanner (repérage d'objets/PNJ)</span><span data-lang="en" hidden>Scanner (object/NPC tracker)</span></caption>
+    <thead><tr><th scope="col"><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th><th scope="col"><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th></tr></thead>
     <tbody>
       <tr><td><span data-lang="fr">Page haut / bas</span><span data-lang="en" hidden>Page Up / Down</span></td><td><span data-lang="fr">Élément précédent/suivant dans la catégorie actuelle du scanner.</span><span data-lang="en" hidden>Previous/next item in the scanner's current category.</span></td></tr>
       <tr><td><span data-lang="fr">Ctrl + Page haut / bas</span><span data-lang="en" hidden>Ctrl + Page Up / Down</span></td><td><span data-lang="fr">Catégorie précédente/suivante (les catégories vides sont sautées automatiquement).</span><span data-lang="en" hidden>Previous/next category (empty categories are skipped automatically).</span></td></tr>
