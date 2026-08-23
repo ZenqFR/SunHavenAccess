@@ -58,6 +58,15 @@ namespace SunHavenAccess.Util
         /// le chiffre N du nom brut ne correspond pas de façon fiable à l'ordre visuel réel. On
         /// se base donc sur la POSITION de l'objet parmi ses frères "Major" (ordre hiérarchique
         /// Unity = ordre visuel gauche à droite pour une rangée d'onglets), pas sur son nom.
+        ///
+        /// Bug corrigé : le dernier onglet (Paramètres) s'est remis à se lire comme le nom brut
+        /// non traduit ("Major..."). Cause : cette liste comptait TOUS les frères nommés
+        /// "Major*" sans filtrer les INACTIFS — un objet gabarit/dupliqué désactivé mais toujours
+        /// présent dans la hiérarchie (fréquent pour les prefabs d'instanciation) se glissait
+        /// dans le compte et décalait le rang du 7e onglet réel à 8, hors de
+        /// MajorTabLabelsByRank (seulement 1 à 7) → retombait en dernier repli sur la traduction
+        /// littérale du nom technique. Filtré aux frères réellement actifs à l'écran, comme
+        /// partout ailleurs dans le mod (Scanner, MenuNavigator...).
         /// </summary>
         private static string TryMajorTabLabel(GameObject go)
         {
@@ -69,11 +78,17 @@ namespace SunHavenAccess.Util
             for (int i = 0; i < parent.childCount; i++)
             {
                 Transform child = parent.GetChild(i);
-                if (UiNameTranslator.IsMajorTabName(child.name)) majorSiblings.Add(child);
+                if (UiNameTranslator.IsMajorTabName(child.name) && child.gameObject.activeInHierarchy)
+                    majorSiblings.Add(child);
             }
 
             int rank = majorSiblings.IndexOf(go.transform) + 1; // 1-based
-            return UiNameTranslator.MajorTabLabelsByRank.TryGetValue(rank, out string label) ? label : null;
+            if (UiNameTranslator.MajorTabLabelsByRank.TryGetValue(rank, out string label)) return label;
+
+            // Filet de sécurité : si le rang tombe quand même hors de 1-7 (nombre d'onglets
+            // inattendu), annoncer un numéro générique plutôt que de retomber sur le nom
+            // technique brut non traduit.
+            return rank > 0 ? $"Onglet {rank}" : null;
         }
 
         /// <summary>
