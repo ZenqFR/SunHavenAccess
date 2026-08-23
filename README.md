@@ -189,6 +189,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Boutiques et artisanat** : noms d'objets, prix (avec devise correctement annoncée : pièces d'or/tickets/orbes), quantités possédées/requises pour chaque ingrédient ("3/5"), temps de fabrication — passent tous par les mêmes systèmes génériques de lecture d'infobulle/texte que le reste du mod, mais jamais testés spécifiquement sur un écran de boutique ou d'artisanat réel.
 - **Courrier** : le contenu complet d'une lettre (message, signature, post-scriptum) est maintenant lu automatiquement à l'ouverture de la boîte aux lettres, sur le même principe que les dialogues — jamais testé en jeu. Les objets éventuellement joints ne sont pour l'instant pas nommés automatiquement (juste leur icône, comme dans les autres menus).
 - **Pêche** : annonce de la touche/du résultat de chaque pression — voir la carte dédiée plus haut pour la limite assumée (viser la jauge reste non résolu).
+- **Carte du monde** : décompilation de `Wish.Map`/`Wish.LocationName` montrant que, contrairement au menu principal (souris uniquement), cet écran liste vraiment les lieux via la sélection native d'Unity — chaque nom de lieu est un vrai bouton avec son texte visible, et le sélectionner ouvre un panneau de description également piloté nativement. Probablement déjà accessible via les systèmes génériques existants (lecture de la sélection courante + infobulle), reclassée ici depuis "pas encore développé" — jamais testée en jeu pour autant.
 
 </details>
 
@@ -197,7 +198,6 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 
 - Minage (au-delà des minerais déjà repérables par le scanner, aucun retour dédié sur l'action de miner elle-même).
 - Donjons/salle de combat spécifiques.
-- Carte du monde (fondamentalement visuelle, pas encore de solution accessible envisagée).
 
 </details>
 
