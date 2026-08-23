@@ -78,7 +78,10 @@ namespace SunHavenAccess.Config
                 "Diagnostic : joue un son Windows indépendant de la synthèse vocale.", "Test sonore (diagnostic)");
             MouseFollowToggle = Bind(config, section, "SourisDirectionnelle", KeyCode.J,
                 "Active ou désactive la souris qui pointe toujours vers la case devant vous.", "Activer/désactiver la souris directionnelle");
-            SimulateLeftClick = Bind(config, section, "ClicGauche", KeyCode.Caret,
+            // Renommé (ClicGauche -> ClicGaucheMonde) pour forcer la prise en compte du nouveau
+            // défaut Espace : Entrée entrait en conflit avec la validation de menu (voir
+            // MenuNavigator.Activate) et ^ (Caret) était peu pratique/pas intuitif.
+            SimulateLeftClick = Bind(config, section, "ClicGaucheMonde", KeyCode.Space,
                 "Simule un clic gauche à la position actuelle de la souris.", "Simuler un clic gauche (monde)");
             SimulateRightClick = Bind(config, section, "ClicDroit", KeyCode.Colon,
                 "Simule un clic droit (avec Ctrl enfoncé ; Slash fonctionne aussi en alternative sur QWERTY).", "Simuler un clic droit (monde, avec Ctrl)");

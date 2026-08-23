@@ -131,7 +131,7 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | F12 | Menu des raccourcis (parcourable et modifiable) |
 | Pavé 4 / Pavé 6 | Tourner à gauche / à droite sans se déplacer |
 | J | Souris directionnelle |
-| ^ (Caret) | Clic gauche (souris) |
+| Espace | Clic gauche (souris) |
 | Ctrl + : (ou Ctrl + /) | Clic droit (souris) |
 | T | Ouvrir le tchat / la console du jeu *(remplace Entrée, qui entrait en conflit avec la validation de menu)* |
 | Flèches directionnelles | Naviguer dans un menu |

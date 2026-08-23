@@ -28,6 +28,15 @@ namespace SunHavenAccess.Cursor
         private static Direction _lastDir;
         private static bool _hasLast;
         private static bool _verbose = true;
+        private static float _lastAnnounceTime = -1f;
+
+        // En restant immobile, la position physique du joueur (Rigidbody2D) n'est jamais
+        // parfaitement fixe au pixel près — de minuscules oscillations suffisent à faire
+        // basculer Player.Position (qui TRONQUE en entier, donc très sensible aux frontières de
+        // case) entre deux valeurs, redéclenchant l'annonce en boucle ("spam") sans que le
+        // joueur ait réellement bougé. Un léger anti-rebond temporel suffit à l'absorber sans
+        // affecter les vrais pas (qui prennent bien plus de temps que ce délai).
+        private const float MinSecondsBetweenAutoAnnounces = 0.35f;
 
         // Ordre horaire, pour "tourner à gauche/à droite" sans se déplacer.
         private static readonly Direction[] ClockwiseOrder =
@@ -54,9 +63,18 @@ namespace SunHavenAccess.Cursor
             Vector2Int tile = player.Position;
             Direction dir = player.facingDirection;
             if (_hasLast && tile == _lastTile && dir == _lastDir) return;
+
+            // Anti-rebond : une case/direction "différente" détectée moins de
+            // MinSecondsBetweenAutoAnnounces après la dernière annonce est presque toujours du
+            // tremblement physique (immobile près d'une frontière de case), pas un vrai pas —
+            // on l'ignore sans pour autant la retenir comme "dernière position connue", pour ne
+            // pas rater une vraie annonce si le tremblement se stabilise entre-temps.
+            if (_hasLast && Time.time - _lastAnnounceTime < MinSecondsBetweenAutoAnnounces) return;
+
             _lastTile = tile;
             _lastDir = dir;
             _hasLast = true;
+            _lastAnnounceTime = Time.time;
 
             // Annonce SYSTÉMATIQUEMENT à chaque case/direction différente, même si le contenu
             // est identique au pas précédent (ex. plusieurs cases d'herbe à la suite) : un
@@ -113,6 +131,7 @@ namespace SunHavenAccess.Cursor
             _lastTile = player.Position;
             _lastDir = player.facingDirection;
             _hasLast = true;
+            _lastAnnounceTime = Time.time;
             string desc = BuildFrontDescription(player);
             TolkSpeech.Speak(desc, interrupt: true);
         }

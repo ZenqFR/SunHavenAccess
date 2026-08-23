@@ -51,18 +51,21 @@ namespace SunHavenAccess.Menus
             Announce(_items[_index]);
         }
 
+        /// <summary>
+        /// Bug corrigé : sur une pression "à froid" (aucune navigation aux flèches depuis
+        /// l'apparition de l'écran actuel), cette méthode sélectionnait silencieusement le
+        /// PREMIER élément interactif trouvé sur tout l'écran — y compris des éléments du HUD
+        /// permanent (barre d'action, suivi de quête...) toujours présents même en jeu normal,
+        /// hors de tout menu. Une pression d'Entrée involontaire pendant les déplacements pouvait
+        /// donc, en deux appuis, activer un bouton du HUD au hasard (ex. ouvrir le menu Tab).
+        /// Corrigé pour EXIGER une sélection déjà faite aux flèches avant de pouvoir valider —
+        /// Entrée seule, même répétée, ne clique donc plus jamais rien à l'aveugle.
+        /// </summary>
         public static void Activate()
         {
             if (_index < 0 || _index >= _items.Count)
             {
-                Rescan();
-                if (_items.Count == 0)
-                {
-                    TolkSpeech.Speak("Rien à activer.", true);
-                    return;
-                }
-                _index = 0;
-                Announce(_items[_index]);
+                TolkSpeech.Speak("Utilisez les flèches pour sélectionner un élément avant de valider.", true);
                 return;
             }
 
