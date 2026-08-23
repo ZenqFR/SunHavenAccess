@@ -5,6 +5,7 @@ using SunHavenAccess.Menus;
 using SunHavenAccess.Input;
 using SunHavenAccess.Navigation;
 using SunHavenAccess.Info;
+using SunHavenAccess.Patches;
 
 namespace SunHavenAccess
 {
@@ -44,6 +45,7 @@ namespace SunHavenAccess
             SafeTick("TileCursor", TileCursor.Tick);
             SafeTick("MouseCursor", MouseCursor.Tick);
             SafeTick("HandItemAnnouncer", HandItemAnnouncer.Tick);
+            SafeTick("FishingToneDriver", FishingToneDriver.Tick);
         }
 
         private static void SafeTick(string name, Action tick)

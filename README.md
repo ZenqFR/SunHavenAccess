@@ -83,13 +83,13 @@ Beaucoup d'actions de Sun Haven (arroser, labourer, récolter, miner, attaquer) 
 </details>
 
 <details>
-<summary><strong>Pêche (repères de base)</strong></summary>
+<summary><strong>Pêche</strong></summary>
 
-La pêche est un mini-jeu en temps réel (une jauge à stopper dans une zone précise) — un vrai point faible d'accessibilité même chez stardew-access, pas résolu ici en profondeur. Premiers repères ajoutés pour ne plus être totalement silencieux :
+La pêche est un mini-jeu en temps réel — un vrai point faible d'accessibilité même chez stardew-access. En décompilant le mini-jeu (`Wish.Bobber`), découverte que contrairement à Stardew Valley (deux éléments mobiles indépendants à suivre), ici une seule jauge oscille TOUTE SEULE en aller-retour automatique : il suffit d'appuyer au bon moment pendant qu'elle traverse une zone gagnante fixe.
 
 - Annonce quand un poisson mord (pour réagir à temps).
 - Annonce du résultat de chaque pression (touché / manqué / poisson échappé).
-- **Limite assumée** : viser précisément la jauge à l'oreille seule n'est pas encore possible (pas de repère audio continu synchronisé à sa position).
+- **Bip continu de visée** : la hauteur du son varie avec la distance à la zone gagnante (grave = loin, aigu = proche, double bip distinctif quand on est dedans) — pour viser au son plutôt qu'à l'aveugle. Touche dédiée pour le désactiver si le son ne convient pas. **Fonctionnalité toute nouvelle, jamais entendue en conditions réelles** (fréquences et tempo choisis au jugé) — à tester en priorité.
 
 </details>
 
@@ -161,6 +161,7 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | Pavé 4 / Pavé 6 | Tourner à gauche / à droite sans se déplacer |
 | Pavé 5 | Clic gauche (souris) |
 | J | Souris directionnelle |
+| K | Activer/désactiver le bip de visée en pêche |
 | Ctrl + : (ou Ctrl + /) | Clic droit (souris) |
 | C | Ouvrir le tchat / la console du jeu *(remplace Entrée, qui entrait en conflit avec la validation de menu)* |
 | Flèches directionnelles | Naviguer dans un menu |

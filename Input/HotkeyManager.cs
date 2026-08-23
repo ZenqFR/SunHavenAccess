@@ -48,6 +48,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.MouseFollowToggle.Value)) MouseCursor.Toggle();
             if (Pressed(ModConfig.Clock.Value)) ClockAnnouncer.Announce();
             if (Pressed(ModConfig.Status.Value)) StatusAnnouncer.Announce();
+            if (Pressed(ModConfig.FishingToneToggle.Value)) FishingToneCue.ToggleEnabled();
 
             // Navigation de menu : flèches directionnelles (Haut/Gauche = précédent,
             // Bas/Droite = suivant, quelle que soit la touche exacte choisie en config, pour
@@ -171,6 +172,7 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.DescribeFront.Value)}, décrire la case devant vous. " +
                 $"{Strings.KeyName(ModConfig.Position.Value)}, votre position. " +
                 $"{Strings.KeyName(ModConfig.Clock.Value)}, l'heure, le jour, la saison et la météo. " +
+                $"{Strings.KeyName(ModConfig.FishingToneToggle.Value)}, activer ou désactiver le bip continu de visée pendant la pêche. " +
                 $"{Strings.KeyName(ModConfig.Status.Value)}, votre santé et votre mana. " +
                 $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
                 $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +

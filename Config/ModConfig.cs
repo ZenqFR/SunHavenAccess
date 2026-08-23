@@ -39,6 +39,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> ChatOpenKey;
         public static ConfigEntry<KeyCode> Clock;
         public static ConfigEntry<KeyCode> Status;
+        public static ConfigEntry<KeyCode> FishingToneToggle;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -128,6 +129,12 @@ namespace SunHavenAccess.Config
 
             Status = Bind(config, section, "StatutV2", KeyCode.H,
                 "Annonce la santé et le mana actuels.", "Annoncer la santé et le mana");
+
+            // Fonctionnalité nouvelle et non testée en conditions réelles (bip continu de visée
+            // pendant le mini-jeu de pêche, voir Speech/FishingToneCue.cs) : une touche pour le
+            // couper au cas où le son ne conviendrait pas, sans devoir quitter la pêche.
+            FishingToneToggle = Bind(config, section, "BipPeche", KeyCode.K,
+                "Active ou désactive le bip continu de visée pendant le mini-jeu de pêche.", "Activer/désactiver le bip de visée en pêche");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,
