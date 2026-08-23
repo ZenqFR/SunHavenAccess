@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sun Haven Access — ZenqFR</title>
+<meta name="description" content="Mod d'accessibilité BepInEx pour Sun Haven : lecteur d'écran, curseur de case, menus, agriculture, scanner d'objets, cheminement automatique, combat — pour jouer en autonomie en étant aveugle ou malvoyant.">
+<link rel="canonical" href="https://zenqfr.github.io/SunHavenAccess/">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='90'%3E%F0%9F%8C%BB%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sun Haven Access — ZenqFR">
+<meta property="og:description" content="Mod d'accessibilité BepInEx pour Sun Haven — jouer en autonomie en étant aveugle.">
+<meta property="og:url" content="https://zenqfr.github.io/SunHavenAccess/">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary">
+<style>
+  :root {
+    --bg: #fff8ea;
+    --bg-card: #fffcf4;
+    --bg-card-border: #eed6a0;
+    --text: #4a3625;
+    --text-dim: #7a624a;
+    --text-faint: #a48f70;
+    --accent: #c1631a;
+    --accent-strong: #a34f0f;
+    --accent-text: #fff8ea;
+    --leaf: #4a7c2a;
+    --leaf-text: #396320;
+    --pill-bg: #fbeecb;
+    --pill-border: #e8cf98;
+    --focus: #1b5e20;
+    --radius: 14px;
+    --sun: #ffb347;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 12% -6%, rgba(255, 179, 71, 0.35), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(124, 179, 66, 0.18), transparent 40%);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.55;
+  }
+
+  a { color: var(--accent-strong); }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -999px;
+    top: 0;
+    background: var(--sun);
+    color: #3a2600;
+    padding: 0.6em 1em;
+    border-radius: 0 0 8px 0;
+    z-index: 10;
+    font-weight: 600;
+  }
+  .skip-link:focus { left: 0; }
+
+  header {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 3em 1.5em 1.2em;
+    text-align: center;
+    position: relative;
+  }
+  header .emoji { font-size: 2.4rem; display: block; margin-bottom: 0.2em; }
+  header h1 {
+    margin: 0 0 0.3em;
+    font-size: 2.1rem;
+    color: var(--accent-strong);
+  }
+  header p { margin: 0; color: var(--text-dim); }
+
+  .status-pill {
+    display: inline-block;
+    margin-top: 1em;
+    background: var(--pill-bg);
+    border: 1px solid var(--pill-border);
+    color: var(--text-dim);
+    border-radius: 999px;
+    padding: 0.4em 1em;
+    font-size: 0.85rem;
+  }
+
+  .lang-switch {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 1em 1.5em 0;
+    text-align: right;
+  }
+  .lang-switch button {
+    background: transparent;
+    border: 1px solid var(--pill-border);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    padding: 0.4em 0.9em;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .lang-switch button:hover { border-color: var(--accent); color: var(--accent-strong); }
+
+  .intro {
+    max-width: 760px;
+    margin: 0 auto 2em;
+    padding: 0 1.5em;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+  }
+  .intro code, main code {
+    background: var(--pill-bg);
+    border: 1px solid var(--pill-border);
+    border-radius: 6px;
+    padding: 0.1em 0.4em;
+    font-size: 0.9em;
+    color: var(--text);
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 1.5em 4em;
+  }
+
+  h2.section-title {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-faint);
+    border-bottom: 1px solid var(--bg-card-border);
+    padding-bottom: 0.5em;
+    margin: 2.5em 0 1.2em;
+  }
+  h2.section-title:first-of-type { margin-top: 0; }
+
+  .install-steps { margin: 0 0 2em; padding-left: 1.4em; color: var(--text-dim); }
+  .install-steps li { margin-bottom: 0.5em; }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--bg-card-border);
+    border-radius: var(--radius);
+    padding: 1.2em 1.4em;
+    margin-bottom: 1em;
+  }
+  .card h3 { margin: 0 0 0.4em; color: var(--accent-strong); font-size: 1.1rem; }
+  .card p { margin: 0.4em 0; color: var(--text-dim); }
+
+  details.card summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--accent-strong);
+    font-size: 1.05rem;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  details.card summary::-webkit-details-marker { display: none; }
+  details.card summary::before {
+    content: "▸";
+    color: var(--leaf-text);
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+  }
+  details.card[open] summary::before { transform: rotate(90deg); }
+  details.card ul { margin: 0.8em 0 0.2em; padding-left: 1.3em; color: var(--text-dim); }
+  details.card ul li { margin-bottom: 0.5em; }
+  details.card ul li strong { color: var(--text); }
+
+  .status-row { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0.6em 0 1.6em; }
+  .status-row .pill { border-radius: 999px; padding: 0.35em 0.9em; font-size: 0.82rem; border: 1px solid transparent; }
+  .pill.ok { background: #eaf4e1; border-color: #cfe6b8; color: var(--leaf-text); }
+  .pill.wip { background: #fdf0da; border-color: #f0d9a8; color: var(--accent-strong); }
+  .pill.todo { background: #f4ede3; border-color: #e4d6c2; color: var(--text-faint); }
+
+  table.keys { width: 100%; border-collapse: collapse; margin: 0.6em 0 1.6em; font-size: 0.92rem; }
+  table.keys th, table.keys td {
+    text-align: left;
+    padding: 0.5em 0.7em;
+    border-bottom: 1px solid var(--bg-card-border);
+  }
+  table.keys th { color: var(--text-faint); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; }
+  table.keys td:first-child { white-space: nowrap; color: var(--accent-strong); font-weight: 600; }
+
+  .cta {
+    display: inline-block;
+    background: var(--leaf);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.7em 1.4em;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-top: 0.5em;
+  }
+  .cta:hover { background: var(--leaf-text); }
+
+  footer {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2em 1.5em 3em;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--text-dim); }
+  footer .privacy { margin-top: 0.6em; font-size: 0.8rem; }
+
+  @media (max-width: 600px) {
+    .lang-switch { text-align: center; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">
+  <span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span>
+</a>
+
+<header>
+  <span class="emoji" aria-hidden="true">🌻</span>
+  <h1>Sun Haven Access</h1>
+  <p>
+    <span data-lang="fr">Mod d'accessibilité pour <strong>Sun Haven</strong> — jouer en toute autonomie en étant aveugle ou malvoyant</span>
+    <span data-lang="en" hidden>Accessibility mod for <strong>Sun Haven</strong> — play independently while blind or visually impaired</span>
+  </p>
+  <span class="status-pill">
+    <span data-lang="fr">🚧 En développement actif — pas encore de version stable</span>
+    <span data-lang="en" hidden>🚧 Actively in development — no stable release yet</span>
+  </span>
+</header>
+
+<div class="lang-switch">
+  <button type="button" id="lang-toggle" aria-label="Switch language / Changer de langue">English</button>
+</div>
+
+<p class="intro">
+  <span data-lang="fr">Vocalisé via <a href="https://www.nvaccess.org/" target="_blank" rel="noopener">NVDA</a> (en direct) ou, à défaut, via <a href="https://github.com/dkager/tolk" target="_blank" rel="noopener">Tolk</a> (SAPI). Inspiré de <a href="https://github.com/stardew-access/stardew-access" target="_blank" rel="noopener">stardew-access</a>, la référence pour Stardew Valley.</span>
+  <span data-lang="en" hidden>Voiced through <a href="https://www.nvaccess.org/" target="_blank" rel="noopener">NVDA</a> (directly) or, as a fallback, <a href="https://github.com/dkager/tolk" target="_blank" rel="noopener">Tolk</a> (SAPI). Inspired by <a href="https://github.com/stardew-access/stardew-access" target="_blank" rel="noopener">stardew-access</a>, the reference mod for Stardew Valley.</span>
+</p>
+
+<main id="main">
+
+  <h2 class="section-title">
+    <span data-lang="fr">Installation</span><span data-lang="en" hidden>Installation</span>
+  </h2>
+  <ol class="install-steps">
+    <li>
+      <span data-lang="fr">Installer <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5.4.23.5 (x64, Mono)</a> dans le dossier du jeu, et lancer Sun Haven une fois pour qu'il génère sa structure de dossiers.</span>
+      <span data-lang="en" hidden>Install <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5.4.23.5 (x64, Mono)</a> in the game folder, and launch Sun Haven once so it generates its folder structure.</span>
+    </li>
+    <li>
+      <span data-lang="fr">Copier <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> et <code>nvdaControllerClient64.dll</code> dans <code>Sun Haven/BepInEx/plugins/SunHavenAccess/</code> (voir le <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">dépôt GitHub</a> pour le code source et les instructions de compilation).</span>
+      <span data-lang="en" hidden>Copy <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> and <code>nvdaControllerClient64.dll</code> into <code>Sun Haven/BepInEx/plugins/SunHavenAccess/</code> (see the <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">GitHub repo</a> for the source and build instructions).</span>
+    </li>
+    <li>
+      <span data-lang="fr">Lancer le jeu. Un message vocal confirme le chargement du mod et rappelle la touche d'aide (<code>F2</code> par défaut).</span>
+      <span data-lang="en" hidden>Launch the game. A voice message confirms the mod loaded and reminds you of the help key (<code>F2</code> by default).</span>
+    </li>
+  </ol>
+  <a class="cta" href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">
+    <span data-lang="fr">Voir le dépôt GitHub →</span><span data-lang="en" hidden>View the GitHub repo →</span>
+  </a>
+
+  <h2 class="section-title">
+    <span data-lang="fr">Fonctionnalités</span><span data-lang="en" hidden>Features</span>
+  </h2>
+
+  <details class="card">
+    <summary><span data-lang="fr">🔊 Lecteur d'écran &amp; synthèse vocale</span><span data-lang="en" hidden>🔊 Screen reader &amp; speech</span></summary>
+    <ul>
+      <li><span data-lang="fr">NVDA en direct par pilotage natif, avec repli automatique sur SAPI via Tolk si NVDA n'est pas détecté.</span><span data-lang="en" hidden>Direct NVDA control, with automatic fallback to SAPI via Tolk if NVDA isn't detected.</span></li>
+      <li><span data-lang="fr">Tout le texte lu passe par un nettoyeur qui retire les balises de mise en forme du jeu (couleurs, icônes de monnaie...) avant vocalisation.</span><span data-lang="en" hidden>All spoken text is cleaned of the game's rich-text formatting (colors, currency icons...) before being read.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">🚶 Déplacement, curseur de case &amp; terrain</span><span data-lang="en" hidden>🚶 Movement, tile cursor &amp; terrain</span></summary>
+    <ul>
+      <li><span data-lang="fr">La case juste devant le personnage est décrite à <strong>chaque pas</strong> : culture (arrosée, stade de croissance), terre labourée, obstacle, type de terrain, objet interactif.</span><span data-lang="en" hidden>The tile right in front of the character is described on <strong>every step</strong>: crop (watered, growth stage), tilled soil, obstacle, terrain type, interactive object.</span></li>
+      <li><span data-lang="fr">Tourner sur soi-même sans se déplacer, avec annonce immédiate de la nouvelle case en face.</span><span data-lang="en" hidden>Turn in place without moving, with an immediate announcement of the new tile ahead.</span></li>
+      <li><span data-lang="fr">Verbosité des déplacements activable/désactivable, et position consultable à la demande.</span><span data-lang="en" hidden>Movement verbosity can be toggled, and your position can be checked on demand.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">📋 Menus, inventaire, dialogues</span><span data-lang="en" hidden>📋 Menus, inventory, dialogue</span></summary>
+    <ul>
+      <li><span data-lang="fr">Navigation clavier maison pour les écrans que le jeu ne rend jamais accessibles au clavier nativement (menu principal, options...).</span><span data-lang="en" hidden>Custom keyboard navigation for screens the game never makes keyboard-accessible natively (main menu, options...).</span></li>
+      <li><span data-lang="fr">Lecture des infobulles natives (nom réel des objets, pas juste « Item »), quantité annoncée avant le nom en une seule phrase.</span><span data-lang="en" hidden>Native tooltip reading (real item names, not just "Item"), quantity announced before the name in one sentence.</span></li>
+      <li><span data-lang="fr">Emplacements vides/d'armure explicitement décrits, onglets du menu principal correctement nommés.</span><span data-lang="en" hidden>Empty/armor slots explicitly described, main menu tabs correctly named.</span></li>
+      <li><span data-lang="fr">Bulles de dialogue lues dès le début de la ligne, pas à la fin de l'animation machine à écrire.</span><span data-lang="en" hidden>Dialogue lines are read from the start, not after the typewriter animation finishes.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">🌾 Agriculture</span><span data-lang="en" hidden>🌾 Farming</span></summary>
+    <ul>
+      <li><span data-lang="fr">Confirmations vocales à chaque action : labourer, arroser, planter, récolter, arrosoir vide/rempli.</span><span data-lang="en" hidden>Voice confirmations for every action: tilling, watering, planting, harvesting, empty/full watering can.</span></li>
+      <li><span data-lang="fr">Description enrichie des cultures et des parcelles labourées sans rien de planté.</span><span data-lang="en" hidden>Enriched description of crops and tilled-but-empty plots.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">🖱️ Souris directionnelle &amp; clics simulés</span><span data-lang="en" hidden>🖱️ Directional mouse &amp; simulated clicks</span></summary>
+    <ul>
+      <li><span data-lang="fr">Beaucoup d'actions (arroser, labourer, récolter, miner, attaquer) se déclenchent par clic souris : une touche fait pointer la souris en permanence vers la case en face.</span><span data-lang="en" hidden>Many actions (watering, tilling, harvesting, mining, attacking) trigger on mouse click: one key keeps the mouse pointed at the tile ahead at all times.</span></li>
+      <li><span data-lang="fr">Simulation de clic gauche et de clic droit à la position actuelle de la souris.</span><span data-lang="en" hidden>Simulated left and right click at the mouse's current position.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">🧭 Scanner par catégories &amp; cheminement automatique</span><span data-lang="en" hidden>🧭 Category scanner &amp; auto-pathing</span></summary>
+    <ul>
+      <li><span data-lang="fr">Repère tout ce qui est à proximité, par catégorie, trié du plus proche au plus loin : personnages, plantations, ressources (dont minerais), bâtiments et portails (avec destination annoncée), animaux et compagnons, ennemis, mobilier et rangement.</span><span data-lang="en" hidden>Finds everything nearby, by category, sorted nearest-first: characters, crops, resources (including ores), buildings and portals (with destination announced), animals and companions, enemies, furniture and storage.</span></li>
+      <li><span data-lang="fr">Les catégories vides sont sautées automatiquement en changeant de catégorie.</span><span data-lang="en" hidden>Empty categories are automatically skipped when switching categories.</span></li>
+      <li><span data-lang="fr"><strong>Cheminement automatique</strong> vers l'élément sélectionné (A* maison tenant compte des vrais obstacles) — si la destination exacte est bloquée, avance quand même jusqu'au point le plus proche atteignable.</span><span data-lang="en" hidden><strong>Automatic pathing</strong> to the selected item (custom A* accounting for real obstacles) — if the exact destination is blocked, still walks as far as it can reach.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">⚔️ Combat</span><span data-lang="en" hidden>⚔️ Combat</span></summary>
+    <ul>
+      <li><span data-lang="fr">Santé restante annoncée à chaque coup reçu, avec alerte progressive (basse, critique, à terre).</span><span data-lang="en" hidden>Remaining health announced on every hit taken, with escalating alerts (low, critical, downed).</span></li>
+      <li><span data-lang="fr">Entrée/sortie de combat, défaite d'un ennemi et mort du personnage annoncées ; santé et mana consultables à la demande.</span><span data-lang="en" hidden>Entering/leaving combat, an enemy's defeat, and your character's death are all announced; health and mana can be checked on demand.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">☀️ Horloge, calendrier &amp; météo</span><span data-lang="en" hidden>☀️ Clock, calendar &amp; weather</span></summary>
+    <ul>
+      <li><span data-lang="fr">Une touche annonce l'heure, le jour de la semaine, le jour du mois, la saison, l'année et la météo actuelle.</span><span data-lang="en" hidden>One key announces the time, day of the week, day of the month, season, year, and current weather.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
+    <summary><span data-lang="fr">⌨️ Raccourcis — tous personnalisables</span><span data-lang="en" hidden>⌨️ Keybindings — fully customizable</span></summary>
+    <p>
+      <span data-lang="fr">Chaque touche se change dans le fichier de config, ou en jeu via un menu vocal dédié.</span>
+      <span data-lang="en" hidden>Every key can be changed in the config file, or in-game through a dedicated voice menu.</span>
+    </p>
+    <table class="keys">
+      <thead><tr>
+        <th><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th>
+        <th><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th>
+      </tr></thead>
+      <tbody>
+        <tr><td>F2</td><td><span data-lang="fr">Aide</span><span data-lang="en" hidden>Help</span></td></tr>
+        <tr><td>F3</td><td><span data-lang="fr">Décrire la case devant vous</span><span data-lang="en" hidden>Describe the tile ahead</span></td></tr>
+        <tr><td>F4</td><td><span data-lang="fr">Votre position</span><span data-lang="en" hidden>Your position</span></td></tr>
+        <tr><td>F5</td><td><span data-lang="fr">Heure, jour, saison, météo</span><span data-lang="en" hidden>Time, day, season, weather</span></td></tr>
+        <tr><td>F6</td><td><span data-lang="fr">Personnage proche suivant</span><span data-lang="en" hidden>Next nearby character</span></td></tr>
+        <tr><td>F7</td><td><span data-lang="fr">Répéter la dernière annonce</span><span data-lang="en" hidden>Repeat the last announcement</span></td></tr>
+        <tr><td>F8</td><td><span data-lang="fr">Santé et mana</span><span data-lang="en" hidden>Health and mana</span></td></tr>
+        <tr><td>F9</td><td><span data-lang="fr">Verbosité des déplacements</span><span data-lang="en" hidden>Movement verbosity</span></td></tr>
+        <tr><td>F12</td><td><span data-lang="fr">Menu des raccourcis</span><span data-lang="en" hidden>Keybindings menu</span></td></tr>
+        <tr><td>J</td><td><span data-lang="fr">Souris directionnelle</span><span data-lang="en" hidden>Directional mouse</span></td></tr>
+        <tr><td>T</td><td><span data-lang="fr">Ouvrir le tchat / la console</span><span data-lang="en" hidden>Open chat / console</span></td></tr>
+        <tr><td><span data-lang="fr">Flèches + Entrée</span><span data-lang="en" hidden>Arrows + Enter</span></td><td><span data-lang="fr">Naviguer / valider dans un menu</span><span data-lang="en" hidden>Navigate / confirm in a menu</span></td></tr>
+        <tr><td><span data-lang="fr">Page haut/bas</span><span data-lang="en" hidden>Page Up/Down</span></td><td><span data-lang="fr">Scanner : élément (Ctrl = catégorie)</span><span data-lang="en" hidden>Scanner: item (Ctrl = category)</span></td></tr>
+        <tr><td><span data-lang="fr">Origine</span><span data-lang="en" hidden>Home</span></td><td><span data-lang="fr">Annoncer / Ctrl = s'y rendre</span><span data-lang="en" hidden>Announce / Ctrl = travel there</span></td></tr>
+      </tbody>
+    </table>
+  </details>
+
+  <h2 class="section-title">
+    <span data-lang="fr">Progression</span><span data-lang="en" hidden>Progress</span>
+  </h2>
+  <div class="status-row">
+    <span class="pill ok"><span data-lang="fr">✓ Confirmé en jeu</span><span data-lang="en" hidden>✓ Confirmed in-game</span></span>
+    <span class="pill wip"><span data-lang="fr">🚧 Développé, pas encore confirmé</span><span data-lang="en" hidden>🚧 Built, not yet confirmed</span></span>
+    <span class="pill todo"><span data-lang="fr">○ Pas encore développé</span><span data-lang="en" hidden>○ Not built yet</span></span>
+  </div>
+
+  <details class="card">
+    <summary><span data-lang="fr">Voir le détail de la progression</span><span data-lang="en" hidden>See progress details</span></summary>
+    <p><strong><span data-lang="fr">✓ Confirmé :</span><span data-lang="en" hidden>✓ Confirmed:</span></strong>
+      <span data-lang="fr">boucle du mod, synthèse vocale, curseur de case, dialogues, menus/inventaire/tooltips, agriculture, souris directionnelle, scanner, navigation clavier des menus, touche du tchat.</span>
+      <span data-lang="en" hidden>mod loop, speech synthesis, tile cursor, dialogue, menus/inventory/tooltips, farming, directional mouse, scanner, menu keyboard navigation, chat key.</span>
+    </p>
+    <p><strong><span data-lang="fr">🚧 Pas encore confirmé :</span><span data-lang="en" hidden>🚧 Not yet confirmed:</span></strong>
+      <span data-lang="fr">description du type de terrain hors ferme (l'eau est fiable, le reste dépend du nom des tuiles), cheminement automatique en terrain complexe.</span>
+      <span data-lang="en" hidden>terrain type description outside farmland (water is reliable, the rest depends on tile names), auto-pathing on complex terrain.</span>
+    </p>
+    <p><strong><span data-lang="fr">○ Pas encore développé :</span><span data-lang="en" hidden>○ Not built yet:</span></strong>
+      <span data-lang="fr">artisanat/cuisine détaillés, courrier, boutiques avec prix (partiellement couvert), pêche, minage, donjons, carte du monde.</span>
+      <span data-lang="en" hidden>detailed crafting/cooking, mail, shops with prices (partially covered), fishing, mining, dungeons, world map.</span>
+    </p>
+  </details>
+
+</main>
+
+<footer>
+  <p>
+    <span data-lang="fr">Créé par <a href="https://github.com/ZenqFR" target="_blank" rel="noopener">ZenqFR</a>
+    · <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">Code source</a>
+    · <a href="https://zenqfr.github.io/" target="_blank" rel="noopener">Tous mes projets</a>
+    · Hébergé sur GitHub Pages</span>
+    <span data-lang="en" hidden>Made by <a href="https://github.com/ZenqFR" target="_blank" rel="noopener">ZenqFR</a>
+    · <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">Source code</a>
+    · <a href="https://zenqfr.github.io/" target="_blank" rel="noopener">All my projects</a>
+    · Hosted on GitHub Pages</span>
+  </p>
+  <p class="privacy">
+    <span data-lang="fr">Aucun cookie, aucun suivi.</span>
+    <span data-lang="en" hidden>No cookies, no tracking.</span>
+  </p>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+  function applyLang(lang) {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-lang="fr"]').forEach(function (el) { el.hidden = lang !== "fr"; });
+    document.querySelectorAll('[data-lang="en"]').forEach(function (el) { el.hidden = lang !== "en"; });
+    var toggle = document.getElementById("lang-toggle");
+    if (toggle) toggle.textContent = lang === "fr" ? "English" : "Français";
+  }
+  var savedLang = "fr";
+  try { savedLang = localStorage.getItem("sunhavenaccess-lang") || "fr"; } catch (e) {}
+  applyLang(savedLang);
+  var toggleBtn = document.getElementById("lang-toggle");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", function () {
+      var next = document.documentElement.lang === "en" ? "fr" : "en";
+      applyLang(next);
+      try { localStorage.setItem("sunhavenaccess-lang", next); } catch (e) {}
+    });
+  }
+})();
+</script>
+
+</body>
+</html>
