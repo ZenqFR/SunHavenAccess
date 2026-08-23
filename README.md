@@ -22,6 +22,7 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 - NVDA en direct par pilotage natif (`nvdaControllerClient64.dll`), avec repli automatique sur SAPI via Tolk si NVDA n'est pas détecté.
 - Aucune dépendance à `System.Speech` ni à une activation COM managée — les deux plantent silencieusement sous le runtime Mono embarqué par Unity.
 - Tout le texte lu passe par un nettoyeur qui retire les balises de mise en forme du jeu (couleurs, tailles...) avant vocalisation.
+- **Notifications du jeu** lues automatiquement dès qu'elles apparaissent (bulle éphémère en haut à gauche) : boutique fermée, action impossible, et potentiellement bien d'autres messages du jeu jamais rencontrés individuellement — un seul point d'accroche générique les couvre toutes.
 
 </details>
 
@@ -195,6 +196,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - Description du TYPE de terrain hors zone cultivable (herbe, sable, pierre...) — la présence d'eau est fiable (donnée de jeu directe), le reste est déduit du nom brut des tuiles et peut nécessiter des ajustements de traduction.
 - Cheminement automatique en présence d'obstacles complexes (le masque de collision est déduit dynamiquement, pas testé sur tous les types de terrain).
 - **Minage & coupe de bois** : annonce d'outil trop faible et confirmation de casse (voir la carte dédiée plus haut) — patch Harmony sur les méthodes internes du jeu, jamais déclenché en conditions réelles.
+- **Notifications génériques du jeu** : un seul patch couvre potentiellement énormément de messages différents (boutique fermée, action impossible...) jamais rencontrés individuellement en décompilation — l'ampleur réelle de ce que ça couvre ne pourra se confirmer qu'à l'usage.
 - **Boutiques et artisanat** : noms d'objets, prix (avec devise correctement annoncée : pièces d'or/tickets/orbes), quantités possédées/requises pour chaque ingrédient ("3/5"), temps de fabrication — passent tous par les mêmes systèmes génériques de lecture d'infobulle/texte que le reste du mod, mais jamais testés spécifiquement sur un écran de boutique ou d'artisanat réel.
 - **Courrier** : le contenu complet d'une lettre (message, signature, post-scriptum) est maintenant lu automatiquement à l'ouverture de la boîte aux lettres, sur le même principe que les dialogues — jamais testé en jeu. Les objets éventuellement joints ne sont pour l'instant pas nommés automatiquement (juste leur icône, comme dans les autres menus).
 - **Pêche** : annonce de la touche/du résultat de chaque pression — voir la carte dédiée plus haut pour la limite assumée (viser la jauge reste non résolu).
