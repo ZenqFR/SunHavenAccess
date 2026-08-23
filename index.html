@@ -19,34 +19,63 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Thème sombre chaleureux assumé comme unique thème (pas de variante claire) : demandé
-     explicitement — plus de contraste, plus confortable à l'œil, tout en restant coloré
-     (soleil couchant sur la ferme) plutôt que gris terne. */
+  /* Thème clair et VIF par défaut (23/08/2026, retouché sur retour direct : "trop proche du
+     thème WoW", même famille ambre/bois) — cette fois multi-teintes assumé (jaune soleil,
+     bleu ciel, vert prairie) plutôt qu'un camaïeu ambre/brun unique, texte en gris-bleu
+     plutôt que brun, pour se démarquer clairement de la page Sku (sombre, bois/ambre). Repli
+     automatique vers une variante sombre selon la préférence système, pas de bouton dédié. */
   :root {
-    --bg: #150f09;
-    --bg-card: #1f160d;
-    --bg-card-border: #3d2e1a;
-    --text: #f5e8d3;
-    --text-dim: #cdb48e;
-    --text-faint: #977f5c;
-    --accent: #f0a94e;
-    --accent-strong: #ffbf6b;
-    --accent-text: #241708;
-    --leaf: #5fae3a;
-    --leaf-text: #8fd66a;
-    --pill-bg: #2a2013;
-    --pill-border: #4a3a22;
-    --focus: #ffd28a;
+    --bg: #fbfaf2;
+    --bg-card: #ffffff;
+    --bg-card-border: #ecdf9e;
+    --text: #1f2b30;
+    --text-dim: #52676d;
+    --text-faint: #8aa0a3;
+    --accent: #ffb400;
+    --accent-strong: #c97a00;
+    --accent-text: #241500;
+    --leaf: #2fa83e;
+    --leaf-text: #1c7a28;
+    --sky: #1f97d4;
+    --sky-text: #0d6ea3;
+    --pill-bg: #fff2c9;
+    --pill-border: #ffe08a;
+    --focus: #1f97d4;
     --radius: 14px;
-    --sun: #ffb347;
-    --plum: #9b5cac;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
+    --sun: #ffb400;
+    --plum: #b0479c;
+    --shadow: 0 1px 2px rgba(31, 43, 48, 0.07), 0 8px 24px rgba(31, 43, 48, 0.09);
+    --nav-bg-translucent: rgba(251, 250, 242, 0.92);
     --nav-h: 52px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c1520;
+      --bg-card: #13202c;
+      --bg-card-border: #24384a;
+      --text: #eaf3f5;
+      --text-dim: #a9c1c9;
+      --text-faint: #7996a0;
+      --accent: #ffc933;
+      --accent-strong: #ffd866;
+      --accent-text: #241500;
+      --leaf: #5fd671;
+      --leaf-text: #8fe89c;
+      --sky: #5cc2f2;
+      --sky-text: #8fd7f7;
+      --pill-bg: #1b2c3a;
+      --pill-border: #2f4a5f;
+      --focus: #5cc2f2;
+      --plum: #e08bd0;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
+      --nav-bg-translucent: rgba(12, 21, 32, 0.88);
+    }
   }
 
   * { box-sizing: border-box; }
 
-  html { color-scheme: dark; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
+  html { color-scheme: light dark; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -57,9 +86,9 @@
     margin: 0;
     background: var(--bg);
     background-image:
-      radial-gradient(circle at 12% -6%, rgba(255, 179, 71, 0.16), transparent 45%),
-      radial-gradient(circle at 100% 0%, rgba(95, 174, 58, 0.12), transparent 40%),
-      radial-gradient(circle at 50% 120%, rgba(155, 92, 172, 0.1), transparent 55%);
+      radial-gradient(circle at 10% -8%, rgba(255, 180, 0, 0.2), transparent 42%),
+      radial-gradient(circle at 100% -4%, rgba(31, 151, 212, 0.14), transparent 42%),
+      radial-gradient(circle at 30% 115%, rgba(47, 168, 62, 0.12), transparent 50%);
     color: var(--text);
     font-family: "Work Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
@@ -114,7 +143,7 @@
     gap: 0.3em;
     flex-wrap: wrap;
     padding: 0.6em 1em;
-    background: rgba(21, 15, 9, 0.88);
+    background: var(--nav-bg-translucent);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--bg-card-border);
     min-height: var(--nav-h);
@@ -395,6 +424,7 @@
   <a href="#features" data-section="features"><span data-lang="fr">Fonctionnalités</span><span data-lang="en" hidden>Features</span></a>
   <a href="#progress" data-section="progress"><span data-lang="fr">Progression</span><span data-lang="en" hidden>Progress</span></a>
   <a href="#about" data-section="about"><span data-lang="fr">À propos</span><span data-lang="en" hidden>About</span></a>
+  <a href="docs.html"><span data-lang="fr">📖 Documentation</span><span data-lang="en" hidden>📖 Documentation</span></a>
 </nav>
 
 <header>
