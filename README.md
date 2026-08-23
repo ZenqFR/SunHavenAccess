@@ -93,6 +93,14 @@ La pêche est un mini-jeu en temps réel (une jauge à stopper dans une zone pr�
 </details>
 
 <details>
+<summary><strong>Minage & coupe de bois</strong></summary>
+
+- Annonce quand l'outil en main n'est pas assez puissant pour un rocher/arbre donné (ex. pioche en bois sur un "heavystone") — le jeu ne donne autrement AUCUN indice, ni visuel ni sonore, quand un coup ne fait rien : on frapperait indéfiniment sans savoir que c'est l'outil en cause.
+- Confirmation vocale quand un rocher se brise ou qu'un arbre est abattu.
+
+</details>
+
+<details>
 <summary><strong>Scanner par catégories (façon Object Tracker de stardew-access)</strong></summary>
 
 Repère tout ce qui se trouve à proximité, par catégorie, trié du plus proche au plus loin :
@@ -186,6 +194,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 
 - Description du TYPE de terrain hors zone cultivable (herbe, sable, pierre...) — la présence d'eau est fiable (donnée de jeu directe), le reste est déduit du nom brut des tuiles et peut nécessiter des ajustements de traduction.
 - Cheminement automatique en présence d'obstacles complexes (le masque de collision est déduit dynamiquement, pas testé sur tous les types de terrain).
+- **Minage & coupe de bois** : annonce d'outil trop faible et confirmation de casse (voir la carte dédiée plus haut) — patch Harmony sur les méthodes internes du jeu, jamais déclenché en conditions réelles.
 - **Boutiques et artisanat** : noms d'objets, prix (avec devise correctement annoncée : pièces d'or/tickets/orbes), quantités possédées/requises pour chaque ingrédient ("3/5"), temps de fabrication — passent tous par les mêmes systèmes génériques de lecture d'infobulle/texte que le reste du mod, mais jamais testés spécifiquement sur un écran de boutique ou d'artisanat réel.
 - **Courrier** : le contenu complet d'une lettre (message, signature, post-scriptum) est maintenant lu automatiquement à l'ouverture de la boîte aux lettres, sur le même principe que les dialogues — jamais testé en jeu. Les objets éventuellement joints ne sont pour l'instant pas nommés automatiquement (juste leur icône, comme dans les autres menus).
 - **Pêche** : annonce de la touche/du résultat de chaque pression — voir la carte dédiée plus haut pour la limite assumée (viser la jauge reste non résolu).
@@ -196,7 +205,6 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 <details>
 <summary><strong>Pas encore développé</strong></summary>
 
-- Minage (au-delà des minerais déjà repérables par le scanner, aucun retour dédié sur l'action de miner elle-même).
 - Donjons/salle de combat spécifiques.
 
 </details>
