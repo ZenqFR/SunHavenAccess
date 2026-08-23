@@ -43,6 +43,8 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> AnnounceQuests;
         public static ConfigEntry<KeyCode> AnnounceRelationships;
         public static ConfigEntry<KeyCode> AnnounceProfessions;
+        public static ConfigEntry<KeyCode> MapPreviousLocation;
+        public static ConfigEntry<KeyCode> MapNextLocation;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -164,6 +166,14 @@ namespace SunHavenAccess.Config
             // pas encore accessible). U : dernière lettre libre simple, sans mnémonique.
             AnnounceProfessions = Bind(config, section, "Competences", KeyCode.U,
                 "Annonce vos niveaux de compétence (combat, agriculture, pêche, minage, exploration).", "Annoncer les niveaux de compétence");
+
+            // Carte du monde (Wish.Map/LocationName) : les lieux ne sont PAS de vrais Selectable
+            // (voir Navigation/MapNavigator.cs) donc invisibles au scan générique de menu —
+            // touches dédiées pour les parcourir un par un, actives seulement carte ouverte.
+            MapPreviousLocation = Bind(config, section, "CarteLieuPrecedent", KeyCode.X,
+                "Lieu précédent sur la carte du monde (carte ouverte uniquement).", "Carte : lieu précédent");
+            MapNextLocation = Bind(config, section, "CarteLieuSuivant", KeyCode.Y,
+                "Lieu suivant sur la carte du monde (carte ouverte uniquement).", "Carte : lieu suivant");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

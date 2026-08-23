@@ -104,6 +104,16 @@ Deux écrans du jeu (relations avec les PNJ, niveaux de compétence) n'affichent
 </details>
 
 <details>
+<summary><strong>Carte du monde</strong></summary>
+
+Chaque lieu de la carte répond bien à la sélection/au clic dans le jeu, mais son composant (`Wish.LocationName`) n'hérite PAS de `Selectable` — invisible au scan générique du mod, donc injoignable au clavier sans ces touches dédiées, même si le reste de l'écran (fermer, changer de région) fonctionne déjà via le système générique.
+
+- Touches dédiées pour parcourir un par un les lieux de la région actuellement affichée.
+- Chaque lieu annonce son nom et sa description dès qu'il est ouvert — centre et surligne aussi la carte, comme un clic.
+
+</details>
+
+<details>
 <summary><strong>Pêche</strong></summary>
 
 La pêche est un mini-jeu en temps réel — un vrai point faible d'accessibilité même chez stardew-access. En décompilant le mini-jeu (`Wish.Bobber`), découverte que contrairement à Stardew Valley (deux éléments mobiles indépendants à suivre), ici une seule jauge oscille TOUTE SEULE en aller-retour automatique : il suffit d'appuyer au bon moment pendant qu'elle traverse une zone gagnante fixe.
@@ -190,6 +200,7 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | G | Annoncer les quêtes actives |
 | V | Annoncer les relations avec les PNJ |
 | U | Annoncer les niveaux de compétence |
+| X / Y | Carte du monde : lieu précédent / suivant (carte ouverte uniquement) |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
 | F12 | Menu des raccourcis (parcourable et modifiable) |
@@ -240,7 +251,8 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Pêche** : annonce touche/résultat + bip continu de visée, voir la carte dédiée plus haut — le bip est la fonctionnalité la moins certaine de tout le mod (fréquences/tempo jamais entendus en jeu).
 - **Quêtes** : acceptation/rendu automatiquement annoncés, touche dédiée pour lister les quêtes actives (voir la carte dédiée plus haut) — tous les champs lus sont publics et déjà remplis par le jeu (`QuestPanel.questDescription`/`questProgress`/`questCompleteTMP`), mais jamais entendu en conditions réelles. Le format exact de `questProgress` (texte de progression détaillé par objectif) n'a pas pu être confirmé sans décompiler chaque type de `QuestRequirement` individuellement — inclus tel quel, peut être incomplet ou redondant avec la description.
 - **Relations & compétences** (voir la carte dédiée plus haut) : calcul des cœurs/niveaux jamais entendu en jeu. Le nombre exact de cœurs affichés visuellement par statut (10/15/20) est déduit des plafonds de points en décompilation (50/75/100, 5 points/cœur) — cohérent avec le code, pas observé à l'écran.
-- **Carte du monde** : décompilation de `Wish.Map`/`Wish.LocationName` montrant que, contrairement au menu principal (souris uniquement), cet écran liste vraiment les lieux via la sélection native d'Unity — chaque nom de lieu est un vrai bouton avec son texte visible, et le sélectionner ouvre un panneau de description également piloté nativement. Probablement déjà accessible via les systèmes génériques existants (lecture de la sélection courante + infobulle), reclassée ici depuis "pas encore développé" — jamais testée en jeu pour autant.
+- **Carte du monde** (voir la carte dédiée plus haut) : la région actuellement affichée (`Map.townType`) et la liste de lieux qui va avec sont lues par réflexion (5 champs privés séparés, un par région) — jamais navigué en jeu pour confirmer que la bonne liste sort à chaque fois qu'on change de région à l'écran.
+- **Carte du monde** (voir la carte dédiée plus bas) : correction d'une supposition précédente — `Wish.LocationName` répond bien à la sélection/au clic mais N'HÉRITE PAS de `Selectable`, donc invisible au scan générique de menu du mod ; pas "probablement déjà accessible" comme supposé avant, réellement injoignable au clavier sans les touches dédiées ajoutées. Le reste de l'écran (boutons fermer/changer de région) fonctionne lui via le système générique, ce sont de vrais `Selectable`.
 - **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
 
 </details>

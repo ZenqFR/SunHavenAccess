@@ -52,6 +52,8 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.AnnounceQuests.Value)) QuestAnnouncer.AnnounceActiveQuests();
             if (Pressed(ModConfig.AnnounceRelationships.Value)) RelationshipAnnouncer.AnnounceAll();
             if (Pressed(ModConfig.AnnounceProfessions.Value)) ProfessionAnnouncer.AnnounceAll();
+            if (Pressed(ModConfig.MapPreviousLocation.Value)) MapNavigator.AnnouncePrevious();
+            if (Pressed(ModConfig.MapNextLocation.Value)) MapNavigator.AnnounceNext();
 
             // Navigation de menu : flèches directionnelles (Haut/Gauche = précédent,
             // Bas/Droite = suivant, quelle que soit la touche exacte choisie en config, pour
@@ -180,6 +182,7 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.AnnounceQuests.Value)}, annoncer vos quêtes actives. " +
                 $"{Strings.KeyName(ModConfig.AnnounceRelationships.Value)}, annoncer vos relations avec les PNJ. " +
                 $"{Strings.KeyName(ModConfig.AnnounceProfessions.Value)}, annoncer vos niveaux de compétence. " +
+                $"{Strings.KeyName(ModConfig.MapPreviousLocation.Value)} et {Strings.KeyName(ModConfig.MapNextLocation.Value)}, lieu précédent ou suivant sur la carte du monde, carte ouverte. " +
                 $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
                 $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +
                 $"{Strings.KeyName(ModConfig.ToggleVerbosity.Value)}, activer ou désactiver l'annonce automatique des déplacements. " +

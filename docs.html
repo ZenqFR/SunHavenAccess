@@ -300,6 +300,7 @@
       <tr><td>G</td><td><span data-lang="fr">Annonce toutes vos quêtes actives (voir <a href="#autres">Quêtes</a> plus bas).</span><span data-lang="en" hidden>Announces all your active quests (see <a href="#autres">Quests</a> below).</span></td></tr>
       <tr><td>V</td><td><span data-lang="fr">Annonce vos relations avec les PNJ romançables (voir <a href="#autres">Relations &amp; compétences</a> plus bas).</span><span data-lang="en" hidden>Announces your relationships with romanceable NPCs (see <a href="#autres">Relationships &amp; skills</a> below).</span></td></tr>
       <tr><td>U</td><td><span data-lang="fr">Annonce vos niveaux de compétence (voir <a href="#autres">Relations &amp; compétences</a> plus bas).</span><span data-lang="en" hidden>Announces your skill levels (see <a href="#autres">Relationships &amp; skills</a> below).</span></td></tr>
+      <tr><td>X / Y</td><td><span data-lang="fr">Carte du monde ouverte : lieu précédent / suivant (voir <a href="#autres">Carte du monde</a> plus bas).</span><span data-lang="en" hidden>World map open: previous / next place (see <a href="#autres">World map</a> below).</span></td></tr>
       <tr><td>F9</td><td><span data-lang="fr">Active/désactive l'annonce automatique de la case devant vous en marchant.</span><span data-lang="en" hidden>Toggles automatic announcement of the tile ahead while walking.</span></td></tr>
       <tr><td>F11</td><td><span data-lang="fr">Test sonore de diagnostic (joue un son Windows, indépendant de la synthèse vocale).</span><span data-lang="en" hidden>Diagnostic sound test (plays a Windows sound, independent of speech synthesis).</span></td></tr>
       <tr><td>F8</td><td><span data-lang="fr">Active/désactive le bip continu de visée pendant la pêche (voir <a href="#autres">Pêche</a> plus bas).</span><span data-lang="en" hidden>Toggles the continuous aiming beep while fishing (see <a href="#autres">Fishing</a> below).</span></td></tr>
@@ -465,6 +466,18 @@
       <li><span data-lang="fr">Touche <strong>U</strong> : niveau et progression ("1234/5678" XP) pour chacune des 5 compétences (combat, agriculture, pêche, minage, exploration).</span><span data-lang="en" hidden><strong>U</strong> key: level and progress ("1234/5678" XP) for each of the 5 skills (combat, farming, fishing, mining, exploration).</span></li>
     </ul>
     <p class="note"><span data-lang="fr">Ne couvre pas l'arbre de compétences lui-même (grille de nœuds à débloquer, touche <strong>K</strong> par défaut du jeu) — une vraie navigation spatiale dans cette grille serait nécessaire, pas encore commencée.</span><span data-lang="en" hidden>Doesn't cover the skill tree itself (a grid of nodes to unlock, <strong>K</strong> key by default) — real spatial navigation through that grid would be needed, not started yet.</span></p>
+  </div>
+  </li>
+
+  <li>
+  <h3 class="sub-title">🗺️ <span data-lang="fr">Carte du monde</span><span data-lang="en" hidden>World map</span></h3>
+  <div class="card">
+    <ul>
+      <li><span data-lang="fr">Chaque lieu de la carte répond bien à la sélection/au clic dans le jeu, mais son composant (<code>Wish.LocationName</code>) n'hérite pas de <code>Selectable</code> — invisible au scan générique de menu du mod, donc injoignable au clavier sans ces touches dédiées.</span><span data-lang="en" hidden>Each map location responds to selection/clicks in the game, but its component (<code>Wish.LocationName</code>) doesn't inherit from <code>Selectable</code> — invisible to the mod's generic menu scan, so unreachable by keyboard without these dedicated keys.</span></li>
+      <li><span data-lang="fr">Touches <strong>X</strong> / <strong>Y</strong> (carte ouverte uniquement) : parcourent un par un les lieux de la région actuellement affichée.</span><span data-lang="en" hidden><strong>X</strong> / <strong>Y</strong> keys (map open only): browse the currently displayed region's places one by one.</span></li>
+      <li><span data-lang="fr">Chaque lieu annonce son nom et sa description dès qu'il est ouvert — centre et surligne aussi la carte, exactement comme un clic.</span><span data-lang="en" hidden>Each place announces its name and description as soon as it's opened — also centers and highlights the map, exactly like a click.</span></li>
+    </ul>
+    <p class="note"><span data-lang="fr">Le reste de l'écran (fermer, changer de région) fonctionne déjà via la navigation générique de menu du mod — ce sont de vrais boutons.</span><span data-lang="en" hidden>The rest of the screen (close, switch region) already works through the mod's generic menu navigation — those are real buttons.</span></p>
   </div>
   </li>
 
