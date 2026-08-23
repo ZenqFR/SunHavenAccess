@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using SunHavenAccess.Speech;
 using SunHavenAccess.Cursor;
 using SunHavenAccess.Navigation;
@@ -64,20 +65,38 @@ namespace SunHavenAccess.Input
                 MenuNavigator.SwitchMajorTab(shift ? -1 : 1);
             }
 
-            // Ctrl+Gauche/Droite ajuste un curseur (Slider) sélectionné (ex. couleurs en
-            // création de personnage) — vérifié EN PREMIER pour que Ctrl+flèche n'avance/recule
-            // pas AUSSI dans la liste des éléments du menu.
-            if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.AdjustSlider(-1);
-            else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.AdjustSlider(1);
-            else if (Pressed(ModConfig.MenuPrevious.Value) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.Previous();
-            else if (Pressed(ModConfig.MenuNext.Value) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.Next();
-            if (ctrl && UnityEngine.Input.GetKeyDown(ModConfig.MenuActivate.Value))
+            // Certains écrans (arbre de compétences, choix de dialogue...) utilisent, EUX,
+            // vraiment la sélection native d'Unity (contrairement au menu principal, piloté
+            // uniquement à la souris) — trouvé en décompilant Wish.SkillNode : elle implémente
+            // ISelectHandler/ISubmitHandler et déclenche elle-même l'infobulle native au
+            // survol/sélection (déjà lue par TooltipReader). Si un objet est RÉELLEMENT
+            // sélectionné là, Rewired pilote déjà les flèches/Entrée nativement pour cet
+            // écran : faire AUSSI avancer notre propre liste MenuNavigator par-dessus créerait
+            // deux systèmes de navigation concurrents désynchronisés (le joueur entendrait
+            // l'annonce d'un élément différent de celui réellement sélectionné, ou une
+            // validation déclenchée deux fois). On laisse donc le jeu gérer nativement dans ce
+            // cas — FocusReader + TooltipReader s'occupent déjà d'annoncer les changements.
+            bool nativeSelectionActive = EventSystem.current != null
+                && EventSystem.current.currentSelectedGameObject != null
+                && EventSystem.current.currentSelectedGameObject.activeInHierarchy;
+
+            if (!nativeSelectionActive)
             {
-                MenuNavigator.SecondaryActivate();
-            }
-            else if (Pressed(ModConfig.MenuActivate.Value))
-            {
-                MenuNavigator.Activate();
+                // Ctrl+Gauche/Droite ajuste un curseur (Slider) sélectionné (ex. couleurs en
+                // création de personnage) — vérifié EN PREMIER pour que Ctrl+flèche n'avance/
+                // recule pas AUSSI dans la liste des éléments du menu.
+                if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.AdjustSlider(-1);
+                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.AdjustSlider(1);
+                else if (Pressed(ModConfig.MenuPrevious.Value) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.Previous();
+                else if (Pressed(ModConfig.MenuNext.Value) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.Next();
+                if (ctrl && UnityEngine.Input.GetKeyDown(ModConfig.MenuActivate.Value))
+                {
+                    MenuNavigator.SecondaryActivate();
+                }
+                else if (Pressed(ModConfig.MenuActivate.Value))
+                {
+                    MenuNavigator.Activate();
+                }
             }
 
             // Clic droit dans le monde (souris directionnelle) : Ctrl + la touche configurée
