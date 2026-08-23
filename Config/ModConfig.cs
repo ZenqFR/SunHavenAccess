@@ -48,15 +48,24 @@ namespace SunHavenAccess.Config
         {
             const string section = "Touches";
 
-            Help = Bind(config, section, "Aide", KeyCode.F2,
+            // IMPORTANT (23/08/2026) : Wish.UserSettings.DefaultKeybinds (décompilé) montre que
+            // F1 à F7 sont TOUTES les touches d'émote par défaut du jeu (Emote1..Emote7) — donc
+            // F2/F3/F4/F6/F7, utilisées ici jusque-là, déclenchaient CHACUNE une émote du
+            // personnage en plus de l'action du mod. Unity ne fait aucune distinction de
+            // modificateur sur Input.GetKeyDown : impossible de "protéger" une touche F1-F7 avec
+            // Ctrl/Maj, le jeu la voit quand même. Reclassées sur des lettres/touches libres
+            // (absentes de DefaultKeybinds) — clés de config renommées pour forcer les nouveaux
+            // défauts, mêmes anciennes valeurs encore utilisables en repli si déjà personnalisées
+            // à la main par l'utilisateur.
+            Help = Bind(config, section, "AideV2", KeyCode.H,
                 "Rappelle la liste des touches du mod.", "Aide");
-            DescribeFront = Bind(config, section, "CaseDevantVous", KeyCode.F3,
+            DescribeFront = Bind(config, section, "CaseDevantVousV2", KeyCode.F10,
                 "Décrit la case devant vous (terrain, objet, PNJ...).", "Décrire la case devant vous");
-            Position = Bind(config, section, "Position", KeyCode.F4,
+            Position = Bind(config, section, "PositionV2", KeyCode.P,
                 "Annonce votre position et la direction regardée.", "Annoncer votre position");
-            NextNpc = Bind(config, section, "PersonnageProche", KeyCode.F6,
+            NextNpc = Bind(config, section, "PersonnageProcheV2", KeyCode.N,
                 "Passe au personnage proche suivant et l'annonce (nom, direction, distance).", "Personnage proche suivant");
-            Repeat = Bind(config, section, "Repeter", KeyCode.F7,
+            Repeat = Bind(config, section, "RepeterV2", KeyCode.B,
                 "Répète la dernière chose annoncée.", "Répéter la dernière annonce");
             ToggleVerbosity = Bind(config, section, "VerbositeDeplacement", KeyCode.F9,
                 "Active ou désactive l'annonce automatique de la case devant vous en marchant.", "Verbosité des déplacements");
@@ -78,10 +87,10 @@ namespace SunHavenAccess.Config
                 "Diagnostic : joue un son Windows indépendant de la synthèse vocale.", "Test sonore (diagnostic)");
             MouseFollowToggle = Bind(config, section, "SourisDirectionnelle", KeyCode.J,
                 "Active ou désactive la souris qui pointe toujours vers la case devant vous.", "Activer/désactiver la souris directionnelle");
-            // Renommé (ClicGauche -> ClicGaucheMonde) pour forcer la prise en compte du nouveau
-            // défaut Espace : Entrée entrait en conflit avec la validation de menu (voir
-            // MenuNavigator.Activate) et ^ (Caret) était peu pratique/pas intuitif.
-            SimulateLeftClick = Bind(config, section, "ClicGaucheMonde", KeyCode.Space,
+            // Espace est en fait le SAUT par défaut du jeu (Wish.UserSettings.DefaultKeybinds,
+            // Button.Jump) : le personnage aurait sauté à chaque clic simulé. Reclassé sur le
+            // pavé numérique, à côté des touches de rotation (Pavé 4/6) déjà là.
+            SimulateLeftClick = Bind(config, section, "ClicGaucheMondeV3", KeyCode.Keypad5,
                 "Simule un clic gauche à la position actuelle de la souris.", "Simuler un clic gauche (monde)");
             SimulateRightClick = Bind(config, section, "ClicDroit", KeyCode.Colon,
                 "Simule un clic droit (avec Ctrl enfoncé ; Slash fonctionne aussi en alternative sur QWERTY).", "Simuler un clic droit (monde, avec Ctrl)");
@@ -106,10 +115,11 @@ namespace SunHavenAccess.Config
             // Le tchat/console de debug du jeu (Quantum Console) s'ouvrait par défaut sur Entrée,
             // en plein conflit avec la validation de menu/dialogue du mod — voir
             // Input/ChatKeyRebinder.cs, qui applique cette touche au tchat dès qu'il existe.
-            ChatOpenKey = Bind(config, section, "OuvertureTchat", KeyCode.T,
+            // T était aussi le Sort 3 par défaut du jeu (Button.Spell3) : reclassé sur C (Chat).
+            ChatOpenKey = Bind(config, section, "OuvertureTchatV2", KeyCode.C,
                 "Touche pour ouvrir le tchat/console du jeu (remplace Entrée, qui entrait en conflit avec la validation de menu).", "Ouvrir le tchat / la console du jeu");
 
-            Clock = Bind(config, section, "Horloge", KeyCode.F5,
+            Clock = Bind(config, section, "HorlogeV2", KeyCode.O,
                 "Annonce l'heure, le jour, la saison, l'année et la météo actuelle.", "Annoncer l'heure, le jour, la saison et la météo");
 
             Status = Bind(config, section, "Statut", KeyCode.F8,

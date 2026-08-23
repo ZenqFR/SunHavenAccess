@@ -117,25 +117,27 @@ Changer d'objet en main (touches 1-0, molette...) annonce son nom et sa quantit�
 
 Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.sunhavenaccess.cfg`, ou en jeu via un menu vocal dédié qui liste tous les raccourcis, ce qu'ils font, et permet de les réassigner à la volée.
 
+> **Toutes vérifiées sans conflit** avec les touches par défaut du jeu (table `Wish.UserSettings.DefaultKeybinds` lue en décompilation) — plusieurs touches ont dû être déplacées le 23/08/2026 en découvrant que F1-F7 sont en fait les émotes du personnage par défaut (F2-F7 utilisées jusque-là déclenchaient donc aussi une émote à chaque pression), qu'Espace est le saut, et que T est un sort.
+
 | Touche par défaut | Action |
 |---|---|
-| F2 | Aide (rappelle les touches principales) |
-| F3 | Décrire la case devant vous |
-| F4 | Votre position |
-| F5 | Heure, jour, saison, météo |
-| F6 | Personnage proche suivant |
-| F7 | Répéter la dernière annonce |
+| H | Aide (rappelle les touches principales) |
+| F10 | Décrire la case devant vous |
+| P | Votre position |
+| O | Heure, jour, saison, météo |
+| N | Personnage proche suivant |
+| B | Répéter la dernière annonce |
 | F8 | Santé et mana |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
 | F12 | Menu des raccourcis (parcourable et modifiable) |
 | Pavé 4 / Pavé 6 | Tourner à gauche / à droite sans se déplacer |
+| Pavé 5 | Clic gauche (souris) |
 | J | Souris directionnelle |
-| Espace | Clic gauche (souris) |
 | Ctrl + : (ou Ctrl + /) | Clic droit (souris) |
-| T | Ouvrir le tchat / la console du jeu *(remplace Entrée, qui entrait en conflit avec la validation de menu)* |
+| C | Ouvrir le tchat / la console du jeu *(remplace Entrée, qui entrait en conflit avec la validation de menu)* |
 | Flèches directionnelles | Naviguer dans un menu |
-| Entrée | Valider (clic gauche) |
+| Entrée | Valider (clic gauche) *(exige d'avoir déjà sélectionné un élément aux flèches)* |
 | Ctrl + Entrée | Action secondaire (clic droit) |
 | Page haut / bas | Élément précédent/suivant du scanner |
 | Ctrl + Page haut / bas | Catégorie précédente/suivante du scanner |
