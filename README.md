@@ -184,6 +184,8 @@ Repère tout ce qui se trouve à proximité, par catégorie, trié du plus proch
 
 Une touche annonce l'heure, le jour de la semaine, le jour du mois, la saison, l'année et la météo actuelle (pluie, neige, canicule, brouillard, vent) — rien de tout ça n'était accessible autrement que visuellement.
 
+Une deuxième touche annonce les festivals de la saison actuelle (nom, jour, description) — le calendrier du jeu (`Wish.CalendarUI`) est une grille de jours purement visuelle sans aucune interaction clavier, cette touche lit directement ses données plutôt que d'essayer de la parcourir.
+
 </details>
 
 <details>
@@ -215,6 +217,7 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | X / Y | Carte du monde : lieu précédent / suivant (carte ouverte uniquement) |
 | Virgule / Point | Création de personnage : option précédente / suivante d'apparence (Ctrl+l'une des deux : catégorie précédente/suivante) |
 | Z | Annoncer les points de compétence disponibles |
+| Point-virgule | Annoncer les festivals de la saison actuelle |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
 | F12 | Menu des raccourcis (parcourable et modifiable) |
@@ -277,7 +280,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 Repérés en explorant systématiquement les classes du jeu (`Wish.*`) au-delà des systèmes déjà couverts :
 
 - **Achievements** : les noms/descriptions viennent des métadonnées Steam (dashboard partenaire, API Steamworks), pas des données locales du jeu — mapping ID→clé Steam à trouver, plus gros chantier que prévu pour un contenu cosmétique.
-- **Festivals saisonniers** (`Wish.SeasonEventUI`) : pas encore regardé.
+- ~~**Festivals saisonniers**~~ fait, voir la carte "Horloge, calendrier & météo" plus haut.
 - **Animaux de compagnie** (`Wish.PetPanel`) : le panneau lui-même n'est qu'un affichage d'icônes sans donnée riche — probablement déjà couvert pour l'essentiel par la catégorie scanner "animaux et compagnons" existante, pas creusé plus loin.
 - **Couleurs en création de personnage** : gérées séparément de la grille d'apparence (voir plus bas), via un vrai `Slider` déjà couvert par Ctrl+flèche gauche/droite (voir la table des touches) — pas revérifié depuis l'ajout de la navigation d'apparence.
 

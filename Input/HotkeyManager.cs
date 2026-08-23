@@ -72,6 +72,7 @@ namespace SunHavenAccess.Input
                 if (ctrl) CharacterAppearanceNavigator.NextCategory(); else CharacterAppearanceNavigator.NextOption();
             }
             if (Pressed(ModConfig.AnnounceSkillPoints.Value)) SkillPointsAnnouncer.AnnounceAll();
+            if (Pressed(ModConfig.AnnounceFestivals.Value)) FestivalAnnouncer.AnnounceThisSeason();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
@@ -197,6 +198,7 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.MapPreviousLocation.Value)} et {Strings.KeyName(ModConfig.MapNextLocation.Value)}, lieu précédent ou suivant sur la carte du monde, carte ouverte. " +
                 $"{Strings.KeyName(ModConfig.AppearancePrevious.Value)} et {Strings.KeyName(ModConfig.AppearanceNext.Value)}, option précédente ou suivante d'apparence en création de personnage. Contrôle plus l'une ou l'autre, catégorie précédente ou suivante. " +
                 $"{Strings.KeyName(ModConfig.AnnounceSkillPoints.Value)}, annoncer les points de compétence disponibles dans chaque arbre. " +
+                $"{Strings.KeyName(ModConfig.AnnounceFestivals.Value)}, annoncer les festivals de la saison actuelle. " +
                 $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
                 $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +
                 $"{Strings.KeyName(ModConfig.ToggleVerbosity.Value)}, activer ou désactiver l'annonce automatique des déplacements. " +

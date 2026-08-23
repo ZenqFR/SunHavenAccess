@@ -48,6 +48,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> AppearancePrevious;
         public static ConfigEntry<KeyCode> AppearanceNext;
         public static ConfigEntry<KeyCode> AnnounceSkillPoints;
+        public static ConfigEntry<KeyCode> AnnounceFestivals;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -192,6 +193,12 @@ namespace SunHavenAccess.Config
             // nœuds elle-même (voir Info/SkillPointsAnnouncer.cs). Z : dernière lettre libre.
             AnnounceSkillPoints = Bind(config, section, "PointsCompetence", KeyCode.Z,
                 "Annonce les points de compétence disponibles dans chaque arbre.", "Annoncer les points de compétence disponibles");
+
+            // Festivals de la saison (Wish.CalendarUI) : écran purement visuel (grille de jours,
+            // aucune interaction clavier native) — juste à lire, pas à naviguer. Plus aucune
+            // lettre simple libre à ce stade (26/26 utilisées) : point-virgule, libre des deux côtés.
+            AnnounceFestivals = Bind(config, section, "Festivals", KeyCode.Semicolon,
+                "Annonce les festivals de la saison actuelle (nom, jour, description).", "Annoncer les festivals de la saison");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,
