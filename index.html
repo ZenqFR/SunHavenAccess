@@ -15,38 +15,56 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:locale:alternate" content="en_US">
 <meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Thème sombre chaleureux assumé comme unique thème (pas de variante claire) : demandé
+     explicitement — plus de contraste, plus confortable à l'œil, tout en restant coloré
+     (soleil couchant sur la ferme) plutôt que gris terne. */
   :root {
-    --bg: #fff8ea;
-    --bg-card: #fffcf4;
-    --bg-card-border: #eed6a0;
-    --text: #4a3625;
-    --text-dim: #7a624a;
-    --text-faint: #a48f70;
-    --accent: #c1631a;
-    --accent-strong: #a34f0f;
-    --accent-text: #fff8ea;
-    --leaf: #4a7c2a;
-    --leaf-text: #396320;
-    --pill-bg: #fbeecb;
-    --pill-border: #e8cf98;
-    --focus: #1b5e20;
+    --bg: #150f09;
+    --bg-card: #1f160d;
+    --bg-card-border: #3d2e1a;
+    --text: #f5e8d3;
+    --text-dim: #cdb48e;
+    --text-faint: #977f5c;
+    --accent: #f0a94e;
+    --accent-strong: #ffbf6b;
+    --accent-text: #241708;
+    --leaf: #5fae3a;
+    --leaf-text: #8fd66a;
+    --pill-bg: #2a2013;
+    --pill-border: #4a3a22;
+    --focus: #ffd28a;
     --radius: 14px;
     --sun: #ffb347;
+    --plum: #9b5cac;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
   }
 
   * { box-sizing: border-box; }
+
+  html { color-scheme: dark; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
 
   body {
     margin: 0;
     background: var(--bg);
     background-image:
-      radial-gradient(circle at 12% -6%, rgba(255, 179, 71, 0.35), transparent 45%),
-      radial-gradient(circle at 100% 0%, rgba(124, 179, 66, 0.18), transparent 40%);
+      radial-gradient(circle at 12% -6%, rgba(255, 179, 71, 0.16), transparent 45%),
+      radial-gradient(circle at 100% 0%, rgba(95, 174, 58, 0.12), transparent 40%),
+      radial-gradient(circle at 50% 120%, rgba(155, 92, 172, 0.1), transparent 55%);
     color: var(--text);
-    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.55;
+    font-family: "Work Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
+
+  h1, h2, h3, summary { font-family: "Fraunces", Georgia, serif; text-wrap: balance; }
 
   a { color: var(--accent-strong); }
   a:focus-visible, button:focus-visible, summary:focus-visible {
@@ -74,10 +92,12 @@
     text-align: center;
     position: relative;
   }
-  header .emoji { font-size: 2.4rem; display: block; margin-bottom: 0.2em; }
+  header .emoji { font-size: clamp(2.4rem, 6vw, 3.2rem); display: block; margin-bottom: 0.2em; }
   header h1 {
     margin: 0 0 0.3em;
-    font-size: 2.1rem;
+    font-size: clamp(2.1rem, 5vw, 2.8rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
     color: var(--accent-strong);
   }
   header p { margin: 0; color: var(--text-dim); }
@@ -153,6 +173,13 @@
     border-radius: var(--radius);
     padding: 1.2em 1.4em;
     margin-bottom: 1em;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  details.card:hover, details.card:focus-within {
+    border-color: var(--pill-border);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35), 0 10px 26px rgba(240, 169, 78, 0.1);
   }
   .card h3 { margin: 0 0 0.4em; color: var(--accent-strong); font-size: 1.1rem; }
   .card p { margin: 0.4em 0; color: var(--text-dim); }
@@ -181,9 +208,9 @@
 
   .status-row { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0.6em 0 1.6em; }
   .status-row .pill { border-radius: 999px; padding: 0.35em 0.9em; font-size: 0.82rem; border: 1px solid transparent; }
-  .pill.ok { background: #eaf4e1; border-color: #cfe6b8; color: var(--leaf-text); }
-  .pill.wip { background: #fdf0da; border-color: #f0d9a8; color: var(--accent-strong); }
-  .pill.todo { background: #f4ede3; border-color: #e4d6c2; color: var(--text-faint); }
+  .pill.ok { background: rgba(95, 174, 58, 0.16); border-color: rgba(143, 214, 106, 0.35); color: var(--leaf-text); }
+  .pill.wip { background: rgba(240, 169, 78, 0.14); border-color: rgba(255, 191, 107, 0.35); color: var(--accent-strong); }
+  .pill.todo { background: var(--pill-bg); border-color: var(--pill-border); color: var(--text-faint); }
 
   table.keys { width: 100%; border-collapse: collapse; margin: 0.6em 0 1.6em; font-size: 0.92rem; }
   table.keys th, table.keys td {
@@ -203,8 +230,10 @@
     border-radius: 999px;
     font-weight: 600;
     margin-top: 0.5em;
+    box-shadow: var(--shadow);
+    transition: background 0.15s ease, transform 0.15s ease;
   }
-  .cta:hover { background: var(--leaf-text); }
+  .cta:hover { background: var(--leaf-text); transform: translateY(-1px); }
 
   footer {
     max-width: 760px;
@@ -328,6 +357,13 @@
   </details>
 
   <details class="card">
+    <summary><span data-lang="fr">✉️ Courrier</span><span data-lang="en" hidden>✉️ Mail</span></summary>
+    <ul>
+      <li><span data-lang="fr">Contenu complet d'une lettre (message, signature, post-scriptum) lu automatiquement dès l'ouverture de la boîte aux lettres, comme les dialogues.</span><span data-lang="en" hidden>A letter's full content (message, sign-off, postscript) is read automatically as soon as the mailbox opens, just like dialogue.</span></li>
+    </ul>
+  </details>
+
+  <details class="card">
     <summary><span data-lang="fr">🧭 Scanner par catégories &amp; cheminement automatique</span><span data-lang="en" hidden>🧭 Category scanner &amp; auto-pathing</span></summary>
     <ul>
       <li><span data-lang="fr">Repère tout ce qui est à proximité, par catégorie, trié du plus proche au plus loin : personnages, plantations, ressources (dont minerais), bâtiments et portails (avec destination annoncée), animaux et compagnons, ennemis, mobilier et rangement.</span><span data-lang="en" hidden>Finds everything nearby, by category, sorted nearest-first: characters, crops, resources (including ores), buildings and portals (with destination announced), animals and companions, enemies, furniture and storage.</span></li>
@@ -398,14 +434,29 @@
       <span data-lang="en" hidden>mod loop, speech synthesis, tile cursor, dialogue, menus/inventory/tooltips, farming, directional mouse, scanner, menu keyboard navigation, chat key.</span>
     </p>
     <p><strong><span data-lang="fr">🚧 Pas encore confirmé :</span><span data-lang="en" hidden>🚧 Not yet confirmed:</span></strong>
-      <span data-lang="fr">description du type de terrain hors ferme (l'eau est fiable, le reste dépend du nom des tuiles), cheminement automatique en terrain complexe, boutiques et artisanat (noms, prix avec devise, quantités possédées/requises, temps de fabrication — passent par les systèmes génériques du mod mais jamais testés sur un écran réel).</span>
-      <span data-lang="en" hidden>terrain type description outside farmland (water is reliable, the rest depends on tile names), auto-pathing on complex terrain, shops and crafting (names, prices with currency, owned/required amounts, craft time — go through the mod's generic systems but never tested on a real screen).</span>
+      <span data-lang="fr">description du type de terrain hors ferme (l'eau est fiable, le reste dépend du nom des tuiles), cheminement automatique en terrain complexe, boutiques et artisanat (noms, prix avec devise, quantités possédées/requises, temps de fabrication), courrier (lu comme les dialogues, objets joints pas encore nommés) — passent par les systèmes génériques du mod mais jamais testés sur un écran réel.</span>
+      <span data-lang="en" hidden>terrain type description outside farmland (water is reliable, the rest depends on tile names), auto-pathing on complex terrain, shops and crafting (names, prices with currency, owned/required amounts, craft time), mail (read like dialogue, attached items not yet named) — go through the mod's generic systems but never tested on a real screen.</span>
     </p>
     <p><strong><span data-lang="fr">○ Pas encore développé :</span><span data-lang="en" hidden>○ Not built yet:</span></strong>
-      <span data-lang="fr">courrier, pêche, minage, donjons, carte du monde.</span>
-      <span data-lang="en" hidden>mail, fishing, mining, dungeons, world map.</span>
+      <span data-lang="fr">pêche, minage, donjons, carte du monde.</span>
+      <span data-lang="en" hidden>fishing, mining, dungeons, world map.</span>
     </p>
   </details>
+
+  <h2 class="section-title">
+    <span data-lang="fr">À propos</span><span data-lang="en" hidden>About</span>
+  </h2>
+  <div class="card about-card">
+    <p>
+      <span data-lang="fr">👋 Je m'appelle <strong>Zenq</strong>. Je suis aveugle, et je développe des mods d'accessibilité comme celui-ci — au départ surtout pour mon propre usage, pour pouvoir jouer aux jeux qui m'intéressent en toute autonomie. Je réfléchis aujourd'hui à étendre ce travail à d'autres joueurs aveugles ou malvoyants, pour que ça profite à plus de monde que juste moi.</span>
+      <span data-lang="en" hidden>👋 My name is <strong>Zenq</strong>. I'm blind, and I build accessibility mods like this one — originally mostly for my own use, so I could play the games I'm interested in independently. I'm now thinking about extending this work to other blind and visually impaired players, so it can help more people than just me.</span>
+    </p>
+    <p>
+      <a href="https://discord.gg/DD7bP3r7Qd" target="_blank" rel="noopener">
+        <span data-lang="fr">💬 Rejoindre mon serveur Discord</span><span data-lang="en" hidden>💬 Join my Discord server</span>
+      </a>
+    </p>
+  </div>
 
 </main>
 
