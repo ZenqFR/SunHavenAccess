@@ -41,6 +41,8 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> Status;
         public static ConfigEntry<KeyCode> FishingToneToggle;
         public static ConfigEntry<KeyCode> AnnounceQuests;
+        public static ConfigEntry<KeyCode> AnnounceRelationships;
+        public static ConfigEntry<KeyCode> AnnounceProfessions;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -149,6 +151,19 @@ namespace SunHavenAccess.Config
             // ("Q" est Spell1 du jeu), simple touche libre des deux côtés.
             AnnounceQuests = Bind(config, section, "Quetes", KeyCode.G,
                 "Annonce toutes vos quêtes actives : nom, progression, où les rendre.", "Annoncer les quêtes actives");
+
+            // Relations avec les PNJ romançables (Wish.GameSave.CurrentCharacter.Relationships) :
+            // le jeu affiche ça sous forme de cœurs remplis visuellement, sans texte natif
+            // équivalent. V : plus de touche mnémotechnique libre à ce stade (R est Spell2 du
+            // jeu), simple touche libre des deux côtés.
+            AnnounceRelationships = Bind(config, section, "Relations", KeyCode.V,
+                "Annonce vos relations avec les PNJ romançables : cœurs, statut (en couple/marié).", "Annoncer les relations");
+
+            // Niveaux de compétence (Combat, Agriculture, Pêche, Minage, Exploration) — pas
+            // l'arbre de compétences lui-même (grille 2D de nœuds, touche K du jeu par défaut,
+            // pas encore accessible). U : dernière lettre libre simple, sans mnémonique.
+            AnnounceProfessions = Bind(config, section, "Competences", KeyCode.U,
+                "Annonce vos niveaux de compétence (combat, agriculture, pêche, minage, exploration).", "Annoncer les niveaux de compétence");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

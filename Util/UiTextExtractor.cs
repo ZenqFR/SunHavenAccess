@@ -28,6 +28,9 @@ namespace SunHavenAccess.Util
             string slotDescription = TrySlotDescription(go);
             if (slotDescription != null) return slotDescription;
 
+            string saveDescription = TrySavePanelDescription(go);
+            if (saveDescription != null) return saveDescription;
+
             string own = ExtractFrom(go);
             if (own != null) return own;
 
@@ -128,6 +131,51 @@ namespace SunHavenAccess.Util
             }
 
             return "Emplacement vide.";
+        }
+
+        /// <summary>
+        /// Écran de sélection de sauvegarde (Wish.SavePanel, un slot de sauvegarde) : nom du
+        /// personnage, jour, niveaux de compétence et argent sont chacun un champ TMP PUBLIC
+        /// séparé sur la classe, pas forcément tous frères directs du bouton "Choisir" dans la
+        /// hiérarchie Unity réelle (inconnue sans avoir vu la scène) — la recherche générique de
+        /// frères directs risquerait donc de rater une partie de l'info. On lit ici directement
+        /// tous les champs publics de SavePanel plutôt que de deviner la structure visuelle.
+        /// Seul le bouton "Choisir" (selectButton) déclenche ce résumé complet ; Supprimer et
+        /// Restaurer gardent la lecture générique (leur propre libellé, ex. "Supprimer").
+        /// </summary>
+        private static string TrySavePanelDescription(GameObject go)
+        {
+            SavePanel panel = go.GetComponentInParent<SavePanel>();
+            if (panel == null) return null;
+
+            UnityEngine.UI.Button button = go.GetComponentInParent<UnityEngine.UI.Button>();
+            if (button == null || button != panel.selectButton) return null;
+
+            string name = TextUtil.Clean(panel.playerNameText?.text);
+            if (string.IsNullOrWhiteSpace(name)) return null; // slot vide ou prefab gabarit désactivé
+
+            var parts = new List<string> { name };
+
+            string day = TextUtil.Clean(panel.dayYearText?.text);
+            if (!string.IsNullOrWhiteSpace(day)) parts.Add(day);
+
+            var levels = new List<string>();
+            void AddLevel(string label, TextMeshProUGUI tmp)
+            {
+                string value = TextUtil.Clean(tmp?.text);
+                if (!string.IsNullOrWhiteSpace(value)) levels.Add($"{label} {value}");
+            }
+            AddLevel("Combat", panel.combatLevelText);
+            AddLevel("Agriculture", panel.farmingLevelText);
+            AddLevel("Pêche", panel.fishingLevelText);
+            AddLevel("Minage", panel.miningLevelText);
+            AddLevel("Exploration", panel.explorationLevelText);
+            if (levels.Count > 0) parts.Add(string.Join(", ", levels));
+
+            string coins = TextUtil.Clean(panel.coinText?.text);
+            if (!string.IsNullOrWhiteSpace(coins)) parts.Add($"{coins} pièces d'or");
+
+            return string.Join(". ", parts) + ".";
         }
 
         private static string ExtractFrom(GameObject go)

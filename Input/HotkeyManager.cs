@@ -50,6 +50,8 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.Status.Value)) StatusAnnouncer.Announce();
             if (Pressed(ModConfig.FishingToneToggle.Value)) FishingToneCue.ToggleEnabled();
             if (Pressed(ModConfig.AnnounceQuests.Value)) QuestAnnouncer.AnnounceActiveQuests();
+            if (Pressed(ModConfig.AnnounceRelationships.Value)) RelationshipAnnouncer.AnnounceAll();
+            if (Pressed(ModConfig.AnnounceProfessions.Value)) ProfessionAnnouncer.AnnounceAll();
 
             // Navigation de menu : flèches directionnelles (Haut/Gauche = précédent,
             // Bas/Droite = suivant, quelle que soit la touche exacte choisie en config, pour
@@ -176,6 +178,8 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.FishingToneToggle.Value)}, activer ou désactiver le bip continu de visée pendant la pêche. " +
                 $"{Strings.KeyName(ModConfig.Status.Value)}, votre santé et votre mana. " +
                 $"{Strings.KeyName(ModConfig.AnnounceQuests.Value)}, annoncer vos quêtes actives. " +
+                $"{Strings.KeyName(ModConfig.AnnounceRelationships.Value)}, annoncer vos relations avec les PNJ. " +
+                $"{Strings.KeyName(ModConfig.AnnounceProfessions.Value)}, annoncer vos niveaux de compétence. " +
                 $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
                 $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +
                 $"{Strings.KeyName(ModConfig.ToggleVerbosity.Value)}, activer ou désactiver l'annonce automatique des déplacements. " +

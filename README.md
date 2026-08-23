@@ -94,6 +94,16 @@ Le jeu ouvre son journal de quêtes avec `L` par défaut, mais c'est un écran p
 </details>
 
 <details>
+<summary><strong>Relations & compétences</strong></summary>
+
+Deux écrans du jeu (relations avec les PNJ, niveaux de compétence) n'affichent leur information que visuellement (cœurs remplis, barres de progression) sans texte natif équivalent — ces touches recalculent l'équivalent en mots directement depuis les données du jeu.
+
+- **Relations** : cœurs (sur 10, 15 ou 20 selon le statut simple/en couple/marié) pour chaque PNJ romançable avec qui une relation a été nouée, triés du plus investi au moins investi.
+- **Compétences** : niveau et progression ("1234/5678" XP) pour chacune des 5 compétences (combat, agriculture, pêche, minage, exploration). Ne couvre pas encore l'arbre de compétences lui-même (dépense de points sur une grille de nœuds) — chantier à part entière, pas encore commencé.
+
+</details>
+
+<details>
 <summary><strong>Pêche</strong></summary>
 
 La pêche est un mini-jeu en temps réel — un vrai point faible d'accessibilité même chez stardew-access. En décompilant le mini-jeu (`Wish.Bobber`), découverte que contrairement à Stardew Valley (deux éléments mobiles indépendants à suivre), ici une seule jauge oscille TOUTE SEULE en aller-retour automatique : il suffit d'appuyer au bon moment pendant qu'elle traverse une zone gagnante fixe.
@@ -178,6 +188,8 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | B | Répéter la dernière annonce |
 | H | Santé et mana |
 | G | Annoncer les quêtes actives |
+| V | Annoncer les relations avec les PNJ |
+| U | Annoncer les niveaux de compétence |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
 | F12 | Menu des raccourcis (parcourable et modifiable) |
@@ -203,7 +215,7 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 
 ## 🚧 Progression & limites connues
 
-Chaque système majeur du jeu a désormais au moins un premier niveau de couverture — la liste "pas encore développé" est vide pour l'instant. Beaucoup d'éléments ci-dessous restent malgré tout à confirmer en conditions réelles (voir le détail).
+La plupart des systèmes majeurs du jeu ont désormais au moins un premier niveau de couverture. Beaucoup d'éléments ci-dessous restent malgré tout à confirmer en conditions réelles (voir le détail) ; quelques écrans repérés en explorant le jeu au-delà des fonctionnalités déjà couvertes n'ont, eux, pas encore été commencés du tout.
 
 <details>
 <summary><strong>Développé et fonctionnel (confirmé en jeu)</strong></summary>
@@ -227,8 +239,31 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Courrier** : le contenu complet d'une lettre (message, signature, post-scriptum) est maintenant lu automatiquement à l'ouverture de la boîte aux lettres, sur le même principe que les dialogues — jamais testé en jeu. Les objets éventuellement joints ne sont pour l'instant pas nommés automatiquement (juste leur icône, comme dans les autres menus).
 - **Pêche** : annonce touche/résultat + bip continu de visée, voir la carte dédiée plus haut — le bip est la fonctionnalité la moins certaine de tout le mod (fréquences/tempo jamais entendus en jeu).
 - **Quêtes** : acceptation/rendu automatiquement annoncés, touche dédiée pour lister les quêtes actives (voir la carte dédiée plus haut) — tous les champs lus sont publics et déjà remplis par le jeu (`QuestPanel.questDescription`/`questProgress`/`questCompleteTMP`), mais jamais entendu en conditions réelles. Le format exact de `questProgress` (texte de progression détaillé par objectif) n'a pas pu être confirmé sans décompiler chaque type de `QuestRequirement` individuellement — inclus tel quel, peut être incomplet ou redondant avec la description.
+- **Relations & compétences** (voir la carte dédiée plus haut) : calcul des cœurs/niveaux jamais entendu en jeu. Le nombre exact de cœurs affichés visuellement par statut (10/15/20) est déduit des plafonds de points en décompilation (50/75/100, 5 points/cœur) — cohérent avec le code, pas observé à l'écran.
 - **Carte du monde** : décompilation de `Wish.Map`/`Wish.LocationName` montrant que, contrairement au menu principal (souris uniquement), cet écran liste vraiment les lieux via la sélection native d'Unity — chaque nom de lieu est un vrai bouton avec son texte visible, et le sélectionner ouvre un panneau de description également piloté nativement. Probablement déjà accessible via les systèmes génériques existants (lecture de la sélection courante + infobulle), reclassée ici depuis "pas encore développé" — jamais testée en jeu pour autant.
 - **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
+
+</details>
+
+<details>
+<summary><strong>Pas encore commencé</strong></summary>
+
+Repérés en explorant systématiquement les classes du jeu (`Wish.*`) au-delà des systèmes déjà couverts, pas encore attaqués :
+
+- **Arbre de compétences** (`Wish.SkillTree`/`SkillTreeButton`, touche `K` par défaut du jeu) : grille 2D de nœuds à débloquer avec des points de compétence — contrairement aux relations/niveaux (juste des chiffres à annoncer), ici il faudrait une vraie navigation spatiale dans la grille, un chantier bien plus lourd que le reste du mod jusqu'ici.
+- **Création de personnage** (`Wish.NewCharacterCreator`) : écran d'apparence par grille de vignettes (corps, cheveux, yeux, visage, torse, jambes, tête, ailes, queue, couleurs) — inconnu si les systèmes génériques existants (FocusReader) en tirent déjà quelque chose d'utilisable ou pas, jamais vérifié. Potentiellement un vrai bloqueur : sans lecture d'écran ici, impossible de commencer une partie du tout.
+- **Sauvegarde/chargement de partie** (`Wish.SavePanel`/`LoadCharacterMenu`) : même remarque — jamais vérifié si la liste des sauvegardes est lisible via les systèmes génériques.
+- **Achievements, festivals saisonniers, animaux de compagnie** (`Wish.AchievementProgressManager`, `SeasonEventUI`, `PetPanel`) : contenu secondaire, pas encore regardé du tout.
+
+</details>
+
+<details>
+<summary><strong>Premiers pas côté sauvegarde & création de personnage (24/08/2026)</strong></summary>
+
+Deux vrais bloqueurs potentiels (sans lecture d'écran ici, impossible de commencer à jouer du tout) — pas résolus entièrement, mais un premier pas concret sur chacun :
+
+- **Écran de sélection de sauvegarde** : chaque emplacement de sauvegarde (`Wish.SavePanel`) lit maintenant, en un seul résumé, le nom du personnage, le jour, les niveaux de compétence et l'argent — tous des champs publics du jeu, lus directement plutôt que de deviner si la lecture générique de menu les aurait trouvés dans le bon ordre.
+- **Création de personnage** : la race sélectionnée, sa description et sa capacité spéciale sont maintenant annoncées automatiquement à chaque changement. Le reste de l'écran (apparence : corps, cheveux, yeux, visage, torse, jambes, tête, ailes, queue, couleurs — une grille de vignettes) n'est **pas** encore couvert : une vraie navigation spatiale dans cette grille serait nécessaire, jamais testée sans retour humain, donc pas commencée pour l'instant.
 
 </details>
 
