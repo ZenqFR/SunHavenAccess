@@ -87,6 +87,23 @@
   }
   .skip-link:focus { left: 0; }
 
+  /* ---------- Barre de navigation entre mes différents projets/pages ---------- */
+  .portfolio-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    padding: 0.5em 1em;
+    font-size: 0.82rem;
+    background: var(--pill-bg);
+    border-bottom: 1px solid var(--pill-border);
+    color: var(--text-faint);
+  }
+  .portfolio-bar a { color: var(--text-dim); text-decoration: none; }
+  .portfolio-bar a:hover { color: var(--accent-strong); text-decoration: underline; }
+  .portfolio-bar [aria-current="page"] { color: var(--accent-strong); font-weight: 600; }
+
   /* ---------- Nav de section (barre collante + scrollspy) ---------- */
   .quick-nav {
     position: sticky;
@@ -212,33 +229,6 @@
     font-size: 0.9em;
     color: var(--text);
   }
-
-  /* ---------- Démo vocale interactive ---------- */
-  .demo-box {
-    max-width: 820px;
-    margin: 0 auto 2.5em;
-    padding: 0 1.5em;
-    text-align: center;
-  }
-  .btn-demo {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    background: var(--pill-bg);
-    border: 1px solid var(--pill-border);
-    color: var(--text);
-    font: inherit;
-    font-weight: 600;
-    font-size: 0.92rem;
-    padding: 0.65em 1.3em;
-    border-radius: 999px;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    transition: border-color 0.15s ease, transform 0.15s ease;
-  }
-  .btn-demo:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .btn-demo[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-strong); }
-  .demo-hint { display: block; margin-top: 0.6em; font-size: 0.8rem; color: var(--text-faint); }
 
   main {
     max-width: 820px;
@@ -390,6 +380,16 @@
   <span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span>
 </a>
 
+<nav class="portfolio-bar" aria-label="Mes autres projets">
+  <a href="https://zenqfr.github.io/">🏠 ZenqFR</a>
+  <span aria-hidden="true">·</span>
+  <span aria-current="page">Sun Haven Access</span>
+  <span aria-hidden="true">·</span>
+  <a href="https://zenqfr.github.io/sku-addons/">Sku Addons</a>
+  <span aria-hidden="true">·</span>
+  <a href="https://zenqfr.github.io/petopiafr/">PetopiaFR</a>
+</nav>
+
 <nav class="quick-nav" aria-label="Navigation rapide">
   <a href="#install" data-section="install"><span data-lang="fr">Installation</span><span data-lang="en" hidden>Install</span></a>
   <a href="#features" data-section="features"><span data-lang="fr">Fonctionnalités</span><span data-lang="en" hidden>Features</span></a>
@@ -433,18 +433,6 @@
   <span data-lang="fr">Vocalisé via <a href="https://www.nvaccess.org/" target="_blank" rel="noopener">NVDA</a> (en direct) ou, à défaut, via <a href="https://github.com/dkager/tolk" target="_blank" rel="noopener">Tolk</a> (SAPI). Inspiré de <a href="https://github.com/stardew-access/stardew-access" target="_blank" rel="noopener">stardew-access</a>, la référence pour Stardew Valley.</span>
   <span data-lang="en" hidden>Voiced through <a href="https://www.nvaccess.org/" target="_blank" rel="noopener">NVDA</a> (directly) or, as a fallback, <a href="https://github.com/dkager/tolk" target="_blank" rel="noopener">Tolk</a> (SAPI). Inspired by <a href="https://github.com/stardew-access/stardew-access" target="_blank" rel="noopener">stardew-access</a>, the reference mod for Stardew Valley.</span>
 </p>
-
-<div class="demo-box">
-  <button type="button" class="btn-demo" id="tts-demo" aria-pressed="false">
-    <span aria-hidden="true">🔊</span>
-    <span data-lang="fr">Écouter un exemple de ce que le mod annonce</span>
-    <span data-lang="en" hidden>Hear a sample of what the mod announces</span>
-  </button>
-  <span class="demo-hint" id="tts-hint">
-    <span data-lang="fr">Utilise la synthèse vocale de votre navigateur — n'importe qui peut essayer, même sans le mod installé.</span>
-    <span data-lang="en" hidden>Uses your browser's own speech synthesis — anyone can try it, even without the mod installed.</span>
-  </span>
-</div>
 
 <main id="main">
 
@@ -678,30 +666,6 @@
       applyLang(next);
       try { localStorage.setItem("sunhavenaccess-lang", next); } catch (e) {}
     });
-  }
-
-  /* ---- Démo de synthèse vocale (Web Speech API du navigateur) ---- */
-  var ttsBtn = document.getElementById("tts-demo");
-  var ttsHint = document.getElementById("tts-hint");
-  if (ttsBtn) {
-    if (!("speechSynthesis" in window)) {
-      ttsBtn.hidden = true;
-      if (ttsHint) ttsHint.hidden = true;
-    } else {
-      ttsBtn.addEventListener("click", function () {
-        window.speechSynthesis.cancel();
-        var isEn = document.documentElement.lang === "en";
-        var text = isEn
-          ? "Wheat, ready to harvest. Nearby character: Lucia, south-east, four tiles."
-          : "Blé, prêt à récolter. Personnage proche, Lucia, sud-est, quatre cases.";
-        var utter = new SpeechSynthesisUtterance(text);
-        utter.lang = isEn ? "en-US" : "fr-FR";
-        ttsBtn.setAttribute("aria-pressed", "true");
-        utter.onend = function () { ttsBtn.setAttribute("aria-pressed", "false"); };
-        utter.onerror = function () { ttsBtn.setAttribute("aria-pressed", "false"); };
-        window.speechSynthesis.speak(utter);
-      });
-    }
   }
 
   /* ---- Apparition des cartes au défilement ---- */
