@@ -135,7 +135,26 @@ namespace SunHavenAccess.Util
             ["pig"] = "Cochon", ["horse"] = "Cheval", ["fox"] = "Renard",
             ["cat"] = "Chat", ["dog"] = "Chien", ["monster"] = "Monstre",
             ["enemy"] = "Ennemi", ["boss"] = "Boss", ["bed"] = "Lit",
-            ["furniture"] = "Meuble", ["storage"] = "Rangement",
+            ["furniture"] = "Meuble", ["storage"] = "Rangement", ["main"] = "Principal",
+        };
+
+        /// <summary>
+        /// Repli mot-par-mot mal adapté à certains noms composés fréquents : "MainMenuToggle"
+        /// se traduisait en "Principal menu Basculer" (ordre des mots faux, sens perdu — rapporté
+        /// par l'utilisateur comme lu d'un bloc, "mainmenubasculer"). Ces noms exacts (une fois le
+        /// suffixe de clonage Unity retiré, insensible à la casse) sont vérifiés AVANT le
+        /// découpage mot-par-mot, pour un vrai libellé français au lieu d'une traduction littérale
+        /// dans le mauvais ordre.
+        /// </summary>
+        private static readonly Dictionary<string, string> ExactPhrases = new Dictionary<string, string>(System.StringComparer.OrdinalIgnoreCase)
+        {
+            ["MainMenuToggle"] = "Retour au menu principal",
+            ["MainMenuButton"] = "Retour au menu principal",
+            ["ToggleMainMenu"] = "Retour au menu principal",
+            ["MainMenu"] = "Menu principal",
+            ["QuitToMainMenu"] = "Quitter vers le menu principal",
+            ["ReturnToMainMenu"] = "Retour au menu principal",
+            ["BackToMainMenu"] = "Retour au menu principal",
         };
 
         // Uniquement le suffixe "(1)" que Unity ajoute aux doublons de nom — surtout PAS un
@@ -168,6 +187,9 @@ namespace SunHavenAccess.Util
         public static string Translate(string rawName)
         {
             if (string.IsNullOrWhiteSpace(rawName)) return rawName;
+
+            string cleaned = CloneSuffix.Replace(rawName, "").Replace("(Clone)", "").Trim();
+            if (ExactPhrases.TryGetValue(cleaned, out string exact)) return exact;
 
             string words = SplitIntoWords(rawName);
             var tokens = words.Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries);
