@@ -53,8 +53,13 @@ namespace SunHavenAccess.Input
             // que les deux paires fonctionnent par défaut). Ctrl+Entrée = clic droit,
             // vérifié EN PREMIER pour ne pas aussi déclencher le simple clic gauche.
             bool ctrl = CtrlHeld();
-            if (Pressed(ModConfig.MenuPrevious.Value) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.Previous();
-            if (Pressed(ModConfig.MenuNext.Value) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.Next();
+            // Ctrl+Gauche/Droite ajuste un curseur (Slider) sélectionné (ex. couleurs en
+            // création de personnage) — vérifié EN PREMIER pour que Ctrl+flèche n'avance/recule
+            // pas AUSSI dans la liste des éléments du menu.
+            if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.AdjustSlider(-1);
+            else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.AdjustSlider(1);
+            else if (Pressed(ModConfig.MenuPrevious.Value) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.Previous();
+            else if (Pressed(ModConfig.MenuNext.Value) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.Next();
             if (ctrl && UnityEngine.Input.GetKeyDown(ModConfig.MenuActivate.Value))
             {
                 MenuNavigator.SecondaryActivate();

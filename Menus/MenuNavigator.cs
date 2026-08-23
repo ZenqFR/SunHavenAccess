@@ -77,6 +77,19 @@ namespace SunHavenAccess.Menus
                 return;
             }
 
+            // Bug corrigé : un clic sur un bouton comme "Jouer" déclenche souvent une
+            // transition d'écran (nouvel écran de sélection/création de personnage...), qui ne
+            // se produit pas forcément à l'instant même. Si le joueur presse Entrée une
+            // deuxième fois par réflexe avant d'avoir re-navigué aux flèches sur le NOUVEL
+            // écran, cette méthode réutilisait l'ancien `_items[_index]` — un bouton de l'écran
+            // PRÉCÉDENT, parfois encore techniquement "actif" le temps de la transition — et le
+            // cliquait à l'aveugle, avec des effets imprévisibles (ex. rouvrir "Nouvelle
+            // partie" alors qu'on est déjà sur l'écran suivant, d'où des messages du type
+            // "cette option n'est pas disponible"). On invalide donc TOUJOURS la sélection
+            // après une activation : il faut re-choisir aux flèches avant de valider à nouveau,
+            // même sur le même écran.
+            _index = -1;
+
             if (sel is Button button)
             {
                 button.onClick.Invoke();
@@ -97,6 +110,23 @@ namespace SunHavenAccess.Menus
             }
         }
 
+        /// <summary>
+        /// Ctrl+Gauche/Droite : ajuste la valeur d'un curseur (Slider) sélectionné — utile pour
+        /// les écrans de création de personnage (couleurs, apparence...), où le repli générique
+        /// d'Activate() (simuler un simple clic) ne fait rien d'utile sur un Slider. Sans effet
+        /// si l'élément actuellement sélectionné n'est pas un Slider.
+        /// </summary>
+        public static void AdjustSlider(int direction)
+        {
+            if (_index < 0 || _index >= _items.Count) return;
+            if (_items[_index] is not Slider slider) return;
+            if (slider == null || !slider.gameObject.activeInHierarchy) return;
+
+            float step = slider.wholeNumbers ? 1f : (slider.maxValue - slider.minValue) / 20f;
+            slider.value = Mathf.Clamp(slider.value + step * direction, slider.minValue, slider.maxValue);
+            AnnounceCurrent();
+        }
+
         /// <summary>Action secondaire (Ctrl+Entrée) : équivalent d'un clic droit sur l'élément annoncé.</summary>
         public static void SecondaryActivate()
         {
@@ -113,6 +143,10 @@ namespace SunHavenAccess.Menus
                 Rescan();
                 return;
             }
+
+            // Même garde-fou que Activate() : on invalide la sélection avant de cliquer, pour
+            // ne jamais réutiliser une référence d'un écran qui vient de changer.
+            _index = -1;
 
             PointerEventData rightClick = new PointerEventData(EventSystem.current)
             {
@@ -156,6 +190,13 @@ namespace SunHavenAccess.Menus
             string text = UiTextExtractor.ExtractAll(sel.gameObject);
             string suffix = "";
             if (sel is Toggle t) suffix = t.isOn ? ", coché" : ", non coché";
+            else if (sel is Slider s)
+            {
+                string valueText = s.wholeNumbers
+                    ? $"{Mathf.RoundToInt(s.value)} sur {Mathf.RoundToInt(s.maxValue)}"
+                    : $"{Mathf.RoundToInt((s.value - s.minValue) / Mathf.Max(s.maxValue - s.minValue, 0.0001f) * 100f)} pour cent";
+                suffix = $", curseur, valeur {valueText} (Contrôle plus gauche/droite pour ajuster)";
+            }
             TolkSpeech.Speak($"{text}{suffix}. Élément {_index + 1} sur {_items.Count}.", true);
         }
     }
