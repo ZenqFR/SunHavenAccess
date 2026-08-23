@@ -64,14 +64,18 @@
     * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   }
 
-  /* Le dégradé "ciel de ferme" du bandeau, maintenant fond de toute la page. En
-     background-attachment: fixed, l'image ne défile pas avec le contenu : c'est littéralement
-     le même dégradé, à la même place à l'écran, du haut en bas de la page — demande explicite
-     de l'utilisateur ("le haut de la page, soit pareil sur toute la page"). */
+  /* Le dégradé "ciel de ferme" du bandeau, maintenant fond de toute la page : étiré sur toute
+     sa hauteur (background-size: 100% 100%) pour rester un seul dégradé continu du haut en
+     bas, quelle que soit la longueur de la page — demande explicite de l'utilisateur ("le
+     haut de la page, soit pareil sur toute la page"). Note : background-attachment: fixed
+     semblait plus simple pour ça, mais provoque un vrai bug de rendu (fond qui disparaît en
+     blanc au défilement, probablement lié aux backdrop-filter des panneaux verre) — cette
+     approche l'évite complètement. */
   body {
     margin: 0;
     background: linear-gradient(160deg, #48c6f4 0%, #7fd9ce 32%, #ffd766 68%, #ffa72e 100%);
-    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     color: var(--text);
     font-family: "Work Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
