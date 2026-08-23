@@ -61,6 +61,18 @@ namespace SunHavenAccess.Input
             // vérifié EN PREMIER pour ne pas aussi déclencher le simple clic gauche.
             bool ctrl = CtrlHeld();
 
+            // Apparence en création de personnage : même convention que le scanner (touche
+            // seule = option, Ctrl+touche = catégorie).
+            if (Pressed(ModConfig.AppearancePrevious.Value))
+            {
+                if (ctrl) CharacterAppearanceNavigator.PreviousCategory(); else CharacterAppearanceNavigator.PreviousOption();
+            }
+            if (Pressed(ModConfig.AppearanceNext.Value))
+            {
+                if (ctrl) CharacterAppearanceNavigator.NextCategory(); else CharacterAppearanceNavigator.NextOption();
+            }
+            if (Pressed(ModConfig.AnnounceSkillPoints.Value)) SkillPointsAnnouncer.AnnounceAll();
+
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
             // Paramètres) sans avoir à naviguer aux flèches toute la liste d'éléments pour
@@ -183,6 +195,8 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.AnnounceRelationships.Value)}, annoncer vos relations avec les PNJ. " +
                 $"{Strings.KeyName(ModConfig.AnnounceProfessions.Value)}, annoncer vos niveaux de compétence. " +
                 $"{Strings.KeyName(ModConfig.MapPreviousLocation.Value)} et {Strings.KeyName(ModConfig.MapNextLocation.Value)}, lieu précédent ou suivant sur la carte du monde, carte ouverte. " +
+                $"{Strings.KeyName(ModConfig.AppearancePrevious.Value)} et {Strings.KeyName(ModConfig.AppearanceNext.Value)}, option précédente ou suivante d'apparence en création de personnage. Contrôle plus l'une ou l'autre, catégorie précédente ou suivante. " +
+                $"{Strings.KeyName(ModConfig.AnnounceSkillPoints.Value)}, annoncer les points de compétence disponibles dans chaque arbre. " +
                 $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
                 $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +
                 $"{Strings.KeyName(ModConfig.ToggleVerbosity.Value)}, activer ou désactiver l'annonce automatique des déplacements. " +

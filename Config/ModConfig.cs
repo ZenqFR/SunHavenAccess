@@ -45,6 +45,9 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> AnnounceProfessions;
         public static ConfigEntry<KeyCode> MapPreviousLocation;
         public static ConfigEntry<KeyCode> MapNextLocation;
+        public static ConfigEntry<KeyCode> AppearancePrevious;
+        public static ConfigEntry<KeyCode> AppearanceNext;
+        public static ConfigEntry<KeyCode> AnnounceSkillPoints;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -174,6 +177,21 @@ namespace SunHavenAccess.Config
                 "Lieu précédent sur la carte du monde (carte ouverte uniquement).", "Carte : lieu précédent");
             MapNextLocation = Bind(config, section, "CarteLieuSuivant", KeyCode.Y,
                 "Lieu suivant sur la carte du monde (carte ouverte uniquement).", "Carte : lieu suivant");
+
+            // Apparence en création de personnage (Wish.ClothingImageButton, même problème que
+            // la carte : pas de vrai Selectable). Convention Scanner : touche seule = option
+            // dans la catégorie actuelle, Ctrl+touche = catégorie (corps/cheveux/yeux/visage/
+            // torse/jambes/tête/queue). Virgule/Point : libres des deux côtés, pas de touche
+            // lettre simple restante à ce stade.
+            AppearancePrevious = Bind(config, section, "ApparencePrecedent", KeyCode.Comma,
+                "Option précédente dans la catégorie d'apparence actuelle. Avec Contrôle : catégorie précédente (création de personnage uniquement).", "Apparence : précédent (Ctrl = catégorie)");
+            AppearanceNext = Bind(config, section, "ApparenceSuivant", KeyCode.Period,
+                "Option suivante dans la catégorie d'apparence actuelle. Avec Contrôle : catégorie suivante (création de personnage uniquement).", "Apparence : suivant (Ctrl = catégorie)");
+
+            // Résumé des points de compétence par arbre — pas la navigation dans la grille de
+            // nœuds elle-même (voir Info/SkillPointsAnnouncer.cs). Z : dernière lettre libre.
+            AnnounceSkillPoints = Bind(config, section, "PointsCompetence", KeyCode.Z,
+                "Annonce les points de compétence disponibles dans chaque arbre.", "Annoncer les points de compétence disponibles");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

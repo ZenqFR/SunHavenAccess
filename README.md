@@ -99,7 +99,19 @@ Le jeu ouvre son journal de quêtes avec `L` par défaut, mais c'est un écran p
 Deux écrans du jeu (relations avec les PNJ, niveaux de compétence) n'affichent leur information que visuellement (cœurs remplis, barres de progression) sans texte natif équivalent — ces touches recalculent l'équivalent en mots directement depuis les données du jeu.
 
 - **Relations** : cœurs (sur 10, 15 ou 20 selon le statut simple/en couple/marié) pour chaque PNJ romançable avec qui une relation a été nouée, triés du plus investi au moins investi.
-- **Compétences** : niveau et progression ("1234/5678" XP) pour chacune des 5 compétences (combat, agriculture, pêche, minage, exploration). Ne couvre pas encore l'arbre de compétences lui-même (dépense de points sur une grille de nœuds) — chantier à part entière, pas encore commencé.
+- **Compétences** : niveau et progression ("1234/5678" XP) pour chacune des 5 compétences (combat, agriculture, pêche, minage, exploration).
+- **Points de compétence** : touche dédiée pour annoncer le nombre de points disponibles à dépenser dans chaque arbre. Ne remplace pas une vraie navigation dans la grille de nœuds elle-même — voir Progression plus bas pour l'état exact de cette grille.
+
+</details>
+
+<details>
+<summary><strong>Création de personnage</strong></summary>
+
+Même problème que la carte du monde : les vignettes d'apparence (`Wish.ClothingImageButton`) ne sont pas de vrais `Selectable`, injoignables au clavier par le système générique — mais le jeu expose déjà tout le nécessaire en données publiques, pas besoin de naviguer la grille visuelle elle-même.
+
+- Race sélectionnée, sa description et sa capacité spéciale annoncées automatiquement à chaque changement.
+- Apparence (corps, cheveux, yeux, visage, torse, jambes, tête, queue) : mêmes touches que le scanner (une touche = option dans la catégorie actuelle, Ctrl+la même touche = catégorie précédente/suivante). Chaque changement annonce la catégorie et le nom de l'option choisie.
+- Ailes et couleurs pas encore couverts (voir Progression plus bas).
 
 </details>
 
@@ -201,6 +213,8 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | V | Annoncer les relations avec les PNJ |
 | U | Annoncer les niveaux de compétence |
 | X / Y | Carte du monde : lieu précédent / suivant (carte ouverte uniquement) |
+| Virgule / Point | Création de personnage : option précédente / suivante d'apparence (Ctrl+l'une des deux : catégorie précédente/suivante) |
+| Z | Annoncer les points de compétence disponibles |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
 | F12 | Menu des raccourcis (parcourable et modifiable) |
@@ -260,22 +274,25 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 <details>
 <summary><strong>Pas encore commencé</strong></summary>
 
-Repérés en explorant systématiquement les classes du jeu (`Wish.*`) au-delà des systèmes déjà couverts, pas encore attaqués :
+Repérés en explorant systématiquement les classes du jeu (`Wish.*`) au-delà des systèmes déjà couverts :
 
-- **Arbre de compétences** (`Wish.SkillTree`/`SkillTreeButton`, touche `K` par défaut du jeu) : grille 2D de nœuds à débloquer avec des points de compétence — contrairement aux relations/niveaux (juste des chiffres à annoncer), ici il faudrait une vraie navigation spatiale dans la grille, un chantier bien plus lourd que le reste du mod jusqu'ici.
-- **Création de personnage** (`Wish.NewCharacterCreator`) : écran d'apparence par grille de vignettes (corps, cheveux, yeux, visage, torse, jambes, tête, ailes, queue, couleurs) — inconnu si les systèmes génériques existants (FocusReader) en tirent déjà quelque chose d'utilisable ou pas, jamais vérifié. Potentiellement un vrai bloqueur : sans lecture d'écran ici, impossible de commencer une partie du tout.
-- **Sauvegarde/chargement de partie** (`Wish.SavePanel`/`LoadCharacterMenu`) : même remarque — jamais vérifié si la liste des sauvegardes est lisible via les systèmes génériques.
-- **Achievements, festivals saisonniers, animaux de compagnie** (`Wish.AchievementProgressManager`, `SeasonEventUI`, `PetPanel`) : contenu secondaire, pas encore regardé du tout.
+- **Achievements** : les noms/descriptions viennent des métadonnées Steam (dashboard partenaire, API Steamworks), pas des données locales du jeu — mapping ID→clé Steam à trouver, plus gros chantier que prévu pour un contenu cosmétique.
+- **Festivals saisonniers** (`Wish.SeasonEventUI`) : pas encore regardé.
+- **Animaux de compagnie** (`Wish.PetPanel`) : le panneau lui-même n'est qu'un affichage d'icônes sans donnée riche — probablement déjà couvert pour l'essentiel par la catégorie scanner "animaux et compagnons" existante, pas creusé plus loin.
+- **Couleurs en création de personnage** : gérées séparément de la grille d'apparence (voir plus bas), via un vrai `Slider` déjà couvert par Ctrl+flèche gauche/droite (voir la table des touches) — pas revérifié depuis l'ajout de la navigation d'apparence.
 
 </details>
 
 <details>
-<summary><strong>Premiers pas côté sauvegarde & création de personnage (24/08/2026)</strong></summary>
+<summary><strong>Écran de sauvegarde, création de personnage & carte du monde (24/08/2026)</strong></summary>
 
-Deux vrais bloqueurs potentiels (sans lecture d'écran ici, impossible de commencer à jouer du tout) — pas résolus entièrement, mais un premier pas concret sur chacun :
+Trois écrans repérés comme des bloqueurs potentiels (sans lecture d'écran, impossible de commencer/continuer une partie) :
 
-- **Écran de sélection de sauvegarde** : chaque emplacement de sauvegarde (`Wish.SavePanel`) lit maintenant, en un seul résumé, le nom du personnage, le jour, les niveaux de compétence et l'argent — tous des champs publics du jeu, lus directement plutôt que de deviner si la lecture générique de menu les aurait trouvés dans le bon ordre.
-- **Création de personnage** : la race sélectionnée, sa description et sa capacité spéciale sont maintenant annoncées automatiquement à chaque changement. Le reste de l'écran (apparence : corps, cheveux, yeux, visage, torse, jambes, tête, ailes, queue, couleurs — une grille de vignettes) n'est **pas** encore couvert : une vraie navigation spatiale dans cette grille serait nécessaire, jamais testée sans retour humain, donc pas commencée pour l'instant.
+- **Écran de sélection de sauvegarde** : chaque emplacement (`Wish.SavePanel`) lit en un seul résumé le nom du personnage, le jour, les niveaux de compétence et l'argent — champs publics du jeu, lus directement plutôt que de deviner si la lecture générique de menu les aurait trouvés dans le bon ordre.
+- **Carte du monde** : les lieux (`Wish.LocationName`) ne sont PAS de vrais `Selectable` (confirmé en décompilation), donc injoignables au clavier par le système générique — touches dédiées ajoutées (voir la carte "Carte du monde" plus haut).
+- **Création de personnage — race** : annoncée automatiquement à chaque changement (nom, description, capacité spéciale).
+- **Création de personnage — apparence** (corps, cheveux, yeux, visage, torse, jambes, tête, queue) : `Wish.ClothingImageButton` a le même problème que la carte (pas de vrai `Selectable`) — touches dédiées ajoutées, qui pilotent directement les données du jeu (`NewCharacterCreator.CycleLayer`, déjà fournie par le jeu lui-même) plutôt que de naviguer la grille visuelle. "Ailes" non couvert : aucune valeur `ClothingLayer` ne correspond de façon évidente, pas de mapping deviné au hasard. Couleurs non couvertes non plus (voir "pas encore commencé" plus haut).
+- **Arbre de compétences** : PAS le même genre de bloqueur que les trois précédents — `Wish.SkillNode` porte un composant `NavigationElement` qui s'ajoute lui-même un `Selectable` nu au démarrage (vu en décompilant `NavigationElement.Start`), donc probablement DÉJÀ repérable par la navigation générique de menu du mod, contrairement à la carte/l'apparence. Jamais vérifié en jeu si ça marche vraiment au clavier (le composant existe, mais rien ne garantit qu'il navigue bien). Un résumé des points de compétence disponibles par arbre a été ajouté en attendant cette confirmation — pas un remplacement pour la navigation dans la grille elle-même si jamais elle s'avère cassée.
 
 </details>
 
