@@ -506,6 +506,8 @@
     document.querySelectorAll('[data-lang="en"]').forEach(function (el) { el.hidden = lang !== "en"; });
     var toggle = document.getElementById("lang-toggle");
     if (toggle) toggle.textContent = lang === "fr" ? "English" : "Français";
+    var toTopBtn = document.getElementById("to-top");
+    if (toTopBtn) toTopBtn.setAttribute("aria-label", lang === "fr" ? "Retour en haut de la page" : "Back to top");
   }
   var savedLang = "fr";
   try { savedLang = localStorage.getItem("sunhavenaccess-lang") || "fr"; } catch (e) {}
