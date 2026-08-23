@@ -315,9 +315,9 @@
   .install-steps li { margin-bottom: 0.5em; }
 
   /* ---------- Grille de cartes de fonctionnalités ---------- */
-  /* Vraie liste (ul/li) plutôt qu'une simple div : un lecteur d'écran annonce "liste de 14
+  /* Vraie liste (ul/li) plutôt qu'une simple div : un lecteur d'écran annonce "liste de N
      éléments" en y entrant, et permet de sauter d'une fonctionnalité à l'autre au lieu de
-     n'avoir aucun repère de structure entre les 14 cartes. */
+     n'avoir aucun repère de structure entre les cartes. */
   .feature-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -614,6 +614,17 @@
 
   <li>
   <details class="card reveal">
+    <summary><span data-lang="fr">📜 Quêtes</span><span data-lang="en" hidden>📜 Quests</span></summary>
+    <ul>
+      <li><span data-lang="fr">Le journal de quêtes du jeu (touche L) est un écran purement visuel, illisible pour un lecteur d'écran — cette fonctionnalité lit directement les données de quête, sans en dépendre.</span><span data-lang="en" hidden>The game's quest journal (L key) is a purely visual screen, unreadable by a screen reader — this feature reads the quest data directly instead.</span></li>
+      <li><span data-lang="fr">Annonce automatique dès qu'une nouvelle quête est acceptée, et quand elle est rendue/terminée.</span><span data-lang="en" hidden>Automatic announcement as soon as a new quest is accepted, and when it's turned in/completed.</span></li>
+      <li><span data-lang="fr">Touche dédiée pour lister toutes les quêtes actives : nom, description, progression et où la rendre.</span><span data-lang="en" hidden>Dedicated key to list all active quests: name, description, progress, and where to turn it in.</span></li>
+    </ul>
+  </details>
+  </li>
+
+  <li>
+  <details class="card reveal">
     <summary><span data-lang="fr">🎣 Pêche</span><span data-lang="en" hidden>🎣 Fishing</span></summary>
     <ul>
       <li><span data-lang="fr">Annonce quand un poisson mord, et le résultat de chaque pression (touché / manqué / échappé).</span><span data-lang="en" hidden>Announces when a fish bites, and the result of each press (hit / miss / escaped).</span></li>
@@ -697,11 +708,12 @@
         <tr><td>N</td><td><span data-lang="fr">Personnage proche suivant</span><span data-lang="en" hidden>Next nearby character</span></td></tr>
         <tr><td>B</td><td><span data-lang="fr">Répéter la dernière annonce</span><span data-lang="en" hidden>Repeat the last announcement</span></td></tr>
         <tr><td>H</td><td><span data-lang="fr">Santé et mana</span><span data-lang="en" hidden>Health and mana</span></td></tr>
+        <tr><td>G</td><td><span data-lang="fr">Annoncer les quêtes actives</span><span data-lang="en" hidden>Announce active quests</span></td></tr>
         <tr><td>F9</td><td><span data-lang="fr">Verbosité des déplacements</span><span data-lang="en" hidden>Movement verbosity</span></td></tr>
         <tr><td>F12</td><td><span data-lang="fr">Menu des raccourcis</span><span data-lang="en" hidden>Keybindings menu</span></td></tr>
         <tr><td><span data-lang="fr">Pavé 5</span><span data-lang="en" hidden>Numpad 5</span></td><td><span data-lang="fr">Clic gauche (monde)</span><span data-lang="en" hidden>Left click (world)</span></td></tr>
         <tr><td>J</td><td><span data-lang="fr">Souris directionnelle</span><span data-lang="en" hidden>Directional mouse</span></td></tr>
-        <tr><td>K</td><td><span data-lang="fr">Activer/désactiver le bip de visée en pêche</span><span data-lang="en" hidden>Toggle the fishing aim beep</span></td></tr>
+        <tr><td>F8</td><td><span data-lang="fr">Activer/désactiver le bip de visée en pêche</span><span data-lang="en" hidden>Toggle the fishing aim beep</span></td></tr>
         <tr><td>C</td><td><span data-lang="fr">Ouvrir le tchat / la console</span><span data-lang="en" hidden>Open chat / console</span></td></tr>
         <tr><td><span data-lang="fr">Flèches + Entrée</span><span data-lang="en" hidden>Arrows + Enter</span></td><td><span data-lang="fr">Naviguer / valider dans un menu</span><span data-lang="en" hidden>Navigate / confirm in a menu</span></td></tr>
         <tr><td><span data-lang="fr">Ctrl+Tab / Ctrl+Maj+Tab</span><span data-lang="en" hidden>Ctrl+Tab / Ctrl+Shift+Tab</span></td><td><span data-lang="fr">Changer d'onglet dans le menu principal</span><span data-lang="en" hidden>Switch tab in the main menu</span></td></tr>

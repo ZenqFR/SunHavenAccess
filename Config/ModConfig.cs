@@ -40,6 +40,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> Clock;
         public static ConfigEntry<KeyCode> Status;
         public static ConfigEntry<KeyCode> FishingToneToggle;
+        public static ConfigEntry<KeyCode> AnnounceQuests;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -133,8 +134,21 @@ namespace SunHavenAccess.Config
             // Fonctionnalité nouvelle et non testée en conditions réelles (bip continu de visée
             // pendant le mini-jeu de pêche, voir Speech/FishingToneCue.cs) : une touche pour le
             // couper au cas où le son ne conviendrait pas, sans devoir quitter la pêche.
-            FishingToneToggle = Bind(config, section, "BipPeche", KeyCode.K,
+            // CONFLIT CORRIGÉ (23/08/2026) : K était aussi la touche par défaut du jeu pour
+            // Button.Skills (ouverture du menu Compétences, Wish.UserSettings.DefaultKeybinds)
+            // — repérée en travaillant sur les quêtes, jamais recroisée avec la table depuis
+            // l'ajout de cette touche. Déplacée sur F8, libre des deux côtés (jeu et mod).
+            FishingToneToggle = Bind(config, section, "BipPecheV2", KeyCode.F8,
                 "Active ou désactive le bip continu de visée pendant le mini-jeu de pêche.", "Activer/désactiver le bip de visée en pêche");
+
+            // Quêtes (Wish.QuestList / Wish.Quest) : totalement absent du mod jusqu'ici. L
+            // (Button.Quests par défaut) ouvre le journal de quêtes du jeu, mais son contenu
+            // n'est pas lisible nativement par un lecteur d'écran (liste visuelle, pas de
+            // Selectable clavier) — cette touche lit directement les données de quête, sans
+            // dépendre de l'écran du journal. G : aucune touche mnémotechnique libre restante
+            // ("Q" est Spell1 du jeu), simple touche libre des deux côtés.
+            AnnounceQuests = Bind(config, section, "Quetes", KeyCode.G,
+                "Annonce toutes vos quêtes actives : nom, progression, où les rendre.", "Annoncer les quêtes actives");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

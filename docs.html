@@ -173,8 +173,8 @@
     box-shadow: var(--shadow);
   }
 
-  /* Vraie liste pour le groupe de 8 sous-thèmes (agriculture, boutiques...) : un lecteur
-     d'écran annonce "liste de 8 éléments" au lieu de n'offrir aucun repère de structure. */
+  /* Vraie liste pour le groupe de sous-thèmes (agriculture, boutiques...) : un lecteur
+     d'écran annonce "liste de N éléments" au lieu de n'offrir aucun repère de structure. */
   .topic-list { list-style: none; margin: 0; padding: 0; }
   .topic-list > li { margin: 0; }
 
@@ -275,7 +275,7 @@
       <li><a href="#deplacement"><span data-lang="fr">3. Déplacement &amp; case devant vous</span><span data-lang="en" hidden>3. Movement &amp; tile ahead</span></a></li>
       <li><a href="#menus"><span data-lang="fr">4. Menus, inventaire, dialogues</span><span data-lang="en" hidden>4. Menus, inventory, dialogue</span></a></li>
       <li><a href="#scanner"><span data-lang="fr">5. Scanner &amp; cheminement automatique</span><span data-lang="en" hidden>5. Scanner &amp; auto-pathing</span></a></li>
-      <li><a href="#autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, pêche, minage, donjons, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, fishing, mining, dungeons, clock</span></a></li>
+      <li><a href="#autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, quêtes, pêche, minage, donjons, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, quests, fishing, mining, dungeons, clock</span></a></li>
     </ul>
   </div>
 
@@ -297,9 +297,10 @@
       <tr><td>N</td><td><span data-lang="fr">Passe au personnage proche suivant et l'annonce (nom, direction, distance).</span><span data-lang="en" hidden>Moves to the next nearby character and announces it (name, direction, distance).</span></td></tr>
       <tr><td>B</td><td><span data-lang="fr">Répète la dernière chose annoncée par le mod.</span><span data-lang="en" hidden>Repeats the last thing the mod announced.</span></td></tr>
       <tr><td>H</td><td><span data-lang="fr">Annonce votre santé et votre mana actuels.</span><span data-lang="en" hidden>Announces your current health and mana.</span></td></tr>
+      <tr><td>G</td><td><span data-lang="fr">Annonce toutes vos quêtes actives (voir <a href="#autres">Quêtes</a> plus bas).</span><span data-lang="en" hidden>Announces all your active quests (see <a href="#autres">Quests</a> below).</span></td></tr>
       <tr><td>F9</td><td><span data-lang="fr">Active/désactive l'annonce automatique de la case devant vous en marchant.</span><span data-lang="en" hidden>Toggles automatic announcement of the tile ahead while walking.</span></td></tr>
       <tr><td>F11</td><td><span data-lang="fr">Test sonore de diagnostic (joue un son Windows, indépendant de la synthèse vocale).</span><span data-lang="en" hidden>Diagnostic sound test (plays a Windows sound, independent of speech synthesis).</span></td></tr>
-      <tr><td>K</td><td><span data-lang="fr">Active/désactive le bip continu de visée pendant la pêche (voir <a href="#autres">Pêche</a> plus bas).</span><span data-lang="en" hidden>Toggles the continuous aiming beep while fishing (see <a href="#autres">Fishing</a> below).</span></td></tr>
+      <tr><td>F8</td><td><span data-lang="fr">Active/désactive le bip continu de visée pendant la pêche (voir <a href="#autres">Pêche</a> plus bas).</span><span data-lang="en" hidden>Toggles the continuous aiming beep while fishing (see <a href="#autres">Fishing</a> below).</span></td></tr>
     </tbody>
   </table>
 
@@ -403,7 +404,7 @@
     </p>
   </div>
 
-  <h2 class="section-title" id="autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, pêche, minage, donjons, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, fishing, mining, dungeons, clock</span></h2>
+  <h2 class="section-title" id="autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, quêtes, pêche, minage, donjons, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, quests, fishing, mining, dungeons, clock</span></h2>
 
   <ul class="topic-list">
   <li>
@@ -442,11 +443,24 @@
   </li>
 
   <li>
+  <h3 class="sub-title">📜 <span data-lang="fr">Quêtes</span><span data-lang="en" hidden>Quests</span></h3>
+  <div class="card">
+    <ul>
+      <li><span data-lang="fr">Le journal de quêtes du jeu (touche <strong>L</strong> par défaut) est un écran purement visuel : liste défilante sans Selectable navigable au clavier, illisible par les systèmes génériques du mod. Cette fonctionnalité lit directement les données de quête (<code>Wish.QuestList</code>), sans en dépendre.</span><span data-lang="en" hidden>The game's quest journal (<strong>L</strong> key by default) is a purely visual screen: a scrolling list with no keyboard-navigable Selectable, unreadable by the mod's generic systems. This feature reads the quest data (<code>Wish.QuestList</code>) directly instead.</span></li>
+      <li><span data-lang="fr">Annonce automatique dès qu'une nouvelle quête est acceptée (nom).</span><span data-lang="en" hidden>Automatic announcement as soon as a new quest is accepted (name).</span></li>
+      <li><span data-lang="fr">Annonce automatique quand une quête est rendue/terminée (nom).</span><span data-lang="en" hidden>Automatic announcement when a quest is turned in/completed (name).</span></li>
+      <li><span data-lang="fr">Touche <strong>G</strong> pour lister toutes les quêtes actives : nom, description, nombre d'objectifs complétés, et où la rendre une fois prête.</span><span data-lang="en" hidden><strong>G</strong> key to list all active quests: name, description, number of completed objectives, and where to turn it in once ready.</span></li>
+    </ul>
+    <p class="note"><span data-lang="fr">⚠️ Fonctionnalité toute nouvelle, jamais entendue en conditions réelles. Le texte de progression détaillé par objectif (<code>questProgress</code>) est inclus tel quel — son format exact n'a pas pu être confirmé sans décompiler chaque type d'objectif individuellement, peut être incomplet ou redondant avec la description.</span><span data-lang="en" hidden>⚠️ Brand new feature, never heard under real conditions. The detailed per-objective progress text (<code>questProgress</code>) is included as-is — its exact format couldn't be confirmed without decompiling every objective type individually, may be incomplete or redundant with the description.</span></p>
+  </div>
+  </li>
+
+  <li>
   <h3 class="sub-title">🎣 <span data-lang="fr">Pêche</span><span data-lang="en" hidden>Fishing</span></h3>
   <div class="card">
     <ul>
       <li><span data-lang="fr">Annonce quand un poisson mord, et le résultat de chaque pression (touché / manqué / poisson échappé).</span><span data-lang="en" hidden>Announces when a fish bites, and the result of each press (hit / miss / fish escaped).</span></li>
-      <li><span data-lang="fr"><strong>Bip continu de visée</strong> (touche <strong>K</strong> pour l'activer/désactiver) : sa hauteur varie avec la distance à la zone gagnante — grave = loin, aigu = proche, double bip distinctif dedans. Une jauge unique oscille toute seule dans ce mini-jeu (contrairement à Stardew Valley), donc un seul repère continu suffit à viser au son.</span><span data-lang="en" hidden><strong>Continuous aiming beep</strong> (<strong>K</strong> key to toggle): its pitch varies with distance to the winning zone — low = far, high = close, distinctive double-beep inside it. A single gauge oscillates on its own in this minigame (unlike Stardew Valley), so one continuous cue is enough to aim by ear.</span></li>
+      <li><span data-lang="fr"><strong>Bip continu de visée</strong> (touche <strong>F8</strong> pour l'activer/désactiver) : sa hauteur varie avec la distance à la zone gagnante — grave = loin, aigu = proche, double bip distinctif dedans. Une jauge unique oscille toute seule dans ce mini-jeu (contrairement à Stardew Valley), donc un seul repère continu suffit à viser au son.</span><span data-lang="en" hidden><strong>Continuous aiming beep</strong> (<strong>F8</strong> key to toggle): its pitch varies with distance to the winning zone — low = far, high = close, distinctive double-beep inside it. A single gauge oscillates on its own in this minigame (unlike Stardew Valley), so one continuous cue is enough to aim by ear.</span></li>
     </ul>
     <p class="note"><span data-lang="fr">⚠️ Le bip de visée est tout nouveau, jamais entendu en conditions réelles — fréquences et tempo choisis au jugé, à affiner avec des retours en jeu.</span><span data-lang="en" hidden>⚠️ The aiming beep is brand new, never heard under real conditions — frequencies and tempo chosen by best guess, to be refined with real in-game feedback.</span></p>
   </div>

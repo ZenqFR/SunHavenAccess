@@ -34,6 +34,7 @@ namespace SunHavenAccess
             TolkSpeech.Init(Log);
             FarmingAnnouncer.Init();
             CombatStateAnnouncer.Init();
+            QuestAnnouncer.Init();
 
             _harmony = new Harmony(PluginGuid);
             try

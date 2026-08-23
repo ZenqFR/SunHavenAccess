@@ -83,6 +83,17 @@ Beaucoup d'actions de Sun Haven (arroser, labourer, récolter, miner, attaquer) 
 </details>
 
 <details>
+<summary><strong>Quêtes</strong></summary>
+
+Le jeu ouvre son journal de quêtes avec `L` par défaut, mais c'est un écran purement visuel (liste défilante sans navigation clavier native) — les systèmes génériques du mod n'en tirent rien. Cette fonctionnalité lit directement les données de quête du jeu, sans dépendre de cet écran.
+
+- Annonce automatique dès qu'une nouvelle quête est acceptée (nom).
+- Annonce automatique quand une quête est rendue/terminée (nom).
+- Touche dédiée pour lister toutes les quêtes actives à la demande : nom, description, progression (X/Y objectifs), et où la rendre une fois prête.
+
+</details>
+
+<details>
 <summary><strong>Pêche</strong></summary>
 
 La pêche est un mini-jeu en temps réel — un vrai point faible d'accessibilité même chez stardew-access. En décompilant le mini-jeu (`Wish.Bobber`), découverte que contrairement à Stardew Valley (deux éléments mobiles indépendants à suivre), ici une seule jauge oscille TOUTE SEULE en aller-retour automatique : il suffit d'appuyer au bon moment pendant qu'elle traverse une zone gagnante fixe.
@@ -155,7 +166,7 @@ Changer d'objet en main (touches 1-0, molette...) annonce son nom et sa quantit�
 
 Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.sunhavenaccess.cfg`, ou en jeu via un menu vocal dédié qui liste tous les raccourcis, ce qu'ils font, et permet de les réassigner à la volée.
 
-> **Vérifiées sans conflit** avec les touches par défaut du jeu (table `Wish.UserSettings.DefaultKeybinds` lue en décompilation) — plusieurs touches ont dû être déplacées le 23/08/2026 en découvrant que F1-F7 sont en fait les émotes du personnage par défaut (F2-F7 utilisées jusque-là déclenchaient donc aussi une émote à chaque pression), qu'Espace est le saut, et que T est un sort. **Exception assumée** : la touche d'aide a ensuite été remise sur `F1` sur demande explicite de l'utilisateur malgré ce conflit connu — elle déclenche donc aussi l'émote 1 du personnage à chaque pression.
+> **Vérifiées sans conflit** avec les touches par défaut du jeu (table `Wish.UserSettings.DefaultKeybinds` lue en décompilation) — plusieurs touches ont dû être déplacées le 23/08/2026 en découvrant que F1-F7 sont en fait les émotes du personnage par défaut (F2-F7 utilisées jusque-là déclenchaient donc aussi une émote à chaque pression), qu'Espace est le saut, et que T est un sort. **Exception assumée** : la touche d'aide a ensuite été remise sur `F1` sur demande explicite de l'utilisateur malgré ce conflit connu — elle déclenche donc aussi l'émote 1 du personnage à chaque pression. Second conflit repéré le même jour en travaillant sur les quêtes : `K` était aussi la touche par défaut du menu Compétences (`Button.Skills`) — déplacée sur `F8`, libre des deux côtés.
 
 | Touche par défaut | Action |
 |---|---|
@@ -166,13 +177,14 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | N | Personnage proche suivant |
 | B | Répéter la dernière annonce |
 | H | Santé et mana |
+| G | Annoncer les quêtes actives |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
 | F12 | Menu des raccourcis (parcourable et modifiable) |
 | Pavé 4 / Pavé 6 | Tourner à gauche / à droite sans se déplacer |
 | Pavé 5 | Clic gauche (souris) |
 | J | Souris directionnelle |
-| K | Activer/désactiver le bip de visée en pêche |
+| F8 | Activer/désactiver le bip de visée en pêche |
 | Ctrl + : (ou Ctrl + /) | Clic droit (souris) |
 | C | Ouvrir le tchat / la console du jeu *(remplace Entrée, qui entrait en conflit avec la validation de menu)* |
 | Flèches directionnelles | Naviguer dans un menu |
@@ -214,6 +226,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Boutiques et artisanat** : noms d'objets, prix (avec devise correctement annoncée : pièces d'or/tickets/orbes), quantités possédées/requises pour chaque ingrédient ("3/5"), temps de fabrication — passent tous par les mêmes systèmes génériques de lecture d'infobulle/texte que le reste du mod, mais jamais testés spécifiquement sur un écran de boutique ou d'artisanat réel.
 - **Courrier** : le contenu complet d'une lettre (message, signature, post-scriptum) est maintenant lu automatiquement à l'ouverture de la boîte aux lettres, sur le même principe que les dialogues — jamais testé en jeu. Les objets éventuellement joints ne sont pour l'instant pas nommés automatiquement (juste leur icône, comme dans les autres menus).
 - **Pêche** : annonce touche/résultat + bip continu de visée, voir la carte dédiée plus haut — le bip est la fonctionnalité la moins certaine de tout le mod (fréquences/tempo jamais entendus en jeu).
+- **Quêtes** : acceptation/rendu automatiquement annoncés, touche dédiée pour lister les quêtes actives (voir la carte dédiée plus haut) — tous les champs lus sont publics et déjà remplis par le jeu (`QuestPanel.questDescription`/`questProgress`/`questCompleteTMP`), mais jamais entendu en conditions réelles. Le format exact de `questProgress` (texte de progression détaillé par objectif) n'a pas pu être confirmé sans décompiler chaque type de `QuestRequirement` individuellement — inclus tel quel, peut être incomplet ou redondant avec la description.
 - **Carte du monde** : décompilation de `Wish.Map`/`Wish.LocationName` montrant que, contrairement au menu principal (souris uniquement), cet écran liste vraiment les lieux via la sélection native d'Unity — chaque nom de lieu est un vrai bouton avec son texte visible, et le sélectionner ouvre un panneau de description également piloté nativement. Probablement déjà accessible via les systèmes génériques existants (lecture de la sélection courante + infobulle), reclassée ici depuis "pas encore développé" — jamais testée en jeu pour autant.
 - **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
 
