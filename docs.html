@@ -173,6 +173,11 @@
     box-shadow: var(--shadow);
   }
 
+  /* Vraie liste pour le groupe de 8 sous-thèmes (agriculture, boutiques...) : un lecteur
+     d'écran annonce "liste de 8 éléments" au lieu de n'offrir aucun repère de structure. */
+  .topic-list { list-style: none; margin: 0; padding: 0; }
+  .topic-list > li { margin: 0; }
+
   table.keys { width: 100%; border-collapse: collapse; margin: 0.6em 0 1.6em; font-size: 0.92rem; }
   table.keys th, table.keys td {
     text-align: left; padding: 0.55em 0.7em; border-bottom: 1px solid var(--bg-card-border);
@@ -270,7 +275,7 @@
       <li><a href="#deplacement"><span data-lang="fr">3. Déplacement &amp; case devant vous</span><span data-lang="en" hidden>3. Movement &amp; tile ahead</span></a></li>
       <li><a href="#menus"><span data-lang="fr">4. Menus, inventaire, dialogues</span><span data-lang="en" hidden>4. Menus, inventory, dialogue</span></a></li>
       <li><a href="#scanner"><span data-lang="fr">5. Scanner &amp; cheminement automatique</span><span data-lang="en" hidden>5. Scanner &amp; auto-pathing</span></a></li>
-      <li><a href="#autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, pêche, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, fishing, clock</span></a></li>
+      <li><a href="#autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, pêche, minage, donjons, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, fishing, mining, dungeons, clock</span></a></li>
     </ul>
   </div>
 
@@ -294,6 +299,7 @@
       <tr><td>H</td><td><span data-lang="fr">Annonce votre santé et votre mana actuels.</span><span data-lang="en" hidden>Announces your current health and mana.</span></td></tr>
       <tr><td>F9</td><td><span data-lang="fr">Active/désactive l'annonce automatique de la case devant vous en marchant.</span><span data-lang="en" hidden>Toggles automatic announcement of the tile ahead while walking.</span></td></tr>
       <tr><td>F11</td><td><span data-lang="fr">Test sonore de diagnostic (joue un son Windows, indépendant de la synthèse vocale).</span><span data-lang="en" hidden>Diagnostic sound test (plays a Windows sound, independent of speech synthesis).</span></td></tr>
+      <tr><td>K</td><td><span data-lang="fr">Active/désactive le bip continu de visée pendant la pêche (voir <a href="#autres">Pêche</a> plus bas).</span><span data-lang="en" hidden>Toggles the continuous aiming beep while fishing (see <a href="#autres">Fishing</a> below).</span></td></tr>
     </tbody>
   </table>
 
@@ -397,18 +403,24 @@
     </p>
   </div>
 
-  <h2 class="section-title" id="autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, pêche, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, fishing, clock</span></h2>
+  <h2 class="section-title" id="autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, pêche, minage, donjons, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, fishing, mining, dungeons, clock</span></h2>
 
+  <ul class="topic-list">
+  <li>
   <h3 class="sub-title">🌾 <span data-lang="fr">Agriculture</span><span data-lang="en" hidden>Farming</span></h3>
   <div class="card">
     <p><span data-lang="fr">Confirmation vocale non-intrusive à chaque action : labourer, arroser, planter, récolter, arrosoir vide/rempli, culture infusée de mana. Réagit directement aux évènements internes du jeu, pas à une détection approximative.</span><span data-lang="en" hidden>Unobtrusive voice confirmation for every action: tilling, watering, planting, harvesting, empty/full watering can, mana-infused crop. Reacts directly to the game's internal events, not an approximate detection.</span></p>
   </div>
+  </li>
 
+  <li>
   <h3 class="sub-title">🛒 <span data-lang="fr">Boutiques &amp; artisanat</span><span data-lang="en" hidden>Shops &amp; crafting</span></h3>
   <div class="card">
     <p><span data-lang="fr">Nom, prix (avec la bonne devise : pièces d'or, tickets ou orbes) et quantité restante en boutique. En artisanat : nom et quantité possédée/requise de chaque ingrédient ("3/5"), nom de l'objet fabriqué, temps de fabrication.</span><span data-lang="en" hidden>Name, price (with the correct currency: gold coins, tickets, or orbs) and remaining quantity in shops. In crafting: name and owned/required amount for each ingredient ("3/5"), the crafted item's name, and craft time.</span></p>
   </div>
+  </li>
 
+  <li>
   <h3 class="sub-title">⚔️ <span data-lang="fr">Combat</span><span data-lang="en" hidden>Combat</span></h3>
   <div class="card">
     <ul>
@@ -416,24 +428,57 @@
       <li><span data-lang="fr">Entrée et sortie de combat annoncées.</span><span data-lang="en" hidden>Entering and leaving combat announced.</span></li>
       <li><span data-lang="fr">Défaite d'un ennemi annoncée par son nom.</span><span data-lang="en" hidden>An enemy's defeat announced by name.</span></li>
       <li><span data-lang="fr">Mort du personnage annoncée.</span><span data-lang="en" hidden>Your character's death announced.</span></li>
+      <li><span data-lang="fr">Santé et mana consultables à tout moment (touche <strong>H</strong>).</span><span data-lang="en" hidden>Health and mana can be checked at any time (<strong>H</strong> key).</span></li>
     </ul>
     <p class="note"><span data-lang="fr">Volontairement, aucune annonce à chaque coup <strong>porté</strong> par le joueur — ça spammerait énormément en combat rapide.</span><span data-lang="en" hidden>Deliberately, no announcement for every hit the player <strong>lands</strong> — it would spam heavily in fast combat.</span></p>
   </div>
+  </li>
 
+  <li>
   <h3 class="sub-title">✉️ <span data-lang="fr">Courrier</span><span data-lang="en" hidden>Mail</span></h3>
   <div class="card">
     <p><span data-lang="fr">Le contenu complet d'une lettre (message, signature, post-scriptum) est lu automatiquement dès l'ouverture de la boîte aux lettres, sur le même principe que les dialogues. Les objets éventuellement joints ne sont pour l'instant pas nommés automatiquement (juste leur icône).</span><span data-lang="en" hidden>A letter's full content (message, sign-off, postscript) is read automatically as soon as the mailbox opens, on the same principle as dialogue. Any attached items aren't automatically named yet (just their icon).</span></p>
   </div>
+  </li>
 
+  <li>
   <h3 class="sub-title">🎣 <span data-lang="fr">Pêche</span><span data-lang="en" hidden>Fishing</span></h3>
   <div class="card">
-    <p><span data-lang="fr">Annonce quand un poisson mord, et le résultat de chaque pression (touché / manqué / poisson échappé). Le cœur du mini-jeu (viser une jauge qui glisse, à l'oreille seule) reste un point faible non résolu — un vrai repère audio continu synchronisé à la jauge n'a pas encore été développé.</span><span data-lang="en" hidden>Announces when a fish bites, and the result of each press (hit / miss / fish escaped). The core of the minigame (aiming a sliding gauge by ear alone) remains an unsolved weak point — a real continuous audio cue synced to the gauge hasn't been built yet.</span></p>
+    <ul>
+      <li><span data-lang="fr">Annonce quand un poisson mord, et le résultat de chaque pression (touché / manqué / poisson échappé).</span><span data-lang="en" hidden>Announces when a fish bites, and the result of each press (hit / miss / fish escaped).</span></li>
+      <li><span data-lang="fr"><strong>Bip continu de visée</strong> (touche <strong>K</strong> pour l'activer/désactiver) : sa hauteur varie avec la distance à la zone gagnante — grave = loin, aigu = proche, double bip distinctif dedans. Une jauge unique oscille toute seule dans ce mini-jeu (contrairement à Stardew Valley), donc un seul repère continu suffit à viser au son.</span><span data-lang="en" hidden><strong>Continuous aiming beep</strong> (<strong>K</strong> key to toggle): its pitch varies with distance to the winning zone — low = far, high = close, distinctive double-beep inside it. A single gauge oscillates on its own in this minigame (unlike Stardew Valley), so one continuous cue is enough to aim by ear.</span></li>
+    </ul>
+    <p class="note"><span data-lang="fr">⚠️ Le bip de visée est tout nouveau, jamais entendu en conditions réelles — fréquences et tempo choisis au jugé, à affiner avec des retours en jeu.</span><span data-lang="en" hidden>⚠️ The aiming beep is brand new, never heard under real conditions — frequencies and tempo chosen by best guess, to be refined with real in-game feedback.</span></p>
   </div>
+  </li>
 
+  <li>
+  <h3 class="sub-title">⛏️ <span data-lang="fr">Minage &amp; coupe de bois</span><span data-lang="en" hidden>Mining &amp; woodcutting</span></h3>
+  <div class="card">
+    <ul>
+      <li><span data-lang="fr">Annonce quand l'outil en main n'est pas assez puissant pour un rocher ou un arbre donné — le jeu ne donne autrement aucun indice quand un coup ne fait rien.</span><span data-lang="en" hidden>Announces when the tool in hand isn't strong enough for a given rock or tree — the game otherwise gives no clue at all when a hit does nothing.</span></li>
+      <li><span data-lang="fr">Confirmation vocale quand un rocher se brise ou qu'un arbre est abattu.</span><span data-lang="en" hidden>Voice confirmation when a rock breaks or a tree is felled.</span></li>
+    </ul>
+  </div>
+  </li>
+
+  <li>
+  <h3 class="sub-title">🏰 <span data-lang="fr">Donjon de combat</span><span data-lang="en" hidden>Combat dungeon</span></h3>
+  <div class="card">
+    <ul>
+      <li><span data-lang="fr">Une succession de salles à vider de tous leurs ennemis pour avancer d'étage en étage.</span><span data-lang="en" hidden>A series of rooms to clear of all enemies to advance floor by floor.</span></li>
+      <li><span data-lang="fr">Annonce du numéro d'étage à l'entrée d'une salle, et confirmation quand elle est nettoyée (porte ouverte).</span><span data-lang="en" hidden>Announces the floor number on entering a room, and confirms when it's cleared (door opens).</span></li>
+    </ul>
+  </div>
+  </li>
+
+  <li>
   <h3 class="sub-title">☀️ <span data-lang="fr">Horloge, calendrier &amp; météo</span><span data-lang="en" hidden>Clock, calendar &amp; weather</span></h3>
   <div class="card">
     <p><span data-lang="fr">La touche <strong>O</strong> annonce l'heure, le jour de la semaine, le jour du mois, la saison, l'année et la météo actuelle (pluie, neige légère, canicule, brouillard, vent, ou ciel dégagé) — rien de tout ça n'était accessible autrement que visuellement.</span><span data-lang="en" hidden>The <strong>O</strong> key announces the time, day of the week, day of the month, season, year, and current weather (rain, light snow, heatwave, fog, wind, or clear skies) — none of this was accessible any other way than visually.</span></p>
   </div>
+  </li>
+  </ul>
 
 </main>
 
