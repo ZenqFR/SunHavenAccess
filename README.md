@@ -67,6 +67,14 @@ Beaucoup d'actions de Sun Haven (arroser, labourer, récolter, miner, attaquer) 
 </details>
 
 <details>
+<summary><strong>Boutiques & artisanat</strong></summary>
+
+- Nom de l'objet, prix (avec la devise correctement annoncée : pièces d'or, tickets ou orbes — les icônes de monnaie ne disparaissent plus silencieusement du texte lu) et quantité restante en boutique.
+- En artisanat : nom et quantité possédée/requise de chaque ingrédient ("3/5"), nom de l'objet fabriqué, temps de fabrication.
+
+</details>
+
+<details>
 <summary><strong>Scanner par catégories (façon Object Tracker de stardew-access)</strong></summary>
 
 Repère tout ce qui se trouve à proximité, par catégorie, trié du plus proche au plus loin :
@@ -156,13 +164,14 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 
 - Description du TYPE de terrain hors zone cultivable (herbe, sable, pierre...) — la présence d'eau est fiable (donnée de jeu directe), le reste est déduit du nom brut des tuiles et peut nécessiter des ajustements de traduction.
 - Cheminement automatique en présence d'obstacles complexes (le masque de collision est déduit dynamiquement, pas testé sur tous les types de terrain).
+- **Boutiques et artisanat** : noms d'objets, prix (avec devise correctement annoncée : pièces d'or/tickets/orbes), quantités possédées/requises pour chaque ingrédient ("3/5"), temps de fabrication — passent tous par les mêmes systèmes génériques de lecture d'infobulle/texte que le reste du mod, mais jamais testés spécifiquement sur un écran de boutique ou d'artisanat réel.
 
 </details>
 
 <details>
 <summary><strong>Pas encore développé</strong></summary>
 
-- Narration fine des menus spécifiques (artisanat, cuisine, courrier, boutiques détaillées avec prix).
+- Narration fine du courrier.
 - Pêche et minage (les mini-jeux en temps réel sont un point faible connu même chez stardew-access).
 - Donjons/salle de combat spécifiques.
 - Carte du monde (fondamentalement visuelle, pas encore de solution accessible envisagée).
