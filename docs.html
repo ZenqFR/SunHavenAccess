@@ -19,16 +19,18 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* Même thème que la page principale (clair et VIF, multi-teintes — jaune soleil/bleu ciel/
-     vert prairie plutôt qu'un camaïeu ambre unique, pour rester distinct de la page Sku
-     sombre/bois. Repli sombre automatique selon la préférence système). */
+  /* Même thème "ciel de ferme" que la page principale (index.html) : le dégradé bleu ciel ->
+     or habille toute la page (couleurs FIXES, pas de variante sombre — voir le commentaire
+     détaillé dans index.html pour le raisonnement complet), contenu porté par des panneaux
+     "verre" translucides. */
   :root {
-    --bg: #fbfaf2;
-    --bg-card: #ffffff;
-    --bg-card-border: #ecdf9e;
+    --bg-card: rgba(255, 255, 255, 0.88);
+    --bg-card-border: rgba(255, 255, 255, 0.7);
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.75);
     --text: #1f2b30;
-    --text-dim: #52676d;
-    --text-faint: #8aa0a3;
+    --text-dim: #3d5158;
+    --text-faint: #5e747a;
     --accent: #ffb400;
     --accent-strong: #c97a00;
     --accent-text: #241500;
@@ -36,54 +38,32 @@
     --leaf-text: #1c7a28;
     --sky: #1f97d4;
     --sky-text: #0d6ea3;
-    --pill-bg: #fff2c9;
-    --pill-border: #ffe08a;
-    --focus: #1f97d4;
+    --pill-bg: rgba(255, 255, 255, 0.55);
+    --pill-border: rgba(255, 255, 255, 0.75);
+    --focus: #0d6ea3;
     --radius: 14px;
     --sun: #ffb400;
-    --shadow: 0 1px 2px rgba(31, 43, 48, 0.07), 0 8px 24px rgba(31, 43, 48, 0.09);
-    --nav-bg-translucent: rgba(251, 250, 242, 0.92);
+    --shadow: 0 1px 2px rgba(31, 43, 48, 0.08), 0 8px 24px rgba(31, 43, 48, 0.14);
+    --nav-bg-translucent: rgba(255, 255, 255, 0.78);
     --nav-h: 52px;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0c1520;
-      --bg-card: #13202c;
-      --bg-card-border: #24384a;
-      --text: #eaf3f5;
-      --text-dim: #a9c1c9;
-      --text-faint: #7996a0;
-      --accent: #ffc933;
-      --accent-strong: #ffd866;
-      --accent-text: #241500;
-      --leaf: #5fd671;
-      --leaf-text: #8fe89c;
-      --sky: #5cc2f2;
-      --sky-text: #8fd7f7;
-      --pill-bg: #1b2c3a;
-      --pill-border: #2f4a5f;
-      --focus: #5cc2f2;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.4);
-      --nav-bg-translucent: rgba(12, 21, 32, 0.88);
-    }
-  }
-
   * { box-sizing: border-box; }
-  html { color-scheme: light dark; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
+  html { color-scheme: light; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
   }
 
+  /* Dégradé étiré sur toute la hauteur de la page (pas background-attachment: fixed, qui
+     provoque un bug de rendu — fond blanc au défilement — combiné aux backdrop-filter des
+     panneaux verre ci-dessous). Voir index.html pour le détail. */
   body {
     margin: 0;
-    background: var(--bg);
-    background-image:
-      radial-gradient(circle at 10% -8%, rgba(255, 180, 0, 0.2), transparent 42%),
-      radial-gradient(circle at 100% -4%, rgba(31, 151, 212, 0.14), transparent 42%),
-      radial-gradient(circle at 30% 115%, rgba(47, 168, 62, 0.12), transparent 50%);
+    background: linear-gradient(160deg, #48c6f4 0%, #7fd9ce 32%, #ffd766 68%, #ffa72e 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     color: var(--text);
     font-family: "Work Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
@@ -107,42 +87,54 @@
   .skip-link:focus { left: 0; }
 
   .portfolio-bar {
-    display: flex; justify-content: center; align-items: center;
-    flex-wrap: wrap; gap: 0.5em; padding: 0.5em 1em;
-    font-size: 0.82rem; background: var(--pill-bg);
-    border-bottom: 1px solid var(--pill-border); color: var(--text-faint);
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 0.6em; padding: 0.55em 1.1em;
+    font-size: 0.82rem; background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--glass-border); color: var(--text-faint);
   }
+  .portfolio-bar ul {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em;
+    margin: 0; padding: 0; list-style: none;
+  }
+  .portfolio-bar li:not(:last-child)::after { content: "·"; margin-left: 0.5em; color: var(--text-faint); }
   .portfolio-bar a { color: var(--text-dim); text-decoration: none; }
-  .portfolio-bar a:hover { color: var(--accent-strong); text-decoration: underline; }
+  .portfolio-bar a:hover, .portfolio-bar a:focus-visible { color: var(--accent-strong); text-decoration: underline; }
   .portfolio-bar [aria-current="page"] { color: var(--accent-strong); font-weight: 600; }
+  .portfolio-bar #lang-toggle {
+    background: transparent; border: 1px solid var(--glass-border); color: var(--text-dim);
+    font-size: 0.82rem; padding: 0.3em 0.8em; border-radius: 999px; cursor: pointer; flex-shrink: 0;
+  }
+  .portfolio-bar #lang-toggle:hover, .portfolio-bar #lang-toggle:focus-visible { border-color: var(--accent); color: var(--accent-strong); }
 
   .quick-nav {
     position: sticky; top: 0; z-index: 15;
-    display: flex; justify-content: center; gap: 0.3em; flex-wrap: wrap;
-    padding: 0.6em 1em; background: var(--nav-bg-translucent);
-    backdrop-filter: blur(8px);
+    display: flex; justify-content: center; align-items: center; gap: 0.3em; flex-wrap: wrap;
+    padding: 0.65em 1em; background: var(--nav-bg-translucent);
+    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--bg-card-border);
+    box-shadow: 0 2px 12px rgba(31, 43, 48, 0.1);
     min-height: var(--nav-h);
   }
   .quick-nav a {
     color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 600;
-    padding: 0.4em 0.8em; border-radius: 999px;
-    transition: background 0.15s ease, color 0.15s ease; white-space: nowrap;
+    padding: 0.45em 0.9em; border-radius: 999px;
+    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease; white-space: nowrap;
   }
-  .quick-nav a:hover { color: var(--text); background: var(--pill-bg); }
-  .quick-nav a[aria-current="true"] { color: var(--accent-text); background: var(--accent); }
+  .quick-nav a:hover, .quick-nav a:focus-visible { color: var(--text); background: var(--pill-bg); }
+  .quick-nav a[aria-current="true"] {
+    color: var(--accent-text); background: var(--accent);
+    box-shadow: 0 2px 8px rgba(255, 180, 0, 0.35);
+  }
 
-  /* Même bandeau "ciel de ferme" à couleurs FIXES que la page principale (index.html), pour
-     une identité visuelle cohérente entre les deux pages du mod. */
+  /* Le bandeau n'a plus son propre fond dégradé : il flotte directement sur le dégradé de
+     body, désormais commun à toute la page (identique à index.html). */
   header {
     max-width: 820px;
     margin: 1.2em auto 0;
     padding: 2.4em 1.5em 2em;
     text-align: center;
     position: relative;
-    background: linear-gradient(160deg, #48c6f4 0%, #7fd9ce 32%, #ffd766 68%, #ffa72e 100%);
-    border-radius: 28px;
-    box-shadow: 0 10px 30px rgba(255, 167, 46, 0.25), 0 2px 8px rgba(31, 43, 48, 0.12);
   }
   header .emoji { font-size: clamp(2.2rem, 5vw, 3rem); display: block; margin-bottom: 0.2em; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15)); }
   header h1 {
@@ -152,14 +144,14 @@
   }
   header p.tagline { margin: 0 auto; max-width: 56ch; color: #253b2a; font-size: 1.02rem; font-weight: 500; }
 
-  .lang-switch { max-width: 900px; margin: 1.2em auto 0; padding: 0 1.5em; text-align: right; }
-  .lang-switch button {
-    background: transparent; border: 1px solid var(--pill-border); color: var(--text-dim);
-    font-size: 0.85rem; padding: 0.4em 0.9em; border-radius: 999px; cursor: pointer;
+  main {
+    max-width: 900px; margin: 1.5em auto 2em; padding: 1.8em 1.8em 2.8em;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
   }
-  .lang-switch button:hover { border-color: var(--accent); color: var(--accent-strong); }
-
-  main { max-width: 900px; margin: 0 auto; padding: 1.5em 1.5em 4em; }
 
   h2.section-title {
     font-size: 1.5rem; color: var(--accent-strong); margin: 2.6em 0 0.5em;
@@ -207,8 +199,12 @@
   }
 
   footer {
-    max-width: 900px; margin: 0 auto; padding: 2em 1.5em 3em;
+    max-width: 900px; margin: 0 auto 2em; padding: 1.4em 1.5em;
     text-align: center; color: var(--text-faint); font-size: 0.85rem;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
   }
   footer a { color: var(--text-dim); }
 
@@ -223,7 +219,8 @@
   .to-top:hover { transform: translateY(-2px); }
 
   @media (max-width: 600px) {
-    .lang-switch { text-align: center; }
+    .portfolio-bar { justify-content: center; }
+    .portfolio-bar ul { justify-content: center; }
     .quick-nav { justify-content: flex-start; overflow-x: auto; }
   }
 </style>
@@ -232,11 +229,12 @@
 <a class="skip-link" href="#main"><span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span></a>
 
 <nav class="portfolio-bar" aria-label="Mes autres projets">
-  <a href="https://zenqfr.github.io/">🏠 ZenqFR</a>
-  <span aria-hidden="true">·</span>
-  <a href="index.html">Sun Haven Access</a>
-  <span aria-hidden="true">·</span>
-  <span aria-current="page"><span data-lang="fr">Documentation</span><span data-lang="en" hidden>Documentation</span></span>
+  <ul>
+    <li><a href="https://zenqfr.github.io/">🏠 ZenqFR</a></li>
+    <li><a href="index.html">Sun Haven Access</a></li>
+    <li aria-current="page"><span data-lang="fr">Documentation</span><span data-lang="en" hidden>Documentation</span></li>
+  </ul>
+  <button type="button" id="lang-toggle" aria-label="Switch language / Changer de langue">English</button>
 </nav>
 
 <nav class="quick-nav" aria-label="Navigation rapide">
@@ -256,10 +254,6 @@
     <span data-lang="en" hidden>Every key, every feature of the mod, in detail. For the general overview, see the <a href="index.html">main page</a>.</span>
   </p>
 </header>
-
-<div class="lang-switch">
-  <button type="button" id="lang-toggle" aria-label="Switch language / Changer de langue">English</button>
-</div>
 
 <main id="main">
 
