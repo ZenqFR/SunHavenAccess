@@ -157,6 +157,7 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | Flèches directionnelles | Naviguer dans un menu |
 | Entrée | Valider (clic gauche) *(exige d'avoir déjà sélectionné un élément aux flèches)* |
 | Ctrl + Entrée | Action secondaire (clic droit) |
+| Ctrl + Tab / Ctrl + Maj + Tab | Changer d'onglet directement dans le menu principal (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres) |
 | Ctrl + Flèche gauche / droite | Diminuer/augmenter un curseur (slider) sélectionné (ex. couleurs en création de personnage) |
 | Page haut / bas | Élément précédent/suivant du scanner |
 | Ctrl + Page haut / bas | Catégorie précédente/suivante du scanner |

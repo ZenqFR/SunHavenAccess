@@ -53,6 +53,17 @@ namespace SunHavenAccess.Input
             // que les deux paires fonctionnent par défaut). Ctrl+Entrée = clic droit,
             // vérifié EN PREMIER pour ne pas aussi déclencher le simple clic gauche.
             bool ctrl = CtrlHeld();
+
+            // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
+            // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
+            // Paramètres) sans avoir à naviguer aux flèches toute la liste d'éléments pour
+            // retrouver les boutons d'onglet, souvent tout en haut de l'écran.
+            if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.Tab))
+            {
+                bool shift = UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift);
+                MenuNavigator.SwitchMajorTab(shift ? -1 : 1);
+            }
+
             // Ctrl+Gauche/Droite ajuste un curseur (Slider) sélectionné (ex. couleurs en
             // création de personnage) — vérifié EN PREMIER pour que Ctrl+flèche n'avance/recule
             // pas AUSSI dans la liste des éléments du menu.
@@ -148,7 +159,9 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.TurnLeft.Value)} et {Strings.KeyName(ModConfig.TurnRight.Value)}, tourner sans vous déplacer. " +
                 $"{Strings.KeyName(ModConfig.MouseFollowToggle.Value)}, activer ou désactiver la souris qui pointe vers la case devant vous. " +
                 $"{Strings.KeyName(ModConfig.SimulateLeftClick.Value)}, clic gauche. Contrôle plus {Strings.KeyName(ModConfig.SimulateRightClick.Value)}, clic droit. " +
-                "Dans les menus : flèches directionnelles pour parcourir, Entrée pour un clic gauche, Contrôle plus Entrée pour un clic droit. " +
+                "Dans les menus : flèches directionnelles pour parcourir, Entrée pour un clic gauche, Contrôle plus Entrée pour un clic droit, " +
+                "Contrôle plus flèche gauche ou droite pour ajuster un curseur sélectionné, Contrôle plus Tabulation ou Contrôle plus Majuscule plus Tabulation " +
+                "pour changer d'onglet directement dans le menu principal. " +
                 "Scanner : Page précédente et Page suivante pour parcourir les éléments trouvés, Contrôle plus Page précédente ou suivante pour changer de catégorie " +
                 "parmi personnages, plantations, ressources, bâtiments et portails, animaux et compagnons, ennemis, mobilier et rangement. " +
                 "Origine pour annoncer l'élément sélectionné, Contrôle plus Origine pour vous y rendre automatiquement, Échap pour annuler le trajet, Fin pour connaître le nombre trouvé. " +

@@ -127,6 +127,74 @@ namespace SunHavenAccess.Menus
             AnnounceCurrent();
         }
 
+        private static int _lastMajorTabRank = 1;
+
+        /// <summary>
+        /// Ctrl+Tab / Ctrl+Maj+Tab : bascule directement vers l'onglet suivant/précédent du menu
+        /// principal (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
+        /// Paramètres) SANS avoir à naviguer aux flèches tout l'écran pour retrouver les boutons
+        /// d'onglet. On garde nous-mêmes trace du rang actuel (`_lastMajorTabRank`) : comme
+        /// c'est TOUJOURS cette méthode qui déclenche le changement d'onglet, pas besoin
+        /// d'interroger l'état visuel du jeu pour savoir où on en est.
+        /// </summary>
+        public static void SwitchMajorTab(int direction)
+        {
+            List<Transform> majorTabs = FindActiveMajorTabsInOrder();
+            if (majorTabs.Count == 0)
+            {
+                TolkSpeech.Speak("Ouvrez d'abord le menu principal (touche Tab) pour changer d'onglet.", true);
+                return;
+            }
+
+            int count = majorTabs.Count;
+            _lastMajorTabRank = ((_lastMajorTabRank - 1 + direction) % count + count) % count + 1;
+            Transform tabTransform = majorTabs[_lastMajorTabRank - 1];
+            Selectable sel = tabTransform.GetComponent<Selectable>();
+
+            if (sel is Button button)
+            {
+                button.onClick.Invoke();
+            }
+            else if (sel != null)
+            {
+                ExecuteEvents.Execute(tabTransform.gameObject, new PointerEventData(EventSystem.current),
+                    ExecuteEvents.pointerClickHandler);
+            }
+
+            string label = UiNameTranslator.MajorTabLabelsByRank.TryGetValue(_lastMajorTabRank, out string l)
+                ? l : $"Onglet {_lastMajorTabRank}";
+            TolkSpeech.Speak(label, true);
+
+            // Repart d'une navigation fraîche aux flèches sur le contenu du nouvel onglet.
+            Rescan();
+        }
+
+        /// <summary>
+        /// Même logique de rang que UiTextExtractor.TryMajorTabLabel (position parmi les frères
+        /// "Major" actifs, ordre hiérarchique Unity = ordre visuel) — DOIT rester cohérente avec
+        /// elle pour que le rang annoncé ici corresponde à ce que le joueur entend en arrivant
+        /// sur l'onglet.
+        /// </summary>
+        private static List<Transform> FindActiveMajorTabsInOrder()
+        {
+            Selectable[] all = Object.FindObjectsOfType<Selectable>();
+            Selectable anyMajorTab = all.FirstOrDefault(s =>
+                s != null && s.gameObject.activeInHierarchy && UiNameTranslator.IsMajorTabName(s.gameObject.name));
+            if (anyMajorTab == null) return new List<Transform>();
+
+            Transform parent = anyMajorTab.transform.parent;
+            if (parent == null) return new List<Transform>();
+
+            var result = new List<Transform>();
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (UiNameTranslator.IsMajorTabName(child.name) && child.gameObject.activeInHierarchy)
+                    result.Add(child);
+            }
+            return result;
+        }
+
         /// <summary>Action secondaire (Ctrl+Entrée) : équivalent d'un clic droit sur l'élément annoncé.</summary>
         public static void SecondaryActivate()
         {
