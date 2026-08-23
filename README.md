@@ -102,6 +102,17 @@ La pêche est un mini-jeu en temps réel — un vrai point faible d'accessibilit
 </details>
 
 <details>
+<summary><strong>Donjon de combat</strong></summary>
+
+Une succession de salles à vider de tous leurs ennemis pour avancer d'étage en étage — jusqu'ici silencieux au-delà du combat lui-même :
+
+- Annonce du numéro d'étage à l'entrée d'une salle.
+- Confirmation vocale quand une salle est nettoyée et que la porte s'ouvre.
+- La récompense de fin de parcours passe par le système de dialogue habituel, déjà lu automatiquement.
+
+</details>
+
+<details>
 <summary><strong>Scanner par catégories (façon Object Tracker de stardew-access)</strong></summary>
 
 Repère tout ce qui se trouve à proximité, par catégorie, trié du plus proche au plus loin :
@@ -180,6 +191,8 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 
 ## 🚧 Progression & limites connues
 
+Chaque système majeur du jeu a désormais au moins un premier niveau de couverture — la liste "pas encore développé" est vide pour l'instant. Beaucoup d'éléments ci-dessous restent malgré tout à confirmer en conditions réelles (voir le détail).
+
 <details>
 <summary><strong>Développé et fonctionnel (confirmé en jeu)</strong></summary>
 
@@ -200,15 +213,9 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Notifications génériques du jeu** : un seul patch couvre potentiellement énormément de messages différents (boutique fermée, action impossible...) jamais rencontrés individuellement en décompilation — l'ampleur réelle de ce que ça couvre ne pourra se confirmer qu'à l'usage.
 - **Boutiques et artisanat** : noms d'objets, prix (avec devise correctement annoncée : pièces d'or/tickets/orbes), quantités possédées/requises pour chaque ingrédient ("3/5"), temps de fabrication — passent tous par les mêmes systèmes génériques de lecture d'infobulle/texte que le reste du mod, mais jamais testés spécifiquement sur un écran de boutique ou d'artisanat réel.
 - **Courrier** : le contenu complet d'une lettre (message, signature, post-scriptum) est maintenant lu automatiquement à l'ouverture de la boîte aux lettres, sur le même principe que les dialogues — jamais testé en jeu. Les objets éventuellement joints ne sont pour l'instant pas nommés automatiquement (juste leur icône, comme dans les autres menus).
-- **Pêche** : annonce de la touche/du résultat de chaque pression — voir la carte dédiée plus haut pour la limite assumée (viser la jauge reste non résolu).
+- **Pêche** : annonce touche/résultat + bip continu de visée, voir la carte dédiée plus haut — le bip est la fonctionnalité la moins certaine de tout le mod (fréquences/tempo jamais entendus en jeu).
 - **Carte du monde** : décompilation de `Wish.Map`/`Wish.LocationName` montrant que, contrairement au menu principal (souris uniquement), cet écran liste vraiment les lieux via la sélection native d'Unity — chaque nom de lieu est un vrai bouton avec son texte visible, et le sélectionner ouvre un panneau de description également piloté nativement. Probablement déjà accessible via les systèmes génériques existants (lecture de la sélection courante + infobulle), reclassée ici depuis "pas encore développé" — jamais testée en jeu pour autant.
-
-</details>
-
-<details>
-<summary><strong>Pas encore développé</strong></summary>
-
-- Donjons/salle de combat spécifiques.
+- **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
 
 </details>
 

@@ -579,6 +579,14 @@
   </details>
 
   <details class="card reveal">
+    <summary><span data-lang="fr">⚔️ Donjon de combat</span><span data-lang="en" hidden>⚔️ Combat dungeon</span></summary>
+    <ul>
+      <li><span data-lang="fr">Une succession de salles à vider de tous leurs ennemis pour avancer d'étage en étage — jusqu'ici silencieux au-delà du combat lui-même.</span><span data-lang="en" hidden>A series of rooms to clear of all enemies to advance floor by floor — silent so far beyond combat itself.</span></li>
+      <li><span data-lang="fr">Annonce du numéro d'étage à l'entrée d'une salle, et confirmation quand elle est nettoyée (porte ouverte).</span><span data-lang="en" hidden>Announces the floor number on entering a room, and confirms when it's cleared (door opens).</span></li>
+    </ul>
+  </details>
+
+  <details class="card reveal">
     <summary><span data-lang="fr">🧭 Scanner par catégories &amp; cheminement automatique</span><span data-lang="en" hidden>🧭 Category scanner &amp; auto-pathing</span></summary>
     <ul>
       <li><span data-lang="fr">Repère tout ce qui est à proximité, par catégorie, trié du plus proche au plus loin : personnages, plantations, ressources (dont minerais), bâtiments et portails (avec destination annoncée), animaux et compagnons, ennemis, mobilier et rangement.</span><span data-lang="en" hidden>Finds everything nearby, by category, sorted nearest-first: characters, crops, resources (including ores), buildings and portals (with destination announced), animals and companions, enemies, furniture and storage.</span></li>
@@ -641,6 +649,10 @@
   <h2 class="section-title" id="progress">
     <span data-lang="fr">Progression</span><span data-lang="en" hidden>Progress</span>
   </h2>
+  <p>
+    <span data-lang="fr">Chaque système majeur du jeu a désormais au moins un premier niveau de couverture — la liste "pas encore développé" est vide pour l'instant. Beaucoup d'éléments ci-dessous restent malgré tout à confirmer en conditions réelles.</span>
+    <span data-lang="en" hidden>Every major game system now has at least a first level of coverage — the "not built yet" list is currently empty. Many items below still need confirmation under real conditions, though.</span>
+  </p>
   <div class="status-row">
     <span class="pill ok"><span data-lang="fr">✓ Confirmé en jeu</span><span data-lang="en" hidden>✓ Confirmed in-game</span></span>
     <span class="pill wip"><span data-lang="fr">🚧 Développé, pas encore confirmé</span><span data-lang="en" hidden>🚧 Built, not yet confirmed</span></span>
@@ -654,12 +666,8 @@
       <span data-lang="en" hidden>mod loop, speech synthesis, tile cursor, dialogue, menus/inventory/tooltips, farming, directional mouse, scanner, menu keyboard navigation, chat key.</span>
     </p>
     <p><strong><span data-lang="fr">🚧 Pas encore confirmé :</span><span data-lang="en" hidden>🚧 Not yet confirmed:</span></strong>
-      <span data-lang="fr">description du type de terrain hors ferme (l'eau est fiable, le reste dépend du nom des tuiles), cheminement automatique en terrain complexe, boutiques et artisanat (noms, prix avec devise, quantités possédées/requises, temps de fabrication), courrier (lu comme les dialogues, objets joints pas encore nommés), minage et coupe de bois (annonce d'outil trop faible, confirmation de casse — patch sur les méthodes internes du jeu), carte du monde (liste de lieux à sélection native, comme l'arbre de compétences — probablement déjà couverte par les mêmes systèmes génériques), notifications génériques du jeu (un seul point d'accroche, ampleur réelle de la couverture à confirmer à l'usage) — passent par les systèmes génériques du mod mais jamais testés sur un écran réel. <strong>Pêche</strong> : touche/résultat annoncés + tout nouveau bip continu de visée (fréquences/tempo choisis au jugé, jamais entendu en jeu) — la fonctionnalité la moins certaine de tout le mod actuellement.</span>
-      <span data-lang="en" hidden>terrain type description outside farmland (water is reliable, the rest depends on tile names), auto-pathing on complex terrain, shops and crafting (names, prices with currency, owned/required amounts, craft time), mail (read like dialogue, attached items not yet named), mining and woodcutting (weak-tool warning, break confirmation — patched into the game's internal methods), world map (native-selection location list, like the skill tree — likely already covered by the same generic systems), generic in-game notifications (a single hook, real coverage to be confirmed in practice) — go through the mod's generic systems but never tested on a real screen. <strong>Fishing</strong>: bite/result announced + brand new continuous aiming beep (frequencies/tempo chosen by best guess, never heard in-game) — the single most uncertain feature in the whole mod right now.</span>
-    </p>
-    <p><strong><span data-lang="fr">○ Pas encore développé :</span><span data-lang="en" hidden>○ Not built yet:</span></strong>
-      <span data-lang="fr">donjons/salles de combat spécifiques.</span>
-      <span data-lang="en" hidden>dungeons/specific combat rooms.</span>
+      <span data-lang="fr">description du type de terrain hors ferme (l'eau est fiable, le reste dépend du nom des tuiles), cheminement automatique en terrain complexe, boutiques et artisanat (noms, prix avec devise, quantités possédées/requises, temps de fabrication), courrier (lu comme les dialogues, objets joints pas encore nommés), minage et coupe de bois (annonce d'outil trop faible, confirmation de casse — patch sur les méthodes internes du jeu), carte du monde (liste de lieux à sélection native, comme l'arbre de compétences — probablement déjà couverte par les mêmes systèmes génériques), notifications génériques du jeu (un seul point d'accroche, ampleur réelle de la couverture à confirmer à l'usage), donjon de combat (numéro d'étage, salle nettoyée) — passent par les systèmes génériques du mod mais jamais testés sur un écran réel. <strong>Pêche</strong> : touche/résultat annoncés + tout nouveau bip continu de visée (fréquences/tempo choisis au jugé, jamais entendu en jeu) — la fonctionnalité la moins certaine de tout le mod actuellement.</span>
+      <span data-lang="en" hidden>terrain type description outside farmland (water is reliable, the rest depends on tile names), auto-pathing on complex terrain, shops and crafting (names, prices with currency, owned/required amounts, craft time), mail (read like dialogue, attached items not yet named), mining and woodcutting (weak-tool warning, break confirmation — patched into the game's internal methods), world map (native-selection location list, like the skill tree — likely already covered by the same generic systems), generic in-game notifications (a single hook, real coverage to be confirmed in practice), combat dungeon (floor number, room cleared) — go through the mod's generic systems but never tested on a real screen. <strong>Fishing</strong>: bite/result announced + brand new continuous aiming beep (frequencies/tempo chosen by best guess, never heard in-game) — the single most uncertain feature in the whole mod right now.</span>
     </p>
   </details>
 
