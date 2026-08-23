@@ -57,7 +57,11 @@ namespace SunHavenAccess.Config
             // (absentes de DefaultKeybinds) — clés de config renommées pour forcer les nouveaux
             // défauts, mêmes anciennes valeurs encore utilisables en repli si déjà personnalisées
             // à la main par l'utilisateur.
-            Help = Bind(config, section, "AideV2", KeyCode.H,
+            // ATTENTION : F1 est l'émote 1 par défaut du jeu (Wish.UserSettings.DefaultKeybinds,
+            // Emote1) — exactement le genre de conflit que H avait corrigé. Remis sur F1 sur
+            // demande explicite de l'utilisateur malgré ça : la touche d'aide déclenchera aussi
+            // une émote du personnage à chaque pression.
+            Help = Bind(config, section, "AideV3", KeyCode.F1,
                 "Rappelle la liste des touches du mod.", "Aide");
             DescribeFront = Bind(config, section, "CaseDevantVousV2", KeyCode.F10,
                 "Décrit la case devant vous (terrain, objet, PNJ...).", "Décrire la case devant vous");
@@ -122,7 +126,7 @@ namespace SunHavenAccess.Config
             Clock = Bind(config, section, "HorlogeV2", KeyCode.O,
                 "Annonce l'heure, le jour, la saison, l'année et la météo actuelle.", "Annoncer l'heure, le jour, la saison et la météo");
 
-            Status = Bind(config, section, "Statut", KeyCode.F8,
+            Status = Bind(config, section, "StatutV2", KeyCode.H,
                 "Annonce la santé et le mana actuels.", "Annoncer la santé et le mana");
         }
 

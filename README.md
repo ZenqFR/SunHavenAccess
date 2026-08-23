@@ -10,7 +10,7 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 
 1. Installer [BepInEx 5.4.23.5 (x64, Mono)](https://github.com/BepInEx/BepInEx/releases) dans le dossier du jeu (`Sun Haven/`), et lancer le jeu une fois pour qu'il génère sa structure de dossiers.
 2. Copier `SunHavenAccess.dll`, `Tolk.dll` et `nvdaControllerClient64.dll` dans `Sun Haven/BepInEx/plugins/SunHavenAccess/`.
-3. Lancer le jeu. Un message vocal confirme le chargement du mod et rappelle la touche d'aide (`H` par défaut).
+3. Lancer le jeu. Un message vocal confirme le chargement du mod et rappelle la touche d'aide (`F1` par défaut).
 
 `Tolk.dll` et `nvdaControllerClient64.dll` sont des bibliothèques tierces libres, redistribuées ici pour que le mod fonctionne "out of the box" — voir [Remerciements](#-remerciements).
 
@@ -135,17 +135,17 @@ Changer d'objet en main (touches 1-0, molette...) annonce son nom et sa quantit�
 
 Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.sunhavenaccess.cfg`, ou en jeu via un menu vocal dédié qui liste tous les raccourcis, ce qu'ils font, et permet de les réassigner à la volée.
 
-> **Toutes vérifiées sans conflit** avec les touches par défaut du jeu (table `Wish.UserSettings.DefaultKeybinds` lue en décompilation) — plusieurs touches ont dû être déplacées le 23/08/2026 en découvrant que F1-F7 sont en fait les émotes du personnage par défaut (F2-F7 utilisées jusque-là déclenchaient donc aussi une émote à chaque pression), qu'Espace est le saut, et que T est un sort.
+> **Vérifiées sans conflit** avec les touches par défaut du jeu (table `Wish.UserSettings.DefaultKeybinds` lue en décompilation) — plusieurs touches ont dû être déplacées le 23/08/2026 en découvrant que F1-F7 sont en fait les émotes du personnage par défaut (F2-F7 utilisées jusque-là déclenchaient donc aussi une émote à chaque pression), qu'Espace est le saut, et que T est un sort. **Exception assumée** : la touche d'aide a ensuite été remise sur `F1` sur demande explicite de l'utilisateur malgré ce conflit connu — elle déclenche donc aussi l'émote 1 du personnage à chaque pression.
 
 | Touche par défaut | Action |
 |---|---|
-| H | Aide (rappelle les touches principales) |
+| F1 | Aide (rappelle les touches principales) — ⚠️ déclenche aussi l'émote 1 du jeu |
 | F10 | Décrire la case devant vous |
 | P | Votre position |
 | O | Heure, jour, saison, météo |
 | N | Personnage proche suivant |
 | B | Répéter la dernière annonce |
-| F8 | Santé et mana |
+| H | Santé et mana |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
 | F12 | Menu des raccourcis (parcourable et modifiable) |
