@@ -45,6 +45,12 @@ namespace SunHavenAccess.Menus
     /// ouvert (`!UIHandler.InventoryOpen`, vu en décompilation) : pas de conflit avec leur usage
     /// normal en jeu.
     ///
+    /// N'agit QUE si `Wish.UIHandler.InventoryOpen` (statique, publique) est vrai — pas juste "un
+    /// slot est-il actuellement sélectionné", corrigé après un bug réel : Tab semblait déclencher
+    /// une fausse détection de slot sélectionné même hors de tout inventaire ouvert (cycle de
+    /// focus clavier natif d'Unity indépendant de la touche Tab du JEU ?), capturant les flèches
+    /// à la place de la navigation normale du menu principal et la rendant totalement inopérante.
+    ///
     /// **Jamais testé en jeu** : aucun moyen de vérifier les positions RectTransform réelles ni
     /// si la navigation native du jeu répond DÉJÀ (en partie ou en double) aux mêmes flèches sur
     /// cet écran précis (voir le même risque déjà documenté pour l'arbre de compétences).
@@ -53,13 +59,38 @@ namespace SunHavenAccess.Menus
     {
         private enum PanelKind { ActionBar, Backpack, Equipment, Tab }
 
-        /// <summary>Vrai si un Slot (sac/équipement) est actuellement sélectionné nativement — sert de garde à HotkeyManager.</summary>
-        public static bool IsSlotFocused() => ResolveCurrentSlot() != null;
+        /// <summary>
+        /// Garde utilisée par HotkeyManager pour savoir si les flèches doivent lui être confiées.
+        /// Basée UNIQUEMENT sur `Wish.UIHandler.InventoryOpen` (pas sur "un slot est-il déjà
+        /// sélectionné ?") : voir le commentaire détaillé sur `ResolveCurrentSlot` — sinon Tab
+        /// pouvait déclencher une fausse détection hors de tout écran d'inventaire réel.
+        /// </summary>
+        public static bool IsActive() => UIHandler.InventoryOpen;
 
         public static void Move(Vector2Int direction, bool crossPanel)
         {
+            if (!UIHandler.InventoryOpen) return;
+
             Slot current = ResolveCurrentSlot();
-            if (current == null) return;
+            if (current == null)
+            {
+                // L'inventaire est ouvert mais rien n'est nativement sélectionné (peut-être que
+                // cet écran ne supporte pas la sélection clavier native, contrairement à l'arbre
+                // de compétences) — on choisit nous-mêmes un point de départ plutôt que de rester
+                // silencieux : la prochaine pression naviguera normalement depuis là.
+                current = Object.FindObjectsOfType<Slot>()
+                    .Where(s => s != null && s.gameObject.activeInHierarchy && IsVisible(s.gameObject))
+                    .OrderByDescending(s => s.transform.position.y)
+                    .ThenBy(s => s.transform.position.x)
+                    .FirstOrDefault();
+                if (current == null)
+                {
+                    TolkSpeech.Speak("Aucun emplacement trouvé.", true);
+                    return;
+                }
+                EventSystem.current.SetSelectedGameObject(current.gameObject);
+                return;
+            }
 
             PanelKind currentKind = Classify(current);
             var candidates = new List<(Component obj, PanelKind kind, Vector3 pos)>();
@@ -109,11 +140,24 @@ namespace SunHavenAccess.Menus
             EventSystem.current.SetSelectedGameObject(current.gameObject);
         }
 
+        /// <summary>
+        /// BUG corrigé (24/08/2026) : sans ce garde-fou, une pression sur Tab pouvait faire
+        /// croire à `IsSlotFocused()` qu'un slot était sélectionné (probablement le comportement
+        /// natif d'Unity qui cycle le focus au clavier sur Tab, indépendamment de la touche Tab
+        /// du JEU qui ouvre le menu principal) même hors de tout écran d'inventaire réellement
+        /// ouvert — capturant alors TOUTES les flèches à sa place et rendant la navigation du
+        /// menu principal (piloté par MenuNavigator, liste plate) totalement inopérante.
+        /// `Wish.UIHandler.InventoryOpen` (statique, publique) est le signal fiable du jeu
+        /// lui-même pour "un panneau d'inventaire est réellement visible à l'écran" — sans lui,
+        /// on ne considère plus jamais qu'un slot est concerné.
+        /// </summary>
         private static Slot ResolveCurrentSlot()
         {
+            if (!UIHandler.InventoryOpen) return null;
+
             GameObject go = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
             if (go == null || !go.activeInHierarchy) return null;
-            return go.GetComponent<Slot>() ?? go.GetComponentInParent<Slot>() ?? go.GetComponentInChildren<Slot>();
+            return go.GetComponent<Slot>();
         }
 
         private static PanelKind Classify(Slot slot)

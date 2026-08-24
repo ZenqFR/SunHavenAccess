@@ -102,7 +102,7 @@ namespace SunHavenAccess.Input
             // Sac à dos/équipement/barre d'action (Wish.Slot/ArmorSlot) : cas plus précis que le
             // passe-plat générique ci-dessus, demande explicite de navigation directionnelle
             // réelle. Voir Menus/InventoryGridNavigator.cs — jamais testé en jeu.
-            if (InventoryGridNavigator.IsSlotFocused())
+            if (InventoryGridNavigator.IsActive())
             {
                 if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)) InventoryGridNavigator.Move(Vector2Int.up, true);
                 else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)) InventoryGridNavigator.Move(Vector2Int.down, true);
