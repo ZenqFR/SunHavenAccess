@@ -46,6 +46,7 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 - Les 7 onglets du menu principal (Tab) correctement nommés (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres).
 - Bulles de dialogue lues dès le DÉBUT de la ligne, pas à la fin de l'animation machine à écrire.
 - Traduction automatique en français des noms techniques d'interface quand le jeu ne fournit aucun texte visible (dictionnaire de plusieurs centaines de termes : actions, lieux, bâtiments...).
+- **Navigation directionnelle réelle dans le sac à dos/équipement/barre d'action** (flèches selon la vraie position à l'écran, pas juste une liste). Ctrl+flèche saute directement au panneau adjacent (barre d'action ↔ sac ↔ équipement ↔ onglets). Touches 1 à 0 sur un objet : l'envoie/le récupère directement du slot de barre d'action correspondant. **Fonctionnalité toute nouvelle, jamais testée en conditions réelles.**
 
 </details>
 
@@ -228,6 +229,9 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | Ctrl + : (ou Ctrl + /) | Clic droit (souris) |
 | C | Ouvrir le tchat / la console du jeu *(remplace Entrée, qui entrait en conflit avec la validation de menu)* |
 | Flèches directionnelles | Naviguer dans un menu |
+| Flèches (sur un slot du sac/équipement/barre d'action) | Voisin réel dans cette direction à l'écran |
+| Ctrl + flèche (sur un slot) | Sauter au panneau adjacent (barre d'action / sac / équipement / onglets) |
+| 1 à 0 (sur un slot) | Envoyer/récupérer l'objet vers/depuis la barre d'action |
 | Entrée | Valider (clic gauche) *(exige d'avoir déjà sélectionné un élément aux flèches)* |
 | Ctrl + Entrée | Action secondaire (clic droit) |
 | Ctrl + Tab / Ctrl + Maj + Tab | Changer d'onglet directement dans le menu principal (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres) |
@@ -269,6 +273,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Quêtes** : acceptation/rendu automatiquement annoncés, touche dédiée pour lister les quêtes actives (voir la carte dédiée plus haut) — tous les champs lus sont publics et déjà remplis par le jeu (`QuestPanel.questDescription`/`questProgress`/`questCompleteTMP`), mais jamais entendu en conditions réelles. Le format exact de `questProgress` (texte de progression détaillé par objectif) n'a pas pu être confirmé sans décompiler chaque type de `QuestRequirement` individuellement — inclus tel quel, peut être incomplet ou redondant avec la description.
 - **Relations & compétences** (voir la carte dédiée plus haut) : calcul des cœurs/niveaux jamais entendu en jeu. Le nombre exact de cœurs affichés visuellement par statut (10/15/20) est déduit des plafonds de points en décompilation (50/75/100, 5 points/cœur) — cohérent avec le code, pas observé à l'écran.
 - **Carte du monde** (voir la carte dédiée plus haut) : la région actuellement affichée (`Map.townType`) et la liste de lieux qui va avec sont lues par réflexion (5 champs privés séparés, un par région) — jamais navigué en jeu pour confirmer que la bonne liste sort à chaque fois qu'on change de région à l'écran.
+- **Navigation directionnelle du sac à dos/équipement/barre d'action** (voir la carte "Menus, inventaire" plus haut) : voisin le plus proche calculé depuis les positions RectTransform réelles à l'écran — jamais vérifiable sans jeu ouvert, et jamais confirmé si la navigation native du jeu répond aussi (en partie ou en double) aux mêmes flèches sur cet écran.
 - **Carte du monde** (voir la carte dédiée plus bas) : correction d'une supposition précédente — `Wish.LocationName` répond bien à la sélection/au clic mais N'HÉRITE PAS de `Selectable`, donc invisible au scan générique de menu du mod ; pas "probablement déjà accessible" comme supposé avant, réellement injoignable au clavier sans les touches dédiées ajoutées. Le reste de l'écran (boutons fermer/changer de région) fonctionne lui via le système générique, ce sont de vrais `Selectable`.
 - **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
 

@@ -99,7 +99,38 @@ namespace SunHavenAccess.Input
                 && EventSystem.current.currentSelectedGameObject != null
                 && EventSystem.current.currentSelectedGameObject.activeInHierarchy;
 
-            if (!nativeSelectionActive)
+            // Sac à dos/équipement/barre d'action (Wish.Slot/ArmorSlot) : cas plus précis que le
+            // passe-plat générique ci-dessus, demande explicite de navigation directionnelle
+            // réelle. Voir Menus/InventoryGridNavigator.cs — jamais testé en jeu.
+            if (InventoryGridNavigator.IsSlotFocused())
+            {
+                if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)) InventoryGridNavigator.Move(Vector2Int.up, true);
+                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)) InventoryGridNavigator.Move(Vector2Int.down, true);
+                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) InventoryGridNavigator.Move(Vector2Int.left, true);
+                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) InventoryGridNavigator.Move(Vector2Int.right, true);
+                else if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)) InventoryGridNavigator.Move(Vector2Int.up, false);
+                else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)) InventoryGridNavigator.Move(Vector2Int.down, false);
+                else if (UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) InventoryGridNavigator.Move(Vector2Int.left, false);
+                else if (UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) InventoryGridNavigator.Move(Vector2Int.right, false);
+
+                if (!ctrl)
+                {
+                    // Rangée de chiffres (même position physique en AZERTY qu'en QWERTY pour ces
+                    // KeyCode) : envoie/récupère l'objet du slot actuel vers/depuis la barre
+                    // d'action, index 0-9.
+                    KeyCode[] digitKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5,
+                        KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0 };
+                    for (int i = 0; i < digitKeys.Length; i++)
+                    {
+                        if (UnityEngine.Input.GetKeyDown(digitKeys[i]))
+                        {
+                            InventoryGridNavigator.QuickAssign(i);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (!nativeSelectionActive)
             {
                 // Ctrl+Gauche/Droite ajuste un curseur (Slider) sélectionné (ex. couleurs en
                 // création de personnage) — vérifié EN PREMIER pour que Ctrl+flèche n'avance/
