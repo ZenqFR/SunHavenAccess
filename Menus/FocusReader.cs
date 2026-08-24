@@ -27,6 +27,16 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static void SetPendingPrefix(string prefix) => _pendingPrefix = prefix;
 
+        /// <summary>
+        /// Ignore UNE seule annonce de changement de sélection. Utilisé quand un autre système du
+        /// mod annonce déjà mieux ce même élément : typiquement la sélection d'une icône d'objet,
+        /// dont TooltipReader lit le nom, la description ET la quantité — laisser les deux parler
+        /// donnerait deux annonces concurrentes, la première coupée en plein mot.
+        /// </summary>
+        public static void SuppressNextAnnouncement() => _suppressNext = true;
+
+        private static bool _suppressNext;
+
         public static void Tick()
         {
             EventSystem es = EventSystem.current;
@@ -38,6 +48,10 @@ namespace SunHavenAccess.Menus
 
             string prefix = _pendingPrefix;
             _pendingPrefix = null;
+
+            bool suppressed = _suppressNext;
+            _suppressNext = false;
+            if (suppressed) return;
 
             if (current == null || !current.activeInHierarchy) return;
 

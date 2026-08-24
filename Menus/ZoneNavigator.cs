@@ -182,8 +182,7 @@ namespace SunHavenAccess.Menus
             if (!UIHandler.InventoryOpen) return;
             if (hotbarIndex < 0 || hotbarIndex > 9) return;
 
-            GameObject go = CurrentSelection();
-            Slot slot = go != null ? go.GetComponent<Slot>() : null;
+            Slot slot = ResolveSlot(CurrentSelection());
             if (slot == null || slot is ArmorSlot || slot.inventory == null)
             {
                 UiSound.EdgeBump();
@@ -197,7 +196,7 @@ namespace SunHavenAccess.Menus
             // contenu (il ne réagit qu'aux CHANGEMENTS de sélection, d'où le passage par null).
             if (EventSystem.current == null) return;
             EventSystem.current.SetSelectedGameObject(null);
-            EventSystem.current.SetSelectedGameObject(slot.gameObject);
+            Select(slot.gameObject); // repasse par Select pour retrouver l'infobulle du nouveau contenu
         }
 
         public static string TabLabel(int panelIndex) =>
@@ -219,7 +218,7 @@ namespace SunHavenAccess.Menus
             }
 
             List<List<GameObject>> rows = BuildRows(ZoneMembers(zone));
-            if (!Locate(rows, currentGo, out int row, out int col))
+            if (!Locate(rows, Anchor(currentGo), out int row, out int col))
             {
                 UiSound.EdgeBump();
                 return;
@@ -286,7 +285,7 @@ namespace SunHavenAccess.Menus
             // On garde la cohérence spatiale : en entrant par la gauche on arrive à gauche, en
             // entrant par le haut on arrive en haut, et on conserve au mieux l'autre coordonnée.
             List<List<GameObject>> currentRows = BuildRows(ZoneMembers(zone));
-            Locate(currentRows, currentGo, out int row, out int col);
+            Locate(currentRows, Anchor(currentGo), out int row, out int col);
 
             int newRow, newCol;
             if (dy != 0)
@@ -318,12 +317,82 @@ namespace SunHavenAccess.Menus
             UiSound.EdgeBump();
         }
 
+        /// <summary>
+        /// Sélectionne un emplacement — mais en visant son ICÔNE D'OBJET quand il en contient une.
+        ///
+        /// C'est LE point qui manquait : le nom et la description d'un objet ne vivent QUE dans
+        /// l'infobulle native du jeu, et celle-ci est déclenchée par `Wish.ItemIcon.Select()` →
+        /// `SetupTooltip()`. Or l'ItemIcon est un ENFANT du `Slot` : sélectionner l'emplacement
+        /// ne réveillait donc jamais l'infobulle, et on n'entendait que ce qui est écrit dans la
+        /// case (la quantité), sans savoir de quel objet il s'agissait. Vaut pour le sac à dos,
+        /// l'équipement ET la barre d'action, qui utilisent tous la même paire Slot/ItemIcon.
+        ///
+        /// `SetupTooltip` est appelée explicitement en plus de la sélection : ça ne dépend pas de
+        /// la bonne propagation de l'évènement de sélection, et c'est la méthode publique que le
+        /// jeu utilise lui-même partout ailleurs pour ça.
+        /// </summary>
         private static void Select(GameObject go)
         {
             if (EventSystem.current == null || go == null) return;
-            // FocusReader annonce automatiquement au prochain tick sur changement de sélection —
-            // pas besoin de reconstruire le texte ici.
-            EventSystem.current.SetSelectedGameObject(go);
+
+            ItemIcon icon = FilledIcon(go);
+            if (icon == null)
+            {
+                // Emplacement vide : pas d'infobulle possible, FocusReader annonce
+                // « Emplacement vide » (ou le type d'armure attendu) comme avant.
+                EventSystem.current.SetSelectedGameObject(go);
+                return;
+            }
+
+            // L'infobulle porte déjà nom + description + quantité (voir Menus/TooltipReader.cs) :
+            // laisser FocusReader annoncer en plus donnerait deux annonces concurrentes dont la
+            // première serait coupée en plein mot.
+            FocusReader.SuppressNextAnnouncement();
+            EventSystem.current.SetSelectedGameObject(icon.gameObject);
+            try { icon.SetupTooltip(overrideCurrentIcon: true); }
+            catch { /* objet en cours de destruction : la sélection reste valide, on n'insiste pas */ }
+        }
+
+        /// <summary>
+        /// Icône d'objet d'un emplacement, ou null si l'emplacement est vide. Exige un ID d'objet
+        /// VALIDE (0 = case vide, même test que partout ailleurs dans le mod) : c'est aussi la
+        /// condition que `SetupTooltip` vérifie de son côté avant d'afficher quoi que ce soit.
+        /// Sans ce contrôle, on renverrait une icône pour laquelle aucune infobulle n'apparaîtra —
+        /// or on coupe l'annonce de FocusReader en comptant dessus : ce serait le silence total
+        /// sur cette case.
+        /// </summary>
+        private static ItemIcon FilledIcon(GameObject slotGo)
+        {
+            Slot slot = slotGo != null ? slotGo.GetComponent<Slot>() : null;
+            if (slot == null) return null;
+
+            ItemIcon icon = slot.GetComponentInChildren<ItemIcon>();
+            if (icon == null || !icon.gameObject.activeInHierarchy || icon.item == null) return null;
+
+            try { return icon.item.ID() != 0 ? icon : null; }
+            catch { return null; }
+        }
+
+        /// <summary>
+        /// Emplacement correspondant à un objet sélectionné. Nécessaire depuis que la sélection
+        /// peut porter sur l'ICÔNE plutôt que sur l'emplacement lui-même (voir Select) : sans ça,
+        /// la navigation perdrait sa position dès le premier objet non vide rencontré.
+        /// </summary>
+        private static Slot ResolveSlot(GameObject go)
+        {
+            if (go == null) return null;
+            Slot slot = go.GetComponent<Slot>();
+            if (slot != null) return slot;
+            ItemIcon icon = go.GetComponent<ItemIcon>();
+            if (icon != null && icon.slot != null) return icon.slot;
+            return go.GetComponentInParent<Slot>();
+        }
+
+        /// <summary>GameObject servant de repère dans la grille : toujours celui de l'emplacement.</summary>
+        private static GameObject Anchor(GameObject selected)
+        {
+            Slot slot = ResolveSlot(selected);
+            return slot != null ? slot.gameObject : selected;
         }
 
         // ------------------------------------------------------------- Zones
@@ -340,7 +409,9 @@ namespace SunHavenAccess.Menus
 
             if (IsTab(go)) return Zone.Tabs;
 
-            Slot slot = go.GetComponent<Slot>();
+            // ResolveSlot et pas GetComponent : la sélection peut porter sur l'icône d'objet,
+            // enfant de l'emplacement (voir Select).
+            Slot slot = ResolveSlot(go);
             if (slot != null)
             {
                 if (slot is ArmorSlot) return Zone.Equipment;
