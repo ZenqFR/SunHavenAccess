@@ -81,7 +81,10 @@ namespace SunHavenAccess.Input
             if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.Tab))
             {
                 bool shift = UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift);
-                MenuNavigator.SwitchMajorTab(shift ? -1 : 1);
+                // wrap:true — Ctrl+Tab est un geste de CYCLE (comme dans un navigateur), il fait
+                // donc le tour ; les flèches gauche/droite dans la zone Onglets butent, elles,
+                // sur un bip de bord comme partout ailleurs.
+                ZoneNavigator.SwitchTab(shift ? -1 : 1, wrap: true);
             }
 
             // Certains écrans (arbre de compétences, choix de dialogue...) utilisent, EUX,
@@ -99,36 +102,14 @@ namespace SunHavenAccess.Input
                 && EventSystem.current.currentSelectedGameObject != null
                 && EventSystem.current.currentSelectedGameObject.activeInHierarchy;
 
-            // Sac à dos/équipement/barre d'action (Wish.Slot/ArmorSlot) : cas plus précis que le
-            // passe-plat générique ci-dessus, demande explicite de navigation directionnelle
-            // réelle. Voir Menus/InventoryGridNavigator.cs — jamais testé en jeu.
-            if (InventoryGridNavigator.IsActive())
-            {
-                if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)) InventoryGridNavigator.Move(Vector2Int.up, true);
-                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)) InventoryGridNavigator.Move(Vector2Int.down, true);
-                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) InventoryGridNavigator.Move(Vector2Int.left, true);
-                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) InventoryGridNavigator.Move(Vector2Int.right, true);
-                else if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)) InventoryGridNavigator.Move(Vector2Int.up, false);
-                else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)) InventoryGridNavigator.Move(Vector2Int.down, false);
-                else if (UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) InventoryGridNavigator.Move(Vector2Int.left, false);
-                else if (UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) InventoryGridNavigator.Move(Vector2Int.right, false);
+            // Navigation directionnelle du mod (Menus/ZoneNavigator.cs) : flèches selon la
+            // disposition visuelle réelle, avec des zones aux frontières nettes.
+            bool directionalNav = ModConfig.TakeOverMenuArrows.Value && ZoneNavigator.IsActive();
+            SuppressNativeNavigation(directionalNav);
 
-                if (!ctrl)
-                {
-                    // Rangée de chiffres (même position physique en AZERTY qu'en QWERTY pour ces
-                    // KeyCode) : envoie/récupère l'objet du slot actuel vers/depuis la barre
-                    // d'action, index 0-9.
-                    KeyCode[] digitKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5,
-                        KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0 };
-                    for (int i = 0; i < digitKeys.Length; i++)
-                    {
-                        if (UnityEngine.Input.GetKeyDown(digitKeys[i]))
-                        {
-                            InventoryGridNavigator.QuickAssign(i);
-                            break;
-                        }
-                    }
-                }
+            if (directionalNav)
+            {
+                HandleDirectionalNavigation(ctrl);
             }
             else if (!nativeSelectionActive)
             {
@@ -181,6 +162,99 @@ namespace SunHavenAccess.Input
             if (UnityEngine.Input.GetKeyDown(KeyCode.Escape) && PathingController.IsPathing)
             {
                 PathingController.Cancel();
+            }
+        }
+
+        /// <summary>
+        /// Flèches en mode navigation directionnelle. Ctrl+flèche = saut vers la zone voisine,
+        /// flèche seule = déplacement dans la zone courante (bip de bord si on bute).
+        /// Entrée/Ctrl+Entrée sont gérés ici aussi : la validation NATIVE d'Unity est neutralisée
+        /// pendant ce mode (voir SuppressNativeNavigation), c'est donc au mod de l'émettre.
+        /// </summary>
+        private static void HandleDirectionalNavigation(bool ctrl)
+        {
+            // Ctrl+gauche/droite sur un curseur (Slider) = ajuster sa valeur, PAS changer de
+            // zone : c'est le seul cas où Ctrl+flèche ne veut pas dire "saut de zone", vérifié
+            // en premier pour cette raison.
+            bool onSlider = MenuNavigator.SelectedIsSlider();
+
+            if (UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                if (ctrl && onSlider) MenuNavigator.AdjustSelectedSlider(-1);
+                else ZoneNavigator.Move(-1, 0, ctrl);
+            }
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                if (ctrl && onSlider) MenuNavigator.AdjustSelectedSlider(1);
+                else ZoneNavigator.Move(1, 0, ctrl);
+            }
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                ZoneNavigator.Move(0, 1, ctrl);
+            }
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                ZoneNavigator.Move(0, -1, ctrl);
+            }
+
+            GameObject selected = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+
+            // Pressed() plutôt que Input.GetKeyDown seul : le jeu lit le clavier via Rewired, qui
+            // peut être le seul des deux à voir la touche (même convention que partout ailleurs).
+            if (Pressed(ModConfig.MenuActivate.Value))
+            {
+                if (selected == null) TolkSpeech.Speak("Aucun élément sélectionné.", true);
+                else if (ctrl) MenuNavigator.SecondaryActivateObject(selected);
+                else MenuNavigator.ActivateObject(selected);
+            }
+
+            if (ctrl) return;
+
+            // Rangée de chiffres (mêmes touches physiques en AZERTY qu'en QWERTY pour ces
+            // KeyCode) : envoie/récupère l'objet de l'emplacement sélectionné vers/depuis le
+            // slot de barre d'action correspondant.
+            for (int i = 0; i < DigitKeys.Length; i++)
+            {
+                if (UnityEngine.Input.GetKeyDown(DigitKeys[i]))
+                {
+                    ZoneNavigator.QuickAssign(i);
+                    break;
+                }
+            }
+        }
+
+        private static readonly KeyCode[] DigitKeys =
+        {
+            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4, KeyCode.Alpha5,
+            KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0,
+        };
+
+        private static bool _navSuppressed;
+
+        /// <summary>
+        /// Neutralise la navigation clavier NATIVE d'Unity tant que le mod pilote les flèches.
+        /// Indispensable : la boucle du mod tourne en Postfix sur `EventSystem.Update`, donc
+        /// APRÈS le traitement d'input du jeu — sans ça, une seule pression sur une flèche
+        /// déplacerait le curseur deux fois (une par le jeu, une par le mod).
+        /// Conséquence assumée : la VALIDATION native (Entrée) est neutralisée elle aussi, le mod
+        /// l'émet donc lui-même (voir HandleDirectionalNavigation). La fermeture des menus
+        /// (Échap) n'est pas concernée : le jeu la lit directement via Rewired dans son propre
+        /// Update, pas via les évènements de l'EventSystem.
+        /// </summary>
+        private static void SuppressNativeNavigation(bool suppress)
+        {
+            EventSystem es = EventSystem.current;
+            if (es == null) return;
+
+            if (suppress && !_navSuppressed)
+            {
+                es.sendNavigationEvents = false;
+                _navSuppressed = true;
+            }
+            else if (!suppress && _navSuppressed)
+            {
+                es.sendNavigationEvents = true;
+                _navSuppressed = false;
             }
         }
 

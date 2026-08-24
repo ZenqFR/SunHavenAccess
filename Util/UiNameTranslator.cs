@@ -164,20 +164,29 @@ namespace SunHavenAccess.Util
         private static readonly Regex CloneSuffix = new Regex(@"\(\d+\)$");
 
         /// <summary>
-        /// Libellés confirmés du menu principal (touche Tab), 7 onglets nommés "MajorTabN" sans
-        /// aucun texte visible. Le chiffre N dans le nom brut s'est révélé peu fiable (décalage
-        /// constaté selon l'indexation interne du jeu) : la correspondance se fait donc par
-        /// POSITION réelle parmi les onglets "Major" (1 = le plus à gauche/premier de la
-        /// hiérarchie), pas par le chiffre du nom — voir UiTextExtractor.TryMajorTabLabel.
+        /// Libellés des onglets du menu principal (touche Tab), indexés par l'index de panneau
+        /// RÉEL du jeu (`Wish.PlayerInventory.majorTabIndex`, base 0) — plus par une position
+        /// devinée dans la hiérarchie Unity, qui pouvait diverger de l'indexation interne.
+        ///
+        /// Indices 0 à 4 confirmés par les accesseurs du jeu lui-même : `IsSkillTreeOpen` =
+        /// panneau 1, `IsRelationshipPanelOpen` = 2, `IsQuestLogOpen` = 3, `IsMapOpen` = 4 (le
+        /// sac à dos étant 0, ouvert par défaut via `EnableInventory`). Indices 6 et 7 déduits de
+        /// `IsEncylopediaOpen` = 6 et `IsSettingsOpen` = 7 — ce qui CORRIGE l'ancienne table, qui
+        /// annonçait "Statistiques" puis "Paramètres" en 6 et 7. L'index 5 n'a aucun accesseur
+        /// dans le jeu : libellé encore incertain, à confirmer en jeu.
+        ///
+        /// Note : le jeu ne fait cycler que les indices 0 à 6 (Mod 7 dans UIHandler.Update), donc
+        /// l'onglet 7 n'est pas atteignable en changeant d'onglet — seulement directement.
         /// </summary>
-        public static readonly IReadOnlyDictionary<int, string> MajorTabLabelsByRank = new Dictionary<int, string>
+        public static readonly IReadOnlyDictionary<int, string> MajorTabLabelsByIndex = new Dictionary<int, string>
         {
-            [1] = "Sac à dos",
-            [2] = "Arbre de compétences",
-            [3] = "Relations",
-            [4] = "Quêtes",
-            [5] = "Carte",
-            [6] = "Statistiques",
+            [0] = "Sac à dos",
+            [1] = "Arbre de compétences",
+            [2] = "Relations",
+            [3] = "Quêtes",
+            [4] = "Carte",
+            [5] = "Statistiques",
+            [6] = "Encyclopédie",
             [7] = "Paramètres",
         };
 

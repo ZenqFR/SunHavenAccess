@@ -31,6 +31,10 @@ namespace SunHavenAccess
             NoKillPatch.ProtectedRoot = gameObject.transform.root.gameObject;
 
             ModConfig.Init(Config);
+            // Le bip de bord de la navigation lit son état ici plutôt que d'interroger la config
+            // à chaque pression (il peut être déclenché plusieurs fois par seconde).
+            Speech.UiSound.Enabled = ModConfig.EdgeSound.Value;
+            ModConfig.EdgeSound.SettingChanged += (_, _) => Speech.UiSound.Enabled = ModConfig.EdgeSound.Value;
             TolkSpeech.Init(Log);
             FarmingAnnouncer.Init();
             CombatStateAnnouncer.Init();

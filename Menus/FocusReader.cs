@@ -16,6 +16,16 @@ namespace SunHavenAccess.Menus
     public static class FocusReader
     {
         private static GameObject _lastFocused;
+        private static string _pendingPrefix;
+
+        /// <summary>
+        /// Contexte à annoncer AVANT le prochain élément sélectionné, en une seule phrase
+        /// ("Équipement, emplacement d'armure, chapeau, vide"). Utilisé par ZoneNavigator quand on
+        /// change de zone : sans ça, il faudrait deux annonces concurrentes (le nom de la zone
+        /// puis l'élément), dont la seconde couperait la première, puisque toute annonce de
+        /// sélection interrompt la précédente.
+        /// </summary>
+        public static void SetPendingPrefix(string prefix) => _pendingPrefix = prefix;
 
         public static void Tick()
         {
@@ -26,13 +36,16 @@ namespace SunHavenAccess.Menus
             if (current == _lastFocused) return;
             _lastFocused = current;
 
+            string prefix = _pendingPrefix;
+            _pendingPrefix = null;
+
             if (current == null || !current.activeInHierarchy) return;
 
             string text = UiTextExtractor.ExtractAll(current);
-            if (!string.IsNullOrWhiteSpace(text))
-            {
-                TolkSpeech.Speak(text, interrupt: true);
-            }
+            if (string.IsNullOrWhiteSpace(text) && string.IsNullOrWhiteSpace(prefix)) return;
+
+            string spoken = string.IsNullOrWhiteSpace(prefix) ? text : $"{prefix}, {text}";
+            TolkSpeech.Speak(spoken, interrupt: true);
         }
     }
 }

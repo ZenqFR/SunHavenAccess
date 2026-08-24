@@ -50,6 +50,10 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> AnnounceSkillPoints;
         public static ConfigEntry<KeyCode> AnnounceFestivals;
 
+        /// <summary>Réglages hors touches (cases à cocher), voir Init.</summary>
+        public static ConfigEntry<bool> EdgeSound;
+        public static ConfigEntry<bool> TakeOverMenuArrows;
+
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
             new List<(string, ConfigEntry<KeyCode>)>();
@@ -199,6 +203,20 @@ namespace SunHavenAccess.Config
             // lettre simple libre à ce stade (26/26 utilisées) : point-virgule, libre des deux côtés.
             AnnounceFestivals = Bind(config, section, "Festivals", KeyCode.Semicolon,
                 "Annonce les festivals de la saison actuelle (nom, jour, description).", "Annoncer les festivals de la saison");
+
+            // Réglages de confort, PAS des touches : volontairement hors de la liste `All` (donc
+            // absents du menu vocal des raccourcis, qui ne sait réassigner que des touches).
+            const string navSection = "Navigation";
+
+            EdgeSound = config.Bind(navSection, "SonDeBord", true,
+                "Joue un bip court et grave quand on bute sur le bord d'une zone (fin de ligne " +
+                "d'inventaire, dernier onglet...). Mettre à false pour naviguer en silence.");
+
+            TakeOverMenuArrows = config.Bind(navSection, "NavigationDirectionnelle", true,
+                "Le mod prend la main sur les flèches dans les menus pour offrir une navigation " +
+                "directionnelle réelle (ligne/colonne, zones séparées). Mettre à false pour " +
+                "rendre les flèches au jeu si un écran se comporte mal (le curseur saute deux " +
+                "cases d'un coup, par exemple).");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

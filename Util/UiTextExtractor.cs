@@ -67,12 +67,19 @@ namespace SunHavenAccess.Util
         /// "Major*" sans filtrer les INACTIFS — un objet gabarit/dupliqué désactivé mais toujours
         /// présent dans la hiérarchie (fréquent pour les prefabs d'instanciation) se glissait
         /// dans le compte et décalait le rang du 7e onglet réel à 8, hors de
-        /// MajorTabLabelsByRank (seulement 1 à 7) → retombait en dernier repli sur la traduction
+        /// la table des libellés → retombait en dernier repli sur la traduction
         /// littérale du nom technique. Filtré aux frères réellement actifs à l'écran, comme
         /// partout ailleurs dans le mod (Scanner, MenuNavigator...).
         /// </summary>
         private static string TryMajorTabLabel(GameObject go)
         {
+            // Source AUTORITATIVE en priorité : la position de cet onglet dans la liste `tabs` du
+            // jeu EST son index de panneau. Le calcul de rang ci-dessous n'est qu'un repli pour
+            // les cas où cette liste n'est pas accessible (hors partie, menu pas encore
+            // initialisé) — c'est lui qui pouvait se décaler et annoncer un mauvais onglet.
+            string authoritative = Menus.ZoneNavigator.TabLabelFor(go);
+            if (authoritative != null) return authoritative;
+
             if (!UiNameTranslator.IsMajorTabName(go.name)) return null;
             Transform parent = go.transform.parent;
             if (parent == null) return null;
@@ -85,13 +92,13 @@ namespace SunHavenAccess.Util
                     majorSiblings.Add(child);
             }
 
-            int rank = majorSiblings.IndexOf(go.transform) + 1; // 1-based
-            if (UiNameTranslator.MajorTabLabelsByRank.TryGetValue(rank, out string label)) return label;
+            int rank = majorSiblings.IndexOf(go.transform); // 0-based, aligné sur majorTabIndex
+            if (rank < 0) return null;
+            if (UiNameTranslator.MajorTabLabelsByIndex.TryGetValue(rank, out string label)) return label;
 
-            // Filet de sécurité : si le rang tombe quand même hors de 1-7 (nombre d'onglets
-            // inattendu), annoncer un numéro générique plutôt que de retomber sur le nom
-            // technique brut non traduit.
-            return rank > 0 ? $"Onglet {rank}" : null;
+            // Filet de sécurité : si le rang tombe hors de la table (nombre d'onglets inattendu),
+            // annoncer un numéro générique plutôt que de retomber sur le nom technique brut.
+            return $"Onglet {rank + 1}";
         }
 
         /// <summary>

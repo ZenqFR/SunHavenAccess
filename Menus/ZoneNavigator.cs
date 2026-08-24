@@ -1,0 +1,471 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using Wish;
+using SunHavenAccess.Speech;
+
+namespace SunHavenAccess.Menus
+{
+    /// <summary>
+    /// Navigation directionnelle RÉELLE dans les menus : les flèches suivent la disposition
+    /// visuelle (ligne/colonne), pas une liste plate triée. Remplace le parcours linéaire de
+    /// MenuNavigator, qui n'avait aucune notion de grille (« droite » pouvait sauter à la ligne
+    /// suivante, « haut » atterrir n'importe où) ni de frontière entre panneaux.
+    ///
+    /// Principe en deux temps, chacun utilisant la source la plus fiable disponible :
+    ///
+    /// 1. **À quelle ZONE appartient un élément → arithmétique**, donc exact. `Wish.PlayerInventory`
+    ///    assigne des `slotNumber` dans un ordre qui fait autorité (`SetUpInventoryData`) :
+    ///    0-9 = barre d'action, 10-49 = sac à dos, 50-62 = équipement (confirmé par
+    ///    `GetIndexByArmorType`/`GetVanityIndexByArmorType` : chapeau 50/51, torse 52/53,
+    ///    gants 54/55, jambes 56/57, dos 58/59, puis souvenir 60, amulette 61, anneau 62 — d'où
+    ///    les DEUX colonnes de l'équipement : index pair = porté, impair = apparence).
+    ///
+    /// 2. **Où se trouve l'élément DANS sa zone → géométrique**, donc adapté à la réalité de
+    ///    l'écran. Les lignes sont reconstruites en regroupant les éléments de hauteur voisine,
+    ///    plutôt qu'en supposant une largeur de grille théorique : ça reste juste si un panneau
+    ///    n'est que partiellement rempli, et ça marche tel quel pour les écrans SANS grille
+    ///    connue (options, boutique, artisanat, arbre de compétences...) qui forment alors une
+    ///    zone « générique » unique.
+    ///
+    /// Flèche seule = déplacement DANS la zone, jamais au-delà : gauche/droite restent sur la
+    /// ligne et butent en bout (bip de bord, voir Speech/UiSound.cs), haut/bas changent de ligne.
+    /// Ctrl+flèche = saut vers une zone voisine, via une table d'adjacence explicite calquée sur
+    /// la disposition réelle du menu Tab (onglets en haut, équipement à gauche, sac à droite,
+    /// barre d'action en bas) — pas de géométrie ici, pour que le résultat soit toujours le même.
+    /// </summary>
+    public static class ZoneNavigator
+    {
+        public enum Zone { None, Tabs, Equipment, Backpack, ActionBar, Generic }
+
+        /// <summary>
+        /// Adjacence entre zones pour Ctrl+flèche. Absence d'entrée = bord (bip, aucun
+        /// déplacement) : c'est ce qui « bloque » proprement en haut de l'équipement, à droite du
+        /// sac, etc., comme demandé.
+        /// </summary>
+        private static readonly Dictionary<(Zone from, int dx, int dy), Zone> Adjacency =
+            new Dictionary<(Zone, int, int), Zone>
+            {
+                { (Zone.Tabs,      0, -1), Zone.Backpack },
+
+                { (Zone.Equipment, 0,  1), Zone.Tabs },
+                { (Zone.Equipment, 1,  0), Zone.Backpack },
+                { (Zone.Equipment, 0, -1), Zone.ActionBar },
+
+                { (Zone.Backpack,  0,  1), Zone.Tabs },
+                { (Zone.Backpack, -1,  0), Zone.Equipment },
+                { (Zone.Backpack,  0, -1), Zone.ActionBar },
+
+                { (Zone.ActionBar, 0,  1), Zone.Backpack },
+            };
+
+        private static readonly Dictionary<Zone, string> ZoneNames = new Dictionary<Zone, string>
+        {
+            { Zone.Tabs, "Onglets" },
+            { Zone.Equipment, "Équipement" },
+            { Zone.Backpack, "Sac à dos" },
+            { Zone.ActionBar, "Barre d'action" },
+        };
+
+        private static FieldInfo _tabsField;
+
+        // ---------------------------------------------------------------- API
+
+        /// <summary>
+        /// Vrai si le mod doit prendre la main sur les flèches. Volontairement basé sur « un menu
+        /// est-il ouvert », PAS sur « un élément est-il sélectionné » : c'est exactement ce qui
+        /// avait causé une régression (Tab est aussi la touche de cycle de focus par défaut
+        /// d'Unity, ce qui rendait vrai un test de sélection même hors de tout menu, et volait
+        /// alors toutes les flèches à la navigation normale).
+        /// </summary>
+        public static bool IsActive()
+        {
+            // Hors partie (menu principal, sélection/création de personnage) : aucun UIHandler ni
+            // joueur, mais on est forcément dans un menu — la seule question est s'il y a quelque
+            // chose à parcourir.
+            if (Player.Instance == null) return CurrentSelection() != null;
+
+            // En partie : on s'appuie UNIQUEMENT sur les signaux du jeu « une interface est
+            // ouverte ». Se fier à « un élément est-il sélectionné » avait causé une régression
+            // (Unity garde une sélection résiduelle même en jeu normal, ce qui volait les flèches
+            // et cassait toute la navigation ailleurs).
+            if (UIHandler.InventoryOpen) return true;
+            if (UIHandler.UIWasOpenThisFrame) return true;
+            UIHandler handler = UIHandler.Instance;
+            return handler != null && handler.AnotherUIOpen;
+        }
+
+        /// <summary>
+        /// Libellé d'un onglet du menu principal à partir de son GameObject, via sa position dans
+        /// la liste `tabs` du jeu — qui EST l'index de panneau (`OpenMajorPanel(i)` sélectionne
+        /// `tabs[i]`). Source autoritative, contrairement au rang deviné dans la hiérarchie Unity
+        /// qu'utilisait UiTextExtractor jusqu'ici. Renvoie null si ce n'est pas un onglet.
+        /// </summary>
+        public static string TabLabelFor(GameObject go)
+        {
+            if (go == null) return null;
+            List<Image> tabs = Tabs();
+            if (tabs == null) return null;
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                if (tabs[i] != null && tabs[i].gameObject == go) return TabLabel(i);
+            }
+            return null;
+        }
+
+        public static void Move(int dx, int dy, bool crossZone)
+        {
+            GameObject currentGo = CurrentSelection();
+            Zone zone = ClassifyZone(currentGo);
+
+            // Rien de sélectionné mais un menu est ouvert : premier appui = point d'entrée.
+            if (currentGo == null || zone == Zone.None)
+            {
+                EnterDefault();
+                return;
+            }
+
+            if (crossZone) MoveAcrossZones(currentGo, zone, dx, dy);
+            else MoveWithinZone(currentGo, zone, dx, dy);
+        }
+
+        /// <summary>
+        /// Onglets du menu Tab. Utilise l'API PUBLIQUE du jeu (`PlayerInventory.OpenMajorPanel`)
+        /// qui fait tout correctement d'un coup : active le bon panneau, met à jour
+        /// `majorTabIndex`, et déplace la sélection Unity sur l'onglet (donc FocusReader annonce
+        /// tout seul). Remplace l'ancienne approche — clic sur un GameObject trouvé par préfixe de
+        /// nom « Major », avec un compteur de rang maintenu par le mod qui DÉRIVAIT dès que
+        /// l'onglet changeait autrement (souris, action du jeu) : c'était la cause la plus
+        /// probable du comportement « bancale » signalé.
+        /// </summary>
+        public static void SwitchTab(int direction, bool wrap)
+        {
+            PlayerInventory inv = Player.Instance != null ? Player.Instance.PlayerInventory : null;
+            if (inv == null)
+            {
+                TolkSpeech.Speak("Le menu n'est pas ouvert.", true);
+                return;
+            }
+
+            const int tabCount = 7; // le jeu lui-même cycle en Mod(±1, 7) dans UIHandler.Update
+            int target = inv.majorTabIndex + direction;
+
+            if (wrap)
+            {
+                target = ((target % tabCount) + tabCount) % tabCount;
+            }
+            else if (target < 0 || target >= tabCount)
+            {
+                UiSound.EdgeBump();
+                return;
+            }
+
+            // Pas de préfixe à poser ici : OpenMajorPanel sélectionne lui-même l'onglet, et
+            // UiTextExtractor sait maintenant en tirer le bon libellé (via TabLabelFor), donc
+            // FocusReader l'annonce correctement tout seul.
+            inv.OpenMajorPanel(target);
+        }
+
+        /// <summary>
+        /// Touches 1 à 0 sur un emplacement : échange son contenu avec le slot de barre d'action
+        /// correspondant (index 0-9). `Wish.Inventory.SwapItems` est publique et SYMÉTRIQUE, donc
+        /// le même appel couvre « envoyer vers la barre d'action » et « récupérer depuis la barre
+        /// d'action ». Le jeu bloque de lui-même le changement d'outil actif par ces touches tant
+        /// que l'inventaire est ouvert (`!UIHandler.InventoryOpen`, vu en décompilation d'ItemIcon),
+        /// donc pas de conflit avec leur usage normal en jeu.
+        /// </summary>
+        public static void QuickAssign(int hotbarIndex)
+        {
+            if (!UIHandler.InventoryOpen) return;
+            if (hotbarIndex < 0 || hotbarIndex > 9) return;
+
+            GameObject go = CurrentSelection();
+            Slot slot = go != null ? go.GetComponent<Slot>() : null;
+            if (slot == null || slot is ArmorSlot || slot.inventory == null)
+            {
+                UiSound.EdgeBump();
+                return;
+            }
+
+            slot.inventory.SwapItems(slot.slotNumber, hotbarIndex, out _, out _);
+            slot.inventory.UpdateInventory();
+
+            // Re-sélectionner le même emplacement force FocusReader à réannoncer son nouveau
+            // contenu (il ne réagit qu'aux CHANGEMENTS de sélection, d'où le passage par null).
+            if (EventSystem.current == null) return;
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(slot.gameObject);
+        }
+
+        public static string TabLabel(int panelIndex) =>
+            Util.UiNameTranslator.MajorTabLabelsByIndex.TryGetValue(panelIndex, out string label)
+                ? label
+                : $"Onglet {panelIndex + 1}";
+
+        // ------------------------------------------------------- Déplacements
+
+        private static void MoveWithinZone(GameObject currentGo, Zone zone, int dx, int dy)
+        {
+            // Les onglets sont un cas à part : ce n'est pas une sélection libre, changer d'onglet
+            // change tout l'écran — on passe par l'API du jeu plutôt que par la grille.
+            if (zone == Zone.Tabs)
+            {
+                if (dx != 0) SwitchTab(dx, wrap: false);
+                else UiSound.EdgeBump();
+                return;
+            }
+
+            List<List<GameObject>> rows = BuildRows(ZoneMembers(zone));
+            if (!Locate(rows, currentGo, out int row, out int col))
+            {
+                UiSound.EdgeBump();
+                return;
+            }
+
+            GameObject target = dx != 0
+                ? StepHorizontally(rows, row, col, dx)
+                : StepVertically(rows, row, col, dy);
+
+            if (target == null)
+            {
+                UiSound.EdgeBump();
+                return;
+            }
+            Select(target);
+        }
+
+        /// <summary>Gauche/droite : reste sur la MÊME ligne, bute en bout (pas de retour à la ligne).</summary>
+        private static GameObject StepHorizontally(List<List<GameObject>> rows, int row, int col, int dx)
+        {
+            int next = col + dx;
+            if (next < 0 || next >= rows[row].Count) return null;
+            return rows[row][next];
+        }
+
+        /// <summary>
+        /// Haut/bas : change de ligne en gardant la colonne la plus proche. Les lignes plus
+        /// courtes (typiquement souvenir/amulette/anneau, seuls sur leur ligne sous les deux
+        /// colonnes de l'équipement) sont donc atteignables au lieu d'être des culs-de-sac.
+        /// </summary>
+        private static GameObject StepVertically(List<List<GameObject>> rows, int row, int col, int dy)
+        {
+            // dy = +1 signifie "vers le haut de l'écran", or les lignes sont ordonnées du haut
+            // vers le bas : on descend donc dans l'index quand dy est positif.
+            int step = dy > 0 ? -1 : 1;
+            for (int r = row + step; r >= 0 && r < rows.Count; r += step)
+            {
+                if (rows[r].Count == 0) continue;
+                return rows[r][Mathf.Clamp(col, 0, rows[r].Count - 1)];
+            }
+            return null;
+        }
+
+        private static void MoveAcrossZones(GameObject currentGo, Zone zone, int dx, int dy)
+        {
+            if (!Adjacency.TryGetValue((zone, dx, dy), out Zone target))
+            {
+                UiSound.EdgeBump();
+                return;
+            }
+
+            if (target == Zone.Tabs)
+            {
+                PlayerInventory inv = Player.Instance != null ? Player.Instance.PlayerInventory : null;
+                if (inv == null) { UiSound.EdgeBump(); return; }
+                FocusReader.SetPendingPrefix(ZoneNames[Zone.Tabs]);
+                inv.OpenMajorPanel(inv.majorTabIndex); // re-sélectionne l'onglet courant
+                return;
+            }
+
+            List<List<GameObject>> targetRows = BuildRows(ZoneMembers(target));
+            if (targetRows.Count == 0) { UiSound.EdgeBump(); return; }
+
+            // On garde la cohérence spatiale : en entrant par la gauche on arrive à gauche, en
+            // entrant par le haut on arrive en haut, et on conserve au mieux l'autre coordonnée.
+            List<List<GameObject>> currentRows = BuildRows(ZoneMembers(zone));
+            Locate(currentRows, currentGo, out int row, out int col);
+
+            int newRow, newCol;
+            if (dy != 0)
+            {
+                newRow = dy > 0 ? targetRows.Count - 1 : 0; // vers le haut = dernière ligne de la zone au-dessus
+                newCol = Mathf.Clamp(col, 0, targetRows[newRow].Count - 1);
+            }
+            else
+            {
+                newRow = Mathf.Clamp(row, 0, targetRows.Count - 1);
+                newCol = dx > 0 ? 0 : targetRows[newRow].Count - 1;
+            }
+
+            GameObject entry = targetRows[newRow][Mathf.Clamp(newCol, 0, targetRows[newRow].Count - 1)];
+            FocusReader.SetPendingPrefix(ZoneNames.TryGetValue(target, out string n) ? n : null);
+            Select(entry);
+        }
+
+        private static void EnterDefault()
+        {
+            foreach (Zone z in new[] { Zone.Backpack, Zone.ActionBar, Zone.Equipment, Zone.Generic })
+            {
+                List<List<GameObject>> rows = BuildRows(ZoneMembers(z));
+                if (rows.Count == 0 || rows[0].Count == 0) continue;
+                FocusReader.SetPendingPrefix(ZoneNames.TryGetValue(z, out string n) ? n : null);
+                Select(rows[0][0]);
+                return;
+            }
+            UiSound.EdgeBump();
+        }
+
+        private static void Select(GameObject go)
+        {
+            if (EventSystem.current == null || go == null) return;
+            // FocusReader annonce automatiquement au prochain tick sur changement de sélection —
+            // pas besoin de reconstruire le texte ici.
+            EventSystem.current.SetSelectedGameObject(go);
+        }
+
+        // ------------------------------------------------------------- Zones
+
+        private static GameObject CurrentSelection()
+        {
+            GameObject go = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+            return (go != null && go.activeInHierarchy) ? go : null;
+        }
+
+        public static Zone ClassifyZone(GameObject go)
+        {
+            if (go == null) return Zone.None;
+
+            if (IsTab(go)) return Zone.Tabs;
+
+            Slot slot = go.GetComponent<Slot>();
+            if (slot != null)
+            {
+                if (slot is ArmorSlot) return Zone.Equipment;
+                if (slot.slotNumber >= 0 && slot.slotNumber < 10) return Zone.ActionBar;
+                if (slot.slotNumber >= 10 && slot.slotNumber < 50) return Zone.Backpack;
+                if (slot.slotNumber >= 50) return Zone.Equipment;
+                return Zone.Backpack;
+            }
+
+            return go.GetComponent<Selectable>() != null ? Zone.Generic : Zone.None;
+        }
+
+        private static bool IsTab(GameObject go)
+        {
+            List<Image> tabs = Tabs();
+            return tabs != null && tabs.Any(t => t != null && t.gameObject == go);
+        }
+
+        private static List<Image> Tabs()
+        {
+            PlayerInventory inv = Player.Instance != null ? Player.Instance.PlayerInventory : null;
+            if (inv == null) return null;
+            _tabsField ??= typeof(PlayerInventory).GetField("tabs", BindingFlags.NonPublic | BindingFlags.Instance);
+            return _tabsField?.GetValue(inv) as List<Image>;
+        }
+
+        private static List<GameObject> ZoneMembers(Zone zone)
+        {
+            if (zone == Zone.Tabs)
+            {
+                List<Image> tabs = Tabs();
+                return tabs == null
+                    ? new List<GameObject>()
+                    : tabs.Where(t => t != null && t.gameObject.activeInHierarchy)
+                          .Select(t => t.gameObject).ToList();
+            }
+
+            if (zone == Zone.Generic)
+            {
+                // Écrans sans grille connue : on réutilise exactement le filtrage déjà éprouvé de
+                // MenuNavigator (interactable + visible + hors CanvasGroup transparent).
+                return MenuNavigator.VisibleSelectables()
+                    .Where(s => ClassifyZone(s.gameObject) == Zone.Generic)
+                    .Select(s => s.gameObject).ToList();
+            }
+
+            return Object.FindObjectsOfType<Slot>()
+                .Where(s => s != null && s.gameObject.activeInHierarchy && ClassifyZone(s.gameObject) == zone)
+                .Select(s => s.gameObject)
+                .ToList();
+        }
+
+        // ------------------------------------------------------------ Grille
+
+        /// <summary>
+        /// Reconstruit les lignes visuelles en regroupant les éléments de hauteur voisine, puis
+        /// trie chaque ligne de gauche à droite. Résultat ordonné du HAUT vers le BAS.
+        /// Volontairement géométrique plutôt que basé sur une largeur de grille supposée : ça
+        /// reste juste quel que soit le remplissage réel du panneau, et ça sert tel quel aux
+        /// écrans dont on ne connaît pas la disposition.
+        /// </summary>
+        private static List<List<GameObject>> BuildRows(List<GameObject> members)
+        {
+            var rows = new List<List<GameObject>>();
+            if (members == null || members.Count == 0) return rows;
+
+            var sorted = members
+                .Where(m => m != null)
+                .OrderByDescending(m => m.transform.position.y)
+                .ToList();
+            if (sorted.Count == 0) return rows;
+
+            float tolerance = RowTolerance(sorted);
+            var currentRow = new List<GameObject> { sorted[0] };
+            float rowY = sorted[0].transform.position.y;
+
+            for (int i = 1; i < sorted.Count; i++)
+            {
+                float y = sorted[i].transform.position.y;
+                if (Mathf.Abs(y - rowY) <= tolerance)
+                {
+                    currentRow.Add(sorted[i]);
+                }
+                else
+                {
+                    rows.Add(currentRow.OrderBy(g => g.transform.position.x).ToList());
+                    currentRow = new List<GameObject> { sorted[i] };
+                    rowY = y;
+                }
+            }
+            rows.Add(currentRow.OrderBy(g => g.transform.position.x).ToList());
+            return rows;
+        }
+
+        /// <summary>
+        /// Deux éléments sont sur la même ligne si leur écart vertical est inférieur à la moitié
+        /// de la hauteur d'un élément — dérivé de la taille réelle à l'écran plutôt que d'une
+        /// constante en pixels, pour rester correct quelle que soit la résolution ou l'échelle
+        /// d'interface choisie par le joueur.
+        /// </summary>
+        private static float RowTolerance(List<GameObject> members)
+        {
+            var heights = new List<float>();
+            foreach (GameObject go in members)
+            {
+                if (go.transform is RectTransform rt)
+                {
+                    float h = Mathf.Abs(rt.rect.height * rt.lossyScale.y);
+                    if (h > 0.0001f) heights.Add(h);
+                }
+            }
+            if (heights.Count == 0) return 0.5f;
+            heights.Sort();
+            return Mathf.Max(0.0001f, heights[heights.Count / 2] * 0.5f);
+        }
+
+        private static bool Locate(List<List<GameObject>> rows, GameObject go, out int row, out int col)
+        {
+            for (int r = 0; r < rows.Count; r++)
+            {
+                int c = rows[r].IndexOf(go);
+                if (c >= 0) { row = r; col = c; return true; }
+            }
+            row = 0; col = 0;
+            return false;
+        }
+    }
+}

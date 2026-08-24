@@ -90,24 +90,47 @@ namespace SunHavenAccess.Menus
             // même sur le même écran.
             _index = -1;
 
+            ActivateObject(sel.gameObject, sel);
+        }
+
+        /// <summary>
+        /// BUG corrigé (24/08/2026) : le repli générique ne simulait QU'UN clic pointeur
+        /// (`pointerClickHandler`). Or `Wish.Slot`/`ArmorSlot` (emplacements d'inventaire et
+        /// d'équipement) n'implémentent PAS `IPointerClickHandler` — seulement `ISubmitHandler` —
+        /// donc valider sur un emplacement d'inventaire ne faisait tout simplement rien. On
+        /// essaie maintenant `submitHandler` EN PREMIER (c'est ce que déclenche la validation
+        /// clavier native d'Unity), et on ne retombe sur le clic pointeur que s'il n'y a pas de
+        /// gestionnaire de validation.
+        /// </summary>
+        public static void ActivateObject(GameObject go, Selectable sel = null)
+        {
+            if (go == null) return;
+            sel ??= go.GetComponent<Selectable>();
+
+            if (sel is Toggle toggle)
+            {
+                toggle.isOn = !toggle.isOn;
+                TolkSpeech.Speak(toggle.isOn ? "Coché." : "Décoché.", true);
+                return;
+            }
+
+            var data = new BaseEventData(EventSystem.current);
+            if (ExecuteEvents.Execute(go, data, ExecuteEvents.submitHandler))
+            {
+                TolkSpeech.Speak("Activé.", true);
+                return;
+            }
+
             if (sel is Button button)
             {
                 button.onClick.Invoke();
                 TolkSpeech.Speak("Activé.", true);
+                return;
             }
-            else if (sel is Toggle toggle)
-            {
-                toggle.isOn = !toggle.isOn;
-                TolkSpeech.Speak(toggle.isOn ? "Coché." : "Décoché.", true);
-            }
-            else
-            {
-                // Repli générique pour les autres Selectable (sliders, éléments personnalisés
-                // avec EventTrigger...) : on simule un clic pointeur.
-                ExecuteEvents.Execute(sel.gameObject, new PointerEventData(EventSystem.current),
-                    ExecuteEvents.pointerClickHandler);
-                TolkSpeech.Speak("Activé.", true);
-            }
+
+            ExecuteEvents.Execute(go, new PointerEventData(EventSystem.current),
+                ExecuteEvents.pointerClickHandler);
+            TolkSpeech.Speak("Activé.", true);
         }
 
         /// <summary>
@@ -127,72 +150,49 @@ namespace SunHavenAccess.Menus
             AnnounceCurrent();
         }
 
-        private static int _lastMajorTabRank = 1;
+        // Le changement d'onglet du menu principal vit maintenant dans ZoneNavigator.SwitchTab :
+        // il utilise l'API PUBLIQUE du jeu (PlayerInventory.OpenMajorPanel), qui met elle-même à
+        // jour l'index d'onglet et la sélection. L'ancienne implémentation ici cliquait un
+        // GameObject trouvé par préfixe de nom et suivait le rang courant dans un compteur
+        // maintenu par le mod — un compteur qui dérivait dès que l'onglet changeait autrement
+        // (souris, action du jeu), cause la plus probable du comportement "bancale" signalé.
 
-        /// <summary>
-        /// Ctrl+Tab / Ctrl+Maj+Tab : bascule directement vers l'onglet suivant/précédent du menu
-        /// principal (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
-        /// Paramètres) SANS avoir à naviguer aux flèches tout l'écran pour retrouver les boutons
-        /// d'onglet. On garde nous-mêmes trace du rang actuel (`_lastMajorTabRank`) : comme
-        /// c'est TOUJOURS cette méthode qui déclenche le changement d'onglet, pas besoin
-        /// d'interroger l'état visuel du jeu pour savoir où on en est.
-        /// </summary>
-        public static void SwitchMajorTab(int direction)
+        // ---- Variantes agissant sur la sélection Unity courante (mode navigation
+        // directionnelle, où c'est ZoneNavigator qui déplace la sélection, pas la liste interne
+        // `_items` de ce navigateur). Même comportement, autre source de vérité.
+
+        private static Slider SelectedSlider()
         {
-            List<Transform> majorTabs = FindActiveMajorTabsInOrder();
-            if (majorTabs.Count == 0)
-            {
-                TolkSpeech.Speak("Ouvrez d'abord le menu principal (touche Tab) pour changer d'onglet.", true);
-                return;
-            }
-
-            int count = majorTabs.Count;
-            _lastMajorTabRank = ((_lastMajorTabRank - 1 + direction) % count + count) % count + 1;
-            Transform tabTransform = majorTabs[_lastMajorTabRank - 1];
-            Selectable sel = tabTransform.GetComponent<Selectable>();
-
-            if (sel is Button button)
-            {
-                button.onClick.Invoke();
-            }
-            else if (sel != null)
-            {
-                ExecuteEvents.Execute(tabTransform.gameObject, new PointerEventData(EventSystem.current),
-                    ExecuteEvents.pointerClickHandler);
-            }
-
-            string label = UiNameTranslator.MajorTabLabelsByRank.TryGetValue(_lastMajorTabRank, out string l)
-                ? l : $"Onglet {_lastMajorTabRank}";
-            TolkSpeech.Speak(label, true);
-
-            // Repart d'une navigation fraîche aux flèches sur le contenu du nouvel onglet.
-            Rescan();
+            GameObject go = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
+            return go != null ? go.GetComponent<Slider>() : null;
         }
 
-        /// <summary>
-        /// Même logique de rang que UiTextExtractor.TryMajorTabLabel (position parmi les frères
-        /// "Major" actifs, ordre hiérarchique Unity = ordre visuel) — DOIT rester cohérente avec
-        /// elle pour que le rang annoncé ici corresponde à ce que le joueur entend en arrivant
-        /// sur l'onglet.
-        /// </summary>
-        private static List<Transform> FindActiveMajorTabsInOrder()
+        public static bool SelectedIsSlider() => SelectedSlider() != null;
+
+        public static void AdjustSelectedSlider(int direction)
         {
-            Selectable[] all = Object.FindObjectsOfType<Selectable>();
-            Selectable anyMajorTab = all.FirstOrDefault(s =>
-                s != null && s.gameObject.activeInHierarchy && UiNameTranslator.IsMajorTabName(s.gameObject.name));
-            if (anyMajorTab == null) return new List<Transform>();
+            Slider slider = SelectedSlider();
+            if (slider == null || !slider.gameObject.activeInHierarchy) return;
 
-            Transform parent = anyMajorTab.transform.parent;
-            if (parent == null) return new List<Transform>();
+            float step = slider.wholeNumbers ? 1f : (slider.maxValue - slider.minValue) / 20f;
+            slider.value = Mathf.Clamp(slider.value + step * direction, slider.minValue, slider.maxValue);
 
-            var result = new List<Transform>();
-            for (int i = 0; i < parent.childCount; i++)
+            string valueText = slider.wholeNumbers
+                ? $"{Mathf.RoundToInt(slider.value)} sur {Mathf.RoundToInt(slider.maxValue)}"
+                : $"{Mathf.RoundToInt((slider.value - slider.minValue) / Mathf.Max(slider.maxValue - slider.minValue, 0.0001f) * 100f)} pour cent";
+            TolkSpeech.Speak(valueText, true);
+        }
+
+        /// <summary>Clic droit sur un GameObject donné (variante de SecondaryActivate hors liste interne).</summary>
+        public static void SecondaryActivateObject(GameObject go)
+        {
+            if (go == null) return;
+            var rightClick = new PointerEventData(EventSystem.current)
             {
-                Transform child = parent.GetChild(i);
-                if (UiNameTranslator.IsMajorTabName(child.name) && child.gameObject.activeInHierarchy)
-                    result.Add(child);
-            }
-            return result;
+                button = PointerEventData.InputButton.Right
+            };
+            ExecuteEvents.Execute(go, rightClick, ExecuteEvents.pointerClickHandler);
+            TolkSpeech.Speak("Clic droit.", true);
         }
 
         /// <summary>Action secondaire (Ctrl+Entrée) : équivalent d'un clic droit sur l'élément annoncé.</summary>
@@ -234,16 +234,23 @@ namespace SunHavenAccess.Menus
             Announce(_items[_index]);
         }
 
+        /// <summary>
+        /// Tous les Selectable réellement navigables à l'écran, triés haut -> bas puis gauche ->
+        /// droite. Partagé avec ZoneNavigator (zone « générique ») pour que les deux systèmes
+        /// s'accordent exactement sur ce qui compte comme élément atteignable.
+        /// </summary>
+        public static IEnumerable<Selectable> VisibleSelectables()
+        {
+            return Object.FindObjectsOfType<Selectable>()
+                .Where(s => s != null && s.interactable && s.gameObject.activeInHierarchy && IsVisible(s))
+                .OrderByDescending(s => s.transform.position.y)
+                .ThenBy(s => s.transform.position.x);
+        }
+
         private static void Rescan()
         {
             _items.Clear();
-            // Tous les Selectable actifs et interactifs de la scène, triés haut -> bas puis
-            // gauche -> droite pour un ordre de lecture naturel.
-            Selectable[] all = Object.FindObjectsOfType<Selectable>();
-            _items.AddRange(all
-                .Where(s => s != null && s.interactable && s.gameObject.activeInHierarchy && IsVisible(s))
-                .OrderByDescending(s => s.transform.position.y)
-                .ThenBy(s => s.transform.position.x));
+            _items.AddRange(VisibleSelectables());
             _index = -1;
         }
 

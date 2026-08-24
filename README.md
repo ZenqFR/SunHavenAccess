@@ -46,7 +46,10 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 - Les 7 onglets du menu principal (Tab) correctement nommés (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres).
 - Bulles de dialogue lues dès le DÉBUT de la ligne, pas à la fin de l'animation machine à écrire.
 - Traduction automatique en français des noms techniques d'interface quand le jeu ne fournit aucun texte visible (dictionnaire de plusieurs centaines de termes : actions, lieux, bâtiments...).
-- **Navigation directionnelle réelle dans le sac à dos/équipement/barre d'action** (flèches selon la vraie position à l'écran, pas juste une liste). Ctrl+flèche saute directement au panneau adjacent (barre d'action ↔ sac ↔ équipement ↔ onglets). Touches 1 à 0 sur un objet : l'envoie/le récupère directement du slot de barre d'action correspondant. **Fonctionnalité toute nouvelle, jamais testée en conditions réelles.**
+- **Navigation directionnelle réelle dans tous les menus** : les flèches suivent la disposition visuelle (ligne/colonne), pas une liste à plat. Gauche/droite restent sur la ligne et **butent en bout avec un bip court** ; haut/bas changent de ligne. Chaque panneau est une zone aux frontières nettes (onglets, équipement, sac à dos, barre d'action), donc on ne « déborde » jamais accidentellement d'une zone à l'autre.
+- **Ctrl+flèche** saute volontairement d'une zone à l'autre, selon la disposition réelle : onglets en haut, équipement à gauche, sac à droite, barre d'action en bas.
+- **Touches 1 à 0** sur un objet : l'envoie ou le récupère directement du slot de barre d'action correspondant.
+- Le bip de bord et la reprise en main des flèches sont tous deux désactivables dans le fichier de config (section `Navigation`).
 
 </details>
 
@@ -228,10 +231,9 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | F8 | Activer/désactiver le bip de visée en pêche |
 | Ctrl + : (ou Ctrl + /) | Clic droit (souris) |
 | C | Ouvrir le tchat / la console du jeu *(remplace Entrée, qui entrait en conflit avec la validation de menu)* |
-| Flèches directionnelles | Naviguer dans un menu |
-| Flèches (sur un slot du sac/équipement/barre d'action) | Voisin réel dans cette direction à l'écran |
-| Ctrl + flèche (sur un slot) | Sauter au panneau adjacent (barre d'action / sac / équipement / onglets) |
-| 1 à 0 (sur un slot) | Envoyer/récupérer l'objet vers/depuis la barre d'action |
+| Flèches directionnelles | Se déplacer dans le menu selon la disposition réelle (bip court si on bute sur un bord) |
+| Ctrl + flèche | Sauter à la zone voisine (onglets / équipement / sac à dos / barre d'action) |
+| 1 à 0 (sur un emplacement) | Envoyer/récupérer l'objet vers/depuis la barre d'action |
 | Entrée | Valider (clic gauche) *(exige d'avoir déjà sélectionné un élément aux flèches)* |
 | Ctrl + Entrée | Action secondaire (clic droit) |
 | Ctrl + Tab / Ctrl + Maj + Tab | Changer d'onglet directement dans le menu principal (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres) |
