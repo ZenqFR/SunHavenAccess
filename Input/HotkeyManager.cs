@@ -36,6 +36,17 @@ namespace SunHavenAccess.Input
                 return;
             }
 
+            // Pendant la frappe dans un champ de saisie, TOUTES les touches du mod sont
+            // suspendues : sinon taper « p » dans le nom de son personnage annoncerait la
+            // position, « o » l'horloge, « c » ouvrirait le tchat... Voir Menus/TextInputReader.cs.
+            // On rétablit d'abord la navigation native, sinon elle resterait neutralisée pour
+            // toute la durée de la saisie (et au-delà, puisqu'on sort avant d'y toucher).
+            if (TextInputReader.IsTyping())
+            {
+                SuppressNativeNavigation(false);
+                return;
+            }
+
             if (Pressed(ModConfig.Repeat.Value)) TolkSpeech.Repeat();
             if (Pressed(ModConfig.DescribeFront.Value)) TileCursor.AnnounceFront();
             if (Pressed(ModConfig.Position.Value)) TileCursor.AnnouncePosition();

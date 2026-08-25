@@ -66,6 +66,30 @@ Parcourir 40 emplacements un par un reste lent, même quand tout est bien lu. Ce
 </details>
 
 <details>
+<summary><strong>Saisie de texte</strong></summary>
+
+Taper du texte se faisait jusqu'ici **dans le silence total** — ce qui bloquait purement et simplement la création de personnage : impossible de savoir ce qu'on avait tapé comme nom, ni même si la frappe était prise en compte.
+
+- À la prise de focus : le rôle du champ (via son texte d'invite) et son contenu actuel sont annoncés.
+- À la frappe : seul le caractère ajouté est annoncé, pas toute la chaîne — sinon saisir un nom deviendrait insupportable.
+- À l'effacement : le caractère supprimé est annoncé.
+- Les champs masqués (mot de passe) ne sont jamais prononcés à voix haute.
+- **Toutes les touches du mod sont suspendues pendant la frappe** : sans ça, taper « p » dans son nom annoncerait la position, « o » l'horloge, « c » ouvrirait le tchat.
+
+Couvre le nom du personnage, le champ de tri de l'artisanat et le tchat, sans code spécifique à chacun.
+
+</details>
+
+<details>
+<summary><strong>Coffres et rangement manuel</strong></summary>
+
+- Les emplacements d'un coffre ouvert forment leur propre zone de navigation, avec les mêmes flèches et les mêmes bords que le reste.
+- **Ctrl+flèche** passe du coffre au sac à dos et inversement.
+- Les touches 1 à 0 sont volontairement inactives sur un emplacement de coffre : elles échangeraient deux cases **du coffre** au lieu d'envoyer l'objet vers la barre d'action.
+
+</details>
+
+<details>
 <summary><strong>Agriculture</strong></summary>
 
 - Confirmations vocales non-intrusives à chaque action : labourer, arroser, planter, récolter, arrosoir vide/rempli, culture infusée de mana.

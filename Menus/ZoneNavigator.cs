@@ -39,7 +39,7 @@ namespace SunHavenAccess.Menus
     /// </summary>
     public static class ZoneNavigator
     {
-        public enum Zone { None, Tabs, Equipment, Backpack, ActionBar, Generic }
+        public enum Zone { None, Tabs, Equipment, Backpack, ActionBar, Chest, Generic }
 
         /// <summary>
         /// Adjacence entre zones pour Ctrl+flèche. Absence d'entrée = bord (bip, aucun
@@ -60,6 +60,12 @@ namespace SunHavenAccess.Menus
                 { (Zone.Backpack,  0, -1), Zone.ActionBar },
 
                 { (Zone.ActionBar, 0,  1), Zone.Backpack },
+
+                // Un coffre ouvert s'affiche à côté de l'inventaire du joueur : on passe de
+                // l'un à l'autre horizontalement, dans les deux sens.
+                { (Zone.Chest,     1,  0), Zone.Backpack },
+                { (Zone.Chest,    -1,  0), Zone.Backpack },
+                { (Zone.Chest,     0, -1), Zone.ActionBar },
             };
 
         private static readonly Dictionary<Zone, string> ZoneNames = new Dictionary<Zone, string>
@@ -68,6 +74,7 @@ namespace SunHavenAccess.Menus
             { Zone.Equipment, "Équipement" },
             { Zone.Backpack, "Sac à dos" },
             { Zone.ActionBar, "Barre d'action" },
+            { Zone.Chest, "Coffre" },
         };
 
         private static FieldInfo _tabsField;
@@ -183,7 +190,11 @@ namespace SunHavenAccess.Menus
             if (hotbarIndex < 0 || hotbarIndex > 9) return;
 
             Slot slot = ResolveSlot(CurrentSelection());
-            if (slot == null || slot is ArmorSlot || slot.inventory == null)
+            // Un emplacement de COFFRE est exclu : `SwapItems` opère au sein d'un même inventaire,
+            // donc sur un coffre il échangerait deux cases DU COFFRE au lieu d'envoyer l'objet
+            // vers la barre d'action du joueur — silencieusement faux, et destructeur du rangement.
+            if (slot == null || slot is ArmorSlot || slot.inventory == null
+                || ClassifyZone(slot.gameObject) == Zone.Chest)
             {
                 UiSound.EdgeBump();
                 return;
@@ -262,9 +273,27 @@ namespace SunHavenAccess.Menus
             return null;
         }
 
+        /// <summary>
+        /// Zone voisine dans une direction. La table d'adjacence est statique, mais le coffre,
+        /// lui, n'existe que par intermittence : on l'intercale dynamiquement quand un coffre est
+        /// réellement ouvert, plutôt que de figer dans la table une zone absente 99 % du temps
+        /// (ce qui ferait buter Ctrl+gauche sur du vide depuis le sac).
+        /// </summary>
+        private static bool ResolveAdjacent(Zone from, int dx, int dy, out Zone target)
+        {
+            if (ChestOpen() && dx != 0 && (from == Zone.Backpack || from == Zone.ActionBar))
+            {
+                target = Zone.Chest;
+                return true;
+            }
+            return Adjacency.TryGetValue((from, dx, dy), out target);
+        }
+
+        private static bool ChestOpen() => ItemIcon.ExternalInventory != null;
+
         private static void MoveAcrossZones(GameObject currentGo, Zone zone, int dx, int dy)
         {
-            if (!Adjacency.TryGetValue((zone, dx, dy), out Zone target))
+            if (!ResolveAdjacent(zone, dx, dy, out Zone target))
             {
                 UiSound.EdgeBump();
                 return;
@@ -306,7 +335,13 @@ namespace SunHavenAccess.Menus
 
         private static void EnterDefault()
         {
-            foreach (Zone z in new[] { Zone.Backpack, Zone.ActionBar, Zone.Equipment, Zone.Generic })
+            // Si un coffre est ouvert, c'est très probablement ce qu'on vient d'ouvrir : on y entre
+            // en premier plutôt que dans le sac.
+            Zone[] order = ChestOpen()
+                ? new[] { Zone.Chest, Zone.Backpack, Zone.ActionBar, Zone.Equipment, Zone.Generic }
+                : new[] { Zone.Backpack, Zone.ActionBar, Zone.Equipment, Zone.Generic };
+
+            foreach (Zone z in order)
             {
                 List<List<GameObject>> rows = BuildRows(ZoneMembers(z));
                 if (rows.Count == 0 || rows[0].Count == 0) continue;
@@ -414,6 +449,16 @@ namespace SunHavenAccess.Menus
             Slot slot = ResolveSlot(go);
             if (slot != null)
             {
+                // ORDRE IMPORTANT : le test « coffre » passe AVANT les plages de slotNumber. Les
+                // emplacements d'un coffre ont eux aussi des slotNumber partant de 0, ils seraient
+                // donc pris pour la barre d'action ou le sac à dos. Le jeu distingue les deux via des
+                // statiques posées par `Chest.Interact()` : l'inventaire externe est celui du coffre.
+                if (slot.inventory != null && ItemIcon.ExternalInventory != null
+                    && ReferenceEquals(slot.inventory, ItemIcon.ExternalInventory))
+                {
+                    return Zone.Chest;
+                }
+
                 if (slot is ArmorSlot) return Zone.Equipment;
                 if (slot.slotNumber >= 0 && slot.slotNumber < 10) return Zone.ActionBar;
                 if (slot.slotNumber >= 10 && slot.slotNumber < 50) return Zone.Backpack;

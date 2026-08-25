@@ -39,6 +39,7 @@ namespace SunHavenAccess
 
             SafeTick("ChatKeyRebinder", ChatKeyRebinder.Tick);
             SafeTick("HotkeyManager", HotkeyManager.Tick);
+            SafeTick("TextInputReader", TextInputReader.Tick);
             SafeTick("FocusReader", FocusReader.Tick);
             SafeTick("HoverReader", HoverReader.Tick);
             SafeTick("TooltipReader", TooltipReader.Tick);
