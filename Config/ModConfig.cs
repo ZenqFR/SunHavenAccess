@@ -53,6 +53,12 @@ namespace SunHavenAccess.Config
         /// <summary>Réglages hors touches (cases à cocher), voir Init.</summary>
         public static ConfigEntry<bool> EdgeSound;
         public static ConfigEntry<bool> TakeOverMenuArrows;
+        public static ConfigEntry<bool> BriefMode;
+
+        public static ConfigEntry<KeyCode> SortBackpack;
+        public static ConfigEntry<KeyCode> AnnounceContents;
+        public static ConfigEntry<KeyCode> StoreInChests;
+        public static ConfigEntry<KeyCode> ReadFullDescription;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -217,6 +223,26 @@ namespace SunHavenAccess.Config
                 "directionnelle réelle (ligne/colonne, zones séparées). Mettre à false pour " +
                 "rendre les flèches au jeu si un écran se comporte mal (le curseur saute deux " +
                 "cases d'un coup, par exemple).");
+
+            BriefMode = config.Bind(navSection, "ModeBref", true,
+                "En parcourant l'inventaire, n'annonce que la quantité et le nom de l'objet au " +
+                "lieu de sa description complète (le jeu fusionne les deux dans un seul texte, " +
+                "ce qui rend le parcours très long). La description reste disponible à la " +
+                "demande avec la touche dédiée. Sans effet en boutique et en artisanat, où le " +
+                "prix et les ingrédients sont indispensables.");
+
+            // ---- Confort d'inventaire ----
+            // Les 26 lettres étant prises (par le jeu ou par le mod), on passe par de la
+            // ponctuation, vérifiée absente de Wish.UserSettings.DefaultKeybinds. Toutes
+            // réassignables via le menu des raccourcis (F12) si la disposition clavier gêne.
+            SortBackpack = Bind(config, section, "TrierSac", KeyCode.Quote,
+                "Trie et regroupe le sac à dos (sans toucher à la barre d'action ni à l'équipement).", "Trier le sac à dos");
+            AnnounceContents = Bind(config, section, "ResumeSac", KeyCode.Backslash,
+                "Annonce tout ce que contient le sac à dos, regroupé par objet, et le nombre d'emplacements libres.", "Résumé du contenu du sac");
+            StoreInChests = Bind(config, section, "RangerCoffres", KeyCode.Equals,
+                "Range dans les coffres proches tout ce dont ils contiennent déjà un exemplaire.", "Ranger dans les coffres proches");
+            ReadFullDescription = Bind(config, section, "DescriptionComplete", KeyCode.Keypad0,
+                "Relit la description complète du dernier objet annoncé (utile quand le mode bref est actif).", "Lire la description complète");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

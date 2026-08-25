@@ -73,6 +73,10 @@ namespace SunHavenAccess.Input
             }
             if (Pressed(ModConfig.AnnounceSkillPoints.Value)) SkillPointsAnnouncer.AnnounceAll();
             if (Pressed(ModConfig.AnnounceFestivals.Value)) FestivalAnnouncer.AnnounceThisSeason();
+            if (Pressed(ModConfig.SortBackpack.Value)) InventoryActions.SortBackpack();
+            if (Pressed(ModConfig.AnnounceContents.Value)) InventoryActions.AnnounceContents();
+            if (Pressed(ModConfig.StoreInChests.Value)) InventoryActions.StoreInNearbyChests();
+            if (Pressed(ModConfig.ReadFullDescription.Value)) AnnounceFullDescription();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
@@ -258,6 +262,20 @@ namespace SunHavenAccess.Input
             }
         }
 
+
+        /// <summary>
+        /// Relit la description complète du dernier objet annoncé. Indispensable avec le mode
+        /// bref (qui n'annonce que quantité + nom en parcourant), et pratique même sans lui pour
+        /// réécouter sans avoir à repasser sur la case. Utilise le texte MÉMORISÉ, donc marche
+        /// aussi une fois l'infobulle refermée.
+        /// </summary>
+        private static void AnnounceFullDescription()
+        {
+            string text = TooltipReader.LastFullText;
+            TolkSpeech.Speak(
+                string.IsNullOrWhiteSpace(text) ? "Aucune description disponible." : text,
+                true);
+        }
         private static bool CtrlHeld() =>
             UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl);
 
@@ -304,6 +322,10 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.AppearancePrevious.Value)} et {Strings.KeyName(ModConfig.AppearanceNext.Value)}, option précédente ou suivante d'apparence en création de personnage. Contrôle plus l'une ou l'autre, catégorie précédente ou suivante. " +
                 $"{Strings.KeyName(ModConfig.AnnounceSkillPoints.Value)}, annoncer les points de compétence disponibles dans chaque arbre. " +
                 $"{Strings.KeyName(ModConfig.AnnounceFestivals.Value)}, annoncer les festivals de la saison actuelle. " +
+                $"Dans l'inventaire : {Strings.KeyName(ModConfig.SortBackpack.Value)}, trier le sac. " +
+                $"{Strings.KeyName(ModConfig.AnnounceContents.Value)}, résumé du contenu. " +
+                $"{Strings.KeyName(ModConfig.StoreInChests.Value)}, ranger dans les coffres proches. " +
+                $"{Strings.KeyName(ModConfig.ReadFullDescription.Value)}, lire la description complète de l'objet annoncé. " +
                 $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
                 $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +
                 $"{Strings.KeyName(ModConfig.ToggleVerbosity.Value)}, activer ou désactiver l'annonce automatique des déplacements. " +

@@ -54,6 +54,18 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 </details>
 
 <details>
+<summary><strong>Confort d'inventaire</strong></summary>
+
+Parcourir 40 emplacements un par un reste lent, même quand tout est bien lu. Ces actions rendent l'inventaire *rapide*, pas seulement lisible.
+
+- **Mode bref** (actif par défaut) : en parcourant, seuls la quantité et le nom de l'objet sont annoncés. Le jeu fusionne nom et description dans un seul texte, ce qui rendait chaque case interminable. Une touche dédiée relit la description complète à la demande, même après la fermeture de l'infobulle. Sans effet en boutique et en artisanat, où le prix et les ingrédients sont indispensables.
+- **Tri du sac à dos** : regroupe et compacte les objets, sans toucher à la barre d'action ni à l'équipement. Effet secondaire utile : les emplacements occupés deviennent contigus, donc la navigation devient beaucoup plus courte.
+- **Résumé du contenu** : annonce tout ce que contient le sac, regroupé par objet et trié du plus abondant au moins abondant, plus le nombre d'emplacements libres.
+- **Rangement dans les coffres proches** : dépose dans les coffres à proximité tout ce dont ils contiennent déjà un exemplaire, et annonce combien de coffres ont été remplis. La méthode équivalente du jeu vise *tous* les coffres chargés, sans filtre de distance — inutilisable à l'aveugle, donc le filtrage par distance est refait ici.
+
+</details>
+
+<details>
 <summary><strong>Agriculture</strong></summary>
 
 - Confirmations vocales non-intrusives à chaque action : labourer, arroser, planter, récolter, arrosoir vide/rempli, culture infusée de mana.
@@ -234,6 +246,10 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | Flèches directionnelles | Se déplacer dans le menu selon la disposition réelle (bip court si on bute sur un bord) |
 | Ctrl + flèche | Sauter à la zone voisine (onglets / équipement / sac à dos / barre d'action) |
 | 1 à 0 (sur un emplacement) | Envoyer/récupérer l'objet vers/depuis la barre d'action |
+| ' (touche ù en AZERTY) | Trier et regrouper le sac à dos |
+| `\` (touche * en AZERTY) | Résumé du contenu du sac |
+| = | Ranger dans les coffres proches |
+| Pavé 0 | Lire la description complète de l'objet annoncé |
 | Entrée | Valider (clic gauche) *(exige d'avoir déjà sélectionné un élément aux flèches)* |
 | Ctrl + Entrée | Action secondaire (clic droit) |
 | Ctrl + Tab / Ctrl + Maj + Tab | Changer d'onglet directement dans le menu principal (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres) |

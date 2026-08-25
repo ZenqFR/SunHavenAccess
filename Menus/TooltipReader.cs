@@ -57,14 +57,53 @@ namespace SunHavenAccess.Menus
             string quantityPrefix = GetQuantityPrefix();
             string full = string.IsNullOrEmpty(quantityPrefix) ? clean : $"{quantityPrefix}, {clean}";
 
-            // Annonce à l'ouverture de l'infobulle, ou si son contenu change alors qu'elle
-            // reste affichée (ex. survol d'un autre emplacement sans fermeture entre-temps).
-            if (!_wasActive || full != _lastText)
-            {
-                _lastText = full;
-                TolkSpeech.Speak(full, interrupt: true);
-            }
+            // Le texte COMPLET est toujours mémorisé, même en mode bref : c'est lui que relit la
+            // touche « description complète » (voir LastFullText), y compris après la fermeture
+            // de l'infobulle.
+            bool changed = !_wasActive || full != _lastText;
+            _lastText = full;
             _wasActive = true;
+            if (!changed) return;
+
+            TolkSpeech.Speak(BriefIfPossible(full, quantityPrefix), interrupt: true);
+        }
+
+        /// <summary>
+        /// Dernier texte d'infobulle complet (nom + description), conservé même après fermeture
+        /// pour la relecture à la demande.
+        /// </summary>
+        public static string LastFullText => _lastText;
+
+        /// <summary>Le mode bref est-il actif ? Piloté par la config (voir Plugin.Awake).</summary>
+        public static bool BriefMode { get; set; } = true;
+
+        /// <summary>
+        /// En mode bref, remplace le texte fusionné nom+description de l'infobulle par le seul
+        /// nom de l'objet (plus sa quantité). Le jeu ne met à disposition qu'UN champ contenant
+        /// les deux collés, d'où le passage par `ItemIcon.itemData` (champ PUBLIC, déjà résolu
+        /// par le jeu) pour obtenir le nom seul.
+        ///
+        /// Ne s'applique QU'AUX ItemIcon, jamais aux ItemImage : ces dernières sont les icônes
+        /// d'artisanat et de boutique, où le prix et les ingrédients sont dans la description —
+        /// l'abréger rendrait ces écrans inutilisables.
+        ///
+        /// Repli sur le texte complet dès que le nom n'est pas récupérable, plutôt que de risquer
+        /// une annonce vide ou tronquée.
+        /// </summary>
+        private static string BriefIfPossible(string full, string quantityPrefix)
+        {
+            if (!BriefMode) return full;
+
+            _currentHoveredItemIconField ??= typeof(ItemIcon).GetField("_currentHoveredIcon",
+                BindingFlags.NonPublic | BindingFlags.Static);
+            if (_currentHoveredItemIconField?.GetValue(null) is not ItemIcon icon) return full;
+
+            string name;
+            try { name = TextUtil.Clean(icon.itemData?.UnformattedDisplayName); }
+            catch { return full; }
+
+            if (string.IsNullOrWhiteSpace(name)) return full;
+            return string.IsNullOrEmpty(quantityPrefix) ? name : $"{quantityPrefix}, {name}";
         }
 
         private static FieldInfo _currentHoveredItemIconField;

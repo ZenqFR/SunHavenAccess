@@ -34,6 +34,8 @@ namespace SunHavenAccess
             // Le bip de bord de la navigation lit son état ici plutôt que d'interroger la config
             // à chaque pression (il peut être déclenché plusieurs fois par seconde).
             Speech.UiSound.Enabled = ModConfig.EdgeSound.Value;
+            Menus.TooltipReader.BriefMode = ModConfig.BriefMode.Value;
+            ModConfig.BriefMode.SettingChanged += (_, _) => Menus.TooltipReader.BriefMode = ModConfig.BriefMode.Value;
             ModConfig.EdgeSound.SettingChanged += (_, _) => Speech.UiSound.Enabled = ModConfig.EdgeSound.Value;
             TolkSpeech.Init(Log);
             FarmingAnnouncer.Init();
