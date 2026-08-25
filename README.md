@@ -43,7 +43,7 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 - Lecture des infobulles natives du jeu (nom réel des objets d'inventaire/équipement, pas juste "Item").
 - Quantité annoncée AVANT le nom, en une seule phrase ("7, Blé"), pour ne jamais couper le nom de l'objet.
 - Emplacements vides et emplacements d'armure décrits explicitement plutôt que silencieux.
-- Les 7 onglets du menu principal (Tab) correctement nommés (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres).
+- Les 7 onglets du menu principal (Tab) correctement nommés (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres), et **Ctrl+haut ramène toujours à la barre d'onglets** depuis n'importe quel panneau.
 - Bulles de dialogue lues dès le DÉBUT de la ligne, pas à la fin de l'animation machine à écrire.
 - Traduction automatique en français des noms techniques d'interface quand le jeu ne fournit aucun texte visible (dictionnaire de plusieurs centaines de termes : actions, lieux, bâtiments...).
 - **Navigation directionnelle réelle dans tous les menus** : les flèches suivent la disposition visuelle (ligne/colonne), pas une liste à plat. Gauche/droite restent sur la ligne et **butent en bout avec un bip court** ; haut/bas changent de ligne. Chaque panneau est une zone aux frontières nettes (onglets, équipement, sac à dos, barre d'action), donc on ne « déborde » jamais accidentellement d'une zone à l'autre.

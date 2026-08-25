@@ -168,12 +168,12 @@ namespace SunHavenAccess.Util
         /// RÉEL du jeu (`Wish.PlayerInventory.majorTabIndex`, base 0) — plus par une position
         /// devinée dans la hiérarchie Unity, qui pouvait diverger de l'indexation interne.
         ///
-        /// Indices 0 à 4 confirmés par les accesseurs du jeu lui-même : `IsSkillTreeOpen` =
-        /// panneau 1, `IsRelationshipPanelOpen` = 2, `IsQuestLogOpen` = 3, `IsMapOpen` = 4 (le
-        /// sac à dos étant 0, ouvert par défaut via `EnableInventory`). Indices 6 et 7 déduits de
-        /// `IsEncylopediaOpen` = 6 et `IsSettingsOpen` = 7 — ce qui CORRIGE l'ancienne table, qui
-        /// annonçait "Statistiques" puis "Paramètres" en 6 et 7. L'index 5 n'a aucun accesseur
-        /// dans le jeu : libellé encore incertain, à confirmer en jeu.
+        /// Indices confirmés EN JEU par l'utilisateur — c'est la source de vérité ici. Les accesseurs
+        /// du jeu (`IsEncylopediaOpen` = panneau 6, `IsSettingsOpen` = panneau 7) m'avaient conduit
+        /// à "corriger" cette table en plaçant Encyclopédie en 6 et Paramètres en 7 : c'était FAUX,
+        /// l'utilisateur a confirmé que le dernier onglet atteignable est bien Paramètres. La liste
+        /// `_panels` du jeu contient donc plus d'entrées que la barre d'onglets n'en expose, et leurs
+        /// index ne se correspondent pas — ne plus se fier à `_panels` pour nommer un onglet.
         ///
         /// Note : le jeu ne fait cycler que les indices 0 à 6 (Mod 7 dans UIHandler.Update), donc
         /// l'onglet 7 n'est pas atteignable en changeant d'onglet — seulement directement.
@@ -186,8 +186,7 @@ namespace SunHavenAccess.Util
             [3] = "Quêtes",
             [4] = "Carte",
             [5] = "Statistiques",
-            [6] = "Encyclopédie",
-            [7] = "Paramètres",
+            [6] = "Paramètres",
         };
 
         public static bool IsMajorTabName(string rawName) =>

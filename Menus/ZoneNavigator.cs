@@ -272,12 +272,17 @@ namespace SunHavenAccess.Menus
             }
             return null;
         }
-
         /// <summary>
-        /// Zone voisine dans une direction. La table d'adjacence est statique, mais le coffre,
-        /// lui, n'existe que par intermittence : on l'intercale dynamiquement quand un coffre est
-        /// réellement ouvert, plutôt que de figer dans la table une zone absente 99 % du temps
-        /// (ce qui ferait buter Ctrl+gauche sur du vide depuis le sac).
+        /// Zone voisine dans une direction. La table d'adjacence est statique, mais deux zones
+        /// n'existent que par intermittence et doivent être résolues à l'exécution :
+        ///
+        /// - **Le coffre**, qui n'est là que quand un coffre est ouvert. L'inscrire en dur ferait
+        ///   buter Ctrl+gauche sur du vide depuis le sac le reste du temps.
+        /// - **Les panneaux « génériques »** (arbre de compétences, relations, quêtes, carte,
+        ///   statistiques, paramètres). BUG CORRIGÉ : la table ne contenait AUCUNE sortie depuis
+        ///   Zone.Generic, donc une fois dans un de ces onglets il était impossible de remonter à
+        ///   la barre d'onglets avec Ctrl+haut — on restait bloqué dans le panneau. Seul
+        ///   l'inventaire fonctionnait, parce que lui seul a ses zones nommées dans la table.
         /// </summary>
         private static bool ResolveAdjacent(Zone from, int dx, int dy, out Zone target)
         {
@@ -286,7 +291,32 @@ namespace SunHavenAccess.Menus
                 target = Zone.Chest;
                 return true;
             }
+
+            // Depuis n'importe quel panneau d'onglet, Ctrl+haut ramène toujours à la barre
+            // d'onglets : c'est la sortie de secours qui manquait.
+            if (from == Zone.Generic && dy > 0)
+            {
+                target = Zone.Tabs;
+                return true;
+            }
+
+            // Depuis la barre d'onglets, Ctrl+bas descend dans le CONTENU de l'onglet courant —
+            // qui n'est le sac à dos que sur le premier onglet. Ailleurs, c'est un panneau
+            // générique : on choisit celui qui a réellement des éléments plutôt que de renvoyer
+            // aveuglément vers un sac à dos absent de cet écran.
+            if (from == Zone.Tabs && dy < 0)
+            {
+                target = HasMembers(Zone.Backpack) ? Zone.Backpack : Zone.Generic;
+                return true;
+            }
+
             return Adjacency.TryGetValue((from, dx, dy), out target);
+        }
+
+        private static bool HasMembers(Zone zone)
+        {
+            List<GameObject> members = ZoneMembers(zone);
+            return members != null && members.Count > 0;
         }
 
         private static bool ChestOpen() => ItemIcon.ExternalInventory != null;
