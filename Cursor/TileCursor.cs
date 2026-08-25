@@ -160,7 +160,7 @@ namespace SunHavenAccess.Cursor
                 }
             }
 
-            string farmland = DescribeFarmland(player);
+            string farmland = DescribeFarmland(GetFrontTileCoord(player));
             if (farmland != null) return farmland;
 
             string obstacle = DescribeObstacle(player, facing);
@@ -170,7 +170,7 @@ namespace SunHavenAccess.Cursor
             // la tuilemap du sol, pour ne dire "rien devant vous" que quand vraiment aucune
             // donnée de case n'est trouvée nulle part (demandé : chaque case a un contenu réel,
             // même en dehors des zones cultivables).
-            string ground = DescribeGroundTile(player);
+            string ground = DescribeGroundTile(GetFrontTileCoord(player));
             if (ground != null) return $"{ground}, côté {facing}.";
 
             return $"Rien devant vous, côté {facing}.";
@@ -183,7 +183,10 @@ namespace SunHavenAccess.Cursor
         /// d'Unity — alors qu'en décompilant `Wish.GameManager` (méthodes `GetBottomTile`/
         /// `IsBottomTileType`), le jeu indexe TOUJOURS ses tuilemaps directement par coordonnée
         /// de case entière (`new Vector3Int(position.x, position.y, 0)`, la même que
-        /// `Player.Position`), jamais via WorldToCell. Corrigé pour faire pareil. On utilise
+        /// `Player.Position`), jamais via WorldToCell. ATTENTION : `Player.Position` n'est PAS une
+        /// simple troncature des coordonnées monde, contrairement à ce qui était écrit ici avant —
+        /// le monde est isométrique (Y divisé par 1,4142135). Voir Util/TileGeometry.cs, qui porte
+        /// désormais la conversion exacte, tirée de la définition du jeu. Corrigé pour faire pareil. On utilise
         /// aussi `GameManager.Instance.TileMaps` (la liste DÉJÀ filtrée par le jeu : elle exclut
         /// `dataLayer`/`topLayer`/les tuilemaps d'ennemis) au lieu de chercher nous-mêmes tous
         /// les Tilemap de la scène.
@@ -193,12 +196,11 @@ namespace SunHavenAccess.Cursor
         /// pas un nom d'objet deviné) : utilisé en priorité pour signaler l'eau, plus important
         /// à savoir pour un joueur aveugle qu'un simple nom de texture.
         /// </summary>
-        private static string DescribeGroundTile(Player player)
+        public static string DescribeGroundTile(Vector2Int tile)
         {
             try
             {
-                Vector2Int frontTile = GetFrontTileCoord(player);
-                var cell = new Vector3Int(frontTile.x, frontTile.y, 0);
+                var cell = new Vector3Int(tile.x, tile.y, 0);
 
                 GameManager gameManager = SingletonBehaviour<GameManager>.Instance;
                 if (gameManager == null) return null;
@@ -209,9 +211,9 @@ namespace SunHavenAccess.Cursor
                 foreach (Tilemap tilemap in gameManager.TileMaps)
                 {
                     if (tilemap == null) continue;
-                    TileBase tile = tilemap.GetTile(cell);
-                    if (tile == null) continue;
-                    string translated = UiNameTranslator.Translate(tile.name);
+                    TileBase tileAsset = tilemap.GetTile(cell);
+                    if (tileAsset == null) continue;
+                    string translated = UiNameTranslator.Translate(tileAsset.name);
                     if (!string.IsNullOrWhiteSpace(translated)) { groundName = translated; break; }
                 }
 
@@ -276,14 +278,12 @@ namespace SunHavenAccess.Cursor
         /// case de terre cultivable/labourée/arrosée, pour l'annoncer comme le ferait
         /// stardew-access (au lieu de dire "rien devant vous" sur une case de plantation vide).
         /// </summary>
-        private static string DescribeFarmland(Player player)
+        public static string DescribeFarmland(Vector2Int tile)
         {
             try
             {
-                Vector2Int frontTile = GetFrontTileCoord(player);
-
                 FarmingTileInfo info = SingletonBehaviour<GameSave>.Instance.GetFarmingInfo(
-                    frontTile, ScenePortalManager.ActiveSceneIndex);
+                    tile, ScenePortalManager.ActiveSceneIndex);
 
                 return info switch
                 {

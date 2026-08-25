@@ -88,6 +88,8 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.AnnounceContents.Value)) InventoryActions.AnnounceContents();
             if (Pressed(ModConfig.StoreInChests.Value)) InventoryActions.StoreInNearbyChests();
             if (Pressed(ModConfig.ReadFullDescription.Value)) AnnounceFullDescription();
+            if (Pressed(ModConfig.FreeCursorToggle.Value)) FreeTileCursor.Toggle();
+            if (Pressed(ModConfig.FreeCursorRecenter.Value)) FreeTileCursor.Recenter();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
@@ -124,7 +126,19 @@ namespace SunHavenAccess.Input
 
             if (directionalNav)
             {
+                // Un menu est ouvert : il a la PRIORITÉ ABSOLUE sur les flèches. Le curseur libre
+                // ne doit jamais les lui voler — c'est exactement ce qui a cassé la navigation
+                // deux fois par le passé.
                 HandleDirectionalNavigation(ctrl);
+            }
+            else if (FreeTileCursor.Active)
+            {
+                // Hors menu, curseur libre actif : les flèches le déplacent case par case.
+                if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)) FreeTileCursor.Move(0, 1);
+                else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)) FreeTileCursor.Move(0, -1);
+                else if (UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) FreeTileCursor.Move(-1, 0);
+                else if (UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) FreeTileCursor.Move(1, 0);
+                else if (Pressed(ModConfig.MenuActivate.Value)) FreeTileCursor.AnnounceCurrent();
             }
             else if (!nativeSelectionActive)
             {
@@ -151,7 +165,13 @@ namespace SunHavenAccess.Input
             {
                 MouseCursor.SimulateRightClick();
             }
-            if (Pressed(ModConfig.SimulateLeftClick.Value)) MouseCursor.SimulateLeftClick();
+            if (Pressed(ModConfig.SimulateLeftClick.Value))
+            {
+                // Curseur libre actif : on pointe d'abord la souris sur la case visée, pour agir
+                // À DISTANCE plutôt que sur la case devant le personnage.
+                FreeTileCursor.PointMouseAtCursor();
+                MouseCursor.SimulateLeftClick();
+            }
 
             // Scanner par catégories (PNJ, plantations, ressources, bâtiments...), même
             // convention que stardew-access : Page seule = élément, Ctrl+Page = catégorie,
@@ -165,9 +185,17 @@ namespace SunHavenAccess.Input
             {
                 if (ctrl) Scanner.NextCategory(); else Scanner.NextItem();
             }
+            // Origine / Ctrl+Origine : quand le curseur libre est actif, ces touches visent LA
+            // CASE DU CURSEUR plutôt que la cible du scanner. Pas de nouvelle touche à retenir :
+            // c'est le même geste (« décris » / « vas-y »), appliqué à ce qu'on vise réellement.
             if (Pressed(ModConfig.ScannerNearest.Value))
             {
-                if (ctrl) Scanner.TravelToCurrent(); else Scanner.AnnounceInfo();
+                if (FreeTileCursor.Active)
+                {
+                    if (ctrl) FreeTileCursor.TravelToCursor(); else FreeTileCursor.AnnounceCurrent();
+                }
+                else if (ctrl) Scanner.TravelToCurrent();
+                else Scanner.AnnounceInfo();
             }
             if (Pressed(ModConfig.ScannerCount.Value)) Scanner.AnnounceCount();
 
@@ -333,6 +361,9 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.AppearancePrevious.Value)} et {Strings.KeyName(ModConfig.AppearanceNext.Value)}, option précédente ou suivante d'apparence en création de personnage. Contrôle plus l'une ou l'autre, catégorie précédente ou suivante. " +
                 $"{Strings.KeyName(ModConfig.AnnounceSkillPoints.Value)}, annoncer les points de compétence disponibles dans chaque arbre. " +
                 $"{Strings.KeyName(ModConfig.AnnounceFestivals.Value)}, annoncer les festivals de la saison actuelle. " +
+                $"{Strings.KeyName(ModConfig.FreeCursorToggle.Value)}, activer le curseur de case libre : les flèches le déplacent alors partout sur la carte, " +
+                $"Origine décrit la case visée, Contrôle plus Origine vous y conduit, et le clic gauche y agit à distance. " +
+                $"{Strings.KeyName(ModConfig.FreeCursorRecenter.Value)}, ramener le curseur sur vous. " +
                 $"Dans l'inventaire : {Strings.KeyName(ModConfig.SortBackpack.Value)}, trier le sac. " +
                 $"{Strings.KeyName(ModConfig.AnnounceContents.Value)}, résumé du contenu. " +
                 $"{Strings.KeyName(ModConfig.StoreInChests.Value)}, ranger dans les coffres proches. " +

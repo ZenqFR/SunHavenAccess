@@ -59,6 +59,8 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> AnnounceContents;
         public static ConfigEntry<KeyCode> StoreInChests;
         public static ConfigEntry<KeyCode> ReadFullDescription;
+        public static ConfigEntry<KeyCode> FreeCursorToggle;
+        public static ConfigEntry<KeyCode> FreeCursorRecenter;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -243,6 +245,15 @@ namespace SunHavenAccess.Config
                 "Range dans les coffres proches tout ce dont ils contiennent déjà un exemplaire.", "Ranger dans les coffres proches");
             ReadFullDescription = Bind(config, section, "DescriptionComplete", KeyCode.Keypad0,
                 "Relit la description complète du dernier objet annoncé (utile quand le mode bref est actif).", "Lire la description complète");
+
+            // ---- Curseur de case libre (Cursor/FreeTileCursor.cs) ----
+            // Le DÉPLACEMENT se fait aux flèches directionnelles, sans réglage : elles ne sont
+            // liées à aucune action du jeu (déplacement en ZQSD/WASD) et ne servent au mod que
+            // dans les menus — le curseur ne les capte donc que hors menu.
+            FreeCursorToggle = Bind(config, section, "CurseurLibre", KeyCode.KeypadPeriod,
+                "Active ou désactive le curseur de case libre, déplaçable aux flèches partout sur la carte.", "Activer/désactiver le curseur libre");
+            FreeCursorRecenter = Bind(config, section, "CurseurLibreRecentrer", KeyCode.KeypadMultiply,
+                "Ramène le curseur libre sur la case où vous vous tenez.", "Curseur libre : recentrer sur soi");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

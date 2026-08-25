@@ -68,14 +68,27 @@ namespace SunHavenAccess.Navigation
 
         private static void UpdatePosition()
         {
+            Player player = Player.Instance;
+            if (player == null) return;
+            PointAt(player.transform.position + Utilities.OffsetFromDirection(player.facingDirection));
+        }
+
+        /// <summary>
+        /// Place le curseur Windows sur une position MONDE quelconque. Extrait de UpdatePosition,
+        /// qui était codée en dur sur la case devant le personnage : le curseur de case libre
+        /// (Cursor/FreeTileCursor.cs) a besoin de viser une case arbitraire pour permettre d'agir
+        /// à distance. Seule l'origine change — la chaîne monde → écran → coordonnées Windows est
+        /// identique dans les deux cas.
+        /// </summary>
+        public static bool PointAt(Vector3 world)
+        {
             try
             {
                 Player player = Player.Instance;
                 Camera cam = player != null ? player.Camera : null;
-                if (player == null || cam == null) return;
+                if (cam == null) return false;
 
-                Vector3 frontWorld = player.transform.position + Utilities.OffsetFromDirection(player.facingDirection);
-                Vector3 screen = cam.WorldToScreenPoint(frontWorld);
+                Vector3 screen = cam.WorldToScreenPoint(world);
 
                 IntPtr hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
                 Point pt = new Point
@@ -85,10 +98,12 @@ namespace SunHavenAccess.Navigation
                 };
                 if (hWnd != IntPtr.Zero) ClientToScreen(hWnd, ref pt);
                 SetCursorPos(pt.X, pt.Y);
+                return true;
             }
             catch (Exception e)
             {
-                Plugin.Log?.LogWarning("MouseCursor.UpdatePosition a échoué : " + e.Message);
+                Plugin.Log?.LogWarning("MouseCursor.PointAt a échoué : " + e.Message);
+                return false;
             }
         }
 
