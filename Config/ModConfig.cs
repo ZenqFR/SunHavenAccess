@@ -118,7 +118,7 @@ namespace SunHavenAccess.Config
                 "Simule un clic gauche à la position actuelle de la souris.", "Simuler un clic gauche (monde)");
             SimulateRightClick = Bind(config, section, "ClicDroit", KeyCode.Colon,
                 "Simule un clic droit (avec Ctrl enfoncé ; Slash fonctionne aussi en alternative sur QWERTY).", "Simuler un clic droit (monde, avec Ctrl)");
-            ShortcutsMenuToggle = Bind(config, section, "MenuRaccourcis", KeyCode.F12,
+            ShortcutsMenuToggle = Bind(config, section, "MenuRaccourcisV2", KeyCode.Delete,
                 "Ouvre ou ferme le menu listant tous les raccourcis et permettant de les modifier.", "Ouvrir le menu des raccourcis");
 
             // Scanner par catégories (Object Tracker façon stardew-access), même convention de
@@ -234,7 +234,7 @@ namespace SunHavenAccess.Config
             // ---- Confort d'inventaire ----
             // Les 26 lettres étant prises (par le jeu ou par le mod), on passe par de la
             // ponctuation, vérifiée absente de Wish.UserSettings.DefaultKeybinds. Toutes
-            // réassignables via le menu des raccourcis (F12) si la disposition clavier gêne.
+            // réassignables via le menu des raccourcis (touche Suppr) si la disposition clavier gêne.
             SortBackpack = Bind(config, section, "TrierSac", KeyCode.Quote,
                 "Trie et regroupe le sac à dos (sans toucher à la barre d'action ni à l'équipement).", "Trier le sac à dos");
             AnnounceContents = Bind(config, section, "ResumeSac", KeyCode.Backslash,

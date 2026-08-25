@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Wish;
 
@@ -41,8 +42,50 @@ namespace SunHavenAccess.Localization
         }
 
         /// <summary>Nom lisible d'une touche pour l'annoncer à voix haute (l'aide, etc.).</summary>
+        /// <summary>
+        /// Noms de touches en français. Sans cette table, `KeyCode.ToString()` renvoie le nom
+        /// brut de l'énumération et l'aide vocale annonçait des mots anglais au milieu d'une
+        /// phrase française (« Comma », « Backslash », « Quote »...), illisible au lecteur
+        /// d'écran. Ne couvre que les touches non alphanumériques : les lettres et chiffres se
+        /// lisent déjà correctement tels quels.
+        /// </summary>
+        private static readonly Dictionary<KeyCode, string> FrenchKeyNames = new Dictionary<KeyCode, string>
+        {
+            { KeyCode.Return, "Entrée" },
+            { KeyCode.KeypadEnter, "entrée du pavé numérique" },
+            { KeyCode.Escape, "Échap" },
+            { KeyCode.Backspace, "Retour arrière" },
+            { KeyCode.Tab, "Tabulation" },
+            { KeyCode.Space, "Espace" },
+            { KeyCode.Delete, "Suppr" },
+            { KeyCode.Insert, "Inser" },
+            { KeyCode.Home, "Origine" },
+            { KeyCode.End, "Fin" },
+            { KeyCode.PageUp, "Page précédente" },
+            { KeyCode.PageDown, "Page suivante" },
+            { KeyCode.UpArrow, "flèche haut" },
+            { KeyCode.DownArrow, "flèche bas" },
+            { KeyCode.LeftArrow, "flèche gauche" },
+            { KeyCode.RightArrow, "flèche droite" },
+            { KeyCode.Comma, "virgule" },
+            { KeyCode.Period, "point" },
+            { KeyCode.Semicolon, "point-virgule" },
+            { KeyCode.Colon, "deux-points" },
+            { KeyCode.Quote, "apostrophe" },
+            { KeyCode.Backslash, "barre oblique inverse" },
+            { KeyCode.Slash, "barre oblique" },
+            { KeyCode.Equals, "égal" },
+            { KeyCode.Minus, "tiret" },
+            { KeyCode.Plus, "plus" },
+            { KeyCode.LeftBracket, "crochet ouvrant" },
+            { KeyCode.RightBracket, "crochet fermant" },
+            { KeyCode.BackQuote, "accent grave" },
+        };
+
         public static string KeyName(KeyCode key)
         {
+            if (FrenchKeyNames.TryGetValue(key, out string french)) return french;
+
             string s = key.ToString();
             if (s.StartsWith("Keypad"))
             {

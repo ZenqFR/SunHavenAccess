@@ -236,7 +236,7 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | Point-virgule | Annoncer les festivals de la saison actuelle |
 | F9 | Activer/désactiver l'annonce automatique des déplacements |
 | F11 | Test sonore (diagnostic) |
-| F12 | Menu des raccourcis (parcourable et modifiable) |
+| Suppr | Menu des raccourcis (parcourable et modifiable) |
 | Pavé 4 / Pavé 6 | Tourner à gauche / à droite sans se déplacer |
 | Pavé 5 | Clic gauche (souris) |
 | J | Souris directionnelle |
