@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Installateur graphique de Sun Haven Access.
+
+    WinForms sur .NET Framework 4.7.2, et non .NET moderne ou un script console, pour trois
+    raisons qui comptent toutes pour le public visé :
+
+    1. Les contrôles WinForms sont de vrais contrôles Win32, donc lus nativement et fiablement
+       par NVDA et JAWS — souvent mieux qu'une sortie console, qu'un lecteur d'écran doit
+       suivre au fil de l'eau.
+    2. .NET Framework 4.7.2 est présent d'origine sur tout Windows récent : aucun runtime à
+       installer avant l'installateur, ce qui serait un comble.
+    3. L'exécutable produit reste léger, contre ~70 Mo pour un .NET moderne autonome.
+  -->
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>Installer Sun Haven Access</AssemblyName>
+    <RootNamespace>SunHavenAccess.Installer</RootNamespace>
+    <Description>Installateur de Sun Haven Access, le mod d'accessibilité pour Sun Haven</Description>
+    <Product>Sun Haven Access</Product>
+    <Company>ZenqFR</Company>
+    <Version>1.0.0</Version>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Charge utile : UNE archive, pas les fichiers un par un.
+
+      MSBuild remplace les séparateurs de dossier par des points dans les noms de ressources, ce
+      qui devient ambigu avec les points des extensions — reconstruire l'arborescence à partir de
+      ces noms est fragile et se casse sur le premier fichier au nom inattendu. Une archive
+      préserve la structure exacte sans aucune reconstruction.
+
+      Le chemin est ancré sur le dossier du projet : une condition en chemin relatif s'évalue
+      selon le répertoire courant de MSBuild, ce qui l'avait déjà fait échouer silencieusement.
+    -->
+    <EmbeddedResource Include="$(MSBuildProjectDirectory)\payload.zip"
+                      Condition="Exists('$(MSBuildProjectDirectory)\payload.zip')"
+                      LogicalName="payload.zip" />
+  </ItemGroup>
+
+</Project>

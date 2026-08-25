@@ -1,0 +1,6 @@
+# Artefacts de construction
+bin/
+obj/
+# Charge utile assemblée par build-payload.ps1 : régénérable, et peut contenir BepInEx
+payload/
+payload.zip
