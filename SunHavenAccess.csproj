@@ -20,6 +20,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!--
+      L.installateur est un projet SÉPARÉ (installer/SunHavenAccessInstaller.csproj), avec ses
+      propres références WinForms. Sans cette exclusion, le SDK .NET ramasse automatiquement
+      TOUS les .cs sous le dossier du projet, y compris ceux de l.installateur — la compilation
+      du mod échouait alors sur des types WinForms qu.il ne référence évidemment pas.
+    -->
+    <Compile Remove="installer/**" />
+    <None Remove="installer/**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- BepInEx -->
     <Reference Include="BepInEx">
       <HintPath>$(BepInExCoreDir)\BepInEx.dll</HintPath>
