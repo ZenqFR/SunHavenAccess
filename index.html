@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sun Haven Access — ZenqFR</title>
-<meta name="description" content="Mod d'accessibilité BepInEx pour Sun Haven : lecteur d'écran, curseur de case, menus, agriculture, scanner d'objets, cheminement automatique, combat — pour jouer en autonomie en étant aveugle ou malvoyant.">
+<meta name="description" content="Mod d'accessibilité BepInEx pour Sun Haven : jouer en autonomie en étant aveugle ou malvoyant, avec un lecteur d'écran.">
 <link rel="canonical" href="https://zenqfr.github.io/SunHavenAccess/">
 <meta name="robots" content="index, follow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='90'%3E%F0%9F%8C%BB%3C/text%3E%3C/svg%3E">
@@ -18,444 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  /* Thème "ciel de ferme" (23/08/2026, sur retour direct : "le haut de la page, je trouve ça
-     beau, je veux ça pareil sur toute la page") — le dégradé bleu ciel -> or, qui n'habillait
-     jusque-là que le bandeau du haut, devient le fond de TOUTE la page (couleurs FIXES,
-     volontairement PAS de variante sombre : la beauté demandée est ce dégradé précis, pas un
-     thème qui change selon la préférence système — voir règle body ci-dessous). Le contenu
-     flotte par-dessus dans des panneaux "verre" translucides (--bg-card, --glass-bg) pour
-     rester lisible quel que soit l'endroit du dégradé visible derrière.
-     Note : la palette --sky/--leaf/--accent reste utilisée en dur dans les schémas de contraste ;
-     pas de bloc dark-mode ici, contrairement aux autres pages du site (hub, docs.html) qui
-     gardent, elles, leur bascule clair/sombre.
-     Contrôle de contraste (23/08/2026) : --accent-strong et --text-faint assombris par
-     rapport à leurs valeurs d'origine (#c97a00, #5e747a) — calculées au ratio WCAG réel contre
-     le pire cas (panneau verre à 0.55 par-dessus chaque étape du dégradé), pas juste contre du
-     blanc pur. Les liens et titres de carte utilisaient l'ancien --accent-strong à seulement
-     ~2.5:1, bien sous le minimum de 4,5:1 pour du texte normal. */
-  :root {
-    --bg-card: rgba(255, 255, 255, 0.88);
-    --bg-card-border: rgba(255, 255, 255, 0.7);
-    --glass-bg: rgba(255, 255, 255, 0.55);
-    --glass-border: rgba(255, 255, 255, 0.75);
-    --text: #1f2b30;
-    --text-dim: #3d5158;
-    --text-faint: #48606a;
-    --accent: #ffb400;
-    --accent-strong: #8a5300;
-    --accent-text: #241500;
-    --leaf: #2fa83e;
-    --leaf-text: #1c7a28;
-    --sky: #1f97d4;
-    --sky-text: #0d6ea3;
-    --pill-bg: rgba(255, 255, 255, 0.55);
-    --pill-border: rgba(255, 255, 255, 0.75);
-    --focus: #0d6ea3;
-    --radius: 14px;
-    --sun: #ffb400;
-    --plum: #b0479c;
-    --shadow: 0 1px 2px rgba(31, 43, 48, 0.08), 0 8px 24px rgba(31, 43, 48, 0.14);
-    --nav-bg-translucent: rgba(255, 255, 255, 0.78);
-    --nav-h: 52px;
-  }
-
-  * { box-sizing: border-box; }
-
-  html { color-scheme: light; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
-
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
-  }
-
-  /* Le dégradé "ciel de ferme" du bandeau, maintenant fond de toute la page : étiré sur toute
-     sa hauteur (background-size: 100% 100%) pour rester un seul dégradé continu du haut en
-     bas, quelle que soit la longueur de la page — demande explicite de l'utilisateur ("le
-     haut de la page, soit pareil sur toute la page"). Note : background-attachment: fixed
-     semblait plus simple pour ça, mais provoque un vrai bug de rendu (fond qui disparaît en
-     blanc au défilement, probablement lié aux backdrop-filter des panneaux verre) — cette
-     approche l'évite complètement. */
-  body {
-    margin: 0;
-    background: linear-gradient(160deg, #48c6f4 0%, #7fd9ce 32%, #ffd766 68%, #ffa72e 100%);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    color: var(--text);
-    font-family: "Work Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1, h2, h3, summary { font-family: "Fredoka", "Work Sans", sans-serif; text-wrap: balance; }
-
-  a { color: var(--accent-strong); }
-  a:focus-visible, button:focus-visible, summary:focus-visible {
-    outline: 3px solid var(--focus);
-    outline-offset: 2px;
-  }
-
-  .skip-link {
-    position: absolute;
-    left: -999px;
-    top: 0;
-    background: var(--sun);
-    color: #3a2600;
-    padding: 0.6em 1em;
-    border-radius: 0 0 8px 0;
-    z-index: 20;
-    font-weight: 600;
-  }
-  .skip-link:focus { left: 0; }
-
-  /* Contenu présent pour les lecteurs d'écran uniquement (légendes de tableaux, contexte
-     supplémentaire) — invisible à l'écran sans être ignoré par les technologies d'assistance. */
-  .sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-  }
-
-  /* ---------- Barre d'identité : mes autres projets + langue ---------- */
-  .portfolio-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6em;
-    padding: 0.55em 1.1em;
-    font-size: 0.82rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--glass-border);
-    color: var(--text-faint);
-  }
-  .portfolio-bar ul {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5em;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .portfolio-bar li:not(:last-child)::after {
-    content: "·";
-    margin-left: 0.5em;
-    color: var(--text-faint);
-  }
-  .portfolio-bar a { color: var(--text-dim); text-decoration: none; }
-  .portfolio-bar a:hover, .portfolio-bar a:focus-visible { color: var(--accent-strong); text-decoration: underline; }
-  .portfolio-bar [aria-current="page"] { color: var(--accent-strong); font-weight: 600; }
-  .portfolio-bar #lang-toggle {
-    background: transparent;
-    border: 1px solid var(--glass-border);
-    color: var(--text-dim);
-    font-size: 0.82rem;
-    padding: 0.3em 0.8em;
-    border-radius: 999px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .portfolio-bar #lang-toggle:hover, .portfolio-bar #lang-toggle:focus-visible { border-color: var(--accent); color: var(--accent-strong); }
-
-  /* ---------- Nav de section (barre collante + scrollspy) ---------- */
-  .quick-nav {
-    position: sticky;
-    top: 0;
-    z-index: 15;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.3em;
-    flex-wrap: wrap;
-    padding: 0.65em 1em;
-    background: var(--nav-bg-translucent);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--bg-card-border);
-    box-shadow: 0 2px 12px rgba(31, 43, 48, 0.1);
-    min-height: var(--nav-h);
-  }
-  .quick-nav a {
-    color: var(--text-dim);
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0.45em 0.9em;
-    border-radius: 999px;
-    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
-    white-space: nowrap;
-  }
-  .quick-nav a:hover, .quick-nav a:focus-visible { color: var(--text); background: var(--pill-bg); }
-  .quick-nav a[aria-current="true"] {
-    color: var(--accent-text);
-    background: var(--accent);
-    box-shadow: 0 2px 8px rgba(255, 180, 0, 0.35);
-  }
-  /* Petite séparation visuelle avant le lien vers l'autre page (docs.html) : contrairement
-     aux autres, ce n'est pas un saut dans la page mais un vrai changement de page. */
-  .quick-nav a[href="docs.html"] { margin-left: 0.5em; border-left: 1px solid var(--bg-card-border); padding-left: 1em; border-radius: 0 999px 999px 0; }
-
-  /* Le bandeau n'a plus son propre fond dégradé : il flotte directement sur le dégradé de
-     body, désormais commun à toute la page. Les couleurs de texte restent fixes (pas les
-     variables de thème), calées sur ce dégradé précis. */
-  header {
-    max-width: 820px;
-    margin: 1.2em auto 0;
-    padding: 2.8em 1.5em 2.4em;
-    text-align: center;
-    position: relative;
-  }
-  header .emoji { font-size: clamp(2.6rem, 6vw, 3.6rem); display: block; margin-bottom: 0.2em; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15)); }
-  header h1 {
-    margin: 0 0 0.3em;
-    font-size: clamp(2.2rem, 5.5vw, 3.1rem);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: #1c2e17;
-    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3);
-  }
-  header p.tagline { margin: 0 auto; max-width: 52ch; color: #253b2a; font-size: 1.08rem; font-weight: 500; }
-  header p.tagline strong { color: #12210f; }
-
-  .status-pill {
-    display: inline-block;
-    margin-top: 1em;
-    background: rgba(255, 255, 255, 0.65);
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    color: #2a1c00;
-    font-weight: 600;
-    border-radius: 999px;
-    padding: 0.4em 1em;
-    font-size: 0.85rem;
-  }
-
-  .hero-actions {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.8em;
-    margin-top: 1.4em;
-  }
-
-  /* ---------- Bandeau de statistiques ---------- */
-  .stat-strip {
-    max-width: 820px;
-    margin: 2em auto 0;
-    padding: 0 1.5em;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1em;
-    text-align: center;
-  }
-  .stat-strip .stat {
-    background: var(--bg-card);
-    border: 1px solid var(--bg-card-border);
-    border-radius: var(--radius);
-    padding: 1em 0.6em;
-    box-shadow: var(--shadow);
-  }
-  .stat-strip .stat strong {
-    display: block;
-    font-family: "Fredoka", sans-serif;
-    font-size: clamp(1.4rem, 4vw, 1.9rem);
-    color: var(--accent-strong);
-  }
-  .stat-strip .stat span { font-size: 0.78rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.04em; }
-  @media (max-width: 560px) {
-    .stat-strip { grid-template-columns: 1fr; }
-  }
-
-  .intro {
-    max-width: 820px;
-    margin: 1em auto 1.5em;
-    padding: 0.8em 1.5em;
-    text-align: center;
-    color: var(--text-dim);
-    font-size: 0.95rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-  }
-  .intro code, main code {
-    background: var(--pill-bg);
-    border: 1px solid var(--pill-border);
-    border-radius: 6px;
-    padding: 0.1em 0.4em;
-    font-size: 0.9em;
-    color: var(--text);
-  }
-
-  /* Grand panneau "verre dépoli" qui porte tout le contenu principal, pour rester lisible
-     par-dessus le dégradé vif de la page tout en le laissant transparaître légèrement. */
-  main {
-    max-width: 820px;
-    margin: 1.5em auto 2em;
-    padding: 1.6em 1.8em 2.6em;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    box-shadow: var(--shadow);
-  }
-
-  h2.section-title {
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-faint);
-    border-bottom: 1px solid var(--bg-card-border);
-    padding-bottom: 0.5em;
-    margin: 2.5em 0 1.2em;
-    scroll-margin-top: calc(var(--nav-h) + 12px);
-  }
-  h2.section-title:first-of-type { margin-top: 0; }
-
-  .install-steps { margin: 0 0 2em; padding-left: 1.4em; color: var(--text-dim); }
-  .install-steps li { margin-bottom: 0.5em; }
-
-  /* ---------- Grille de cartes de fonctionnalités ---------- */
-  /* Vraie liste (ul/li) plutôt qu'une simple div : un lecteur d'écran annonce "liste de N
-     éléments" en y entrant, et permet de sauter d'une fonctionnalité à l'autre au lieu de
-     n'avoir aucun repère de structure entre les cartes. */
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1em;
-    align-items: start;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .feature-grid > li { margin: 0; }
-
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--bg-card-border);
-    border-radius: var(--radius);
-    padding: 1.2em 1.4em;
-    margin-bottom: 1em;
-    box-shadow: var(--shadow);
-    transition: box-shadow 0.15s ease, transform 0.15s ease, opacity 0.4s ease, translate 0.4s ease;
-  }
-  .feature-grid .card { margin-bottom: 0; }
-  details.card:hover, details.card:focus-within {
-    border-color: var(--pill-border);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35), 0 10px 26px rgba(240, 169, 78, 0.1);
-  }
-  .card h3 { margin: 0 0 0.4em; color: var(--accent-strong); font-size: 1.1rem; }
-  .card p { margin: 0.4em 0; color: var(--text-dim); }
-
-  /* Animation d'apparition au défilement (IntersectionObserver). Visible par défaut
-     (opacity:1) : c'est le script en bas qui ajoute .js-reveal-active sur <html> UNIQUEMENT
-     s'il va effectivement piloter l'animation — sans JS (ou JS en échec), rien ne masque ces
-     cartes, qui contiennent toute la doc du mod. Avant, .reveal partait de opacity:0 en CSS
-     pur : sans JS, ces cartes restaient invisibles pour toujours, un vrai bug. */
-  .reveal { transition: opacity 0.4s ease, translate 0.4s ease; }
-  html.js-reveal-active .reveal { opacity: 0; translate: 0 12px; }
-  html.js-reveal-active .reveal.is-visible { opacity: 1; translate: 0 0; }
-
-  details.card summary {
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--accent-strong);
-    font-size: 1.05rem;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 0.5em;
-  }
-  details.card summary::-webkit-details-marker { display: none; }
-  details.card summary::before {
-    content: "▸";
-    color: var(--leaf-text);
-    transition: transform 0.15s ease;
-    flex-shrink: 0;
-  }
-  details.card[open] summary::before { transform: rotate(90deg); }
-  details.card ul { margin: 0.8em 0 0.2em; padding-left: 1.3em; color: var(--text-dim); }
-  details.card ul li { margin-bottom: 0.5em; }
-  details.card ul li strong { color: var(--text); }
-
-  .status-row { display: flex; flex-wrap: wrap; gap: 0.5em; margin: 0.6em 0 1.6em; }
-  .status-row .pill { border-radius: 999px; padding: 0.35em 0.9em; font-size: 0.82rem; border: 1px solid transparent; }
-  .pill.ok { background: rgba(95, 174, 58, 0.16); border-color: rgba(143, 214, 106, 0.35); color: var(--leaf-text); }
-  .pill.wip { background: rgba(240, 169, 78, 0.14); border-color: rgba(255, 191, 107, 0.35); color: var(--accent-strong); }
-  .pill.todo { background: var(--pill-bg); border-color: var(--pill-border); color: var(--text-faint); }
-
-  table.keys { width: 100%; border-collapse: collapse; margin: 0.6em 0 1.6em; font-size: 0.92rem; }
-  table.keys th, table.keys td {
-    text-align: left;
-    padding: 0.5em 0.7em;
-    border-bottom: 1px solid var(--bg-card-border);
-  }
-  table.keys th { color: var(--text-faint); font-weight: 600; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  table.keys td:first-child { white-space: nowrap; color: var(--accent-strong); font-weight: 600; }
-
-  .cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4em;
-    background: var(--leaf);
-    color: #fff;
-    text-decoration: none;
-    padding: 0.7em 1.4em;
-    border-radius: 999px;
-    font-weight: 600;
-    box-shadow: var(--shadow);
-    transition: background 0.15s ease, transform 0.15s ease;
-  }
-  .cta:hover { background: var(--leaf-text); transform: translateY(-1px); }
-  /* Couleurs fixes (pas les variables de thème) : ce bouton vit directement sur le dégradé
-     vif de la page — il lui faut un contraste garanti quel que soit l'endroit du dégradé
-     visible derrière. Un fond pâle assorti au dégradé (comme avant) s'y fondait presque. */
-  .cta.secondary { background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(255, 255, 255, 0.9); color: #24170a; }
-  .cta.secondary:hover { background: #fff; transform: translateY(-1px); }
-
-  footer {
-    max-width: 820px;
-    margin: 0 auto 2em;
-    padding: 1.4em 1.5em;
-    text-align: center;
-    color: var(--text-faint);
-    font-size: 0.85rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-  }
-  footer a { color: var(--text-dim); }
-  footer .privacy { margin-top: 0.6em; font-size: 0.8rem; }
-
-  /* ---------- Bouton retour en haut ---------- */
-  .to-top {
-    position: fixed;
-    right: 1.2em;
-    bottom: 1.2em;
-    z-index: 15;
-    width: 2.6em;
-    height: 2.6em;
-    border-radius: 50%;
-    background: var(--accent);
-    color: var(--accent-text);
-    border: none;
-    font-size: 1.1rem;
-    cursor: pointer;
-    box-shadow: var(--shadow);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .to-top.is-visible { opacity: 1; pointer-events: auto; }
-  .to-top:hover { transform: translateY(-2px); }
-
-  @media (max-width: 600px) {
-    .portfolio-bar { justify-content: center; }
-    .portfolio-bar ul { justify-content: center; }
-    .quick-nav { justify-content: flex-start; overflow-x: auto; }
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <a class="skip-link" href="#main">
@@ -473,10 +36,11 @@
 </nav>
 
 <nav class="quick-nav" aria-label="Navigation rapide">
-  <a href="#install" data-section="install"><span data-lang="fr">Installation</span><span data-lang="en" hidden>Install</span></a>
-  <a href="#features" data-section="features"><span data-lang="fr">Fonctionnalités</span><span data-lang="en" hidden>Features</span></a>
-  <a href="#progress" data-section="progress"><span data-lang="fr">Progression</span><span data-lang="en" hidden>Progress</span></a>
+  <a href="#quoi" data-section="quoi"><span data-lang="fr">Le mod</span><span data-lang="en" hidden>The mod</span></a>
+  <a href="#fonctionnalites" data-section="fonctionnalites"><span data-lang="fr">Fonctionnalités</span><span data-lang="en" hidden>Features</span></a>
+  <a href="#avancement" data-section="avancement"><span data-lang="fr">Avancement</span><span data-lang="en" hidden>Progress</span></a>
   <a href="#about" data-section="about"><span data-lang="fr">À propos</span><span data-lang="en" hidden>About</span></a>
+  <a href="demarrer.html"><span data-lang="fr">🚀 Démarrer</span><span data-lang="en" hidden>🚀 Get started</span></a>
   <a href="docs.html"><span data-lang="fr">📖 Documentation</span><span data-lang="en" hidden>📖 Documentation</span></a>
 </nav>
 
@@ -493,18 +57,18 @@
   </span>
 
   <div class="hero-actions">
-    <a class="cta" href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">
-      <span data-lang="fr">Voir le dépôt GitHub →</span><span data-lang="en" hidden>View the GitHub repo →</span>
+    <a class="cta" href="demarrer.html">
+      <span data-lang="fr">🚀 Commencer ici →</span><span data-lang="en" hidden>🚀 Start here →</span>
     </a>
-    <a class="cta secondary" href="https://discord.gg/DD7bP3r7Qd" target="_blank" rel="noopener">
-      <span data-lang="fr">💬 QGDV (Discord)</span><span data-lang="en" hidden>💬 QGDV (Discord)</span>
+    <a class="cta secondary" href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">
+      <span data-lang="fr">Voir le code source</span><span data-lang="en" hidden>View the source code</span>
     </a>
   </div>
 </header>
 
 <div class="stat-strip">
-  <div class="stat"><strong>7</strong><span data-lang="fr">Catégories de repérage</span><span data-lang="en" hidden>Tracker categories</span></div>
-  <div class="stat"><strong>15+</strong><span data-lang="fr">Raccourcis personnalisables</span><span data-lang="en" hidden>Customizable shortcuts</span></div>
+  <div class="stat"><strong>5</strong><span data-lang="fr">Domaines couverts</span><span data-lang="en" hidden>Areas covered</span></div>
+  <div class="stat"><strong>40+</strong><span data-lang="fr">Raccourcis personnalisables</span><span data-lang="en" hidden>Customizable shortcuts</span></div>
   <div class="stat"><strong>100%</strong><span data-lang="fr">Gratuit &amp; open-source</span><span data-lang="en" hidden>Free &amp; open-source</span></div>
 </div>
 
@@ -515,299 +79,118 @@
 
 <main id="main">
 
-  <h2 class="section-title" id="install">
-    <span data-lang="fr">Installation</span><span data-lang="en" hidden>Installation</span>
+  <h2 class="section-title" id="quoi">
+    <span data-lang="fr">Le mod en deux minutes</span><span data-lang="en" hidden>The mod in two minutes</span>
   </h2>
-  <ol class="install-steps">
-    <li>
-      <span data-lang="fr">Installer <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5.4.23.5 (x64, Mono)</a> dans le dossier du jeu, et lancer Sun Haven une fois pour qu'il génère sa structure de dossiers.</span>
-      <span data-lang="en" hidden>Install <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5.4.23.5 (x64, Mono)</a> in the game folder, and launch Sun Haven once so it generates its folder structure.</span>
-    </li>
-    <li>
-      <span data-lang="fr">Copier <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> et <code>nvdaControllerClient64.dll</code> dans <code>Sun Haven/BepInEx/plugins/SunHavenAccess/</code> (voir le <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">dépôt GitHub</a> pour le code source et les instructions de compilation).</span>
-      <span data-lang="en" hidden>Copy <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> and <code>nvdaControllerClient64.dll</code> into <code>Sun Haven/BepInEx/plugins/SunHavenAccess/</code> (see the <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">GitHub repo</a> for the source and build instructions).</span>
-    </li>
-    <li>
-      <span data-lang="fr">Lancer le jeu. Un message vocal confirme le chargement du mod et rappelle la touche d'aide (<code>F1</code> par défaut).</span>
-      <span data-lang="en" hidden>Launch the game. A voice message confirms the mod loaded and reminds you of the help key (<code>F1</code> by default).</span>
-    </li>
-  </ol>
 
-  <h2 class="section-title" id="features">
+  <div class="card reveal">
+    <p>
+      <span data-lang="fr">Sun Haven est un jeu de ferme et d'aventure entièrement visuel : rien n'y est annoncé, ni ce qu'on a devant soi, ni le contenu des menus, ni les objets ramassés. <strong>Ce mod rend le jeu jouable au lecteur d'écran</strong> — il décrit le monde case par case, lit les menus, annonce les actions, et ajoute des outils qui n'existent pas dans le jeu : un scanner de ce qui vous entoure, un cheminement automatique, un curseur explorable.</span>
+      <span data-lang="en" hidden>Sun Haven is an entirely visual farming and adventure game: nothing is announced — not what's in front of you, not menu contents, not items picked up. <strong>This mod makes the game playable with a screen reader</strong> — it describes the world tile by tile, reads menus, announces actions, and adds tools the game doesn't have: a scanner for your surroundings, automatic pathing, an explorable cursor.</span>
+    </p>
+    <p>
+      <span data-lang="fr">Vous découvrez ? La page <a href="demarrer.html"><strong>Démarrer</strong></a> vous guide de l'installation à votre première heure de jeu. La <a href="docs.html">documentation</a> détaille ensuite chaque touche et chaque fonctionnalité.</span>
+      <span data-lang="en" hidden>New here? The <a href="demarrer.html"><strong>Get started</strong></a> page walks you from installation to your first hour of play. The <a href="docs.html">documentation</a> then covers every key and every feature in detail.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="fonctionnalites">
     <span data-lang="fr">Fonctionnalités</span><span data-lang="en" hidden>Features</span>
   </h2>
+  <p>
+    <span data-lang="fr">Cinq domaines. Chaque section se déplie pour le détail ; la <a href="docs.html">documentation</a> va plus loin.</span>
+    <span data-lang="en" hidden>Five areas. Each section expands for detail; the <a href="docs.html">documentation</a> goes further.</span>
+  </p>
 
   <ul class="feature-grid">
 
   <li>
   <details class="card reveal">
-    <summary><span data-lang="fr">🔊 Lecteur d'écran &amp; synthèse vocale</span><span data-lang="en" hidden>🔊 Screen reader &amp; speech</span></summary>
+    <summary><span data-lang="fr">🗺️ Lire le monde autour de soi</span><span data-lang="en" hidden>🗺️ Reading the world around you</span></summary>
     <ul>
-      <li><span data-lang="fr">NVDA en direct par pilotage natif, avec repli automatique sur SAPI via Tolk si NVDA n'est pas détecté.</span><span data-lang="en" hidden>Direct NVDA control, with automatic fallback to SAPI via Tolk if NVDA isn't detected.</span></li>
-      <li><span data-lang="fr">Tout le texte lu passe par un nettoyeur qui retire les balises de mise en forme du jeu (couleurs, icônes de monnaie...) avant vocalisation.</span><span data-lang="en" hidden>All spoken text is cleaned of the game's rich-text formatting (colors, currency icons...) before being read.</span></li>
-      <li><span data-lang="fr">Notifications du jeu (bulle éphémère en haut à gauche) lues automatiquement dès qu'elles apparaissent : boutique fermée, action impossible, et potentiellement bien d'autres messages jamais rencontrés individuellement — un seul point d'accroche générique les couvre toutes.</span><span data-lang="en" hidden>In-game notifications (ephemeral top-left toast) read automatically as soon as they appear: shop closed, action not possible, and potentially many other messages never individually encountered — a single generic hook covers them all.</span></li>
+      <li><span data-lang="fr"><strong>La case devant vous</strong> est décrite à chaque pas : culture et son stade de croissance, terre labourée ou arrosée, obstacle, type de terrain, objet interactif.</span><span data-lang="en" hidden><strong>The tile in front of you</strong> is described on every step: crop and growth stage, tilled or watered soil, obstacle, terrain type, interactive object.</span></li>
+      <li><span data-lang="fr"><strong>Curseur de case libre</strong> : déplaçable aux flèches n'importe où sur la carte, indépendamment du personnage. Explorer sans bouger, puis s'y rendre ou y agir à distance.</span><span data-lang="en" hidden><strong>Free tile cursor</strong>: moved with the arrow keys anywhere on the map, independently of your character. Explore without moving, then travel there or act at range.</span></li>
+      <li><span data-lang="fr"><strong>Scanner par catégories</strong> : tout ce qui est à proximité, trié du plus proche au plus loin — personnages, plantations, ressources, bâtiments et portails, animaux, ennemis, mobilier.</span><span data-lang="en" hidden><strong>Category scanner</strong>: everything nearby, sorted nearest-first — characters, crops, resources, buildings and portals, animals, enemies, furniture.</span></li>
+      <li><span data-lang="fr"><strong>Cheminement automatique</strong> vers n'importe quelle cible repérée, en contournant les obstacles réels.</span><span data-lang="en" hidden><strong>Automatic pathing</strong> to any spotted target, routing around real obstacles.</span></li>
+      <li><span data-lang="fr"><strong>Souris directionnelle</strong> : beaucoup d'actions de Sun Haven passent par un clic souris — une touche fait pointer le curseur en permanence vers la case visée.</span><span data-lang="en" hidden><strong>Directional mouse</strong>: many Sun Haven actions happen through a mouse click — one key keeps the cursor permanently aimed at the targeted tile.</span></li>
+      <li><span data-lang="fr">Position, heure, jour, saison, année et météo annoncées à la demande.</span><span data-lang="en" hidden>Position, time, day, season, year and weather announced on demand.</span></li>
     </ul>
   </details>
   </li>
 
   <li>
   <details class="card reveal">
-    <summary><span data-lang="fr">🚶 Déplacement, curseur de case &amp; terrain</span><span data-lang="en" hidden>🚶 Movement, tile cursor &amp; terrain</span></summary>
+    <summary><span data-lang="fr">📋 Interface, menus et inventaire</span><span data-lang="en" hidden>📋 Interface, menus and inventory</span></summary>
     <ul>
-      <li><span data-lang="fr">La case juste devant le personnage est décrite à <strong>chaque pas</strong> : culture (arrosée, stade de croissance), terre labourée, obstacle, type de terrain, objet interactif.</span><span data-lang="en" hidden>The tile right in front of the character is described on <strong>every step</strong>: crop (watered, growth stage), tilled soil, obstacle, terrain type, interactive object.</span></li>
-      <li><span data-lang="fr">Tourner sur soi-même sans se déplacer, avec annonce immédiate de la nouvelle case en face.</span><span data-lang="en" hidden>Turn in place without moving, with an immediate announcement of the new tile ahead.</span></li>
-      <li><span data-lang="fr">Verbosité des déplacements activable/désactivable, et position consultable à la demande.</span><span data-lang="en" hidden>Movement verbosity can be toggled, and your position can be checked on demand.</span></li>
+      <li><span data-lang="fr"><strong>Navigation directionnelle réelle</strong> : les flèches suivent la disposition visuelle (ligne, colonne), pas une liste à plat. Gauche/droite butent en bout de ligne avec un bip court, haut/bas changent de ligne.</span><span data-lang="en" hidden><strong>Real directional navigation</strong>: arrows follow the visual layout (row, column), not a flat list. Left/right stop at the row's end with a short beep, up/down change rows.</span></li>
+      <li><span data-lang="fr"><strong>Zones aux frontières nettes</strong> : onglets, équipement, sac à dos, barre d'action, coffre. Ctrl+flèche saute volontairement de l'une à l'autre, on ne déborde jamais par accident.</span><span data-lang="en" hidden><strong>Zones with hard edges</strong>: tabs, equipment, backpack, action bar, chest. Ctrl+arrow deliberately jumps between them; you never spill over by accident.</span></li>
+      <li><span data-lang="fr"><strong>Saisie de texte annoncée</strong> — sans quoi nommer son personnage se faisait dans le silence total. Chaque lettre tapée est annoncée, et les touches du mod se suspendent pendant la frappe.</span><span data-lang="en" hidden><strong>Text input announced</strong> — without it, naming your character happened in complete silence. Every keystroke is announced, and the mod's keys stand down while you type.</span></li>
+      <li><span data-lang="fr"><strong>Nom réel des objets</strong> lu depuis l'infobulle du jeu, avec la quantité annoncée avant le nom en une seule phrase. Emplacements vides et emplacements d'armure décrits explicitement.</span><span data-lang="en" hidden><strong>Real item names</strong> read from the game's tooltip, with quantity announced before the name in a single sentence. Empty and armor slots described explicitly.</span></li>
+      <li><span data-lang="fr"><strong>Dialogues lus dès le début de la ligne</strong>, sans attendre la fin de l'animation machine à écrire. Notifications du jeu lues automatiquement.</span><span data-lang="en" hidden><strong>Dialogue read from the start of the line</strong>, without waiting for the typewriter animation. In-game notifications read automatically.</span></li>
     </ul>
   </details>
   </li>
 
   <li>
   <details class="card reveal">
-    <summary><span data-lang="fr">📋 Menus, inventaire, dialogues</span><span data-lang="en" hidden>📋 Menus, inventory, dialogue</span></summary>
+    <summary><span data-lang="fr">🌾 Activités : ferme, pêche, mine, combat</span><span data-lang="en" hidden>🌾 Activities: farming, fishing, mining, combat</span></summary>
     <ul>
-      <li><span data-lang="fr">Navigation clavier maison pour les écrans que le jeu ne rend jamais accessibles au clavier nativement (menu principal, options...).</span><span data-lang="en" hidden>Custom keyboard navigation for screens the game never makes keyboard-accessible natively (main menu, options...).</span></li>
-      <li><span data-lang="fr">Lecture des infobulles natives (nom réel des objets, pas juste « Item »), quantité annoncée avant le nom en une seule phrase.</span><span data-lang="en" hidden>Native tooltip reading (real item names, not just "Item"), quantity announced before the name in one sentence.</span></li>
-      <li><span data-lang="fr">Emplacements vides/d'armure explicitement décrits, onglets du menu principal correctement nommés.</span><span data-lang="en" hidden>Empty/armor slots explicitly described, main menu tabs correctly named.</span></li>
-      <li><span data-lang="fr">Bulles de dialogue lues dès le début de la ligne, pas à la fin de l'animation machine à écrire.</span><span data-lang="en" hidden>Dialogue lines are read from the start, not after the typewriter animation finishes.</span></li>
-      <li><span data-lang="fr">Navigation directionnelle réelle dans tous les menus : les flèches suivent la disposition visuelle. Gauche/droite restent sur la ligne et butent en bout avec un bip court, haut/bas changent de ligne. Chaque panneau est une zone aux frontières nettes, donc on ne déborde jamais accidentellement.</span><span data-lang="en" hidden>Real directional navigation in every menu: arrows follow the visual layout. Left/right stay on the row and stop at its end with a short beep, up/down change rows. Each panel is a zone with hard edges, so you never spill over by accident.</span></li>
-      <li><span data-lang="fr">Ctrl+flèche saute volontairement d'une zone à l'autre : onglets en haut, équipement à gauche, sac à droite, barre d'action en bas. Touches 1-0 pour envoyer/récupérer un objet de la barre d'action.</span><span data-lang="en" hidden>Ctrl+arrow deliberately jumps between zones: tabs on top, equipment left, backpack right, action bar at the bottom. Keys 1-0 send/retrieve an item from the action bar.</span></li>
+      <li><span data-lang="fr"><strong>Agriculture</strong> : confirmation vocale à chaque action (labourer, arroser, planter, récolter, arrosoir vide ou rempli), et description enrichie des cultures et des parcelles.</span><span data-lang="en" hidden><strong>Farming</strong>: voice confirmation for every action (tilling, watering, planting, harvesting, empty or full watering can), plus enriched crop and plot descriptions.</span></li>
+      <li><span data-lang="fr"><strong>Pêche</strong> : annonce quand le poisson mord et du résultat de chaque tentative, plus un <strong>bip continu de visée</strong> dont la hauteur suit la distance à la zone gagnante — pour viser au son.</span><span data-lang="en" hidden><strong>Fishing</strong>: announces when a fish bites and the outcome of each attempt, plus a <strong>continuous aiming beep</strong> whose pitch tracks distance to the winning zone — so you can aim by ear.</span></li>
+      <li><span data-lang="fr"><strong>Minage et coupe de bois</strong> : signale quand l'outil en main est trop faible pour un rocher ou un arbre — sinon le jeu ne donne aucun indice quand un coup ne fait rien.</span><span data-lang="en" hidden><strong>Mining and woodcutting</strong>: warns when the tool in hand is too weak for a rock or tree — otherwise the game gives no clue at all when a hit does nothing.</span></li>
+      <li><span data-lang="fr"><strong>Combat</strong> : santé restante à chaque coup reçu avec alerte progressive, entrée et sortie de combat, ennemi vaincu, mort du personnage.</span><span data-lang="en" hidden><strong>Combat</strong>: remaining health on every hit taken with escalating alerts, entering and leaving combat, enemy defeated, character death.</span></li>
+      <li><span data-lang="fr"><strong>Donjons</strong> : numéro d'étage à l'entrée d'une salle, et confirmation quand elle est nettoyée.</span><span data-lang="en" hidden><strong>Dungeons</strong>: floor number when entering a room, and confirmation once it's cleared.</span></li>
     </ul>
   </details>
   </li>
 
   <li>
   <details class="card reveal">
-    <summary><span data-lang="fr">🎒 Confort d'inventaire</span><span data-lang="en" hidden>🎒 Inventory comfort</span></summary>
+    <summary><span data-lang="fr">💞 Vie sociale et progression</span><span data-lang="en" hidden>💞 Social life and progression</span></summary>
     <ul>
-      <li><span data-lang="fr"><strong>Mode bref</strong> (par défaut) : en parcourant, seuls la quantité et le nom sont annoncés — le jeu fusionne nom et description dans un seul texte, ce qui rendait chaque case interminable. Une touche relit la description complète à la demande.</span><span data-lang="en" hidden><strong>Brief mode</strong> (default): while browsing, only quantity and name are announced — the game merges name and description into a single text, which made every slot endless. A key reads the full description on demand.</span></li>
-      <li><span data-lang="fr"><strong>Tri du sac</strong> : regroupe et compacte les objets, ce qui raccourcit beaucoup la navigation. <strong>Résumé du contenu</strong> : annonce tout ce qu'on possède et le nombre d'emplacements libres.</span><span data-lang="en" hidden><strong>Sort backpack</strong>: groups and compacts items, which greatly shortens navigation. <strong>Contents summary</strong>: announces everything you own and how many slots are free.</span></li>
-      <li><span data-lang="fr"><strong>Rangement dans les coffres proches</strong> : dépose ce dont un coffre contient déjà un exemplaire, avec compte-rendu. Filtrage par distance refait à la main : la méthode du jeu vise tous les coffres chargés, ce qui est inutilisable sans voir où partent les objets.</span><span data-lang="en" hidden><strong>Store into nearby chests</strong>: deposits whatever a chest already holds a copy of, and reports back. Distance filtering redone by hand: the game's own method targets every loaded chest, unusable when you can't see where items went.</span></li>
+      <li><span data-lang="fr"><strong>Quêtes</strong> : annonce automatique à l'acceptation et au rendu, et liste complète à la demande (nom, description, progression, où rendre).</span><span data-lang="en" hidden><strong>Quests</strong>: automatic announcement on accepting and turning in, plus the full list on demand (name, description, progress, where to hand it in).</span></li>
+      <li><span data-lang="fr"><strong>Relations</strong> : cœurs pour chaque personnage romançable, avec le statut (en couple, marié).</span><span data-lang="en" hidden><strong>Relationships</strong>: hearts for each romanceable character, with status (dating, married).</span></li>
+      <li><span data-lang="fr"><strong>Compétences</strong> : niveau et progression des cinq compétences, et points disponibles à dépenser dans chaque arbre.</span><span data-lang="en" hidden><strong>Skills</strong>: level and progress for all five skills, plus points available to spend in each tree.</span></li>
+      <li><span data-lang="fr"><strong>Courrier</strong> : contenu complet d'une lettre lu automatiquement à l'ouverture de la boîte aux lettres.</span><span data-lang="en" hidden><strong>Mail</strong>: a letter's full contents read automatically when the mailbox opens.</span></li>
+      <li><span data-lang="fr"><strong>Carte du monde</strong> et <strong>festivals de la saison</strong> : lieux parcourables un par un avec leur description, et calendrier des évènements.</span><span data-lang="en" hidden><strong>World map</strong> and <strong>seasonal festivals</strong>: locations browsable one by one with their descriptions, plus the events calendar.</span></li>
+      <li><span data-lang="fr"><strong>Création de personnage</strong> : race, description et capacité annoncées, apparence parcourable catégorie par catégorie.</span><span data-lang="en" hidden><strong>Character creation</strong>: race, description and ability announced, appearance browsable category by category.</span></li>
     </ul>
   </details>
   </li>
 
   <li>
   <details class="card reveal">
-    <summary><span data-lang="fr">🌾 Agriculture</span><span data-lang="en" hidden>🌾 Farming</span></summary>
+    <summary><span data-lang="fr">🎒 Confort et personnalisation</span><span data-lang="en" hidden>🎒 Comfort and customization</span></summary>
     <ul>
-      <li><span data-lang="fr">Confirmations vocales à chaque action : labourer, arroser, planter, récolter, arrosoir vide/rempli.</span><span data-lang="en" hidden>Voice confirmations for every action: tilling, watering, planting, harvesting, empty/full watering can.</span></li>
-      <li><span data-lang="fr">Description enrichie des cultures et des parcelles labourées sans rien de planté.</span><span data-lang="en" hidden>Enriched description of crops and tilled-but-empty plots.</span></li>
+      <li><span data-lang="fr"><strong>Mode bref</strong> : en parcourant l'inventaire, seuls la quantité et le nom sont annoncés — le jeu fusionne nom et description dans un seul texte, ce qui rendait chaque case interminable. La description complète reste disponible à la demande.</span><span data-lang="en" hidden><strong>Brief mode</strong>: while browsing the inventory, only quantity and name are announced — the game merges name and description into one text, which made every slot endless. The full description stays available on demand.</span></li>
+      <li><span data-lang="fr"><strong>Tri, résumé du contenu, rangement dans les coffres proches</strong> : savoir ce qu'on possède et ranger sans parcourir 40 cases une à une.</span><span data-lang="en" hidden><strong>Sorting, contents summary, storing into nearby chests</strong>: know what you own and tidy up without walking through 40 slots one by one.</span></li>
+      <li><span data-lang="fr"><strong>Toutes les touches sont réassignables</strong>, depuis le jeu via un menu vocal dédié ou dans le fichier de configuration.</span><span data-lang="en" hidden><strong>Every key can be reassigned</strong>, from inside the game through a dedicated voice menu, or in the configuration file.</span></li>
+      <li><span data-lang="fr">Toutes vérifiées sans conflit avec les touches par défaut du jeu — une seule exception, documentée.</span><span data-lang="en" hidden>All verified conflict-free with the game's own default keys — with a single documented exception.</span></li>
     </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">🖱️ Souris directionnelle &amp; clics simulés</span><span data-lang="en" hidden>🖱️ Directional mouse &amp; simulated clicks</span></summary>
-    <ul>
-      <li><span data-lang="fr">Beaucoup d'actions (arroser, labourer, récolter, miner, attaquer) se déclenchent par clic souris : une touche fait pointer la souris en permanence vers la case en face.</span><span data-lang="en" hidden>Many actions (watering, tilling, harvesting, mining, attacking) trigger on mouse click: one key keeps the mouse pointed at the tile ahead at all times.</span></li>
-      <li><span data-lang="fr">Simulation de clic gauche et de clic droit à la position actuelle de la souris.</span><span data-lang="en" hidden>Simulated left and right click at the mouse's current position.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">🛒 Boutiques &amp; artisanat</span><span data-lang="en" hidden>🛒 Shops &amp; crafting</span></summary>
-    <ul>
-      <li><span data-lang="fr">Nom, prix (devise correctement annoncée : pièces d'or, tickets ou orbes) et quantité restante en boutique.</span><span data-lang="en" hidden>Name, price (currency correctly announced: gold coins, tickets, or orbs) and remaining quantity in shops.</span></li>
-      <li><span data-lang="fr">En artisanat : quantité possédée/requise de chaque ingrédient, nom de l'objet fabriqué, temps de fabrication.</span><span data-lang="en" hidden>In crafting: owned/required amount for each ingredient, crafted item's name, craft time.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">✉️ Courrier</span><span data-lang="en" hidden>✉️ Mail</span></summary>
-    <ul>
-      <li><span data-lang="fr">Contenu complet d'une lettre (message, signature, post-scriptum) lu automatiquement dès l'ouverture de la boîte aux lettres, comme les dialogues.</span><span data-lang="en" hidden>A letter's full content (message, sign-off, postscript) is read automatically as soon as the mailbox opens, just like dialogue.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">📜 Quêtes</span><span data-lang="en" hidden>📜 Quests</span></summary>
-    <ul>
-      <li><span data-lang="fr">Le journal de quêtes du jeu (touche L) est un écran purement visuel, illisible pour un lecteur d'écran — cette fonctionnalité lit directement les données de quête, sans en dépendre.</span><span data-lang="en" hidden>The game's quest journal (L key) is a purely visual screen, unreadable by a screen reader — this feature reads the quest data directly instead.</span></li>
-      <li><span data-lang="fr">Annonce automatique dès qu'une nouvelle quête est acceptée, et quand elle est rendue/terminée.</span><span data-lang="en" hidden>Automatic announcement as soon as a new quest is accepted, and when it's turned in/completed.</span></li>
-      <li><span data-lang="fr">Touche dédiée pour lister toutes les quêtes actives : nom, description, progression et où la rendre.</span><span data-lang="en" hidden>Dedicated key to list all active quests: name, description, progress, and where to turn it in.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">💞 Relations &amp; compétences</span><span data-lang="en" hidden>💞 Relationships &amp; skills</span></summary>
-    <ul>
-      <li><span data-lang="fr">Relations : cœurs (sur 10, 15 ou 20 selon simple/en couple/marié) pour chaque PNJ romançable, triés du plus investi au moins investi.</span><span data-lang="en" hidden>Relationships: hearts (out of 10, 15, or 20 depending on single/dating/married) for each romanceable NPC, sorted most to least invested.</span></li>
-      <li><span data-lang="fr">Compétences : niveau et progression pour chacune des 5 compétences (combat, agriculture, pêche, minage, exploration).</span><span data-lang="en" hidden>Skills: level and progress for each of the 5 skills (combat, farming, fishing, mining, exploration).</span></li>
-      <li><span data-lang="fr">Points de compétence disponibles à dépenser dans chaque arbre, sur demande.</span><span data-lang="en" hidden>Skill points available to spend in each tree, on demand.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">🧑‍🎨 Création de personnage</span><span data-lang="en" hidden>🧑‍🎨 Character creation</span></summary>
-    <ul>
-      <li><span data-lang="fr">Race sélectionnée, sa description et sa capacité spéciale annoncées automatiquement à chaque changement.</span><span data-lang="en" hidden>Selected race, its description, and special ability announced automatically on every change.</span></li>
-      <li><span data-lang="fr">Apparence (corps, cheveux, yeux, visage, torse, jambes, tête, queue) : mêmes touches que le scanner (une touche = option, Ctrl+la même touche = catégorie). Ailes et couleurs pas encore couverts.</span><span data-lang="en" hidden>Appearance (body, hair, eyes, face, chest, pants, head, tail): same convention as the scanner (one key = option, Ctrl+same key = category). Wings and colors not covered yet.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">🗺️ Carte du monde</span><span data-lang="en" hidden>🗺️ World map</span></summary>
-    <ul>
-      <li><span data-lang="fr">Chaque lieu répond au clic dans le jeu mais n'est pas un vrai bouton navigable au clavier — invisible pour la navigation générique des menus du mod. Touches dédiées pour les parcourir un par un.</span><span data-lang="en" hidden>Each place responds to clicks in the game but isn't a real keyboard-navigable button — invisible to the mod's generic menu navigation. Dedicated keys to browse them one by one.</span></li>
-      <li><span data-lang="fr">Nom et description annoncés dès qu'un lieu est ouvert, avec centrage/surlignage sur la carte comme un clic.</span><span data-lang="en" hidden>Name and description announced as soon as a place is opened, centering/highlighting the map just like a click.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">🎣 Pêche</span><span data-lang="en" hidden>🎣 Fishing</span></summary>
-    <ul>
-      <li><span data-lang="fr">Annonce quand un poisson mord, et le résultat de chaque pression (touché / manqué / échappé).</span><span data-lang="en" hidden>Announces when a fish bites, and the result of each press (hit / miss / escaped).</span></li>
-      <li><span data-lang="fr"><strong>Bip continu de visée</strong> : sa hauteur varie avec la distance à la zone gagnante (grave = loin, aigu = proche, double bip distinctif dedans) — une jauge unique oscille toute seule dans ce mini-jeu (contrairement à Stardew Valley), un seul repère continu suffit donc à viser au son. Touche dédiée pour le désactiver.</span><span data-lang="en" hidden><strong>Continuous aiming beep</strong>: its pitch varies with distance to the winning zone (low = far, high = close, distinctive double-beep inside it) — a single gauge oscillates on its own in this minigame (unlike Stardew Valley), so one continuous cue is enough to aim by ear. Dedicated key to turn it off.</span></li>
-      <li><span data-lang="fr">⚠️ Fonctionnalité toute nouvelle, jamais entendue en conditions réelles — fréquences et tempo choisis au jugé.</span><span data-lang="en" hidden>⚠️ Brand new feature, never heard under real conditions — frequencies and tempo chosen by best guess.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">⛏️ Minage &amp; coupe de bois</span><span data-lang="en" hidden>⛏️ Mining &amp; woodcutting</span></summary>
-    <ul>
-      <li><span data-lang="fr">Annonce quand l'outil en main n'est pas assez puissant pour un rocher/arbre donné — le jeu ne donne autrement aucun indice quand un coup ne fait rien.</span><span data-lang="en" hidden>Announces when the tool in hand isn't strong enough for a given rock/tree — the game otherwise gives no clue at all when a hit does nothing.</span></li>
-      <li><span data-lang="fr">Confirmation vocale quand un rocher se brise ou qu'un arbre est abattu.</span><span data-lang="en" hidden>Voice confirmation when a rock breaks or a tree is felled.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">⚔️ Donjon de combat</span><span data-lang="en" hidden>⚔️ Combat dungeon</span></summary>
-    <ul>
-      <li><span data-lang="fr">Une succession de salles à vider de tous leurs ennemis pour avancer d'étage en étage — jusqu'ici silencieux au-delà du combat lui-même.</span><span data-lang="en" hidden>A series of rooms to clear of all enemies to advance floor by floor — silent so far beyond combat itself.</span></li>
-      <li><span data-lang="fr">Annonce du numéro d'étage à l'entrée d'une salle, et confirmation quand elle est nettoyée (porte ouverte).</span><span data-lang="en" hidden>Announces the floor number on entering a room, and confirms when it's cleared (door opens).</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">🧭 Scanner par catégories &amp; cheminement automatique</span><span data-lang="en" hidden>🧭 Category scanner &amp; auto-pathing</span></summary>
-    <ul>
-      <li><span data-lang="fr">Repère tout ce qui est à proximité, par catégorie, trié du plus proche au plus loin : personnages, plantations, ressources (dont minerais), bâtiments et portails (avec destination annoncée), animaux et compagnons, ennemis, mobilier et rangement.</span><span data-lang="en" hidden>Finds everything nearby, by category, sorted nearest-first: characters, crops, resources (including ores), buildings and portals (with destination announced), animals and companions, enemies, furniture and storage.</span></li>
-      <li><span data-lang="fr">Les catégories vides sont sautées automatiquement en changeant de catégorie.</span><span data-lang="en" hidden>Empty categories are automatically skipped when switching categories.</span></li>
-      <li><span data-lang="fr"><strong>Cheminement automatique</strong> vers l'élément sélectionné (A* maison tenant compte des vrais obstacles) — si la destination exacte est bloquée, avance quand même jusqu'au point le plus proche atteignable.</span><span data-lang="en" hidden><strong>Automatic pathing</strong> to the selected item (custom A* accounting for real obstacles) — if the exact destination is blocked, still walks as far as it can reach.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">⚔️ Combat</span><span data-lang="en" hidden>⚔️ Combat</span></summary>
-    <ul>
-      <li><span data-lang="fr">Santé restante annoncée à chaque coup reçu, avec alerte progressive (basse, critique, à terre).</span><span data-lang="en" hidden>Remaining health announced on every hit taken, with escalating alerts (low, critical, downed).</span></li>
-      <li><span data-lang="fr">Entrée/sortie de combat, défaite d'un ennemi et mort du personnage annoncées ; santé et mana consultables à la demande.</span><span data-lang="en" hidden>Entering/leaving combat, an enemy's defeat, and your character's death are all announced; health and mana can be checked on demand.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">☀️ Horloge, calendrier &amp; météo</span><span data-lang="en" hidden>☀️ Clock, calendar &amp; weather</span></summary>
-    <ul>
-      <li><span data-lang="fr">Une touche annonce l'heure, le jour de la semaine, le jour du mois, la saison, l'année et la météo actuelle.</span><span data-lang="en" hidden>One key announces the time, day of the week, day of the month, season, year, and current weather.</span></li>
-      <li><span data-lang="fr">Une autre annonce les festivals de la saison actuelle (nom, jour, description) — le calendrier du jeu est un affichage purement visuel, cette touche lit ses données directement.</span><span data-lang="en" hidden>Another announces this season's festivals (name, day, description) — the game's calendar is a purely visual display, this key reads its data directly.</span></li>
-    </ul>
-  </details>
-  </li>
-
-  <li>
-  <details class="card reveal">
-    <summary><span data-lang="fr">⌨️ Raccourcis — tous personnalisables</span><span data-lang="en" hidden>⌨️ Keybindings — fully customizable</span></summary>
-    <p>
-      <span data-lang="fr">Chaque touche se change dans le fichier de config, ou en jeu via un menu vocal dédié. Toutes vérifiées sans conflit avec les touches par défaut du jeu (table lue directement dans le code décompilé).</span>
-      <span data-lang="en" hidden>Every key can be changed in the config file, or in-game through a dedicated voice menu. All verified conflict-free with the game's default keybindings (checked directly against the decompiled code).</span>
-    </p>
-    <table class="keys">
-      <caption class="sr-only">
-        <span data-lang="fr">Raccourcis clavier de Sun Haven Access et leur action</span>
-        <span data-lang="en" hidden>Sun Haven Access keybindings and what they do</span>
-      </caption>
-      <thead><tr>
-        <th scope="col"><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th>
-        <th scope="col"><span data-lang="fr">Action</span><span data-lang="en" hidden>Action</span></th>
-      </tr></thead>
-      <tbody>
-        <tr><td>F1</td><td><span data-lang="fr">Aide (⚠️ déclenche aussi l'émote 1 du jeu)</span><span data-lang="en" hidden>Help (⚠️ also triggers the game's emote 1)</span></td></tr>
-        <tr><td>F10</td><td><span data-lang="fr">Décrire la case devant vous</span><span data-lang="en" hidden>Describe the tile ahead</span></td></tr>
-        <tr><td>P</td><td><span data-lang="fr">Votre position</span><span data-lang="en" hidden>Your position</span></td></tr>
-        <tr><td>O</td><td><span data-lang="fr">Heure, jour, saison, météo</span><span data-lang="en" hidden>Time, day, season, weather</span></td></tr>
-        <tr><td>N</td><td><span data-lang="fr">Personnage proche suivant</span><span data-lang="en" hidden>Next nearby character</span></td></tr>
-        <tr><td>B</td><td><span data-lang="fr">Répéter la dernière annonce</span><span data-lang="en" hidden>Repeat the last announcement</span></td></tr>
-        <tr><td>H</td><td><span data-lang="fr">Santé et mana</span><span data-lang="en" hidden>Health and mana</span></td></tr>
-        <tr><td>G</td><td><span data-lang="fr">Annoncer les quêtes actives</span><span data-lang="en" hidden>Announce active quests</span></td></tr>
-        <tr><td>V</td><td><span data-lang="fr">Annoncer les relations avec les PNJ</span><span data-lang="en" hidden>Announce NPC relationships</span></td></tr>
-        <tr><td>U</td><td><span data-lang="fr">Annoncer les niveaux de compétence</span><span data-lang="en" hidden>Announce skill levels</span></td></tr>
-        <tr><td>X / Y</td><td><span data-lang="fr">Carte : lieu précédent / suivant</span><span data-lang="en" hidden>Map: previous / next place</span></td></tr>
-        <tr><td>, / .</td><td><span data-lang="fr">Création perso : apparence précédente/suivante (Ctrl = catégorie)</span><span data-lang="en" hidden>Char. creation: previous/next appearance (Ctrl = category)</span></td></tr>
-        <tr><td>Z</td><td><span data-lang="fr">Points de compétence disponibles</span><span data-lang="en" hidden>Available skill points</span></td></tr>
-        <tr><td>;</td><td><span data-lang="fr">Festivals de la saison actuelle</span><span data-lang="en" hidden>Current season's festivals</span></td></tr>
-        <tr><td>F9</td><td><span data-lang="fr">Verbosité des déplacements</span><span data-lang="en" hidden>Movement verbosity</span></td></tr>
-        <tr><td><span data-lang="fr">Suppr</span><span data-lang="en" hidden>Delete</span></td><td><span data-lang="fr">Menu des raccourcis</span><span data-lang="en" hidden>Keybindings menu</span></td></tr>
-        <tr><td><span data-lang="fr">Pavé 5</span><span data-lang="en" hidden>Numpad 5</span></td><td><span data-lang="fr">Clic gauche (monde)</span><span data-lang="en" hidden>Left click (world)</span></td></tr>
-        <tr><td>J</td><td><span data-lang="fr">Souris directionnelle</span><span data-lang="en" hidden>Directional mouse</span></td></tr>
-        <tr><td>F8</td><td><span data-lang="fr">Activer/désactiver le bip de visée en pêche</span><span data-lang="en" hidden>Toggle the fishing aim beep</span></td></tr>
-        <tr><td>C</td><td><span data-lang="fr">Ouvrir le tchat / la console</span><span data-lang="en" hidden>Open chat / console</span></td></tr>
-        <tr><td><span data-lang="fr">Flèches + Entrée</span><span data-lang="en" hidden>Arrows + Enter</span></td><td><span data-lang="fr">Naviguer / valider dans un menu</span><span data-lang="en" hidden>Navigate / confirm in a menu</span></td></tr>
-        <tr><td><span data-lang="fr">Ctrl + flèche</span><span data-lang="en" hidden>Ctrl + arrow</span></td><td><span data-lang="fr">Sauter à la zone voisine (onglets / équipement / sac / barre d'action)</span><span data-lang="en" hidden>Jump to the adjacent zone (tabs / equipment / backpack / action bar)</span></td></tr>
-        <tr><td>1-0</td><td><span data-lang="fr">Envoyer/récupérer un objet vers/depuis la barre d'action</span><span data-lang="en" hidden>Send/retrieve an item to/from the action bar</span></td></tr>
-        <tr><td>'</td><td><span data-lang="fr">Trier et regrouper le sac à dos</span><span data-lang="en" hidden>Sort and compact the backpack</span></td></tr>
-        <tr><td>\</td><td><span data-lang="fr">Résumé du contenu du sac</span><span data-lang="en" hidden>Backpack contents summary</span></td></tr>
-        <tr><td>=</td><td><span data-lang="fr">Ranger dans les coffres proches</span><span data-lang="en" hidden>Store into nearby chests</span></td></tr>
-        <tr><td><span data-lang="fr">Pavé 0</span><span data-lang="en" hidden>Numpad 0</span></td><td><span data-lang="fr">Lire la description complète de l'objet</span><span data-lang="en" hidden>Read the item's full description</span></td></tr>
-        <tr><td><span data-lang="fr">Ctrl+Tab / Ctrl+Maj+Tab</span><span data-lang="en" hidden>Ctrl+Tab / Ctrl+Shift+Tab</span></td><td><span data-lang="fr">Changer d'onglet dans le menu principal</span><span data-lang="en" hidden>Switch tab in the main menu</span></td></tr>
-        <tr><td><span data-lang="fr">Ctrl+flèche gauche/droite</span><span data-lang="en" hidden>Ctrl+left/right arrow</span></td><td><span data-lang="fr">Ajuster un curseur sélectionné</span><span data-lang="en" hidden>Adjust a selected slider</span></td></tr>
-        <tr><td><span data-lang="fr">Page haut/bas</span><span data-lang="en" hidden>Page Up/Down</span></td><td><span data-lang="fr">Scanner : élément (Ctrl = catégorie)</span><span data-lang="en" hidden>Scanner: item (Ctrl = category)</span></td></tr>
-        <tr><td><span data-lang="fr">Origine</span><span data-lang="en" hidden>Home</span></td><td><span data-lang="fr">Annoncer / Ctrl = s'y rendre</span><span data-lang="en" hidden>Announce / Ctrl = travel there</span></td></tr>
-      </tbody>
-    </table>
   </details>
   </li>
 
   </ul>
 
-  <h2 class="section-title" id="progress">
-    <span data-lang="fr">Progression</span><span data-lang="en" hidden>Progress</span>
+  <h2 class="section-title" id="avancement">
+    <span data-lang="fr">Avancement</span><span data-lang="en" hidden>Progress</span>
   </h2>
-  <p>
-    <span data-lang="fr">Chaque système majeur du jeu a désormais au moins un premier niveau de couverture — la liste "pas encore développé" est vide pour l'instant. Beaucoup d'éléments ci-dessous restent malgré tout à confirmer en conditions réelles.</span>
-    <span data-lang="en" hidden>Every major game system now has at least a first level of coverage — the "not built yet" list is currently empty. Many items below still need confirmation under real conditions, though.</span>
-  </p>
-  <div class="status-row">
-    <span class="pill ok"><span data-lang="fr">✓ Confirmé en jeu</span><span data-lang="en" hidden>✓ Confirmed in-game</span></span>
-    <span class="pill wip"><span data-lang="fr">🚧 Développé, pas encore confirmé</span><span data-lang="en" hidden>🚧 Built, not yet confirmed</span></span>
-    <span class="pill todo"><span data-lang="fr">○ Pas encore développé</span><span data-lang="en" hidden>○ Not built yet</span></span>
-  </div>
 
-  <details class="card reveal">
-    <summary><span data-lang="fr">Voir le détail de la progression</span><span data-lang="en" hidden>See progress details</span></summary>
-    <p><strong><span data-lang="fr">✓ Confirmé :</span><span data-lang="en" hidden>✓ Confirmed:</span></strong>
-      <span data-lang="fr">boucle du mod, synthèse vocale, curseur de case, dialogues, menus/inventaire/tooltips, agriculture, souris directionnelle, scanner, navigation clavier des menus, touche du tchat.</span>
-      <span data-lang="en" hidden>mod loop, speech synthesis, tile cursor, dialogue, menus/inventory/tooltips, farming, directional mouse, scanner, menu keyboard navigation, chat key.</span>
+  <div class="card reveal">
+    <p>
+      <span data-lang="fr">Tous les systèmes majeurs du jeu ont au moins un premier niveau de couverture. Il faut cependant être clair sur un point : <strong>le mod est développé par une IA qui ne peut ni voir ni entendre le jeu.</strong> Le code est écrit en décompilant Sun Haven et en raisonnant dessus ; la validation vient toujours d'un test humain réel. Beaucoup de fonctionnalités récentes n'ont donc pas encore été confirmées en conditions de jeu.</span>
+      <span data-lang="en" hidden>Every major game system has at least a first level of coverage. One thing needs stating plainly though: <strong>this mod is developed by an AI that can neither see nor hear the game.</strong> The code is written by decompiling Sun Haven and reasoning about it; validation always comes from real human testing. Many recent features therefore remain unconfirmed under real play conditions.</span>
     </p>
-    <p><strong><span data-lang="fr">🚧 Pas encore confirmé :</span><span data-lang="en" hidden>🚧 Not yet confirmed:</span></strong>
-      <span data-lang="fr">description du type de terrain hors ferme (l'eau est fiable, le reste dépend du nom des tuiles), cheminement automatique en terrain complexe, boutiques et artisanat (noms, prix avec devise, quantités possédées/requises, temps de fabrication), courrier (lu comme les dialogues, objets joints pas encore nommés), minage et coupe de bois (annonce d'outil trop faible, confirmation de casse — patch sur les méthodes internes du jeu), carte du monde (liste de lieux à sélection native, comme l'arbre de compétences — probablement déjà couverte par les mêmes systèmes génériques), notifications génériques du jeu (un seul point d'accroche, ampleur réelle de la couverture à confirmer à l'usage), donjon de combat (numéro d'étage, salle nettoyée) — passent par les systèmes génériques du mod mais jamais testés sur un écran réel. <strong>Pêche</strong> : touche/résultat annoncés + tout nouveau bip continu de visée (fréquences/tempo choisis au jugé, jamais entendu en jeu) — la fonctionnalité la moins certaine de tout le mod actuellement.</span>
-      <span data-lang="en" hidden>terrain type description outside farmland (water is reliable, the rest depends on tile names), auto-pathing on complex terrain, shops and crafting (names, prices with currency, owned/required amounts, craft time), mail (read like dialogue, attached items not yet named), mining and woodcutting (weak-tool warning, break confirmation — patched into the game's internal methods), world map (native-selection location list, like the skill tree — likely already covered by the same generic systems), generic in-game notifications (a single hook, real coverage to be confirmed in practice), combat dungeon (floor number, room cleared) — go through the mod's generic systems but never tested on a real screen. <strong>Fishing</strong>: bite/result announced + brand new continuous aiming beep (frequencies/tempo chosen by best guess, never heard in-game) — the single most uncertain feature in the whole mod right now.</span>
+    <div class="status-row">
+      <span class="pill ok"><span data-lang="fr">✓ Confirmé en jeu</span><span data-lang="en" hidden>✓ Confirmed in-game</span></span>
+      <span class="pill wip"><span data-lang="fr">🚧 Développé, à confirmer</span><span data-lang="en" hidden>🚧 Built, to be confirmed</span></span>
+      <span class="pill todo"><span data-lang="fr">○ Pas encore commencé</span><span data-lang="en" hidden>○ Not started yet</span></span>
+    </div>
+    <p>
+      <span data-lang="fr">Le détail complet, fonctionnalité par fonctionnalité, est dans la <a href="docs.html#avancement">documentation</a>.</span>
+      <span data-lang="en" hidden>The full breakdown, feature by feature, is in the <a href="docs.html#avancement">documentation</a>.</span>
     </p>
-  </details>
+  </div>
 
   <h2 class="section-title" id="about">
     <span data-lang="fr">À propos</span><span data-lang="en" hidden>About</span>
@@ -828,14 +211,8 @@
 
 <footer>
   <p>
-    <span data-lang="fr">Créé par <a href="https://github.com/ZenqFR" target="_blank" rel="noopener">ZenqFR</a>
-    · <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">Code source</a>
-    · <a href="https://zenqfr.github.io/" target="_blank" rel="noopener">Tous mes projets</a>
-    · Hébergé sur GitHub Pages</span>
-    <span data-lang="en" hidden>Made by <a href="https://github.com/ZenqFR" target="_blank" rel="noopener">ZenqFR</a>
-    · <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">Source code</a>
-    · <a href="https://zenqfr.github.io/" target="_blank" rel="noopener">All my projects</a>
-    · Hosted on GitHub Pages</span>
+    <span data-lang="fr">Créé par <a href="https://github.com/ZenqFR" target="_blank" rel="noopener">ZenqFR</a> · Code source sous licence libre · Hébergé sur GitHub Pages</span>
+    <span data-lang="en" hidden>Made by <a href="https://github.com/ZenqFR" target="_blank" rel="noopener">ZenqFR</a> · Open-source · Hosted on GitHub Pages</span>
   </p>
   <p class="privacy">
     <span data-lang="fr">Aucun cookie, aucun suivi.</span>
@@ -845,89 +222,7 @@
 
 <button type="button" class="to-top" id="to-top" aria-label="Retour en haut de la page">↑</button>
 
-<script>
-(function () {
-  "use strict";
-
-  /* ---- Langue FR/EN ---- */
-  function applyLang(lang) {
-    document.documentElement.lang = lang;
-    document.querySelectorAll('[data-lang="fr"]').forEach(function (el) { el.hidden = lang !== "fr"; });
-    document.querySelectorAll('[data-lang="en"]').forEach(function (el) { el.hidden = lang !== "en"; });
-    var toggle = document.getElementById("lang-toggle");
-    if (toggle) toggle.textContent = lang === "fr" ? "English" : "Français";
-    // aria-label ne peut pas contenir de spans data-lang : mis à jour ici pour rester cohérent
-    // avec le reste du texte de la page quand on change de langue.
-    var toTopBtn = document.getElementById("to-top");
-    if (toTopBtn) toTopBtn.setAttribute("aria-label", lang === "fr" ? "Retour en haut de la page" : "Back to top");
-  }
-  var savedLang = "fr";
-  try { savedLang = localStorage.getItem("sunhavenaccess-lang") || "fr"; } catch (e) {}
-  applyLang(savedLang);
-  var toggleBtn = document.getElementById("lang-toggle");
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", function () {
-      var next = document.documentElement.lang === "en" ? "fr" : "en";
-      applyLang(next);
-      try { localStorage.setItem("sunhavenaccess-lang", next); } catch (e) {}
-    });
-  }
-
-  /* ---- Apparition des cartes au défilement ---- */
-  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var revealEls = document.querySelectorAll(".reveal");
-  if (reduceMotion || !("IntersectionObserver" in window)) {
-    revealEls.forEach(function (el) { el.classList.add("is-visible"); });
-  } else {
-    // N'active le masquage CSS (html.js-reveal-active) qu'ici, une fois sûr de pouvoir
-    // effectivement révéler les cartes ensuite — sinon elles restent visibles par défaut.
-    document.documentElement.classList.add("js-reveal-active");
-    var revealObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
-    revealEls.forEach(function (el) { revealObserver.observe(el); });
-  }
-
-  /* ---- Scrollspy de la nav rapide ---- */
-  var navLinks = document.querySelectorAll(".quick-nav a");
-  var sections = Array.prototype.map.call(navLinks, function (link) {
-    return document.getElementById(link.getAttribute("data-section"));
-  }).filter(Boolean);
-  if (sections.length && "IntersectionObserver" in window) {
-    var setActive = function (id) {
-      navLinks.forEach(function (link) {
-        var match = link.getAttribute("data-section") === id;
-        if (match) link.setAttribute("aria-current", "true");
-        else link.removeAttribute("aria-current");
-      });
-    };
-    var navObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) setActive(entry.target.id);
-      });
-    }, { rootMargin: "-40% 0px -55% 0px" });
-    sections.forEach(function (section) { navObserver.observe(section); });
-  }
-
-  /* ---- Bouton retour en haut ---- */
-  var toTop = document.getElementById("to-top");
-  if (toTop) {
-    var toggleToTop = function () {
-      toTop.classList.toggle("is-visible", window.scrollY > 500);
-    };
-    window.addEventListener("scroll", toggleToTop, { passive: true });
-    toggleToTop();
-    toTop.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-    });
-  }
-})();
-</script>
+<script src="site.js"></script>
 
 </body>
 </html>

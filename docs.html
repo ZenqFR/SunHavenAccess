@@ -18,222 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  /* Même thème "ciel de ferme" que la page principale (index.html) : le dégradé bleu ciel ->
-     or habille toute la page (couleurs FIXES, pas de variante sombre — voir le commentaire
-     détaillé dans index.html pour le raisonnement complet), contenu porté par des panneaux
-     "verre" translucides. */
-  :root {
-    --bg-card: rgba(255, 255, 255, 0.88);
-    --bg-card-border: rgba(255, 255, 255, 0.7);
-    --glass-bg: rgba(255, 255, 255, 0.55);
-    --glass-border: rgba(255, 255, 255, 0.75);
-    --text: #1f2b30;
-    --text-dim: #3d5158;
-    --text-faint: #48606a;
-    --accent: #ffb400;
-    --accent-strong: #8a5300;
-    --accent-text: #241500;
-    --leaf: #2fa83e;
-    --leaf-text: #1c7a28;
-    --sky: #1f97d4;
-    --sky-text: #0d6ea3;
-    --pill-bg: rgba(255, 255, 255, 0.55);
-    --pill-border: rgba(255, 255, 255, 0.75);
-    --focus: #0d6ea3;
-    --radius: 14px;
-    --sun: #ffb400;
-    --shadow: 0 1px 2px rgba(31, 43, 48, 0.08), 0 8px 24px rgba(31, 43, 48, 0.14);
-    --nav-bg-translucent: rgba(255, 255, 255, 0.78);
-    --nav-h: 52px;
-  }
-
-  * { box-sizing: border-box; }
-  html { color-scheme: light; scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); }
-
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
-  }
-
-  /* Dégradé étiré sur toute la hauteur de la page (pas background-attachment: fixed, qui
-     provoque un bug de rendu — fond blanc au défilement — combiné aux backdrop-filter des
-     panneaux verre ci-dessous). Voir index.html pour le détail. */
-  body {
-    margin: 0;
-    background: linear-gradient(160deg, #48c6f4 0%, #7fd9ce 32%, #ffd766 68%, #ffa72e 100%);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    color: var(--text);
-    font-family: "Work Sans", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  h1, h2, h3, summary { font-family: "Fredoka", "Work Sans", sans-serif; text-wrap: balance; }
-
-  a { color: var(--accent-strong); }
-  a:focus-visible, button:focus-visible, summary:focus-visible {
-    outline: 3px solid var(--focus);
-    outline-offset: 2px;
-  }
-
-  .skip-link {
-    position: absolute; left: -999px; top: 0;
-    background: var(--sun); color: #3a2600;
-    padding: 0.6em 1em; border-radius: 0 0 8px 0;
-    z-index: 20; font-weight: 600;
-  }
-  .skip-link:focus { left: 0; }
-
-  .sr-only {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-  }
-
-  .portfolio-bar {
-    display: flex; justify-content: space-between; align-items: center;
-    flex-wrap: wrap; gap: 0.6em; padding: 0.55em 1.1em;
-    font-size: 0.82rem; background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--glass-border); color: var(--text-faint);
-  }
-  .portfolio-bar ul {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em;
-    margin: 0; padding: 0; list-style: none;
-  }
-  .portfolio-bar li:not(:last-child)::after { content: "·"; margin-left: 0.5em; color: var(--text-faint); }
-  .portfolio-bar a { color: var(--text-dim); text-decoration: none; }
-  .portfolio-bar a:hover, .portfolio-bar a:focus-visible { color: var(--accent-strong); text-decoration: underline; }
-  .portfolio-bar [aria-current="page"] { color: var(--accent-strong); font-weight: 600; }
-  .portfolio-bar #lang-toggle {
-    background: transparent; border: 1px solid var(--glass-border); color: var(--text-dim);
-    font-size: 0.82rem; padding: 0.3em 0.8em; border-radius: 999px; cursor: pointer; flex-shrink: 0;
-  }
-  .portfolio-bar #lang-toggle:hover, .portfolio-bar #lang-toggle:focus-visible { border-color: var(--accent); color: var(--accent-strong); }
-
-  .quick-nav {
-    position: sticky; top: 0; z-index: 15;
-    display: flex; justify-content: center; align-items: center; gap: 0.3em; flex-wrap: wrap;
-    padding: 0.65em 1em; background: var(--nav-bg-translucent);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--bg-card-border);
-    box-shadow: 0 2px 12px rgba(31, 43, 48, 0.1);
-    min-height: var(--nav-h);
-  }
-  .quick-nav a {
-    color: var(--text-dim); text-decoration: none; font-size: 0.85rem; font-weight: 600;
-    padding: 0.45em 0.9em; border-radius: 999px;
-    transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease; white-space: nowrap;
-  }
-  .quick-nav a:hover, .quick-nav a:focus-visible { color: var(--text); background: var(--pill-bg); }
-  .quick-nav a[aria-current="true"] {
-    color: var(--accent-text); background: var(--accent);
-    box-shadow: 0 2px 8px rgba(255, 180, 0, 0.35);
-  }
-
-  /* Le bandeau n'a plus son propre fond dégradé : il flotte directement sur le dégradé de
-     body, désormais commun à toute la page (identique à index.html). */
-  header {
-    max-width: 820px;
-    margin: 1.2em auto 0;
-    padding: 2.4em 1.5em 2em;
-    text-align: center;
-    position: relative;
-  }
-  header .emoji { font-size: clamp(2.2rem, 5vw, 3rem); display: block; margin-bottom: 0.2em; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15)); }
-  header h1 {
-    margin: 0 0 0.3em; font-size: clamp(1.9rem, 5vw, 2.6rem);
-    font-weight: 700; letter-spacing: -0.01em; color: #1c2e17;
-    text-shadow: 0 2px 0 rgba(255, 255, 255, 0.3);
-  }
-  header p.tagline { margin: 0 auto; max-width: 56ch; color: #253b2a; font-size: 1.02rem; font-weight: 500; }
-
-  main {
-    max-width: 900px; margin: 1.5em auto 2em; padding: 1.8em 1.8em 2.8em;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: 24px;
-    box-shadow: var(--shadow);
-  }
-
-  h2.section-title {
-    font-size: 1.5rem; color: var(--accent-strong); margin: 2.6em 0 0.5em;
-    scroll-margin-top: calc(var(--nav-h) + 12px);
-  }
-  h2.section-title:first-of-type { margin-top: 0.5em; }
-  h3.sub-title { font-size: 1.1rem; color: var(--text); margin: 1.6em 0 0.5em; }
-  main p, main li { color: var(--text-dim); }
-  main p strong, main li strong { color: var(--text); }
-
-  .card {
-    background: var(--bg-card); border: 1px solid var(--bg-card-border);
-    border-radius: var(--radius); padding: 1.2em 1.4em; margin-bottom: 1.2em;
-    box-shadow: var(--shadow);
-  }
-
-  /* Vraie liste pour le groupe de sous-thèmes (agriculture, boutiques...) : un lecteur
-     d'écran annonce "liste de N éléments" au lieu de n'offrir aucun repère de structure. */
-  .topic-list { list-style: none; margin: 0; padding: 0; }
-  .topic-list > li { margin: 0; }
-
-  table.keys { width: 100%; border-collapse: collapse; margin: 0.6em 0 1.6em; font-size: 0.92rem; }
-  table.keys th, table.keys td {
-    text-align: left; padding: 0.55em 0.7em; border-bottom: 1px solid var(--bg-card-border);
-    vertical-align: top;
-  }
-  table.keys th {
-    color: var(--text-faint); font-weight: 600; font-size: 0.8rem;
-    text-transform: uppercase; letter-spacing: 0.04em;
-  }
-  table.keys td:first-child { white-space: nowrap; color: var(--accent-strong); font-weight: 600; }
-  table.keys tbody tr:hover { background: var(--pill-bg); }
-
-  .note {
-    background: var(--pill-bg); border: 1px solid var(--pill-border);
-    border-radius: 10px; padding: 0.8em 1em; font-size: 0.9em; color: var(--text-dim);
-    margin: 0.8em 0;
-  }
-  .note strong { color: var(--text); }
-
-  .toc { columns: 2; column-gap: 2em; list-style: none; padding: 0; margin: 0; }
-  .toc li { margin-bottom: 0.4em; break-inside: avoid; }
-  .toc a { text-decoration: none; }
-  .toc a:hover { text-decoration: underline; }
-  @media (max-width: 560px) { .toc { columns: 1; } }
-
-  code {
-    background: var(--pill-bg); border: 1px solid var(--pill-border); border-radius: 6px;
-    padding: 0.1em 0.4em; font-size: 0.9em; color: var(--text);
-  }
-
-  footer {
-    max-width: 900px; margin: 0 auto 2em; padding: 1.4em 1.5em;
-    text-align: center; color: var(--text-faint); font-size: 0.85rem;
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius);
-  }
-  footer a { color: var(--text-dim); }
-
-  .to-top {
-    position: fixed; right: 1.2em; bottom: 1.2em; z-index: 15;
-    width: 2.6em; height: 2.6em; border-radius: 50%;
-    background: var(--accent); color: var(--accent-text); border: none;
-    font-size: 1.1rem; cursor: pointer; box-shadow: var(--shadow);
-    opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease;
-  }
-  .to-top.is-visible { opacity: 1; pointer-events: auto; }
-  .to-top:hover { transform: translateY(-2px); }
-
-  @media (max-width: 600px) {
-    .portfolio-bar { justify-content: center; }
-    .portfolio-bar ul { justify-content: center; }
-    .quick-nav { justify-content: flex-start; overflow-x: auto; }
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 <a class="skip-link" href="#main"><span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span></a>
@@ -251,17 +36,19 @@
   <a href="#touches" data-section="touches"><span data-lang="fr">Touches</span><span data-lang="en" hidden>Keys</span></a>
   <a href="#lecteur-ecran" data-section="lecteur-ecran"><span data-lang="fr">Lecteur d'écran</span><span data-lang="en" hidden>Screen reader</span></a>
   <a href="#deplacement" data-section="deplacement"><span data-lang="fr">Déplacement</span><span data-lang="en" hidden>Movement</span></a>
+  <a href="#curseur-libre" data-section="curseur-libre"><span data-lang="fr">Curseur libre</span><span data-lang="en" hidden>Free cursor</span></a>
   <a href="#menus" data-section="menus"><span data-lang="fr">Menus</span><span data-lang="en" hidden>Menus</span></a>
   <a href="#scanner" data-section="scanner"><span data-lang="fr">Scanner</span><span data-lang="en" hidden>Scanner</span></a>
   <a href="#autres" data-section="autres"><span data-lang="fr">Autres</span><span data-lang="en" hidden>Other</span></a>
+  <a href="demarrer.html"><span data-lang="fr">🚀 Démarrer</span><span data-lang="en" hidden>🚀 Get started</span></a>
 </nav>
 
 <header>
   <span class="emoji" aria-hidden="true">📖</span>
   <h1><span data-lang="fr">Documentation</span><span data-lang="en" hidden>Documentation</span></h1>
   <p class="tagline">
-    <span data-lang="fr">Toutes les touches, toutes les fonctionnalités du mod, en détail. Pour la présentation générale, voir la <a href="index.html">page principale</a>.</span>
-    <span data-lang="en" hidden>Every key, every feature of the mod, in detail. For the general overview, see the <a href="index.html">main page</a>.</span>
+    <span data-lang="fr">Toutes les touches, toutes les fonctionnalités du mod, en détail. Vous découvrez le mod ? Commencez plutôt par la page <a href="demarrer.html">Démarrer</a>. Pour la présentation générale, voir la <a href="index.html">page principale</a>.</span>
+    <span data-lang="en" hidden>Every key, every feature of the mod, in detail. New to the mod? Start with the <a href="demarrer.html">Get started</a> page instead. For the general overview, see the <a href="index.html">main page</a>.</span>
   </p>
 </header>
 
@@ -273,7 +60,10 @@
       <li><a href="#touches"><span data-lang="fr">1. Toutes les touches</span><span data-lang="en" hidden>1. Every key</span></a></li>
       <li><a href="#lecteur-ecran"><span data-lang="fr">2. Lecteur d'écran &amp; synthèse vocale</span><span data-lang="en" hidden>2. Screen reader &amp; speech</span></a></li>
       <li><a href="#deplacement"><span data-lang="fr">3. Déplacement &amp; case devant vous</span><span data-lang="en" hidden>3. Movement &amp; tile ahead</span></a></li>
+      <li><a href="#curseur-libre"><span data-lang="fr">Curseur de case libre</span><span data-lang="en" hidden>Free tile cursor</span></a></li>
       <li><a href="#menus"><span data-lang="fr">4. Menus, inventaire, dialogues</span><span data-lang="en" hidden>4. Menus, inventory, dialogue</span></a></li>
+      <li><a href="#saisie"><span data-lang="fr">Saisie de texte</span><span data-lang="en" hidden>Text input</span></a></li>
+      <li><a href="#avancement"><span data-lang="fr">Avancement et limites</span><span data-lang="en" hidden>Progress and limits</span></a></li>
       <li><a href="#scanner"><span data-lang="fr">5. Scanner &amp; cheminement automatique</span><span data-lang="en" hidden>5. Scanner &amp; auto-pathing</span></a></li>
       <li><a href="#autres"><span data-lang="fr">6. Agriculture, boutiques, combat, courrier, quêtes, pêche, minage, donjons, horloge</span><span data-lang="en" hidden>6. Farming, shops, combat, mail, quests, fishing, mining, dungeons, clock</span></a></li>
     </ul>
@@ -319,6 +109,9 @@
       <tr><td>J</td><td><span data-lang="fr">Active/désactive la souris directionnelle : le curseur Windows pointe alors en permanence vers la case devant vous (beaucoup d'actions du jeu — arroser, labourer, récolter, miner, attaquer — se déclenchent par clic souris, pas par touche d'interaction).</span><span data-lang="en" hidden>Toggles the directional mouse: the Windows cursor then constantly points at the tile ahead of you (many game actions — watering, tilling, harvesting, mining, attacking — trigger on mouse click, not an interact key).</span></td></tr>
       <tr><td><span data-lang="fr">Pavé 5</span><span data-lang="en" hidden>Numpad 5</span></td><td><span data-lang="fr">Simule un clic gauche à la position actuelle de la souris.</span><span data-lang="en" hidden>Simulates a left click at the mouse's current position.</span></td></tr>
       <tr><td>Ctrl + : <span data-lang="fr">(ou Ctrl + / en QWERTY)</span><span data-lang="en" hidden>(or Ctrl + / on QWERTY)</span></td><td><span data-lang="fr">Simule un clic droit à la position actuelle de la souris.</span><span data-lang="en" hidden>Simulates a right click at the mouse's current position.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé décimal</span><span data-lang="en" hidden>Numpad period</span></td><td><span data-lang="fr">Active/désactive le <strong>curseur de case libre</strong> : les flèches le déplacent alors case par case n'importe où sur la carte, indépendamment de votre personnage. Voir <a href="#curseur-libre">Curseur de case libre</a>.</span><span data-lang="en" hidden>Toggles the <strong>free tile cursor</strong>: the arrow keys then move it tile by tile anywhere on the map, independently of your character. See <a href="#curseur-libre">Free tile cursor</a>.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé multiplier</span><span data-lang="en" hidden>Numpad multiply</span></td><td><span data-lang="fr">Ramène le curseur libre sur la case où vous vous tenez.</span><span data-lang="en" hidden>Brings the free cursor back to the tile you're standing on.</span></td></tr>
+      <tr><td><span data-lang="fr">Flèches (curseur libre actif)</span><span data-lang="en" hidden>Arrows (free cursor active)</span></td><td><span data-lang="fr">Déplacent le curseur d'une case. Un bip court signale le bord de la carte chargée. Les menus gardent la priorité sur les flèches.</span><span data-lang="en" hidden>Move the cursor by one tile. A short beep marks the edge of the loaded map. Menus keep priority over the arrow keys.</span></td></tr>
       <tr><td>C</td><td><span data-lang="fr">Ouvre le tchat/la console de debug du jeu. Remplace Entrée, sa touche par défaut, qui entrait en conflit avec la validation de menu du mod.</span><span data-lang="en" hidden>Opens the game's chat/debug console. Replaces Enter, its default key, which conflicted with the mod's menu confirmation.</span></td></tr>
     </tbody>
   </table>
@@ -385,6 +178,29 @@
     </p>
   </div>
 
+  <h2 class="section-title" id="curseur-libre"><span data-lang="fr">Curseur de case libre</span><span data-lang="en" hidden>Free tile cursor</span></h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Jusqu'ici le mod ne savait lire qu'une seule case : celle devant votre personnage. Explorer une carte inconnue devenait très laborieux — aucun moyen de savoir ce qu'il y a trois cases plus loin sans s'y rendre physiquement. Le <strong>curseur de case libre</strong> est un point de lecture que vous déplacez aux flèches n'importe où sur la carte, indépendamment de votre personnage. C'est l'équivalent du <em>Tile Viewer</em> de stardew-access.</span>
+      <span data-lang="en" hidden>Until now the mod could only read one tile: the one in front of your character. Exploring an unknown map was laborious — no way to know what's three tiles away without physically walking there. The <strong>free tile cursor</strong> is a reading point you move with the arrow keys anywhere on the map, independently of your character. It's the equivalent of stardew-access's <em>Tile Viewer</em>.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Pavé décimal</strong> active ou désactive le curseur. À l'activation il se place sur la case où vous vous tenez, ce qui donne toujours un repère connu au départ.</span><span data-lang="en" hidden><strong>Numpad period</strong> toggles the cursor. On activation it starts on the tile you're standing on, which always gives you a known reference point.</span></li>
+      <li><span data-lang="fr">Les <strong>flèches</strong> le déplacent case par case. Chaque déplacement annonce le contenu de la case, sa direction et sa distance par rapport à vous.</span><span data-lang="en" hidden>The <strong>arrow keys</strong> move it tile by tile. Each move announces the tile's contents, its direction and its distance from you.</span></li>
+      <li><span data-lang="fr"><strong>Origine</strong> redécrit la case visée, <strong>Ctrl+Origine</strong> vous y conduit automatiquement, et la touche de <strong>clic gauche</strong> (Pavé 5) y agit à distance — le curseur souris est d'abord pointé sur cette case.</span><span data-lang="en" hidden><strong>Home</strong> re-describes the targeted tile, <strong>Ctrl+Home</strong> walks you there automatically, and the <strong>left click</strong> key (Numpad 5) acts on it at range — the mouse cursor is aimed at that tile first.</span></li>
+      <li><span data-lang="fr"><strong>Pavé multiplier</strong> ramène le curseur sur vous sans quitter le mode.</span><span data-lang="en" hidden><strong>Numpad multiply</strong> brings the cursor back to you without leaving the mode.</span></li>
+      <li><span data-lang="fr">Un <strong>bip court</strong> signale que vous atteignez le bord de la carte chargée.</span><span data-lang="en" hidden>A <strong>short beep</strong> signals that you've reached the edge of the loaded map.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr">Les flèches servent aussi à naviguer dans les menus : <strong>quand un menu est ouvert, il garde la priorité</strong> et le curseur libre ne les capte pas. Les flèches ne sont liées à aucune action de Sun Haven lui-même (le déplacement se fait en ZQSD), il n'y a donc pas de conflit avec le jeu.</span>
+      <span data-lang="en" hidden>The arrow keys also drive menu navigation: <strong>when a menu is open it keeps priority</strong> and the free cursor doesn't claim them. Arrows aren't bound to any Sun Haven action either (movement is WASD), so there's no clash with the game.</span>
+    </p>
+    <p class="note">
+      <span data-lang="fr"><strong>Note technique.</strong> Sun Haven a un monde isométrique : une case ne mesure pas la même chose horizontalement et verticalement. La conversion exacte entre coordonnées de case et position dans le monde est tirée de la définition du jeu lui-même, et vit désormais à un seul endroit du mod — auparavant elle était recopiée à cinq endroits avec deux conventions contradictoires.</span>
+      <span data-lang="en" hidden><strong>Technical note.</strong> Sun Haven has an isometric world: a tile doesn't measure the same horizontally and vertically. The exact conversion between tile coordinates and world position is taken from the game's own definition, and now lives in a single place in the mod — it was previously copy-pasted across five sites using two contradictory conventions.</span>
+    </p>
+  </div>
+
   <h2 class="section-title" id="menus"><span data-lang="fr">4. Menus, inventaire, dialogues</span><span data-lang="en" hidden>4. Menus, inventory, dialogue</span></h2>
   <div class="card">
     <ul>
@@ -399,6 +215,52 @@
       <li><span data-lang="fr"><strong>Ctrl+flèche</strong> saute volontairement d'une zone à l'autre, selon la disposition réelle : onglets en haut, équipement à gauche, sac à droite, barre d'action en bas. Les touches <strong>1 à 0</strong> sur un objet l'envoient ou le récupèrent directement du slot de barre d'action correspondant.</span><span data-lang="en" hidden><strong>Ctrl+arrow</strong> deliberately jumps between zones, following the real layout: tabs on top, equipment on the left, backpack on the right, action bar at the bottom. The <strong>1 to 0</strong> keys on an item send it to or retrieve it from the matching action bar slot.</span></li>
       <li><span data-lang="fr">La disposition de l'équipement est connue exactement plutôt que devinée : <strong>2 colonnes</strong> (porté à gauche, apparence à droite) pour chapeau, torse, gants, jambes et dos, puis souvenir, amulette et anneau.</span><span data-lang="en" hidden>The equipment layout is known exactly rather than guessed: <strong>2 columns</strong> (worn on the left, cosmetic on the right) for hat, chest, gloves, pants and back, then keepsake, amulet and ring.</span></li>
       <li><span data-lang="fr">Le bip de bord et la reprise en main des flèches sont désactivables séparément dans le fichier de config, section <code>Navigation</code>.</span><span data-lang="en" hidden>The edge beep and the arrow-key takeover can each be turned off separately in the config file, <code>Navigation</code> section.</span></li>
+    </ul>
+  </div>
+
+  <h2 class="section-title" id="saisie"><span data-lang="fr">Saisie de texte</span><span data-lang="en" hidden>Text input</span></h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Taper du texte se faisait auparavant <strong>dans le silence total</strong>, ce qui bloquait purement et simplement la création de personnage : aucun moyen de savoir ce qu'on avait tapé comme nom, ni même si la frappe était prise en compte.</span>
+      <span data-lang="en" hidden>Typing used to happen <strong>in complete silence</strong>, which flatly blocked character creation: no way to know what you had typed as a name, or even whether keystrokes were registering.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr">À la prise de focus, le rôle du champ et son contenu actuel sont annoncés.</span><span data-lang="en" hidden>On focus, the field's purpose and current contents are announced.</span></li>
+      <li><span data-lang="fr">À la frappe, <strong>seul le caractère ajouté</strong> est annoncé — relire toute la chaîne à chaque lettre rendrait la saisie d'un nom insupportable. L'effacement annonce le caractère supprimé.</span><span data-lang="en" hidden>While typing, <strong>only the added character</strong> is announced — re-reading the whole string per keystroke would make typing a name unbearable. Deletion announces the removed character.</span></li>
+      <li><span data-lang="fr"><strong>Toutes les touches du mod sont suspendues pendant la frappe.</strong> Sans ça, taper « p » dans votre nom annoncerait votre position, « o » l'horloge, « c » ouvrirait le tchat.</span><span data-lang="en" hidden><strong>All the mod's keys stand down while you type.</strong> Without that, typing "p" into your name would announce your position, "o" the clock, "c" would open chat.</span></li>
+      <li><span data-lang="fr">Les champs masqués (mot de passe) ne sont jamais prononcés à voix haute.</span><span data-lang="en" hidden>Masked fields (passwords) are never spoken aloud.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr">Couvre le nom du personnage, le champ de tri de l'artisanat et le tchat, sans code spécifique à chacun.</span>
+      <span data-lang="en" hidden>Covers the character name, the crafting sort field and chat, with no per-field code.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="avancement"><span data-lang="fr">État d'avancement et limites connues</span><span data-lang="en" hidden>Progress and known limitations</span></h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Ce mod est développé par une IA qui <strong>ne peut ni voir ni entendre le jeu</strong>. Le code est écrit en décompilant Sun Haven et en raisonnant sur son fonctionnement réel ; la validation finale vient toujours d'un test humain. Cette section dit donc explicitement ce qui est confirmé et ce qui ne l'est pas.</span>
+      <span data-lang="en" hidden>This mod is developed by an AI that <strong>can neither see nor hear the game</strong>. The code is written by decompiling Sun Haven and reasoning about how it actually works; final validation always comes from human testing. This section therefore states explicitly what is confirmed and what is not.</span>
+    </p>
+
+    <h3 class="sub-title"><span data-lang="fr">Confirmé en jeu</span><span data-lang="en" hidden>Confirmed in-game</span></h3>
+    <ul>
+      <li><span data-lang="fr">Boucle du mod stable sur toute une session, synthèse vocale, curseur de case, dialogues, menus et infobulles, agriculture, souris directionnelle, scanner, navigation clavier des menus.</span><span data-lang="en" hidden>Mod loop stable across a whole session, speech, tile cursor, dialogue, menus and tooltips, farming, directional mouse, scanner, keyboard menu navigation.</span></li>
+    </ul>
+
+    <h3 class="sub-title"><span data-lang="fr">Développé mais pas encore confirmé</span><span data-lang="en" hidden>Built but not yet confirmed</span></h3>
+    <ul>
+      <li><span data-lang="fr">Curseur de case libre, saisie de texte, navigation dans les coffres, confort d'inventaire (tri, résumé, rangement), quêtes, relations, compétences, carte du monde, festivals, création de personnage, minage, donjons, courrier.</span><span data-lang="en" hidden>Free tile cursor, text input, chest navigation, inventory comfort (sort, summary, storing), quests, relationships, skills, world map, festivals, character creation, mining, dungeons, mail.</span></li>
+      <li><span data-lang="fr">Le <strong>bip de visée en pêche</strong> est la fonctionnalité la moins certaine : fréquences et tempo ont été choisis au jugé, sans jamais avoir été entendus en conditions réelles.</span><span data-lang="en" hidden>The <strong>fishing aim beep</strong> is the least certain feature: frequencies and tempo were chosen by best guess, never having been heard under real conditions.</span></li>
+      <li><span data-lang="fr">Le <strong>type de terrain</strong> hors zone cultivable est déduit du nom brut des tuiles et peut nécessiter des ajustements de traduction. La présence d'eau, elle, est fiable : c'est une donnée de jeu directe.</span><span data-lang="en" hidden>The <strong>terrain type</strong> outside farmable areas is inferred from raw tile names and may need translation tweaks. Water detection, by contrast, is reliable: it comes from direct game data.</span></li>
+    </ul>
+
+    <h3 class="sub-title"><span data-lang="fr">Pas encore commencé</span><span data-lang="en" hidden>Not started yet</span></h3>
+    <ul>
+      <li><span data-lang="fr"><strong>Placement de meubles et de bâtiments</strong> : Sun Haven est très axé décoration, et c'est aujourd'hui impossible à l'aveugle. C'est le prochain grand chantier.</span><span data-lang="en" hidden><strong>Furniture and building placement</strong>: Sun Haven is heavily decoration-focused, and this is currently impossible blind. It is the next major piece of work.</span></li>
+      <li><span data-lang="fr"><strong>Succès Steam</strong> : leurs noms et descriptions ne sont pas dans les données du jeu mais dans les métadonnées Steam — gros chantier pour un contenu surtout cosmétique.</span><span data-lang="en" hidden><strong>Steam achievements</strong>: their names and descriptions are not in the game's data but in Steam metadata — a large piece of work for largely cosmetic content.</span></li>
+      <li><span data-lang="fr"><strong>Navigation dans la grille de l'arbre de compétences</strong> : elle fonctionne peut-être déjà via la navigation générique du mod, ce n'a jamais été vérifié. Une touche annonce en attendant les points disponibles par arbre.</span><span data-lang="en" hidden><strong>Skill tree grid navigation</strong>: it may already work through the mod's generic navigation; this has never been verified. In the meantime a key announces available points per tree.</span></li>
+      <li><span data-lang="fr"><strong>Traduction anglaise des annonces</strong> : le mod ne parle qu'en français pour l'instant.</span><span data-lang="en" hidden><strong>English translation of announcements</strong>: the mod only speaks French for now.</span></li>
     </ul>
   </div>
 
@@ -576,60 +438,7 @@
 
 <button type="button" class="to-top" id="to-top" aria-label="Retour en haut de la page">↑</button>
 
-<script>
-(function () {
-  "use strict";
-  function applyLang(lang) {
-    document.documentElement.lang = lang;
-    document.querySelectorAll('[data-lang="fr"]').forEach(function (el) { el.hidden = lang !== "fr"; });
-    document.querySelectorAll('[data-lang="en"]').forEach(function (el) { el.hidden = lang !== "en"; });
-    var toggle = document.getElementById("lang-toggle");
-    if (toggle) toggle.textContent = lang === "fr" ? "English" : "Français";
-    var toTopBtn = document.getElementById("to-top");
-    if (toTopBtn) toTopBtn.setAttribute("aria-label", lang === "fr" ? "Retour en haut de la page" : "Back to top");
-  }
-  var savedLang = "fr";
-  try { savedLang = localStorage.getItem("sunhavenaccess-lang") || "fr"; } catch (e) {}
-  applyLang(savedLang);
-  var toggleBtn = document.getElementById("lang-toggle");
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", function () {
-      var next = document.documentElement.lang === "en" ? "fr" : "en";
-      applyLang(next);
-      try { localStorage.setItem("sunhavenaccess-lang", next); } catch (e) {}
-    });
-  }
-
-  var navLinks = document.querySelectorAll(".quick-nav a");
-  var sections = Array.prototype.map.call(navLinks, function (link) {
-    return document.getElementById(link.getAttribute("data-section"));
-  }).filter(Boolean);
-  if (sections.length && "IntersectionObserver" in window) {
-    var setActive = function (id) {
-      navLinks.forEach(function (link) {
-        var match = link.getAttribute("data-section") === id;
-        if (match) link.setAttribute("aria-current", "true");
-        else link.removeAttribute("aria-current");
-      });
-    };
-    var navObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) { if (entry.isIntersecting) setActive(entry.target.id); });
-    }, { rootMargin: "-40% 0px -55% 0px" });
-    sections.forEach(function (section) { navObserver.observe(section); });
-  }
-
-  var toTop = document.getElementById("to-top");
-  if (toTop) {
-    var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var toggleToTop = function () { toTop.classList.toggle("is-visible", window.scrollY > 500); };
-    window.addEventListener("scroll", toggleToTop, { passive: true });
-    toggleToTop();
-    toTop.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-    });
-  }
-})();
-</script>
+<script src="site.js"></script>
 
 </body>
 </html>

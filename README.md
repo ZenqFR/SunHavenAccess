@@ -8,6 +8,8 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 
 ## 📦 Installation
 
+> **Vous découvrez le mod ?** Le guide de démarrage <https://zenqfr.github.io/SunHavenAccess/demarrer.html> vous accompagne de l'installation à votre première heure de jeu, écrit pour un joueur aveugle qui débute.
+
 1. Installer [BepInEx 5.4.23.5 (x64, Mono)](https://github.com/BepInEx/BepInEx/releases) dans le dossier du jeu (`Sun Haven/`), et lancer le jeu une fois pour qu'il génère sa structure de dossiers.
 2. Copier `SunHavenAccess.dll`, `Tolk.dll` et `nvdaControllerClient64.dll` dans `Sun Haven/BepInEx/plugins/SunHavenAccess/`.
 3. Lancer le jeu. Un message vocal confirme le chargement du mod et rappelle la touche d'aide (`F1` par défaut).
@@ -36,6 +38,18 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 
 </details>
 
+
+<details>
+<summary><strong>Curseur de case libre</strong></summary>
+
+Le mod ne savait lire qu'une seule case : celle devant le personnage. Explorer une carte inconnue était donc très laborieux — aucun moyen de savoir ce qu'il y a trois cases plus loin sans s'y rendre. Équivalent du *Tile Viewer* de stardew-access.
+
+- Un point de lecture déplaçable **aux flèches n'importe où sur la carte**, indépendamment du personnage. Chaque déplacement annonce le contenu de la case, sa direction et sa distance.
+- **S'y rendre** (cheminement automatique) ou **y agir à distance** (le curseur souris est pointé sur la case avant le clic), sans nouvelle touche à retenir : les touches existantes s'appliquent à la case visée quand le curseur est actif.
+- Démarre toujours sur la case du joueur, ce qui donne un repère connu — et sert d'autovérification de la conversion.
+- Les menus gardent la **priorité absolue** sur les flèches ; le curseur ne les capte que hors menu.
+
+</details>
 <details>
 <summary><strong>Menus, inventaire, dialogues</strong></summary>
 
@@ -274,6 +288,9 @@ Chaque touche peut être changée directement dans `BepInEx/config/com.kleitz.su
 | `\` (touche * en AZERTY) | Résumé du contenu du sac |
 | = | Ranger dans les coffres proches |
 | Pavé 0 | Lire la description complète de l'objet annoncé |
+| Pavé décimal | Activer/désactiver le curseur de case libre |
+| Pavé multiplier | Curseur libre : recentrer sur soi |
+| Flèches (curseur libre actif, hors menu) | Déplacer le curseur d'une case |
 | Entrée | Valider (clic gauche) *(exige d'avoir déjà sélectionné un élément aux flèches)* |
 | Ctrl + Entrée | Action secondaire (clic droit) |
 | Ctrl + Tab / Ctrl + Maj + Tab | Changer d'onglet directement dans le menu principal (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres) |
