@@ -31,9 +31,6 @@
   if (reduceMotion || !("IntersectionObserver" in window)) {
     revealEls.forEach(function (el) { el.classList.add("is-visible"); });
   } else {
-    // N'active le masquage CSS (html.js-reveal-active) qu'ici, une fois sûr de pouvoir
-    // effectivement révéler les cartes ensuite — sinon elles restent visibles par défaut.
-    document.documentElement.classList.add("js-reveal-active");
     var revealObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {

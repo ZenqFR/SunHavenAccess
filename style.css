@@ -326,14 +326,25 @@ details.card:hover, details.card:focus-within {
 .card h3 { margin: 0 0 0.4em; color: var(--accent-strong); font-size: 1.1rem; }
 .card p { margin: 0.4em 0; color: var(--text-dim); }
 
-/* Animation d'apparition au défilement (IntersectionObserver). Visible par défaut
-   (opacity:1) : c'est le script en bas qui ajoute .js-reveal-active sur <html> UNIQUEMENT
-   s'il va effectivement piloter l'animation — sans JS (ou JS en échec), rien ne masque ces
-   cartes, qui contiennent toute la doc du mod. Avant, .reveal partait de opacity:0 en CSS
-   pur : sans JS, ces cartes restaient invisibles pour toujours, un vrai bug. */
-.reveal { transition: opacity 0.4s ease, translate 0.4s ease; }
-html.js-reveal-active .reveal { opacity: 0; translate: 0 12px; }
-html.js-reveal-active .reveal.is-visible { opacity: 1; translate: 0 0; }
+/* Animation d'apparition au défilement. Le contenu est TOUJOURS visible par défaut : l'animation
+   ne fait que rejouer une entrée en fondu quand l'élément arrive à l'écran, elle ne conditionne
+   jamais sa visibilité.
+
+   Deux versions précédentes ont échoué sur ce point. La première masquait les cartes en CSS pur
+   et comptait sur le script pour les révéler : sans JavaScript, toute la documentation du mod
+   restait invisible pour toujours. La seconde ne masquait plus qu'avec .js-reveal-active, mais
+   dépendait encore de l'IntersectionObserver pour révéler — or celui-ci ne s'exécute pas dans un
+   onglet en arrière-plan, ce qui pouvait laisser une page entièrement blanche.
+
+   Ici, plus aucun cas de figure ne peut cacher le contenu : pas de JavaScript, observateur qui
+   ne se déclenche jamais, animation désactivée pour cause de préférence système — dans tous les
+   cas le texte est là. C'est une décoration, elle doit se comporter comme telle. */
+.reveal.is-visible { animation: reveal-in 0.4s ease both; }
+
+@keyframes reveal-in {
+  from { opacity: 0; translate: 0 12px; }
+  to { opacity: 1; translate: 0 0; }
+}
 
 details.card summary {
   cursor: pointer;
