@@ -234,6 +234,10 @@ namespace SunHavenAccess.Menus
             "Les écrans en colonnes, comme la création de personnage : catégories à gauche, personnalisation au centre, informations à droite. " +
             "Contrôle plus gauche ou droite saute d'une colonne à l'autre, et annonce laquelle. Les flèches seules parcourent l'écran comme d'habitude.",
 
+            $"Choisir une sauvegarde. {K(ModConfig.SaveList)} ouvre les parties en liste — nom et date, de quoi les reconnaître. " +
+            "Valider une partie propose Charger ou Supprimer, chaque action nommée avec elle pour qu'on ne puisse pas effacer la mauvaise. " +
+            "Un emplacement libre lance directement une nouvelle partie.",
+
             "La création de personnage. L'écran a trois colonnes : les catégories à gauche, les choix de la catégorie courante au centre, " +
             "votre personnage, le champ du nom et le bouton Valider à droite. Contrôle plus gauche ou droite change de colonne. " +
             "Un nom et une date d'anniversaire sont obligatoires : le mod annonce ce qui manque encore, et le dit quand tout est prêt. " +

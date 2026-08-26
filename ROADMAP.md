@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 112 au point** (6 %).
+Mis à jour le 2026-08-26 — **7 sur 113 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 96 |
+| `[ ]` | À tester | jamais essayé en jeu | 97 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -62,6 +62,10 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Parcourir le menu principal du jeu aux flèches.
   - Attendu : Tous les boutons sont atteignables et nommés, au moins aussi bien qu'avant.
   - Retour de jeu : RÉGRESSION que j'ai introduite : le test « élément réellement à l'écran », ajouté pour écarter les panneaux des autres onglets, écartait aussi des boutons parfaitement visibles quand la conversion de coordonnées ne convenait pas à ce canevas. Corrigé — le test ne peut plus vider un écran : s'il ne laisse rien, on garde tout. Un écran inatteignable est bien pire que quelques éléments de trop.
+- [ ] **personnage-sauvegardes-liste** ⚠️ — touche : Pavé 3
+  - Faire : Sur l'écran de choix de personnage, ouvrir les sauvegardes en liste, choisir une partie, puis Charger. Réessayer sur un emplacement vide.
+  - Attendu : Une ligne par partie : nom et date. Valider propose « Charger la partie de X » ou « Supprimer la partie de X », l'action nommée avec la partie. Un emplacement vide lance directement une nouvelle partie.
+  - Retour de jeu : L'écran affiche chaque sauvegarde comme une fiche avec deux boutons quelque part dedans ; en suivant la mise en page, rien ne dit à quelle partie appartient le bouton où l'on se trouve. Les deux boutons déclenchés sont ceux du jeu, donc c'est lui qui charge, supprime, et impose sa confirmation.
 - [ ] **personnage-chargement-personnage** — touche : Flèches
   - Faire : Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.
   - Attendu : Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom et date. Un emplacement libre annonce qu'il est vide. La touche de description complète ajoute les niveaux et l'or.

@@ -68,6 +68,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> AnnounceSpells;
         public static ConfigEntry<KeyCode> EquipSpell;
         public static ConfigEntry<KeyCode> SettingsList;
+        public static ConfigEntry<KeyCode> SaveList;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -297,6 +298,10 @@ namespace SunHavenAccess.Config
             // ---- Réglages en liste (Menus/SettingsMenu.cs) ----
             SettingsList = Bind(config, section, "ReglagesListe", KeyCode.Keypad8,
                 "Ouvre les réglages en liste : ceux du mod, puis ceux du jeu affichés à l'écran. Gauche et droite changent la valeur.", "Réglages (liste)");
+
+            // ---- Sauvegardes en liste (Menus/SaveMenu.cs) ----
+            SaveList = Bind(config, section, "SauvegardesListe", KeyCode.Keypad3,
+                "Sur l'écran de choix de personnage : ouvre les sauvegardes en liste, puis Charger ou Supprimer.", "Sauvegardes (liste)");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

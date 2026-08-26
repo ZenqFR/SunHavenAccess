@@ -125,6 +125,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.AnnounceSpells.Value)) SpellAnnouncer.AnnounceEquipped();
             if (Pressed(ModConfig.EquipSpell.Value)) SpellEquipMenu.Advance();
             if (Pressed(ModConfig.SettingsList.Value)) SettingsMenu.Open();
+            if (Pressed(ModConfig.SaveList.Value)) SaveMenu.Open();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
