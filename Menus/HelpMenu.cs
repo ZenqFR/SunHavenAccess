@@ -225,8 +225,9 @@ namespace SunHavenAccess.Menus
             $"Vérifier que le son marche. {K(ModConfig.TestTone)} joue un son Windows indépendant de la synthèse vocale : " +
             "si vous l'entendez sans entendre de parole, le problème vient du lecteur d'écran et non du mod.",
 
-            $"Changer une touche. {K(ModConfig.ShortcutsMenuToggle)} ouvre le menu des raccourcis, " +
-            "qui liste chaque action avec sa touche et permet de la réassigner sans quitter le jeu.",
+            $"Changer une touche. {K(ModConfig.ShortcutsMenuToggle)} ouvre le menu des raccourcis, qui liste chaque action avec sa touche " +
+            "et permet de la réassigner sans quitter le jeu. Sur l'écran de saisie, Retour arrière ou Suppression retire l'assignation : " +
+            "l'action reste dans la liste, disponible si vous en voulez plus tard, mais n'occupe plus aucune touche.",
         };
     }
 }

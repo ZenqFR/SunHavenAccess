@@ -84,6 +84,11 @@ namespace SunHavenAccess.Localization
 
         public static string KeyName(KeyCode key)
         {
+            // Un raccourci peut exister sans être assigné : c'est ainsi que sont livrées les
+            // actions marginales, disponibles pour qui en veut sans encombrer le clavier de tout
+            // le monde. « None » lu tel quel n'aurait aucun sens à l'oral.
+            if (key == KeyCode.None) return "non assignée";
+
             if (FrenchKeyNames.TryGetValue(key, out string french)) return french;
 
             string s = key.ToString();

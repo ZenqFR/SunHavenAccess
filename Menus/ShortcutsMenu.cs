@@ -74,7 +74,9 @@ namespace SunHavenAccess.Menus
         {
             _awaitingKey = true;
             (string label, var entry) = ModConfig.All[_index];
-            TolkSpeech.Speak($"Appuyez sur la nouvelle touche pour {label}, ou sur Échap pour annuler.", true);
+            TolkSpeech.Speak(
+                $"Appuyez sur la nouvelle touche pour {label}. " +
+                "Retour arrière ou Suppression pour n'assigner aucune touche, Échap pour annuler.", true);
         }
 
         private static void CaptureNewKey()
@@ -86,9 +88,22 @@ namespace SunHavenAccess.Menus
                 return;
             }
 
+            // Retirer l'assignation. Sans ça, un raccourci ne pouvait que se déplacer d'une touche
+            // à une autre, jamais disparaître : une action dont on ne veut pas continuait d'occuper
+            // une touche du clavier, et il fallait éditer le fichier de config à la main.
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Backspace) || UnityEngine.Input.GetKeyDown(KeyCode.Delete))
+            {
+                (string cleared, var clearedEntry) = ModConfig.All[_index];
+                clearedEntry.Value = KeyCode.None;
+                _awaitingKey = false;
+                TolkSpeech.Speak($"{cleared} n'est plus assigné à aucune touche.", true);
+                return;
+            }
+
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
             {
                 if (key == KeyCode.None || key == KeyCode.Escape) continue;
+                if (key == KeyCode.Backspace || key == KeyCode.Delete) continue; // réservées au retrait
                 if (!UnityEngine.Input.GetKeyDown(key)) continue;
 
                 (string label, var entry) = ModConfig.All[_index];
@@ -102,8 +117,15 @@ namespace SunHavenAccess.Menus
         private static void AnnounceCurrent()
         {
             (string label, var entry) = ModConfig.All[_index];
+
+            // « touche non assignée » se dirait mal : sans touche, on annonce l'état, pas une
+            // touche absente.
+            string keyPart = entry.Value == KeyCode.None
+                ? "non assigné"
+                : $"touche {Strings.KeyName(entry.Value)}";
+
             TolkSpeech.Speak(
-                $"{label} : touche {Strings.KeyName(entry.Value)}. {entry.Description.Description} " +
+                $"{label} : {keyPart}. {entry.Description.Description} " +
                 $"Élément {_index + 1} sur {ModConfig.All.Count}.", true);
         }
     }
