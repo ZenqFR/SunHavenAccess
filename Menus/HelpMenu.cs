@@ -165,6 +165,11 @@ namespace SunHavenAccess.Menus
             $"La souris. {K(ModConfig.MouseFollowToggle)} active la souris qui pointe toujours la case devant vous. " +
             $"{K(ModConfig.SimulateLeftClick)} fait un clic gauche, Contrôle plus {K(ModConfig.SimulateRightClick)} un clic droit.",
 
+            "Les grands écrans (création de personnage, arbre de compétences, relations). Ils sont vus comme un empilement de bandes — " +
+            "barre d'onglets, barre de sous-onglets, grille de contenu, bandeau d'informations. Contrôle plus haut ou bas change de bande, " +
+            "Contrôle plus gauche ou droite change de colonne dans la bande. Deux Contrôle plus bas depuis les onglets amènent donc " +
+            "dans la barre de métiers, puis dans la grille. Les flèches seules restent dans la case courante, avec un bip aux quatre bords.",
+
             "Naviguer dans les menus. Les flèches suivent la disposition visuelle réelle : gauche et droite restent sur la ligne et butent en bout avec un bip, " +
             "haut et bas changent de ligne. Entrée valide, Contrôle plus Entrée fait un clic droit.",
 

@@ -2,14 +2,14 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 94 au point** (6 %).
+Mis à jour le 2026-08-26 — **7 sur 97 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 87 |
-| `[!]` | À corriger | essayé, ne marche pas | 1 |
+| `[ ]` | À tester | jamais essayé en jeu | 86 |
+| `[!]` | À corriger | essayé, ne marche pas | 4 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
-| `[x]` | Au point | essayé, rien à redire | 6 |
+| `[x]` | Au point | essayé, rien à redire | 7 |
 
 ⚠️ = à vérifier en priorité.
 
@@ -35,10 +35,10 @@ Installer, et vérifier que le mod se charge. Si ça échoue ici, rien d'autre n
 - [x] **avant-test-son** — touche : F11
   - Faire : Appuyer sur F11.
   - Attendu : Un son Windows se fait entendre, indépendamment de la synthèse vocale — pour distinguer « mod pas chargé » de « lecteur d'écran muet ».
-- [ ] **avant-aide** — touche : F1
+- [x] **avant-aide** — touche : F1
   - Faire : Appuyer sur F1, parcourir les rubriques aux flèches, puis fermer avec Échap ou F1.
   - Attendu : Un menu d'aide s'ouvre et annonce le nombre de rubriques. Les flèches passent d'une rubrique à la suivante, une seule est lue à la fois, et un bip signale les extrémités. Origine et Fin vont à la première et à la dernière. F1 est aussi une émote du jeu, le personnage fera donc un geste en plus.
-  - Retour de jeu : L'ancienne version, qui lisait les quarante touches d'un bloc, était validée mais inexploitable en pratique. Remplacée par ce menu — à revérifier.
+  - Retour de jeu : Validé en jeu : rien à redire.
 - [x] **avant-menu-raccourcis** — touche : Suppr
   - Faire : Ouvrir le menu des raccourcis, le parcourir, réassigner une touche.
   - Attendu : Chaque raccourci est annoncé avec son libellé et sa touche, et se change sans quitter le jeu.
@@ -53,10 +53,10 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
 - [ ] **personnage-race** — touche : Flèches
   - Faire : Choisir une race.
   - Attendu : Chaque race est annoncée au passage.
-- [!] **personnage-colonnes** ⚠️ — touche : Ctrl + gauche / droite
+- [!] **personnage-colonnes** ⚠️ — touche : Ctrl + flèches
   - Faire : En création de personnage, sauter d'une colonne à l'autre : catégories à gauche, personnalisation au centre, informations à droite.
   - Attendu : « Colonne 2 sur 3 » est annoncé, suivi de l'élément atteint, d'une seule traite. On arrive à la même hauteur qu'on avait quittée. Un bip signale les bords.
-  - Retour de jeu : Rapporté en jeu : Ctrl+flèche ne faisait RIEN sur cet écran. Deux causes trouvées et corrigées — le mod refusait les flèches tant que rien n'était sélectionné (blocage circulaire, puisque l'écran ne sélectionne rien de lui-même), et les lignes étaient reconstruites en travers des trois colonnes. À réessayer.
+  - Retour de jeu : Rapporté en jeu, deux fois. D'abord Ctrl+flèche ne faisait rien (le mod refusait les flèches tant que rien n'était sélectionné — blocage circulaire). Puis, au choix du métier, la colonne centrale se découpait en une colonne par icône, et le bandeau du bas en créait d'autres. Trois causes corrigées : le seuil de découpage est désormais relatif à la largeur de l'écran et non absolu ; l'écran est vu comme un empilement de bandes, Ctrl+haut/bas passant de l'une à l'autre ; et les éléments hors champ sont exclus. À réessayer.
 - [ ] **personnage-apparence** — touche : Virgule / Point
   - Faire : Parcourir les options d'apparence, puis changer de catégorie avec Ctrl.
   - Attendu : Chaque option est annoncée ; Ctrl passe à la catégorie suivante. Les ailes ne sont pas couvertes.
@@ -106,6 +106,17 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
 - [ ] **sac-nav-directionnelle** ⚠️ — touche : Flèches
   - Faire : Dans le sac, se déplacer ligne par ligne et colonne par colonne.
   - Attendu : Les flèches suivent la disposition visuelle réelle. Gauche/droite butent en bout de ligne avec un bip. Une pression = un seul déplacement.
+- [!] **sac-onglet-ctrl-bas** ⚠️ — touche : Ctrl + bas
+  - Faire : Ouvrir chaque onglet du menu principal (Sac, Compétences, Relations, Quêtes, Carte, Statistiques) et faire Ctrl+bas depuis la barre d'onglets.
+  - Attendu : On descend dans le contenu de l'onglet RÉELLEMENT ouvert. Un deuxième Ctrl+bas descend encore d'une bande — par exemple vers la barre des métiers, puis vers la grille de compétences.
+  - Retour de jeu : Rapporté en jeu : quel que soit l'onglet, Ctrl+bas atterrissait dans l'arbre de compétences. Cause trouvée — le mod ne testait que la transparence, jamais si l'élément était réellement à l'écran, et les panneaux des autres onglets restent actifs hors champ. Ils étaient donc tous candidats. Corrigé par un test de présence à l'écran.
+- [!] **sac-competences-bandes** ⚠️ — touche : Ctrl + bas puis flèches
+  - Faire : Dans l'arbre de compétences : Ctrl+bas jusqu'à la barre des métiers (Exploration, Agriculture, Miner, Combat, Pêcher), puis encore Ctrl+bas pour entrer dans la grille des nœuds.
+  - Attendu : Chaque bande est atteignable dans l'ordre, et les flèches seules parcourent la bande courante avec un mur sonore aux quatre bords.
+- [!] **sac-relations-menu** — touche : Flèches
+  - Faire : Ouvrir l'onglet Relations et tenter de parcourir la liste des personnages.
+  - Attendu : Chaque personnage est atteignable et annoncé avec ses cœurs.
+  - Retour de jeu : Rapporté en jeu : le menu n'est pas parcourable. Le test de présence à l'écran peut suffire à le débloquer si le problème venait des panneaux voisins ; sinon les entrées de relations n'exposent probablement aucun élément sélectionnable, et il faudra un navigateur dédié comme pour la carte du monde. À revérifier pour trancher.
 - [ ] **sac-infobulles** ⚠️ — touche : Flèches
   - Faire : Passer sur des objets du sac et de l'équipement.
   - Attendu : Le NOM et la DESCRIPTION sont lus, pas seulement la quantité. Les emplacements vides le disent.

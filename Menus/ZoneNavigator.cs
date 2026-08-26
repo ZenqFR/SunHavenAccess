@@ -143,11 +143,10 @@ namespace SunHavenAccess.Menus
                 return;
             }
 
-            // Écrans en colonnes (création de personnage : catégories à gauche, personnalisation
-            // au centre, informations à droite). Ctrl+gauche/droite y saute d'une colonne à
-            // l'autre, comme il saute de panneau à panneau dans l'inventaire — même geste, même
-            // sens. Les zones nommées du jeu n'existent pas ici, d'où ce traitement à part.
-            if (crossZone && dx != 0 && zone == Zone.Generic && MoveAcrossColumns(currentGo, dx)) return;
+            // Écrans sans zones connues du jeu (création de personnage, arbre de compétences,
+            // relations...) : Ctrl+flèche y navigue entre bandes et colonnes déduites de la
+            // disposition, puisqu'aucune table d'adjacence ne peut les décrire d'avance.
+            if (crossZone && zone == Zone.Generic && MoveAcrossBands(currentGo, dx, dy)) return;
 
             if (crossZone) MoveAcrossZones(currentGo, zone, dx, dy);
             else MoveWithinZone(currentGo, zone, dx, dy);
@@ -176,34 +175,62 @@ namespace SunHavenAccess.Menus
             return columns.FirstOrDefault(c => c.Contains(go));
         }
 
-        private static bool MoveAcrossColumns(GameObject currentGo, int dx)
+        /// <summary>
+        /// Ctrl+flèche sur un écran sans zones connues du jeu (création de personnage, arbre de
+        /// compétences, relations...).
+        ///
+        /// L'écran y est vu comme un empilement de BANDES horizontales — barre d'onglets, barre de
+        /// sous-onglets, grille de contenu, bandeau d'informations — chacune découpée en COLONNES.
+        /// Ctrl+haut/bas change de bande, Ctrl+gauche/droite change de colonne dans la bande. Deux
+        /// Ctrl+bas depuis les onglets amènent donc dans la barre de métiers puis dans la grille,
+        /// exactement comme demandé.
+        ///
+        /// Les colonnes sont recalculées DANS la bande d'arrivée, pas sur tout l'écran : une
+        /// grille de contenu et un bandeau du bas n'ont aucune raison d'avoir le même découpage.
+        /// </summary>
+        private static bool MoveAcrossBands(GameObject currentGo, int dx, int dy)
         {
-            List<List<GameObject>> columns = BuildColumns(ZoneMembers(Zone.Generic));
-            if (columns.Count < 2) return false;
+            List<GameObject> all = ZoneMembers(Zone.Generic);
+            List<List<GameObject>> bands = BuildBands(all);
+            if (bands.Count == 0) return false;
 
-            int currentColumn = columns.FindIndex(c => c.Contains(currentGo));
-            if (currentColumn < 0) return false;
+            int band = bands.FindIndex(b => b.Contains(currentGo));
+            if (band < 0) return false;
 
-            int target = currentColumn + (dx > 0 ? 1 : -1);
-            if (target < 0 || target >= columns.Count)
+            if (dy != 0)
             {
-                UiSound.EdgeBump();
+                // dy positif = vers le haut de l'écran ; les bandes sont ordonnées du haut vers le bas.
+                int target = band + (dy > 0 ? -1 : 1);
+                if (target < 0 || target >= bands.Count) { UiSound.EdgeBump(); return true; }
+
+                float x = currentGo.transform.position.x;
+                GameObject entry = bands[target].OrderBy(g => Mathf.Abs(g.transform.position.x - x)).FirstOrDefault();
+                if (entry == null) return false;
+
+                FocusReader.SetPendingPrefix($"Bande {target + 1} sur {bands.Count}");
+                Select(entry);
                 return true;
             }
 
-            // On vise l'élément de la colonne d'arrivée le plus proche EN HAUTEUR de celui qu'on
-            // quitte : passer d'une colonne à l'autre ne doit pas faire perdre sa place verticale.
-            float y = currentGo.transform.position.y;
-            GameObject best = columns[target]
-                .OrderBy(g => Mathf.Abs(g.transform.position.y - y))
-                .FirstOrDefault();
+            List<List<GameObject>> columns = BuildColumns(bands[band]);
+            if (columns.Count < 2) { UiSound.EdgeBump(); return true; }
 
+            int col = columns.FindIndex(c => c.Contains(currentGo));
+            if (col < 0) return false;
+
+            int targetCol = col + (dx > 0 ? 1 : -1);
+            if (targetCol < 0 || targetCol >= columns.Count) { UiSound.EdgeBump(); return true; }
+
+            // On vise l'élément le plus proche EN HAUTEUR : changer de colonne ne doit pas faire
+            // perdre sa place verticale.
+            float y = currentGo.transform.position.y;
+            GameObject best = columns[targetCol].OrderBy(g => Mathf.Abs(g.transform.position.y - y)).FirstOrDefault();
             if (best == null) return false;
 
-            // Le repère de colonne est posé en PRÉFIXE plutôt qu'annoncé séparément : FocusReader
-            // annonce l'élément à la frame suivante en coupant la parole, ce qui avalerait une
-            // annonce faite ici. On obtient ainsi « Colonne 2 sur 3, Cheveux » d'une seule traite.
-            FocusReader.SetPendingPrefix($"Colonne {target + 1} sur {columns.Count}");
+            // Repère posé en PRÉFIXE plutôt qu'annoncé à part : FocusReader annonce l'élément à la
+            // frame suivante en coupant la parole, ce qui avalerait une annonce faite ici. On
+            // obtient « Colonne 2 sur 3, Cheveux » d'une seule traite.
+            FocusReader.SetPendingPrefix($"Colonne {targetCol + 1} sur {columns.Count}");
             Select(best);
             return true;
         }
@@ -213,42 +240,63 @@ namespace SunHavenAccess.Menus
         /// plus grands que l'écart courant coupent une colonne : une grille dense d'icônes reste
         /// ainsi d'un seul tenant, alors qu'un panneau séparé par du vide s'en détache.
         /// </summary>
-        private static List<List<GameObject>> BuildColumns(List<GameObject> members)
-        {
-            var columns = new List<List<GameObject>>();
-            if (members == null || members.Count < 2) return columns;
+        private static List<List<GameObject>> BuildColumns(List<GameObject> members) =>
+            Cluster(members, g => g.transform.position.x);
 
-            var sorted = members.Where(m => m != null)
-                                .OrderBy(m => m.transform.position.x)
-                                .ToList();
-            if (sorted.Count < 2) return columns;
+        /// <summary>
+        /// Regroupe les éléments en BANDES horizontales : barre d'onglets, barre de sous-onglets,
+        /// grille de contenu, bandeau d'informations en bas. C'est la structure que suit
+        /// Ctrl+haut/bas.
+        /// </summary>
+        private static List<List<GameObject>> BuildBands(List<GameObject> members) =>
+            Cluster(members, g => g.transform.position.y)
+                .AsEnumerable().Reverse().ToList(); // du HAUT de l'écran vers le bas
+
+        /// <summary>
+        /// Découpe une liste d'éléments en paquets, là où l'espace entre deux voisins devient
+        /// nettement plus grand qu'ailleurs — ce que fait l'œil pour distinguer deux panneaux.
+        ///
+        /// Le seuil est proportionnel à l'ÉTENDUE TOTALE occupée par les éléments, et non une
+        /// distance absolue. C'est le correctif du défaut rapporté en jeu sur le choix du métier :
+        /// dans une grille, beaucoup d'éléments partagent exactement la même coordonnée, la
+        /// médiane des écarts tombe donc à zéro et n'importe quel plancher fixe finissait par
+        /// couper entre chaque colonne d'icônes. Un vrai vide entre deux panneaux occupe une
+        /// fraction visible de l'écran ; l'espacement d'une grille, non.
+        /// </summary>
+        private static List<List<GameObject>> Cluster(List<GameObject> members, System.Func<GameObject, float> axis)
+        {
+            var groups = new List<List<GameObject>>();
+            if (members == null) return groups;
+
+            var sorted = members.Where(m => m != null).OrderBy(axis).ToList();
+            if (sorted.Count < 2) return groups;
+
+            float span = axis(sorted[sorted.Count - 1]) - axis(sorted[0]);
+            if (span <= 0f) return groups;
 
             var gaps = new List<float>();
-            for (int i = 1; i < sorted.Count; i++)
-                gaps.Add(sorted[i].transform.position.x - sorted[i - 1].transform.position.x);
+            for (int i = 1; i < sorted.Count; i++) gaps.Add(axis(sorted[i]) - axis(sorted[i - 1]));
 
-            // Écart de référence : la médiane, insensible aux quelques très grands écarts qu'on
-            // cherche justement à repérer (une moyenne, elle, serait tirée vers le haut par eux).
-            var ordered = gaps.OrderBy(g => g).ToList();
-            float median = ordered[ordered.Count / 2];
+            float median = gaps.OrderBy(g => g).ElementAt(gaps.Count / 2);
 
-            // Un écart coupe s'il dépasse largement l'ordinaire. Le plancher évite de découper un
-            // écran dont tous les éléments sont pratiquement alignés, où la médiane vaut zéro.
-            float threshold = Mathf.Max(median * 4f, 1.5f);
+            // Deux conditions à remplir : dépasser largement l'écart courant ET représenter une
+            // part visible de l'écran. La première seule se fait piéger par une médiane nulle, la
+            // seconde seule découperait une grille très étalée.
+            float threshold = Mathf.Max(median * 4f, span * 0.08f);
 
             var current = new List<GameObject> { sorted[0] };
             for (int i = 1; i < sorted.Count; i++)
             {
                 if (gaps[i - 1] > threshold)
                 {
-                    columns.Add(current);
+                    groups.Add(current);
                     current = new List<GameObject>();
                 }
                 current.Add(sorted[i]);
             }
-            columns.Add(current);
+            groups.Add(current);
 
-            return columns;
+            return groups;
         }
 
         /// <summary>

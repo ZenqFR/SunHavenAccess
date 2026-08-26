@@ -257,7 +257,44 @@ namespace SunHavenAccess.Menus
         private static bool IsVisible(Selectable s)
         {
             CanvasGroup group = s.GetComponentInParent<CanvasGroup>();
-            return group == null || group.alpha > 0.01f;
+            if (group != null && group.alpha <= 0.01f) return false;
+            return IsOnScreen(s);
+        }
+
+        /// <summary>
+        /// L'élément est-il réellement dans l'écran ?
+        ///
+        /// Le seul test de transparence ne suffisait pas : Sun Haven garde les panneaux des autres
+        /// onglets actifs et opaques, simplement rangés hors champ. Ils restaient donc candidats à
+        /// la navigation, ce qui produisait le défaut rapporté en jeu — Ctrl+bas depuis la barre
+        /// d'onglets atterrissait dans l'arbre de compétences quel que soit l'onglet ouvert, parce
+        /// que ses nœuds étaient les premiers de la liste. Ils faussaient du même coup le
+        /// regroupement en bandes et en colonnes, calculé sur des positions invisibles à l'écran.
+        ///
+        /// La marge tolère les éléments à cheval sur un bord plutôt que de les écarter : mieux
+        /// vaut un élément de trop qu'un élément atteignable rendu inatteignable.
+        /// </summary>
+        private static bool IsOnScreen(Selectable s)
+        {
+            try
+            {
+                Canvas canvas = s.GetComponentInParent<Canvas>();
+                Camera camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                    ? canvas.worldCamera
+                    : null;
+
+                Vector2 screen = RectTransformUtility.WorldToScreenPoint(camera, s.transform.position);
+                const float margin = 64f;
+
+                return screen.x >= -margin && screen.x <= Screen.width + margin
+                    && screen.y >= -margin && screen.y <= Screen.height + margin;
+            }
+            catch
+            {
+                // Hiérarchie inattendue : on préfère garder l'élément. L'écarter par excès de
+                // prudence le rendrait définitivement inatteignable au clavier.
+                return true;
+            }
         }
 
         private static void Announce(Selectable sel)
