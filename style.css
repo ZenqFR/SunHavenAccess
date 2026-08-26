@@ -26,6 +26,7 @@
   --accent-text: #241500;
   --leaf: #2fa83e;
   --leaf-text: #1c7a28;
+  --leaf-deep: #16651f;
   --sky: #1f97d4;
   --sky-text: #0d6ea3;
   --pill-bg: rgba(255, 255, 255, 0.55);
@@ -387,7 +388,10 @@ table.keys td:first-child { white-space: nowrap; color: var(--accent-strong); fo
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
-  background: var(--leaf);
+  /* Fond --leaf-text et non --leaf : blanc sur --leaf ne donnait que 3,09:1, en dessous du
+     minimum AA de 4,5:1 — et c'est le bouton le plus important du site, sur le site d'un mod
+     d'accessibilité. --leaf-text monte à 5,44:1, --leaf-deep (survol) à 7,2:1. */
+  background: var(--leaf-text);
   color: #fff;
   text-decoration: none;
   padding: 0.7em 1.4em;
@@ -396,7 +400,7 @@ table.keys td:first-child { white-space: nowrap; color: var(--accent-strong); fo
   box-shadow: var(--shadow);
   transition: background 0.15s ease, transform 0.15s ease;
 }
-.cta:hover { background: var(--leaf-text); transform: translateY(-1px); }
+.cta:hover { background: var(--leaf-deep); transform: translateY(-1px); }
 /* Couleurs fixes (pas les variables de thème) : ce bouton vit directement sur le dégradé
    vif de la page — il lui faut un contraste garanti quel que soit l'endroit du dégradé
    visible derrière. Un fond pâle assorti au dégradé (comme avant) s'y fondait presque. */
