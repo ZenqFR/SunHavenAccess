@@ -53,7 +53,10 @@ namespace SunHavenAccess.Navigation
             }
             while (_items.Count == 0 && _categoryIndex != startIndex && attempts < CategoryNames.Length);
 
-            TolkSpeech.Speak($"Catégorie : {CategoryNames[_categoryIndex]}. {_items.Count} élément trouvé{(_items.Count > 1 ? "s" : "")}.", true);
+            // Pas de préfixe « Catégorie : » : on en change plusieurs fois de suite pour trouver
+            // la bonne, et le mot se répétait à chaque fois sans jamais rien apprendre — le nom de
+            // la catégorie dit déjà de quoi il s'agit.
+            TolkSpeech.Speak($"{CategoryNames[_categoryIndex]}, {_items.Count} élément trouvé{(_items.Count > 1 ? "s" : "")}.", true);
         }
 
         public static void NextItem()
@@ -78,7 +81,7 @@ namespace SunHavenAccess.Navigation
             Rescan();
             if (_items.Count == 0)
             {
-                TolkSpeech.Speak($"Rien trouvé dans la catégorie {CategoryNames[_categoryIndex]}.", true);
+                TolkSpeech.Speak($"Rien trouvé en {CategoryNames[_categoryIndex]}.", true);
                 return;
             }
             if (_itemIndex < 0 || _itemIndex >= _items.Count) _itemIndex = 0;
@@ -111,14 +114,14 @@ namespace SunHavenAccess.Navigation
             Rescan();
             TolkSpeech.Speak(
                 $"{_items.Count} élément{(_items.Count > 1 ? "s" : "")} trouvé{(_items.Count > 1 ? "s" : "")} " +
-                $"dans la catégorie {CategoryNames[_categoryIndex]}.", true);
+                $"en {CategoryNames[_categoryIndex]}.", true);
         }
 
         private static void Move(int direction)
         {
             if (_items.Count == 0)
             {
-                TolkSpeech.Speak($"Rien trouvé dans la catégorie {CategoryNames[_categoryIndex]}.", true);
+                TolkSpeech.Speak($"Rien trouvé en {CategoryNames[_categoryIndex]}.", true);
                 return;
             }
             _itemIndex = ((_itemIndex + direction) % _items.Count + _items.Count) % _items.Count;

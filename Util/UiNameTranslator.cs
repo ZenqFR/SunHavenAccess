@@ -18,6 +18,35 @@ namespace SunHavenAccess.Util
     {
         private static readonly Dictionary<string, string> Dictionary = new Dictionary<string, string>
         {
+            // Terrains et sols. Ces mots viennent des noms d'assets de tuilemap, lus à CHAQUE PAS
+            // par la description de la case devant soi : un terme manquant s'entend donc en
+            // anglais des dizaines de fois par minute. Les suffixes techniques sont traduits par
+            // du VIDE — ils n'apprennent rien à l'oral et alourdissent chaque annonce.
+            // (Les mots déjà présents plus bas — beach, forest, snow, lava, mine... — ne sont pas
+            // repris ici : une clé en double serait silencieusement écrasée par la suivante.)
+            ["tile"] = "", ["tiles"] = "", ["tilemap"] = "", ["rule"] = "", ["ruletile"] = "",
+            ["layer"] = "", ["variant"] = "", ["terrain"] = "Terrain",
+            ["grass"] = "Herbe", ["dirt"] = "Terre", ["soil"] = "Terre",
+            ["farmland"] = "Terre labourée", ["tilled"] = "Labourée", ["watered"] = "Arrosée",
+            ["sand"] = "Sable", ["stone"] = "Pierre", ["rock"] = "Roche",
+            ["gravel"] = "Gravier", ["mud"] = "Boue", ["ash"] = "Cendre",
+            ["moss"] = "Mousse", ["mossy"] = "Moussu",
+            ["wood"] = "Bois", ["wooden"] = "En bois", ["plank"] = "Planche", ["planks"] = "Planches",
+            ["floor"] = "Plancher", ["flooring"] = "Plancher", ["carpet"] = "Tapis", ["rug"] = "Tapis",
+            ["brick"] = "Brique", ["bricks"] = "Briques", ["cobble"] = "Pavé",
+            ["cobblestone"] = "Pavé", ["marble"] = "Marbre", ["metal"] = "Métal",
+
+            // Verbes d'interaction. Plusieurs classes du jeu codent ce texte en dur en anglais
+            // (`Decoration.InteractionPoint` renvoie « Open ») au lieu de passer par sa
+            // localisation, d'où ces entrées.
+            ["chop"] = "Couper", ["examine"] = "Examiner", ["harvest"] = "Récolter",
+            ["pick"] = "Cueillir", ["talk"] = "Parler", ["read"] = "Lire",
+            ["enter"] = "Entrer", ["take"] = "Prendre", ["sleep"] = "Dormir",
+            ["plant"] = "Planter", ["till"] = "Labourer", ["feed"] = "Nourrir",
+            ["ride"] = "Monter", ["catch"] = "Attraper", ["repair"] = "Réparer",
+            ["collect"] = "Ramasser", ["shear"] = "Tondre", ["milk"] = "Traire",
+            ["donate"] = "Donner",
+
             // Actions génériques
             ["play"] = "Jouer", ["continue"] = "Continuer", ["new"] = "Nouveau",
             ["load"] = "Charger", ["save"] = "Sauvegarder", ["delete"] = "Supprimer",
@@ -191,6 +220,41 @@ namespace SunHavenAccess.Util
 
         public static bool IsMajorTabName(string rawName) =>
             !string.IsNullOrEmpty(rawName) && rawName.StartsWith("Major", System.StringComparison.OrdinalIgnoreCase);
+
+        /// <summary>
+        /// Traduction d'un nom de TERRAIN, avec un filet : renvoie null si pas un seul mot n'a été
+        /// reconnu.
+        ///
+        /// Le terrain est décrit à chaque pas. Lâcher un nom d'asset anglais brut — le repli
+        /// habituel de Translate — le ferait entendre des dizaines de fois par minute. Mieux vaut
+        /// que l'appelant retombe sur un mot générique que d'annoncer « GrassRuleTileVariantB ».
+        ///
+        /// Les mots inconnus sont écartés plutôt que conservés : dans un nom de tuile, ce sont des
+        /// numéros de variante ou des suffixes d'atelier, jamais une information pour le joueur.
+        /// </summary>
+        public static string TranslateTerrain(string rawName)
+        {
+            if (string.IsNullOrWhiteSpace(rawName)) return null;
+
+            string cleaned = CloneSuffix.Replace(rawName, "").Replace("(Clone)", "").Trim();
+            if (ExactPhrases.TryGetValue(cleaned, out string exact)) return exact;
+
+            var kept = new List<string>();
+            bool recognised = false;
+
+            foreach (string token in SplitIntoWords(rawName)
+                         .Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (!Dictionary.TryGetValue(token.ToLowerInvariant(), out string translated)) continue;
+
+                recognised = true;
+                // Une entrée vide est un suffixe technique volontairement supprimé.
+                if (!string.IsNullOrEmpty(translated)) kept.Add(translated);
+            }
+
+            if (!recognised || kept.Count == 0) return null;
+            return string.Join(" ", kept);
+        }
 
         public static string Translate(string rawName)
         {

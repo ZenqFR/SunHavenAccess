@@ -155,7 +155,11 @@ namespace SunHavenAccess.Cursor
                 if (info?.interactionText != null && info.interactionText.Count > 0)
                 {
                     int idx = Mathf.Clamp(first.interactionType, 0, info.interactionText.Count - 1);
-                    string text = TextUtil.Clean(info.interactionText[idx]);
+                    // Le texte d'interaction n'est pas toujours localisé : plusieurs classes du jeu
+                    // le codent en dur en anglais (`Decoration.InteractionPoint` renvoie « Open »).
+                    // On le passe donc au traducteur, qui laisse intact ce qu'il connaît déjà en
+                    // français et couvre ces quelques verbes restés en anglais.
+                    string text = UiNameTranslator.Translate(TextUtil.Clean(info.interactionText[idx]));
                     if (!string.IsNullOrWhiteSpace(text)) return text;
                 }
             }
@@ -213,7 +217,11 @@ namespace SunHavenAccess.Cursor
                     if (tilemap == null) continue;
                     TileBase tileAsset = tilemap.GetTile(cell);
                     if (tileAsset == null) continue;
-                    string translated = UiNameTranslator.Translate(tileAsset.name);
+                    // TranslateTerrain plutôt que Translate : celui-ci renvoie null quand aucun mot
+                    // n'est reconnu, au lieu de laisser passer le nom d'asset anglais. Le terrain
+                    // étant décrit à chaque pas, un seul nom brut s'entendrait des dizaines de fois
+                    // par minute.
+                    string translated = UiNameTranslator.TranslateTerrain(tileAsset.name);
                     if (!string.IsNullOrWhiteSpace(translated)) { groundName = translated; break; }
                 }
 
