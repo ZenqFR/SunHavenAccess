@@ -24,6 +24,9 @@
         { "id": "installateur-detection", "key": "—", "status": "ok",
           "action":   { "fr": "Regarder si le jeu est trouvé tout seul.", "en": "See whether the game is found automatically." },
           "expected": { "fr": "Le chemin de Sun Haven est prérempli sans rien saisir.", "en": "Sun Haven's path is pre-filled with no input." } },
+        { "id": "installateur-mise-a-jour", "key": "—", "status": "todo",
+          "action":   { "fr": "Relancer l'installateur alors que le mod est déjà installé.", "en": "Run the installer again with the mod already installed." },
+          "expected": { "fr": "Le bouton principal annonce « Mettre à jour le mod » et non « Installer ». Après une désinstallation, il redevient « Installer ».", "en": "The main button announces \"Update the mod\", not \"Install\". After an uninstall it becomes \"Install\" again." } },
         { "id": "chargement", "key": "—", "status": "ok", "critical": true,
           "action":   { "fr": "Lancer Sun Haven.", "en": "Launch Sun Haven." },
           "expected": { "fr": "Un message vocal annonce que le mod est chargé et rappelle la touche d'aide.", "en": "A spoken message says the mod loaded and names the help key." } },
@@ -370,6 +373,32 @@
         { "id": "arbre-validation", "key": "Entrée", "status": "todo",
           "action":   { "fr": "Prendre une compétence disponible.", "en": "Take an available skill." },
           "expected": { "fr": "Le nœud est débloqué et le point décompté.", "en": "The node unlocks and the point is spent." } }
+      ]
+    },
+
+    {
+      "id": "reglages",
+      "title": { "fr": "Réglages et confort", "en": "Settings and comfort" },
+      "intro": {
+        "fr": "Ce qui s'ajuste plutôt que ce qui s'utilise. Ces réglages vivent dans le fichier de configuration du mod, et servent surtout de soupape : si un écran se comporte mal, ils permettent de rendre la main au jeu sans désinstaller quoi que ce soit.",
+        "en": "What you adjust rather than what you use. These live in the mod's config file and act mainly as a release valve: if a screen misbehaves, they hand control back to the game without uninstalling anything."
+      },
+      "items": [
+        { "id": "tchat", "key": "C", "status": "todo",
+          "action":   { "fr": "Ouvrir le tchat ou la console du jeu, taper quelque chose, valider.", "en": "Open the game's chat or console, type something, submit." },
+          "expected": { "fr": "C ouvre le tchat — pas Entrée, qui sert à valider dans les menus et entrait en conflit. La frappe est annoncée caractère par caractère, et aucune touche du mod ne se déclenche pendant.", "en": "C opens chat — not Enter, which validates in menus and used to clash. Typing is announced character by character, and no mod key fires meanwhile." } },
+        { "id": "mode-bref", "key": "—", "status": "todo",
+          "action":   { "fr": "Dans le fichier de configuration, section Navigation, passer ModeBref à false, relancer, et parcourir le sac.", "en": "In the config file, Navigation section, set ModeBref to false, relaunch, and browse the bag." },
+          "expected": { "fr": "À true (défaut), le parcours n'annonce que la quantité et le nom. À false, la description complète suit chaque objet. Boutiques et artisanat ne changent pas dans les deux cas : prix et ingrédients y restent indispensables.", "en": "At true (default), browsing announces only quantity and name. At false, the full description follows each item. Shops and crafting are unaffected either way: prices and ingredients stay essential there." } },
+        { "id": "son-de-bord", "key": "—", "status": "todo",
+          "action":   { "fr": "Passer SonDeBord à false, relancer, et buter en bout de ligne dans le sac.", "en": "Set SonDeBord to false, relaunch, and hit the end of a row in the bag." },
+          "expected": { "fr": "Plus aucun bip aux extrémités, et la navigation reste sinon identique.", "en": "No more beep at the limits, and navigation is otherwise unchanged." } },
+        { "id": "rendre-les-fleches", "key": "—", "status": "todo",
+          "action":   { "fr": "Passer NavigationDirectionnelle à false, relancer, et rouvrir un menu.", "en": "Set NavigationDirectionnelle to false, relaunch, and reopen a menu." },
+          "expected": { "fr": "Les flèches reviennent au jeu. C'est la soupape prévue si un écran se comporte mal — par exemple si le curseur saute deux cases d'un coup.", "en": "The arrows go back to the game. This is the intended release valve if a screen misbehaves — for instance if the cursor jumps two cells at once." } },
+        { "id": "raccourcis-persistants", "key": "Suppr", "status": "todo",
+          "action":   { "fr": "Réassigner une touche dans le menu des raccourcis, quitter le jeu, relancer.", "en": "Reassign a key in the shortcuts menu, quit the game, relaunch." },
+          "expected": { "fr": "La nouvelle touche est conservée, et l'aide F1 l'affiche à la place de l'ancienne.", "en": "The new key is kept, and the F1 help shows it in place of the old one." } }
       ]
     }
   ]

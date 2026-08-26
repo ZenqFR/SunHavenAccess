@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 74 au point** (8 %).
+Mis à jour le 2026-08-26 — **6 sur 80 au point** (8 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 68 |
+| `[ ]` | À tester | jamais essayé en jeu | 74 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
@@ -26,6 +26,9 @@ Installer, et vérifier que le mod se charge. Si ça échoue ici, rien d'autre n
 - [x] **avant-installateur-detection** — touche : —
   - Faire : Regarder si le jeu est trouvé tout seul.
   - Attendu : Le chemin de Sun Haven est prérempli sans rien saisir.
+- [ ] **avant-installateur-mise-a-jour** — touche : —
+  - Faire : Relancer l'installateur alors que le mod est déjà installé.
+  - Attendu : Le bouton principal annonce « Mettre à jour le mod » et non « Installer ». Après une désinstallation, il redevient « Installer ».
 - [x] **avant-chargement** ⚠️ — touche : —
   - Faire : Lancer Sun Haven.
   - Attendu : Un message vocal annonce que le mod est chargé et rappelle la touche d'aide.
@@ -300,4 +303,24 @@ Les compétences, qu'on dépense au fil des niveaux.
 - [ ] **progresser-arbre-validation** — touche : Entrée
   - Faire : Prendre une compétence disponible.
   - Attendu : Le nœud est débloqué et le point décompté.
+
+## 14. Réglages et confort
+
+Ce qui s'ajuste plutôt que ce qui s'utilise. Ces réglages vivent dans le fichier de configuration du mod, et servent surtout de soupape : si un écran se comporte mal, ils permettent de rendre la main au jeu sans désinstaller quoi que ce soit.
+
+- [ ] **reglages-tchat** — touche : C
+  - Faire : Ouvrir le tchat ou la console du jeu, taper quelque chose, valider.
+  - Attendu : C ouvre le tchat — pas Entrée, qui sert à valider dans les menus et entrait en conflit. La frappe est annoncée caractère par caractère, et aucune touche du mod ne se déclenche pendant.
+- [ ] **reglages-mode-bref** — touche : —
+  - Faire : Dans le fichier de configuration, section Navigation, passer ModeBref à false, relancer, et parcourir le sac.
+  - Attendu : À true (défaut), le parcours n'annonce que la quantité et le nom. À false, la description complète suit chaque objet. Boutiques et artisanat ne changent pas dans les deux cas : prix et ingrédients y restent indispensables.
+- [ ] **reglages-son-de-bord** — touche : —
+  - Faire : Passer SonDeBord à false, relancer, et buter en bout de ligne dans le sac.
+  - Attendu : Plus aucun bip aux extrémités, et la navigation reste sinon identique.
+- [ ] **reglages-rendre-les-fleches** — touche : —
+  - Faire : Passer NavigationDirectionnelle à false, relancer, et rouvrir un menu.
+  - Attendu : Les flèches reviennent au jeu. C'est la soupape prévue si un écran se comporte mal — par exemple si le curseur saute deux cases d'un coup.
+- [ ] **reglages-raccourcis-persistants** — touche : Suppr
+  - Faire : Réassigner une touche dans le menu des raccourcis, quitter le jeu, relancer.
+  - Attendu : La nouvelle touche est conservée, et l'aide F1 l'affiche à la place de l'ancienne.
 
