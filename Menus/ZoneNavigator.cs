@@ -347,12 +347,21 @@ namespace SunHavenAccess.Menus
             var gaps = new List<float>();
             for (int i = 1; i < sorted.Count; i++) gaps.Add(axis(sorted[i]) - axis(sorted[i - 1]));
 
-            float median = gaps.OrderBy(g => g).ElementAt(gaps.Count / 2);
+            // Écart de référence : la médiane des écarts NON NULS, c'est-à-dire l'espacement normal
+            // entre deux éléments voisins.
+            //
+            // Prendre la médiane de tous les écarts ne marche pas : dans une grille, beaucoup
+            // d'éléments partagent exactement la même coordonnée sur l'autre axe, la moitié des
+            // écarts vaut donc zéro et la médiane s'effondre. Le seuil retombait alors sur la seule
+            // part d'écran, qui découpait la grille des compétences colonne de nœud par colonne de
+            // nœud — chaque déplacement latéral exigeait un Contrôle, ce qui a été rapporté en jeu
+            // comme « trop de Ctrl+flèches ».
+            List<float> spacing = gaps.Where(g => g > 0.001f).OrderBy(g => g).ToList();
+            float reference = spacing.Count > 0 ? spacing[spacing.Count / 2] : span;
 
-            // Deux conditions à remplir : dépasser largement l'écart courant ET représenter une
-            // part visible de l'écran. La première seule se fait piéger par une médiane nulle, la
-            // seconde seule découperait une grille très étalée.
-            float threshold = Mathf.Max(median * 4f, span * 0.08f);
+            // Un vrai vide entre deux panneaux vaut plusieurs fois l'espacement d'une grille. Le
+            // plancher en part d'écran ne sert que de garde-fou quand l'espacement est minuscule.
+            float threshold = Mathf.Max(reference * 3f, span * 0.15f);
 
             var current = new List<GameObject> { sorted[0] };
             for (int i = 1; i < sorted.Count; i++)
@@ -483,6 +492,21 @@ namespace SunHavenAccess.Menus
 
             if (target != null)
             {
+                // Changer de ligne annonce l'intitulé de la nouvelle — « Mobilité »,
+                // « Bûcheronnage » — quand l'écran en affiche un à sa gauche.
+                //
+                // Ce repère était sur Contrôle+haut/bas ; il est passé ici, sur la flèche simple,
+                // parce que descendre d'une rangée à l'autre dans une grille est un déplacement
+                // ORDINAIRE. L'exiger avec Contrôle revenait à réclamer un modificateur pour ce
+                // que la flèche fait naturellement — ce qui a été rapporté en jeu comme « trop de
+                // Ctrl+flèches » dans l'arbre de compétences.
+                if (dy != 0 && zone == Zone.Generic)
+                {
+                    List<GameObject> targetRow = rows.FirstOrDefault(r => r.Contains(target));
+                    string label = targetRow != null ? BandLabel(targetRow) : null;
+                    if (label != null) FocusReader.SetPendingPrefix(label);
+                }
+
                 Select(target);
                 return;
             }
