@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Wish;
 using SunHavenAccess.Speech;
+using SunHavenAccess.Util;
 
 namespace SunHavenAccess.Menus
 {
@@ -179,6 +180,51 @@ namespace SunHavenAccess.Menus
         /// de ce qui fonctionnait déjà ne change.
         /// </summary>
         /// <summary>
+        /// L'intitulé affiché à GAUCHE d'une bande, s'il y en a un.
+        ///
+        /// L'arbre de compétences range ses nœuds en rangées précédées d'un titre — Mobilité,
+        /// Bûcheronnage, Collecte, Social. Ce titre n'est pas un élément navigable, donc il ne fait
+        /// pas partie de la bande ; il est pourtant la seule chose qui dise ce qu'on parcourt. On
+        /// le retrouve géométriquement : le texte à l'écran situé à la hauteur de la bande et à sa
+        /// gauche, le plus proche.
+        ///
+        /// Renvoie null s'il n'y en a pas, auquel cas l'appelant retombe sur un repère numéroté.
+        /// </summary>
+        private static string BandLabel(List<GameObject> band)
+        {
+            try
+            {
+                if (band == null || band.Count == 0) return null;
+
+                float top = band.Max(g => g.transform.position.y);
+                float bottom = band.Min(g => g.transform.position.y);
+                float left = band.Min(g => g.transform.position.x);
+
+                var candidates = Object.FindObjectsOfType<TMPro.TextMeshProUGUI>()
+                    .Where(t => t != null
+                                && t.gameObject.activeInHierarchy
+                                && !string.IsNullOrWhiteSpace(t.text)
+                                && t.transform.position.x < left
+                                && t.transform.position.y <= top
+                                && t.transform.position.y >= bottom
+                                && MenuNavigator.IsOnScreen(t))
+                    .OrderByDescending(t => t.transform.position.x)
+                    .ToList();
+
+                foreach (TMPro.TextMeshProUGUI candidate in candidates)
+                {
+                    string text = TextUtil.Clean(candidate.text);
+                    // Les titres de rangée sont courts. Une longue phrase est une description, pas
+                    // un intitulé, et l'annoncer à chaque changement de bande serait pénible.
+                    if (!string.IsNullOrWhiteSpace(text) && text.Length <= 30) return text;
+                }
+            }
+            catch { }
+
+            return null;
+        }
+
+        /// <summary>
         /// La colonne qui contient cet élément, ou null si l'écran n'est pas en colonnes.
         /// </summary>
         private static List<GameObject> ColumnContaining(List<GameObject> members, GameObject go)
@@ -227,7 +273,11 @@ namespace SunHavenAccess.Menus
                 GameObject entry = bands[target].OrderBy(g => Mathf.Abs(g.transform.position.x - x)).FirstOrDefault();
                 if (entry == null) return false;
 
-                FocusReader.SetPendingPrefix($"Bande {target + 1} sur {bands.Count}");
+                // On nomme la bande par son intitulé à l'écran quand il y en a un — « Mobilité »,
+                // « Bûcheronnage » — plutôt que par un numéro. « Bande 3 sur 4 » n'apprend rien à
+                // qui ne voit pas la disposition, alors que l'intitulé dit ce qu'on parcourt.
+                string label = BandLabel(bands[target]) ?? $"Bande {target + 1} sur {bands.Count}";
+                FocusReader.SetPendingPrefix(label);
                 Select(entry);
                 return true;
             }
@@ -779,13 +829,21 @@ namespace SunHavenAccess.Menus
         {
             try
             {
-                return Object.FindObjectsOfType<TMPro.TextMeshProUGUI>()
+                List<TMPro.TextMeshProUGUI> all = Object.FindObjectsOfType<TMPro.TextMeshProUGUI>()
                     .Where(t => t != null
                                 && t.gameObject.activeInHierarchy
                                 && !string.IsNullOrWhiteSpace(t.text)
                                 && t.text.Trim().Length > 1)
-                    .Select(t => t.gameObject)
                     .ToList();
+
+                // Filtre INDISPENSABLE : le jeu garde les panneaux des autres onglets actifs et
+                // opaques, rangés hors champ. Sans lui, ce repli ramassait tous leurs textes —
+                // d'où le message d'arbre de compétences entendu dans n'importe quel onglet.
+                //
+                // Comme ailleurs, il ne peut pas vider l'écran : s'il ne laisse rien, on garde
+                // tout. Un panneau devenu muet serait pire que quelques textes de trop.
+                List<TMPro.TextMeshProUGUI> onScreen = all.Where(MenuNavigator.IsOnScreen).ToList();
+                return (onScreen.Count > 0 ? onScreen : all).Select(t => t.gameObject).ToList();
             }
             catch
             {

@@ -287,7 +287,7 @@ namespace SunHavenAccess.Menus
         /// La marge tolère les éléments à cheval sur un bord plutôt que de les écarter : mieux
         /// vaut un élément de trop qu'un élément atteignable rendu inatteignable.
         /// </summary>
-        private static bool IsOnScreen(Selectable s)
+        internal static bool IsOnScreen(Component s)
         {
             try
             {

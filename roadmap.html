@@ -61,8 +61,8 @@
     <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
   </p>
   <span class="status-pill">
-    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 105 au point</span>
-    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 105 solid</span>
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 107 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 107 solid</span>
   </span>
 </header>
 
@@ -75,10 +75,10 @@
 
   <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
   <div class="card">
-    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 105</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 105 solid</strong> — 7%.</span></p>
+    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 107</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 107 solid</strong> — 7%.</span></p>
     <ul class="legend-list">
-      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 91</span><span data-lang="en" hidden>never tried in game: 91</span></li>
-      <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 7</span><span data-lang="en" hidden>tried, doesn't work: 7</span></li>
+      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 92</span><span data-lang="en" hidden>never tried in game: 92</span></li>
+      <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 8</span><span data-lang="en" hidden>tried, doesn't work: 8</span></li>
       <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
       <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 7</span><span data-lang="en" hidden>tried, nothing to add: 7</span></li>
     </ul>
@@ -247,7 +247,7 @@
   <h2 class="section-title" id="sac"><span data-lang="fr">4. Son sac et son équipement</span><span data-lang="en" hidden>4. Your bag and gear</span></h2>
   <div class="card">
     <p><span data-lang="fr">La navigation dans les menus a été entièrement refaite et n'a jamais été confirmée en jeu. Le point à surveiller : qu'une pression ne provoque pas deux déplacements.</span><span data-lang="en" hidden>Menu navigation was fully rewritten and never confirmed in game. Watch for this: one press must not cause two moves.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 13 au point.</span><span data-lang="en" hidden>0 of 13 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 15 au point.</span><span data-lang="en" hidden>0 of 15 solid.</span></p>
     <ol class="roadmap-list">
       <li class="roadmap-item status-todo" id="sac-onglets">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
@@ -259,6 +259,18 @@
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Ctrl + haut — <span data-lang="fr">Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.</span><span data-lang="en" hidden>Open the Skills tab (or any other), go down into the content, then come back up to the tab bar.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.</span><span data-lang="en" hidden>Ctrl+up ALWAYS returns to the tab bar, from any panel and at any depth.</span></p>
         <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Signalé puis retiré : après plusieurs Tab la navigation redevenait bonne. Le défaut existait néanmoins dans le code — au sommet de l'écran, le saut de bandes bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé. Le tâtonnement venait d'ailleurs : la barre d'onglets ne figurait pas dans l'ordre d'entrée, donc la première flèche après Tab atterrissait dans le sac à dos. Elle y est désormais en premier.</span><span data-lang="en" hidden>Reported then withdrawn: after several Tab presses navigation came good. The defect was real in the code all the same — at the top of the screen, band jumping beeped and consumed the key, so the Ctrl+up-returns-to-the-tabs rule was never reached. Fixed. The fumbling came from elsewhere: the tab bar was missing from the entry order, so the first arrow after Tab landed in the backpack. It now comes first.</span></p>
+      </li>
+      <li class="roadmap-item status-fix is-critical" id="sac-onglets-message-parasite">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Tab puis flèches — <span data-lang="fr">Ouvrir Relations, Carte, Quêtes, Statistiques et Paramètres, puis parcourir chacun aux flèches.</span><span data-lang="en" hidden>Open Relationships, Map, Quests, Statistics and Settings, then browse each with the arrows.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque onglet lit SON contenu. Plus aucun message d'arbre de compétences dans un autre onglet.</span><span data-lang="en" hidden>Each tab reads ITS content. No more skill-tree message inside another tab.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">RÉGRESSION que j'ai introduite : le repli qui rend parcourables les onglets sans élément cliquable ramassait TOUS les textes actifs de la scène, y compris ceux des panneaux voisins que le jeu garde hors champ. D'où le message d'arbre de compétences partout. Le filtre de présence à l'écran lui manquait ; il l'a maintenant, avec le même garde-fou qu'ailleurs — s'il ne laisse rien, on garde tout.</span><span data-lang="en" hidden>A REGRESSION I introduced: the fallback that makes tabs without clickable elements browsable was collecting EVERY active text in the scene, including those of neighbouring panels the game parks off-screen. Hence the skill-tree message everywhere. It was missing the on-screen filter; it now has it, with the same safeguard as elsewhere — if it leaves nothing, everything is kept.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="sac-bandes-nommees">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Ctrl + haut / bas — <span data-lang="fr">Dans l'arbre de compétences, passer d'une bande à l'autre avec Ctrl+haut et Ctrl+bas.</span><span data-lang="en" hidden>In the skill tree, move between bands with Ctrl+up and Ctrl+down.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque bande est annoncée par son intitulé à l'écran — « Mobilité », « Bûcheronnage », « Collecte », « Social » — et non par un numéro.</span><span data-lang="en" hidden>Each band is announced by its on-screen heading — "Mobility", "Logging", "Gathering", "Social" — rather than by a number.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">« Bande 3 sur 4 » n'apprend rien à qui ne voit pas la disposition. L'intitulé de rangée n'étant pas un élément navigable, il est retrouvé géométriquement : le texte situé à la hauteur de la bande et à sa gauche. Si aucun n'est trouvé, on retombe sur le repère numéroté.</span><span data-lang="en" hidden>"Band 3 of 4" teaches nothing to someone who cannot see the layout. The row heading is not a navigable element, so it is found geometrically: the text at the band's height and to its left. If none is found, the numbered marker is used.</span></p>
       </li>
       <li class="roadmap-item status-todo is-critical" id="sac-onglets-tous">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>

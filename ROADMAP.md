@@ -2,12 +2,12 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 105 au point** (7 %).
+Mis à jour le 2026-08-26 — **7 sur 107 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 91 |
-| `[!]` | À corriger | essayé, ne marche pas | 7 |
+| `[ ]` | À tester | jamais essayé en jeu | 92 |
+| `[!]` | À corriger | essayé, ne marche pas | 8 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
 
@@ -122,6 +122,14 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
   - Faire : Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.
   - Attendu : Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.
   - Retour de jeu : Signalé puis retiré : après plusieurs Tab la navigation redevenait bonne. Le défaut existait néanmoins dans le code — au sommet de l'écran, le saut de bandes bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé. Le tâtonnement venait d'ailleurs : la barre d'onglets ne figurait pas dans l'ordre d'entrée, donc la première flèche après Tab atterrissait dans le sac à dos. Elle y est désormais en premier.
+- [!] **sac-onglets-message-parasite** ⚠️ — touche : Tab puis flèches
+  - Faire : Ouvrir Relations, Carte, Quêtes, Statistiques et Paramètres, puis parcourir chacun aux flèches.
+  - Attendu : Chaque onglet lit SON contenu. Plus aucun message d'arbre de compétences dans un autre onglet.
+  - Retour de jeu : RÉGRESSION que j'ai introduite : le repli qui rend parcourables les onglets sans élément cliquable ramassait TOUS les textes actifs de la scène, y compris ceux des panneaux voisins que le jeu garde hors champ. D'où le message d'arbre de compétences partout. Le filtre de présence à l'écran lui manquait ; il l'a maintenant, avec le même garde-fou qu'ailleurs — s'il ne laisse rien, on garde tout.
+- [ ] **sac-bandes-nommees** — touche : Ctrl + haut / bas
+  - Faire : Dans l'arbre de compétences, passer d'une bande à l'autre avec Ctrl+haut et Ctrl+bas.
+  - Attendu : Chaque bande est annoncée par son intitulé à l'écran — « Mobilité », « Bûcheronnage », « Collecte », « Social » — et non par un numéro.
+  - Retour de jeu : « Bande 3 sur 4 » n'apprend rien à qui ne voit pas la disposition. L'intitulé de rangée n'étant pas un élément navigable, il est retrouvé géométriquement : le texte situé à la hauteur de la bande et à sa gauche. Si aucun n'est trouvé, on retombe sur le repère numéroté.
 - [ ] **sac-onglets-tous** ⚠️ — touche : Tab puis flèches
   - Faire : Ouvrir chacun des sept onglets et tenter de parcourir son contenu : Sac à dos, Compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.
   - Attendu : Chaque onglet a quelque chose de parcourable et de lu. Les onglets sans rien de cliquable — les Statistiques notamment — deviennent parcourables ligne de texte par ligne de texte, à défaut de mieux.
