@@ -55,6 +55,10 @@ namespace SunHavenAccess.Installer
                 AccessibleName = "Dossier d'installation de Sun Haven",
                 AccessibleDescription = "Chemin complet du dossier contenant Sun Haven.exe",
             };
+            // Le bouton doit dire « Installer » ou « Mettre à jour » selon ce que contient
+            // RÉELLEMENT le dossier saisi, pas selon celui détecté au démarrage : on suit donc
+            // chaque frappe. La vérification se résume à un File.Exists, sans coût notable.
+            _pathBox.TextChanged += (s, e) => RefreshActionLabel();
 
             var browseButton = new Button
             {
@@ -133,7 +137,7 @@ namespace SunHavenAccess.Installer
                 Log("Sun Haven a été trouvé automatiquement :");
                 Log("  " + found);
                 Log(ModInstaller.IsInstalled(found)
-                    ? "Le mod est déjà installé ici. Réinstaller le mettra à jour."
+                    ? "Le mod est déjà installé ici : le bouton propose de le mettre à jour."
                     : "Le mod n'est pas encore installé ici.");
             }
             else
@@ -151,6 +155,9 @@ namespace SunHavenAccess.Installer
             }
 
             Log("");
+            // Le cas « jeu non trouvé » laisse le champ vide, donc sans TextChanged : on aligne
+            // explicitement le bouton plutôt que de compter sur cet événement.
+            RefreshActionLabel();
             _pathBox.Focus();
         }
 
@@ -169,6 +176,31 @@ namespace SunHavenAccess.Installer
                     ? "Dossier valide : le jeu a bien été trouvé."
                     : "Attention : " + GameLocator.GameExecutable + " est introuvable dans ce dossier.");
             }
+        }
+
+        /// <summary>
+        /// Fait dire au bouton principal ce qu'il va réellement faire : « Installer » sur un
+        /// dossier vierge, « Mettre à jour » là où le mod est déjà posé.
+        ///
+        /// Le geste est le même dans les deux cas, mais pas ce qu'il signifie pour la personne
+        /// qui appuie — et au lecteur d'écran, le libellé du bouton est la seule chose qui le dit.
+        /// « Installer » sur une installation existante laisserait croire à un doublon, ou à une
+        /// action sans effet.
+        /// </summary>
+        private void RefreshActionLabel()
+        {
+            bool installed = ModInstaller.IsInstalled(_pathBox.Text.Trim());
+
+            // Le raccourci change avec le libellé (Alt+I / Alt+J) : garder Alt+I sur un bouton
+            // affichant « Mettre à jour » exposerait une lettre absente du texte lu, que rien ne
+            // permettrait de deviner.
+            _installButton.Text = installed ? "Mettre à &jour" : "&Installer";
+            _installButton.AccessibleName = installed
+                ? "Mettre à jour le mod"
+                : "Installer le mod";
+            _installButton.AccessibleDescription = installed
+                ? "Remplace les fichiers du mod déjà présents par ceux de cette version."
+                : "Installe BepInEx et le mod dans le dossier du jeu.";
         }
 
         private void RunInstall() => Run(() => ModInstaller.Install(_pathBox.Text.Trim(), Log));
@@ -193,6 +225,10 @@ namespace SunHavenAccess.Installer
             {
                 _installButton.Enabled = true;
                 _uninstallButton.Enabled = true;
+                // L'opération vient de changer ce que contient le dossier : le bouton doit suivre.
+                // Après une désinstallation il redevient « Installer », après une pose « Mettre à
+                // jour » — sans quoi il décrirait l'état d'avant.
+                RefreshActionLabel();
                 _log.Focus();
                 _log.SelectionStart = _log.TextLength;
             }

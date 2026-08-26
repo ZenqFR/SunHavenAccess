@@ -18,6 +18,21 @@ installer avant l'installateur, ce qui serait un comble.
 - **Aucun message éphémère et aucune boîte de dialogue modale** : tout le compte rendu s'écrit
   dans une zone de texte relisible à volonté, et le focus y est déplacé après chaque opération.
   Une barre de progression qui disparaît ne laisse aucune trace pour quelqu'un qui ne l'a pas vue.
+- **Le bouton principal dit ce qu'il va faire** : « Installer » sur un dossier vierge, « Mettre à
+  jour » là où le mod est déjà posé. Le geste est identique, mais pas ce qu'il signifie pour la
+  personne qui appuie — et au lecteur d'écran, le libellé est la seule chose qui le dise. Le
+  libellé suit chaque frappe dans le champ de chemin, et se réaligne après chaque opération.
+
+## Tests
+
+```powershell
+.\test-installer.ps1   # 16 vérifications : pose à froid, mise à jour, retrait, dossier invalide
+.\test-bouton.ps1      #  6 vérifications : le libellé du bouton suit l'état réel du dossier
+```
+
+Aucun des deux ne touche à l'installation réelle : ils travaillent sur de faux dossiers de jeu
+dans `%TEMP%`. `test-bouton.ps1` instancie la vraie fenêtre sans l'afficher — c'est le seul moyen
+de prouver que le libellé suit la saisie, plutôt que de re-tester la logique d'installation.
 
 ## Construire
 
@@ -35,7 +50,7 @@ l'arborescence à partir de ces noms est fragile. Une archive préserve la struc
 
 ## Avant toute publication
 
-- [ ] Tester sur un dossier de jeu où le mod n'est **pas** déjà installé, sinon le test ne prouve rien.
+- [x] Tester sur un dossier de jeu où le mod n'est **pas** déjà installé — couvert par `test-installer.ps1`, qui repart d'un dossier vierge.
 - [ ] Vérifier la lecture NVDA de chaque contrôle, au clavier uniquement.
 - [ ] Inclure `LICENSE-BepInEx.txt` : BepInEx est sous LGPL-2.1, sa licence **doit** accompagner
       toute redistribution.
