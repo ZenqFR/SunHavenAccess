@@ -37,6 +37,7 @@
   <a href="#lecteur-ecran" data-section="lecteur-ecran"><span data-lang="fr">Lecteur d'écran</span><span data-lang="en" hidden>Screen reader</span></a>
   <a href="#deplacement" data-section="deplacement"><span data-lang="fr">Déplacement</span><span data-lang="en" hidden>Movement</span></a>
   <a href="#curseur-libre" data-section="curseur-libre"><span data-lang="fr">Curseur libre</span><span data-lang="en" hidden>Free cursor</span></a>
+  <a href="#placement" data-section="placement"><span data-lang="fr">Placement</span><span data-lang="en" hidden>Placing</span></a>
   <a href="#menus" data-section="menus"><span data-lang="fr">Menus</span><span data-lang="en" hidden>Menus</span></a>
   <a href="#scanner" data-section="scanner"><span data-lang="fr">Scanner</span><span data-lang="en" hidden>Scanner</span></a>
   <a href="#autres" data-section="autres"><span data-lang="fr">Autres</span><span data-lang="en" hidden>Other</span></a>
@@ -111,6 +112,7 @@
       <tr><td>Ctrl + : <span data-lang="fr">(ou Ctrl + / en QWERTY)</span><span data-lang="en" hidden>(or Ctrl + / on QWERTY)</span></td><td><span data-lang="fr">Simule un clic droit à la position actuelle de la souris.</span><span data-lang="en" hidden>Simulates a right click at the mouse's current position.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé décimal</span><span data-lang="en" hidden>Numpad period</span></td><td><span data-lang="fr">Active/désactive le <strong>curseur de case libre</strong> : les flèches le déplacent alors case par case n'importe où sur la carte, indépendamment de votre personnage. Voir <a href="#curseur-libre">Curseur de case libre</a>.</span><span data-lang="en" hidden>Toggles the <strong>free tile cursor</strong>: the arrow keys then move it tile by tile anywhere on the map, independently of your character. See <a href="#curseur-libre">Free tile cursor</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé multiplier</span><span data-lang="en" hidden>Numpad multiply</span></td><td><span data-lang="fr">Ramène le curseur libre sur la case où vous vous tenez.</span><span data-lang="en" hidden>Brings the free cursor back to the tile you're standing on.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé plus</span><span data-lang="en" hidden>Numpad plus</span></td><td><span data-lang="fr">Redit l'état du placement en cours : objet en main, emprise au sol et validité de l'emplacement visé. Voir <a href="#placement">Poser des meubles et des bâtiments</a>.</span><span data-lang="en" hidden>Re-reads the current placement state: item in hand, footprint and validity of the targeted spot. See <a href="#placement">Placing furniture and buildings</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Flèches (curseur libre actif)</span><span data-lang="en" hidden>Arrows (free cursor active)</span></td><td><span data-lang="fr">Déplacent le curseur d'une case. Un bip court signale le bord de la carte chargée. Les menus gardent la priorité sur les flèches.</span><span data-lang="en" hidden>Move the cursor by one tile. A short beep marks the edge of the loaded map. Menus keep priority over the arrow keys.</span></td></tr>
       <tr><td>C</td><td><span data-lang="fr">Ouvre le tchat/la console de debug du jeu. Remplace Entrée, sa touche par défaut, qui entrait en conflit avec la validation de menu du mod.</span><span data-lang="en" hidden>Opens the game's chat/debug console. Replaces Enter, its default key, which conflicted with the mod's menu confirmation.</span></td></tr>
     </tbody>
@@ -198,6 +200,25 @@
     <p class="note">
       <span data-lang="fr"><strong>Note technique.</strong> Sun Haven a un monde isométrique : une case ne mesure pas la même chose horizontalement et verticalement. La conversion exacte entre coordonnées de case et position dans le monde est tirée de la définition du jeu lui-même, et vit désormais à un seul endroit du mod — auparavant elle était recopiée à cinq endroits avec deux conventions contradictoires.</span>
       <span data-lang="en" hidden><strong>Technical note.</strong> Sun Haven has an isometric world: a tile doesn't measure the same horizontally and vertically. The exact conversion between tile coordinates and world position is taken from the game's own definition, and now lives in a single place in the mod — it was previously copy-pasted across five sites using two contradictory conventions.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="placement"><span data-lang="fr">Poser des meubles et des bâtiments</span><span data-lang="en" hidden>Placing furniture and buildings</span></h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Poser un objet était l'une des dernières actions entièrement fermées : un aperçu suit la souris et change de teinte — blanc si l'emplacement convient, rouge sinon. Sans la vue, on ne sait ni où vise l'aperçu, ni pourquoi le clic ne fait rien.</span>
+      <span data-lang="en" hidden>Placing an object was one of the last entirely closed actions: a preview follows the mouse and changes tint — white if the spot works, red otherwise. Without sight you know neither where the preview points nor why the click does nothing.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr">Prendre un objet posable en main <strong>annonce le mode placement</strong>, le nom de l'objet et, s'il fait plus d'une case, son <strong>emprise au sol</strong> (« emprise 3 sur 2 cases »).</span><span data-lang="en" hidden>Taking a placeable item in hand <strong>announces placement mode</strong>, the item's name and, if it covers more than one tile, its <strong>footprint</strong> ("footprint 3 by 2 tiles").</span></li>
+      <li><span data-lang="fr">Le <strong>curseur libre sert à viser</strong> : activez-le et les flèches déplacent l'emplacement visé, exactement comme elles déplacent le curseur de lecture. Vous entendez donc à la fois ce qu'il y a sur la case et si l'objet peut y aller.</span><span data-lang="en" hidden>The <strong>free cursor does the aiming</strong>: turn it on and the arrow keys move the targeted spot, exactly as they move the reading cursor. So you hear both what's on the tile and whether the object can go there.</span></li>
+      <li><span data-lang="fr">Le mod annonce <strong>« emplacement valide »</strong> ou <strong>« emplacement invalide »</strong> uniquement quand cela bascule. Balayer six cases invalides s'entend une fois, pas six — c'est d'ailleurs ce que perçoit un joueur voyant, dont l'œil n'est alerté que par le changement de teinte.</span><span data-lang="en" hidden>The mod announces <strong>"valid spot"</strong> or <strong>"invalid spot"</strong> only when it flips. Sweeping six invalid tiles is heard once, not six times — which is also what a sighted player perceives, since the eye is only drawn by the change of tint.</span></li>
+      <li><span data-lang="fr"><strong>Pavé plus</strong> redit à tout moment l'état complet : objet, emprise et validité de l'emplacement visé.</span><span data-lang="en" hidden><strong>Numpad plus</strong> re-reads the full state at any time: object, footprint and validity of the targeted spot.</span></li>
+      <li><span data-lang="fr">La touche de <strong>clic gauche</strong> (Pavé 5) pose l'objet à l'endroit visé.</span><span data-lang="en" hidden>The <strong>left click</strong> key (Numpad 5) places the object at the targeted spot.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr"><strong>Note technique.</strong> Le mod ne reprogramme pas le placement : le jeu recalcule déjà à chaque image la case visée et sa validité, et le mod se contente de les lire. Ce qui est annoncé est donc exactement ce que le jeu va faire, sans règle dupliquée qui pourrait diverger — et toutes les variantes (maisons, granges, arbres, papier peint) sont couvertes sans code particulier.</span>
+      <span data-lang="en" hidden><strong>Technical note.</strong> The mod doesn't reimplement placement: the game already recomputes the target tile and its validity every frame, and the mod merely reads them. What is announced is therefore exactly what the game will do, with no duplicated rule that could drift — and every variant (houses, barns, trees, wallpaper) is covered with no special-case code.</span>
     </p>
   </div>
 

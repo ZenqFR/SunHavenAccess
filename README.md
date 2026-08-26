@@ -51,6 +51,18 @@ Le mod ne savait lire qu'une seule case : celle devant le personnage. Explorer u
 
 </details>
 <details>
+<summary><strong>Poser des meubles et des bâtiments</strong></summary>
+
+Poser un objet était l'une des dernières actions entièrement fermées : un aperçu suit la souris et change de teinte — blanc si l'emplacement convient, rouge sinon. Sans la vue, on ne sait ni où vise l'aperçu, ni pourquoi le clic ne fait rien.
+
+- Prendre un objet posable en main annonce le **mode placement**, le nom de l'objet et, s'il dépasse une case, son **emprise au sol**.
+- Le **curseur libre sert à viser** : les flèches déplacent l'emplacement visé en même temps que le curseur de lecture, donc on entend à la fois ce qu'il y a sur la case et si l'objet peut y aller.
+- **« Emplacement valide » / « invalide » n'est dit qu'aux bascules.** Balayer six cases invalides s'entend une fois, pas six — c'est ce que perçoit un joueur voyant, dont l'œil n'est alerté que par le changement de teinte. L'annonce ne coupe jamais la description de case en cours.
+- Une touche dédiée redit l'état complet à la demande.
+- Le mod **ne reprogramme pas le placement** : le jeu recalcule déjà la case visée et sa validité à chaque image, et le mod se contente de les lire. Ce qui est annoncé est donc exactement ce que le jeu va faire, sans règle dupliquée qui pourrait diverger — et toutes les variantes (maisons, granges, arbres, papier peint) sont couvertes sans code particulier.
+
+</details>
+<details>
 <summary><strong>Menus, inventaire, dialogues</strong></summary>
 
 - Navigation clavier maison (flèches directionnelles + Entrée) pour les écrans du jeu qui n'utilisent jamais la sélection clavier native d'Unity (menu principal, options...) — construite en scannant les éléments interactifs visibles à l'écran.
@@ -335,6 +347,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Navigation directionnelle du sac à dos/équipement/barre d'action** (voir la carte "Menus, inventaire" plus haut) : voisin le plus proche calculé depuis les positions RectTransform réelles à l'écran — jamais vérifiable sans jeu ouvert, et jamais confirmé si la navigation native du jeu répond aussi (en partie ou en double) aux mêmes flèches sur cet écran.
 - **Carte du monde** (voir la carte dédiée plus bas) : correction d'une supposition précédente — `Wish.LocationName` répond bien à la sélection/au clic mais N'HÉRITE PAS de `Selectable`, donc invisible au scan générique de menu du mod ; pas "probablement déjà accessible" comme supposé avant, réellement injoignable au clavier sans les touches dédiées ajoutées. Le reste de l'écran (boutons fermer/changer de région) fonctionne lui via le système générique, ce sont de vrais `Selectable`.
 - **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
+- **Placement de meubles et bâtiments** (voir la carte dédiée plus haut) : la lecture de `canBePlaced` et `roundedMousePos` se fait par réflexion sur des champs privés/protégés, et le pilotage de la visée repose sur le fait que le jeu relit la position réelle de la souris à chaque image. Deux points à vérifier en jeu : que l'aperçu suit bien le curseur libre, et que le clic pose l'objet sur la case visée et non devant le personnage. Le mode manette (`MouseVisualManager.UsingController`) prend un tout autre chemin de calcul et n'est pas couvert.
 
 </details>
 
