@@ -64,6 +64,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> PlacementStatus;
         public static ConfigEntry<KeyCode> HerdStatus;
         public static ConfigEntry<KeyCode> BundleStatus;
+        public static ConfigEntry<KeyCode> BulletinBoardTasks;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -271,6 +272,10 @@ namespace SunHavenAccess.Config
             // ---- Paquets à compléter : musée, autel, aquarium (Info/BundleReader.cs) ----
             BundleStatus = Bind(config, section, "EtatPaquet", KeyCode.KeypadDivide,
                 "Paquet ouvert : dit ce qu'il manque encore, objet par objet, avec les quantités déjà déposées.", "Paquet : ce qu'il manque");
+
+            // ---- Panneaux d'affichage des villes (Info/BulletinBoardReader.cs) ----
+            BulletinBoardTasks = Bind(config, section, "PanneauAffichage", KeyCode.KeypadEnter,
+                "Près d'un panneau d'affichage : annonce les tâches du jour, si elles sont déjà acceptées, et leur récompense.", "Panneau d'affichage : tâches du jour");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

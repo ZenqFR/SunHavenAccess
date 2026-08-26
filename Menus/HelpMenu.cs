@@ -182,6 +182,9 @@ namespace SunHavenAccess.Menus
 
             $"La pêche. {K(ModConfig.FishingToneToggle)} active ou coupe le bip continu qui aide à viser pendant le mini-jeu.",
 
+            $"Les panneaux d'affichage des villes. Près d'un panneau, {K(ModConfig.BulletinBoardTasks)} annonce les tâches du jour, " +
+            "si vous les avez déjà acceptées, et ce qu'elles rapportent — sans avoir à ouvrir le panneau.",
+
             $"Vos quêtes et vos relations. {K(ModConfig.AnnounceQuests)} liste vos quêtes actives. " +
             $"{K(ModConfig.AnnounceRelationships)} donne vos relations avec les personnages.",
 

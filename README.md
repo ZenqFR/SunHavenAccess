@@ -60,6 +60,18 @@ Le mod ne savait lire qu'une seule case : celle devant le personnage. Explorer u
 
 </details>
 <details>
+<summary><strong>Les panneaux d'affichage des villes</strong></summary>
+
+Deux tâches renouvelées chaque jour par ville (une seule commission aux baraquements) : une source régulière d'argent, d'expérience et de relations. Une icône au-dessus du panneau dit d'un coup d'œil s'il reste quelque chose à prendre ; sans la vue, il fallait s'approcher, ouvrir, déplier chaque post-it, et espérer que quelque chose soit lu.
+
+- Une touche annonce, **près du panneau et sans l'ouvrir**, les tâches du jour : nom, énoncé, récompense garantie.
+- Chaque tâche dit si elle est **à prendre ou déjà acceptée** — la vraie question quand on repasse devant le lendemain.
+- Le panneau est nommé par sa ville en clair, pas par l'identifiant interne anglais collé (`GreatCity`), incompréhensible à l'oral.
+- Les tâches sont lues dans `BulletinBoardManager.GetTask` / `GetBarracksTask` (publiques) et non sur les post-its affichés : ceux-ci ne sont peuplés qu'à l'ouverture, alors que tout l'intérêt est de savoir avant. L'état « acceptée » vient de `GameSave.GetProgressBoolCharacter("Accepted{type}Task{n}")`, la même clé que celle du jeu.
+- `BulletinBoard.bulletinBoardType` étant privé, il est lu par réflexion, avec mise en cache et repli silencieux si le champ disparaît.
+
+</details>
+<details>
 <summary><strong>Les paquets à compléter (musée, autel, aquarium)</strong></summary>
 
 Le système de progression au long cours du jeu : on y dépose des objets précis, en quantité précise, sur toute une partie. Visuellement, un paquet est une grille d'emplacements montrant chacun l'objet attendu en grisé et un compteur. Sans la vue, impossible de savoir ce qu'un paquet réclamait encore — il fallait déposer au hasard et voir ce que le jeu acceptait.
@@ -383,6 +395,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Placement de meubles et bâtiments** (voir la carte dédiée plus haut) : la lecture de `canBePlaced` et `roundedMousePos` se fait par réflexion sur des champs privés/protégés, et le pilotage de la visée repose sur le fait que le jeu relit la position réelle de la souris à chaque image. Deux points à vérifier en jeu : que l'aperçu suit bien le curseur libre, et que le clic pose l'objet sur la case visée et non devant le personnage. Le mode manette (`MouseVisualManager.UsingController`) prend un tout autre chemin de calcul et n'est pas couvert.
 - **Animaux de la ferme** (voir la carte dédiée plus haut) : lit `AnimalPositionData` (`Hungry`, `hasPetted`, `droppedItem`, `name`) via `Animal.animalItem`, tout en public. Deux inconnues : qu'un animal du joueur ait bien toujours un `animalItem` renseigné (un animal sauvage ou d'ambiance n'en a probablement pas — d'où le compte séparé « état inconnu »), et que `droppedItem` signifie bien « produit disponible au sol » et non « a déjà été ramassé ».
 - **Paquets à compléter** (voir la carte dédiée plus haut) : lit `Slot.itemToAccept`/`numberOfItemToAccept` et `SlotItemData.amount` sur l'inventaire externe ouvert. Trois inconnues : que `itemToAccept` soit bien renseigné sur les emplacements de paquet (sinon on retombe sur l'icône grisée, puis sur le numéro d'objet), que l'aquarium et l'autel de Dynus utilisent bien le même mécanisme `onlyAcceptSpecificItem` que le musée, et qu'aucun coffre ordinaire du jeu n'emploie ce même mécanisme — auquel cas il serait annoncé à tort comme un paquet.
+- **Panneaux d'affichage** (voir la carte dédiée plus haut) : trois inconnues. Que `GetTask` renvoie bien les tâches du jour même quand le panneau n'a jamais été ouvert de la session (les post-its, eux, ne sont peuplés qu'à l'ouverture — c'est justement pourquoi on ne les lit pas). Que la clé de sauvegarde `Accepted{type}Task{n}` reflète l'acceptation immédiatement et pas seulement après un rechargement. Et que le rayon de détection de 8 unités corresponde à « je suis devant le panneau » sans capter celui d'une autre place.
 
 </details>
 

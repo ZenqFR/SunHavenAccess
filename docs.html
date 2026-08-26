@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 </head>
 <body>
 <a class="skip-link" href="#main"><span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span></a>
@@ -39,6 +39,7 @@
   <a href="#deplacement" data-section="deplacement"><span data-lang="fr">Déplacement</span><span data-lang="en" hidden>Movement</span></a>
   <a href="#curseur-libre" data-section="curseur-libre"><span data-lang="fr">Curseur libre</span><span data-lang="en" hidden>Free cursor</span></a>
   <a href="#placement" data-section="placement"><span data-lang="fr">Placement</span><span data-lang="en" hidden>Placing</span></a>
+  <a href="#panneaux" data-section="panneaux"><span data-lang="fr">Panneaux</span><span data-lang="en" hidden>Boards</span></a>
   <a href="#paquets" data-section="paquets"><span data-lang="fr">Paquets</span><span data-lang="en" hidden>Bundles</span></a>
   <a href="#animaux" data-section="animaux"><span data-lang="fr">Animaux</span><span data-lang="en" hidden>Animals</span></a>
   <a href="#menus" data-section="menus"><span data-lang="fr">Menus</span><span data-lang="en" hidden>Menus</span></a>
@@ -119,6 +120,7 @@
       <tr><td><span data-lang="fr">Pavé plus</span><span data-lang="en" hidden>Numpad plus</span></td><td><span data-lang="fr">Redit l'état du placement en cours : objet en main, emprise au sol et validité de l'emplacement visé. Voir <a href="#placement">Poser des meubles et des bâtiments</a>.</span><span data-lang="en" hidden>Re-reads the current placement state: item in hand, footprint and validity of the targeted spot. See <a href="#placement">Placing furniture and buildings</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé moins</span><span data-lang="en" hidden>Numpad minus</span></td><td><span data-lang="fr">Bilan des animaux présents : combien sont à nourrir, à caresser, combien ont laissé un produit au sol. Voir <a href="#animaux">Animaux de la ferme</a>.</span><span data-lang="en" hidden>Status of the animals present: how many need feeding, how many need petting, how many left a product on the ground. See <a href="#animaux">Farm animals</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé diviser</span><span data-lang="en" hidden>Numpad divide</span></td><td><span data-lang="fr">Devant un paquet ouvert (musée, autel, aquarium) : dit ce qu'il manque encore, objet par objet, avec les quantités déjà déposées. Voir <a href="#paquets">Les paquets à compléter</a>.</span><span data-lang="en" hidden>With a bundle open (museum, altar, aquarium): says what is still missing, item by item, with the amounts already given. See <a href="#paquets">Bundles to complete</a>.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé Entrée</span><span data-lang="en" hidden>Numpad Enter</span></td><td><span data-lang="fr">Près d'un panneau d'affichage : annonce les tâches du jour, si elles sont déjà acceptées, et leur récompense — sans avoir à ouvrir le panneau. Voir <a href="#panneaux">Les panneaux d'affichage</a>.</span><span data-lang="en" hidden>Near a bulletin board: announces the day's tasks, whether they're already accepted, and their reward — without opening the board. See <a href="#panneaux">Bulletin boards</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Flèches (curseur libre actif)</span><span data-lang="en" hidden>Arrows (free cursor active)</span></td><td><span data-lang="fr">Déplacent le curseur d'une case. Un bip court signale le bord de la carte chargée. Les menus gardent la priorité sur les flèches.</span><span data-lang="en" hidden>Move the cursor by one tile. A short beep marks the edge of the loaded map. Menus keep priority over the arrow keys.</span></td></tr>
       <tr><td>C</td><td><span data-lang="fr">Ouvre le tchat/la console de debug du jeu. Remplace Entrée, sa touche par défaut, qui entrait en conflit avec la validation de menu du mod.</span><span data-lang="en" hidden>Opens the game's chat/debug console. Replaces Enter, its default key, which conflicted with the mod's menu confirmation.</span></td></tr>
     </tbody>
@@ -225,6 +227,24 @@
     <p class="note">
       <span data-lang="fr"><strong>Note technique.</strong> Le mod ne reprogramme pas le placement : le jeu recalcule déjà à chaque image la case visée et sa validité, et le mod se contente de les lire. Ce qui est annoncé est donc exactement ce que le jeu va faire, sans règle dupliquée qui pourrait diverger — et toutes les variantes (maisons, granges, arbres, papier peint) sont couvertes sans code particulier.</span>
       <span data-lang="en" hidden><strong>Technical note.</strong> The mod doesn't reimplement placement: the game already recomputes the target tile and its validity every frame, and the mod merely reads them. What is announced is therefore exactly what the game will do, with no duplicated rule that could drift — and every variant (houses, barns, trees, wallpaper) is covered with no special-case code.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="panneaux"><span data-lang="fr">Les panneaux d'affichage</span><span data-lang="en" hidden>Bulletin boards</span></h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Chaque ville a son panneau, qui propose deux tâches renouvelées quotidiennement — un seul travail aux baraquements. C'est une source régulière d'argent, d'expérience et de relations. Visuellement, une icône au-dessus du panneau dit d'un coup d'œil s'il reste quelque chose à prendre. Sans la vue, il fallait s'en approcher, l'ouvrir, déplier chaque post-it, et espérer que quelque chose soit lu.</span>
+      <span data-lang="en" hidden>Every town has its board, offering two tasks refreshed daily — a single commission at the barracks. It's a steady source of money, experience and relationships. Visually, an icon above the board tells you at a glance whether anything is left to take. Without sight you had to walk up, open it, unfold each note, and hope something got read out.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Pavé Entrée</strong>, près d'un panneau, annonce les <strong>tâches du jour</strong> : leur nom, leur énoncé, et ce qu'elles rapportent.</span><span data-lang="en" hidden><strong>Numpad Enter</strong>, near a board, announces the <strong>day's tasks</strong>: their name, their brief, and what they pay.</span></li>
+      <li><span data-lang="fr">Chaque tâche dit si elle est <strong>« à prendre » ou « déjà acceptée »</strong> — la question qu'on se pose vraiment en repassant devant le panneau le lendemain.</span><span data-lang="en" hidden>Each task says whether it's <strong>"to take" or "already accepted"</strong> — the question you actually have when passing the board again the next day.</span></li>
+      <li><span data-lang="fr"><strong>Sans avoir à ouvrir le panneau.</strong> C'est justement avant de l'ouvrir qu'on veut savoir s'il vaut le détour.</span><span data-lang="en" hidden><strong>Without opening the board.</strong> Before opening it is exactly when you want to know whether it's worth the trip.</span></li>
+      <li><span data-lang="fr">Le panneau est nommé par sa ville, en clair : « la Grande Cité », « les baraquements » — et non par l'identifiant interne anglais collé, incompréhensible à l'oral.</span><span data-lang="en" hidden>The board is named by its town in plain words rather than by the run-together internal identifier, which makes no sense read aloud.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr"><strong>Note technique.</strong> Les tâches sont lues dans le gestionnaire du jeu et non sur les post-its affichés : ceux-ci ne sont remplis qu'à l'ouverture du panneau, alors que tout l'intérêt est de savoir sans ouvrir. Seules les récompenses garanties sont annoncées — celles au choix se décident au rendu, pas au moment de partir.</span>
+      <span data-lang="en" hidden><strong>Technical note.</strong> Tasks are read from the game's manager rather than from the displayed notes: those are only filled in when the board is opened, and the whole point is knowing without opening. Only guaranteed rewards are announced — the optional ones are picked at hand-in, not when setting off.</span>
     </p>
   </div>
 

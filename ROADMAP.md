@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 80 au point** (8 %).
+Mis à jour le 2026-08-26 — **6 sur 84 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 74 |
+| `[ ]` | À tester | jamais essayé en jeu | 78 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
@@ -206,6 +206,18 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
 - [ ] **village-courrier** — touche : —
   - Faire : Ouvrir une lettre dans la boîte aux lettres.
   - Attendu : Le contenu complet est lu : message, signature, post-scriptum.
+- [ ] **village-panneau-taches** ⚠️ — touche : Pavé Entrée
+  - Faire : S'approcher d'un panneau d'affichage SANS l'ouvrir, et demander les tâches.
+  - Attendu : Les deux tâches du jour sont annoncées avec leur nom, leur énoncé et leur récompense. C'est le point à vérifier : les tâches doivent être lisibles avant même d'avoir ouvert le panneau.
+- [ ] **village-panneau-acceptee** — touche : Pavé Entrée
+  - Faire : Accepter une tâche, puis redemander.
+  - Attendu : Elle passe de « à prendre » à « déjà acceptée », immédiatement et sans recharger la partie.
+- [ ] **village-panneau-loin** — touche : Pavé Entrée
+  - Faire : S'éloigner du panneau et réessayer ; puis essayer dans une ville sans panneau à proximité.
+  - Attendu : « Aucun panneau d'affichage à proximité. » Le rayon doit correspondre à « je suis devant », sans capter le panneau d'une autre place.
+- [ ] **village-panneau-baraquements** — touche : Pavé Entrée
+  - Faire : Essayer au panneau des baraquements.
+  - Attendu : Une seule commission est annoncée, pas deux tâches.
 - [ ] **village-quetes** — touche : G
   - Faire : Accepter une quête, la rendre, puis lister les quêtes actives.
   - Attendu : Acceptation et rendu sont annoncés d'eux-mêmes ; la liste donne nom, description et progression.
