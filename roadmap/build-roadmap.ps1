@@ -57,7 +57,7 @@ foreach ($s in $order) {
     Add ('      <li class="legend-' + $s + '"><strong><span data-lang="fr">' + (Esc $l.fr) + '</span><span data-lang="en" hidden>' + (Esc $l.en) + '</span></strong> — <span data-lang="fr">' + (Esc $l.hint.fr) + '&nbsp;: ' + $counts[$s] + '</span><span data-lang="en" hidden>' + (Esc $l.hint.en) + ': ' + $counts[$s] + '</span></li>')
 }
 Add '    </ul>'
-Add '    <p class="note"><span data-lang="fr">« Au point » veut dire : essayé en jeu par un joueur aveugle, et le comportement attendu observé. Rien n''y passe sur la seule foi du code — je ne peux ni voir ni entendre le jeu.</span><span data-lang="en" hidden>"Solid" means: tried in game by a blind player, with the expected behaviour observed. Nothing reaches it on the strength of the code alone — I can neither see nor hear the game.</span></p>'
+Add '    <p class="note"><span data-lang="fr">« Au point » veut dire : essayé en jeu, avec le comportement attendu observé. Rien n''y passe sans un essai réel — c''est le seul moyen de le savoir. Chaque retour fait avancer cette liste et affine l''accessibilité du mod.</span><span data-lang="en" hidden>"Solid" means: tried in game, with the expected behaviour observed. Nothing gets there without a real trial — that is the only way to know. Every report moves this list along and sharpens the mod''s accessibility.</span></p>'
 Add '  </div>'
 Add ''
 
@@ -164,8 +164,8 @@ $nav
 </header>
 
 <p class="intro">
-  <span data-lang="fr">Le mod est écrit en décompilant Sun Haven et en raisonnant dessus, par une IA qui ne peut ni voir ni entendre le jeu. <strong>Seul un essai réel peut confirmer qu'une fonctionnalité marche.</strong> Les étapes suivent la progression d'une partie : on vérifie chaque chose au moment où on la rencontre, plutôt que de tout passer en revue d'un bloc.</span>
-  <span data-lang="en" hidden>The mod is written by decompiling Sun Haven and reasoning about it, by an AI that can neither see nor hear the game. <strong>Only a real trial can confirm a feature works.</strong> The stages follow a playthrough: you check each thing as you meet it, rather than sweeping the whole list at once.</span>
+  <span data-lang="fr">Le mod couvre désormais tous les grands systèmes du jeu, mais <strong>à ce stade tout reste à éprouver en conditions réelles</strong> : chaque fonctionnalité listée ici attend d'être essayée. Plus il y a de tests, plus l'accessibilité se précise — un seul retour transforme un « ça devrait marcher » en « ça marche », ou dit exactement ce qu'il faut corriger. Les étapes suivent la progression d'une partie : on vérifie chaque chose au moment où on la rencontre, plutôt que de tout passer en revue d'un bloc.</span>
+  <span data-lang="en" hidden>The mod now covers every major system in the game, but <strong>at this stage everything still needs proving in real conditions</strong>: every feature listed here is waiting to be tried. The more testing it gets, the sharper the accessibility becomes — a single report turns "it should work" into "it works", or says exactly what needs fixing. The stages follow a playthrough: you check each thing as you meet it, rather than sweeping the whole list at once.</span>
 </p>
 
 <main id="main">
