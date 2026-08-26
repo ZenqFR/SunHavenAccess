@@ -83,6 +83,17 @@ Le système de progression au long cours du jeu : on y dépose des objets préci
 
 </details>
 <details>
+<summary><strong>Montures</strong></summary>
+
+À cheval, on se déplace nettement plus vite mais les outils ne s'utilisent plus. Sans la vue, le seul indice était que les actions cessaient de répondre — indiscernable d'une panne. Le sifflet servant à la fois à monter et à descendre, il est aussi facile de se retrouver dans l'état inverse de celui voulu.
+
+- Annonce « en selle » et « à pied » à chaque changement, sans interrompre la parole en cours.
+- L'état est **relu à chaque image** plutôt qu'abonné à `Player.onChangeMount` : cet évènement est un champ d'INSTANCE, et l'instance de joueur est recréée à chaque changement de carte — un abonnement s'y perdrait silencieusement au premier portail franchi.
+- La première lecture d'une partie est enregistrée sans être annoncée : commenter un état qui n'a pas changé n'apprend rien.
+- Le refus de monter en intérieur n'est pas traité ici : le jeu envoie déjà une notification, lue par le patch générique.
+
+</details>
+<details>
 <summary><strong>Énergie</strong></summary>
 
 Ce que l'interface appelle « mana » est la jauge que consomment les outils : à zéro, la pioche, la houe et l'arrosoir cessent d'agir. Un joueur voyant voit la barre se vider et rentre se coucher avant la panne ; sans la vue, l'outil s'arrête d'un coup sans que rien n'explique pourquoi — un symptôme qui ressemble à un bug du mod plutôt qu'à une mécanique du jeu.

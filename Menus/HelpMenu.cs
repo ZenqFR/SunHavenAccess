@@ -139,6 +139,9 @@ namespace SunHavenAccess.Menus
             $"L'heure et votre état. {K(ModConfig.Clock)} donne l'heure, le jour, la saison et la météo. " +
             $"{K(ModConfig.Status)} donne votre santé, votre énergie et votre argent.",
 
+            "Les montures. Le sifflet sert à la fois à monter et à descendre : le mod annonce « en selle » ou « à pied » à chaque changement. " +
+            "À cheval on va nettement plus vite, mais les outils ne s'utilisent plus. Monter est refusé en intérieur, et le jeu le dit lui-même.",
+
             "L'énergie. C'est elle que consomment vos outils : à zéro, la pioche, la houe et l'arrosoir cessent d'agir. " +
             "Le mod prévient à la moitié, au quart, presque à sec, puis à l'épuisement — sans quoi l'outil s'arrêterait " +
             "d'un coup sans que rien n'explique pourquoi. Une nuit de sommeil la restaure.",

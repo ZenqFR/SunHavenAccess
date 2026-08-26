@@ -240,6 +240,15 @@
         "en": "Talking, buying, getting mail, following your quests."
       },
       "items": [
+        { "id": "monture", "key": "—", "status": "todo",
+          "action":   { "fr": "Utiliser le sifflet pour monter, puis à nouveau pour descendre.", "en": "Use the whistle to mount, then again to dismount." },
+          "expected": { "fr": "« En selle » puis « à pied » sont annoncés à chaque changement, sans couper l'annonce en cours.", "en": "\"Mounted\" then \"on foot\" are announced at each change, without cutting off what is being said." } },
+        { "id": "monture-interieur", "key": "—", "status": "todo",
+          "action":   { "fr": "Essayer de monter à l'intérieur d'un bâtiment.", "en": "Try to mount inside a building." },
+          "expected": { "fr": "Le refus du jeu est lu (c'est une notification), et aucun « en selle » n'est annoncé à tort.", "en": "The game's refusal is read (it's a notification), and no false \"mounted\" is announced." } },
+        { "id": "monture-carte", "key": "—", "status": "todo",
+          "action":   { "fr": "Monter, franchir un portail vers une autre carte, puis descendre.", "en": "Mount, cross a portal to another map, then dismount." },
+          "expected": { "fr": "Les annonces continuent après le changement de carte — c'est là que le suivi pourrait se perdre.", "en": "The announcements keep working after the map change — that's where the tracking could get lost." } },
         { "id": "npc-proche", "key": "N", "status": "todo",
           "action":   { "fr": "Appuyer sur N plusieurs fois près de personnages.", "en": "Press N repeatedly near characters." },
           "expected": { "fr": "On passe d'un personnage proche au suivant, avec nom, direction et distance.", "en": "You cycle through nearby characters, with name, bearing and distance." } },

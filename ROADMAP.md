@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 87 au point** (7 %).
+Mis à jour le 2026-08-26 — **6 sur 90 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 81 |
+| `[ ]` | À tester | jamais essayé en jeu | 84 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
@@ -200,6 +200,15 @@ Le curseur libre est l'outil qui ouvre l'exploration. Son premier test vérifie 
 
 Parler, acheter, recevoir du courrier, suivre ses quêtes.
 
+- [ ] **village-monture** — touche : —
+  - Faire : Utiliser le sifflet pour monter, puis à nouveau pour descendre.
+  - Attendu : « En selle » puis « à pied » sont annoncés à chaque changement, sans couper l'annonce en cours.
+- [ ] **village-monture-interieur** — touche : —
+  - Faire : Essayer de monter à l'intérieur d'un bâtiment.
+  - Attendu : Le refus du jeu est lu (c'est une notification), et aucun « en selle » n'est annoncé à tort.
+- [ ] **village-monture-carte** — touche : —
+  - Faire : Monter, franchir un portail vers une autre carte, puis descendre.
+  - Attendu : Les annonces continuent après le changement de carte — c'est là que le suivi pourrait se perdre.
 - [ ] **village-npc-proche** — touche : N
   - Faire : Appuyer sur N plusieurs fois près de personnages.
   - Attendu : On passe d'un personnage proche au suivant, avec nom, direction et distance.
