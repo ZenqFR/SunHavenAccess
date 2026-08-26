@@ -87,7 +87,7 @@ Savoir où on est et ce qu'on a devant soi. C'est le socle : tout le reste s'app
   - Attendu : Heure, jour, saison et météo.
 - [ ] **premiers-pas-statut** — touche : H
   - Faire : Appuyer sur H.
-  - Attendu : Santé, énergie et argent.
+  - Attendu : Santé, mana et bourse : pièces, plus orbes et tickets si vous en avez. Les monnaies à zéro sont passées sous silence, sauf les pièces.
 - [ ] **premiers-pas-notifications** — touche : —
   - Faire : Provoquer un message du jeu (entrer dans une boutique fermée, action impossible).
   - Attendu : La bulle éphémère en haut à gauche est lue automatiquement.
@@ -125,14 +125,14 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
 
 La boucle quotidienne : labourer, planter, arroser, récolter.
 
-- [ ] **ferme-energie-alertes** ⚠️ — touche : —
-  - Faire : Miner ou labourer jusqu'à épuiser l'énergie.
+- [ ] **ferme-mana-alertes** ⚠️ — touche : —
+  - Faire : Miner ou labourer jusqu'à épuiser le mana.
   - Attendu : Une alerte à la moitié, au quart, presque à sec, puis à l'épuisement. Chacune n'est dite qu'une fois, et n'interrompt pas l'annonce en cours.
-- [ ] **ferme-energie-pas-de-spam** — touche : —
-  - Faire : Sous un seuil, consommer et regagner un peu d'énergie plusieurs fois de suite.
+- [ ] **ferme-mana-pas-de-spam** — touche : —
+  - Faire : Sous un seuil, consommer et regagner un peu de mana plusieurs fois de suite.
   - Attendu : L'alerte ne se répète pas à chaque oscillation. Elle ne revient qu'après une vraie remontée au-dessus du seuil.
-- [ ] **ferme-energie-lendemain** — touche : —
-  - Faire : Épuiser l'énergie, dormir, puis retravailler le lendemain.
+- [ ] **ferme-mana-lendemain** — touche : —
+  - Faire : Épuiser le mana, dormir, puis retravailler le lendemain.
   - Attendu : Les alertes recommencent normalement au fil de la nouvelle journée — l'état de la veille ne les bloque pas.
 - [ ] **ferme-agriculture** ⚠️ — touche : —
   - Faire : Labourer, arroser, planter, récolter.

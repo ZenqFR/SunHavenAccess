@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=11">
+<link rel="stylesheet" href="style.css?v=12">
 </head>
 <body>
 <a class="skip-link" href="#main"><span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span></a>
@@ -92,7 +92,7 @@
       <tr><td>O</td><td><span data-lang="fr">Annonce l'heure, le jour de la semaine, le jour du mois, la saison, l'année et la météo actuelle.</span><span data-lang="en" hidden>Announces the time, day of the week, day of the month, season, year, and current weather.</span></td></tr>
       <tr><td>N</td><td><span data-lang="fr">Passe au personnage proche suivant et l'annonce (nom, direction, distance).</span><span data-lang="en" hidden>Moves to the next nearby character and announces it (name, direction, distance).</span></td></tr>
       <tr><td>B</td><td><span data-lang="fr">Répète la dernière chose annoncée par le mod.</span><span data-lang="en" hidden>Repeats the last thing the mod announced.</span></td></tr>
-      <tr><td>H</td><td><span data-lang="fr">Annonce votre santé et votre mana actuels.</span><span data-lang="en" hidden>Announces your current health and mana.</span></td></tr>
+      <tr><td>H</td><td><span data-lang="fr">Annonce votre santé, votre mana et votre bourse : pièces, plus orbes et tickets si vous en avez. Voir <a href="#mana">Le mana</a>.</span><span data-lang="en" hidden>Announces your health, your mana and your purse: coins, plus orbs and tickets if you have any. See <a href="#mana">Mana</a>.</span></td></tr>
       <tr><td>G</td><td><span data-lang="fr">Annonce toutes vos quêtes actives (voir <a href="#autres">Quêtes</a> plus bas).</span><span data-lang="en" hidden>Announces all your active quests (see <a href="#autres">Quests</a> below).</span></td></tr>
       <tr><td>V</td><td><span data-lang="fr">Annonce vos relations avec les PNJ romançables (voir <a href="#autres">Relations &amp; compétences</a> plus bas).</span><span data-lang="en" hidden>Announces your relationships with romanceable NPCs (see <a href="#autres">Relationships &amp; skills</a> below).</span></td></tr>
       <tr><td>U</td><td><span data-lang="fr">Annonce vos niveaux de compétence (voir <a href="#autres">Relations &amp; compétences</a> plus bas).</span><span data-lang="en" hidden>Announces your skill levels (see <a href="#autres">Relationships &amp; skills</a> below).</span></td></tr>
@@ -378,7 +378,7 @@
   </li>
 
   <li>
-  <h3 class="sub-title">⚡ <span data-lang="fr">Énergie</span><span data-lang="en" hidden>Energy</span></h3>
+  <h3 class="sub-title" id="mana">⚡ <span data-lang="fr">Le mana</span><span data-lang="en" hidden>Mana</span></h3>
   <div class="card">
     <p>
       <span data-lang="fr">Ce que l'interface de Sun Haven appelle « mana » est la jauge que consomment vos outils : à zéro, la pioche, la houe et l'arrosoir cessent simplement d'agir. Un joueur voyant voit la barre se vider et rentre se coucher avant la panne.</span>
@@ -387,8 +387,8 @@
     <ul>
       <li><span data-lang="fr">Le mod prévient à <strong>la moitié</strong>, au <strong>quart</strong>, <strong>presque à sec</strong>, puis à l'<strong>épuisement</strong>. Sans ça, l'outil s'arrête d'un coup sans que rien n'explique pourquoi — un symptôme qui ressemble à un bug du mod plutôt qu'à une mécanique du jeu.</span><span data-lang="en" hidden>The mod warns at <strong>half</strong>, at <strong>a quarter</strong>, <strong>nearly empty</strong>, then at <strong>exhaustion</strong>. Without it the tool stops dead with nothing to explain why — a symptom that looks like a mod bug rather than a game mechanic.</span></li>
       <li><span data-lang="fr">Les seuils sont volontairement espacés : prévenir tous les dix pour cent transformerait une séance de minage en compte à rebours permanent. Ceux retenus correspondent aux moments où la décision change.</span><span data-lang="en" hidden>The thresholds are deliberately far apart: warning every ten percent would turn a mining session into a permanent countdown. These match the points where the decision actually changes.</span></li>
-      <li><span data-lang="fr">Chaque alerte ne se dit qu'<strong>au franchissement</strong>, et ne coupe jamais l'annonce en cours. Une petite marge de remontée évite qu'une énergie oscillant autour d'un seuil ne réannonce sans fin.</span><span data-lang="en" hidden>Each warning is spoken <strong>only on crossing</strong>, and never interrupts what is being said. A small recovery margin stops energy hovering around a threshold from announcing endlessly.</span></li>
-      <li><span data-lang="fr">La touche <strong>H</strong> donne à tout moment le chiffre exact, avec la santé et l'argent.</span><span data-lang="en" hidden>The <strong>H</strong> key gives the exact figure at any time, along with health and money.</span></li>
+      <li><span data-lang="fr">Chaque alerte ne se dit qu'<strong>au franchissement</strong>, et ne coupe jamais l'annonce en cours. Une petite marge de remontée évite qu'un mana oscillant autour d'un seuil ne réannonce sans fin.</span><span data-lang="en" hidden>Each warning is spoken <strong>only on crossing</strong>, and never interrupts what is being said. A small recovery margin stops energy hovering around a threshold from announcing endlessly.</span></li>
+      <li><span data-lang="fr">La touche <strong>H</strong> donne à tout moment le chiffre exact, avec la santé et la bourse. Le mod garde le mot « mana » du jeu plutôt que d'inventer « énergie » : c'est celui qu'emploient l'interface et le wiki, et en changer obligerait à traduire mentalement chaque aide extérieure.</span><span data-lang="en" hidden>The <strong>H</strong> key gives the exact figure at any time, along with health and purse. The mod keeps the game's word "mana" rather than inventing "energy": it is what the interface and the wiki use, and changing it would mean mentally translating every outside guide.</span></li>
     </ul>
   </div>
   </li>

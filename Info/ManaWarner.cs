@@ -5,16 +5,20 @@ using SunHavenAccess.Speech;
 namespace SunHavenAccess.Info
 {
     /// <summary>
-    /// Alerte quand l'énergie baisse.
+    /// Alerte quand le mana baisse.
     ///
-    /// Dans Sun Haven, ce que l'interface appelle « mana » est la jauge que consomment les outils :
-    /// à zéro, la pioche, la houe et l'arrosoir cessent simplement d'agir. Un joueur voyant voit la
-    /// barre se vider et rentre se coucher avant la panne ; sans la vue, l'outil s'arrête d'un coup
-    /// sans que rien n'explique pourquoi — le pire des symptômes, puisqu'il ressemble à un bug du
-    /// mod plutôt qu'à une mécanique du jeu.
+    /// Le « mana » de Sun Haven n'est pas une réserve de sorts : c'est la jauge que consomment les
+    /// outils, et à zéro la pioche, la houe et l'arrosoir cessent simplement d'agir. Un joueur
+    /// voyant voit la barre se vider et rentre se coucher avant la panne ; sans la vue, l'outil
+    /// s'arrête d'un coup sans que rien n'explique pourquoi — le pire des symptômes, puisqu'il
+    /// ressemble à un bug du mod plutôt qu'à une mécanique du jeu.
     ///
-    /// La santé en combat était déjà annoncée progressivement ; l'énergie ne l'était qu'à la
-    /// demande. C'est pourtant elle qui décide de la longueur d'une journée de travail.
+    /// On garde le mot du jeu plutôt que de parler d'« énergie » : c'est celui qu'emploient
+    /// l'interface et le wiki, et en inventer un autre obligerait à traduire mentalement chaque
+    /// fois qu'on lit une aide extérieure.
+    ///
+    /// La santé en combat était déjà annoncée progressivement ; le mana ne l'était qu'à la
+    /// demande. C'est pourtant lui qui décide de la longueur d'une journée de travail.
     /// </summary>
     public static class ManaWarner
     {
@@ -26,14 +30,14 @@ namespace SunHavenAccess.Info
         /// </summary>
         private static readonly (float Fraction, string Message)[] Thresholds =
         {
-            (0.50f, "Énergie à la moitié."),
-            (0.25f, "Énergie à un quart."),
-            (0.10f, "Énergie presque épuisée."),
-            (0.00f, "Plus d'énergie : les outils ne fonctionnent plus."),
+            (0.50f, "Mana à la moitié."),
+            (0.25f, "Mana à un quart."),
+            (0.10f, "Mana presque épuisé."),
+            (0.00f, "Plus de mana : les outils ne fonctionnent plus."),
         };
 
         /// <summary>
-        /// Dernier seuil franchi, en indice dans le tableau ; -1 quand l'énergie est au-dessus de
+        /// Dernier seuil franchi, en indice dans le tableau ; -1 quand le mana est au-dessus de
         /// tous. Mémorisé pour n'annoncer qu'au FRANCHISSEMENT : la valeur est relue à chaque
         /// image, et répéter l'alerte tant qu'on reste sous le seuil rendrait la synthèse
         /// inutilisable.
@@ -41,9 +45,9 @@ namespace SunHavenAccess.Info
         private static int _lastCrossed = -1;
 
         /// <summary>
-        /// Marge de remontée avant de réarmer un seuil. Sans elle, une énergie qui oscille juste
-        /// autour d'un seuil — ce qui arrive en permanence, puisque les outils la consomment par
-        /// petits paquets et que certains objets la rendent — réannoncerait sans fin.
+        /// Marge de remontée avant de réarmer un seuil. Sans elle, un mana qui oscille juste
+        /// autour d'un seuil — ce qui arrive en permanence, puisque les outils le consomment par
+        /// petits paquets et que certains objets le rendent — réannoncerait sans fin.
         /// </summary>
         private const float Hysteresis = 0.03f;
 
@@ -57,7 +61,7 @@ namespace SunHavenAccess.Info
             catch { return; }
 
             // Écran de chargement, personnage pas encore initialisé : une valeur aberrante ne doit
-            // pas déclencher « plus d'énergie » au moment où la partie s'ouvre.
+            // pas déclencher « plus de mana » au moment où la partie s'ouvre.
             if (float.IsNaN(fraction) || fraction < 0f || fraction > 1.5f) return;
 
             int crossed = CurrentThreshold(fraction);
@@ -73,14 +77,14 @@ namespace SunHavenAccess.Info
 
             if (crossed < _lastCrossed)
             {
-                // L'énergie remonte : on réarme, mais seulement une fois la marge franchie.
+                // Le mana remonte : on réarme, mais seulement une fois la marge franchie.
                 if (_lastCrossed >= 0 && fraction < Thresholds[_lastCrossed].Fraction + Hysteresis) return;
                 _lastCrossed = crossed;
             }
         }
 
-        // Pas de remise à zéro explicite au changement de journée : l'énergie y remonte au
-        // maximum, ce qui la fait repasser au-dessus de tous les seuils et réarme le suivi.
+        // Pas de remise à zéro explicite au changement de journée : le mana y remonte au
+        // maximum, ce qui le fait repasser au-dessus de tous les seuils et réarme le suivi.
 
         /// <summary>Indice du seuil le plus bas actuellement franchi, ou -1 si aucun.</summary>
         private static int CurrentThreshold(float fraction)

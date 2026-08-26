@@ -137,14 +137,14 @@ namespace SunHavenAccess.Menus
             $"{K(ModConfig.ReadFullDescription)} relit la description complète du dernier objet annoncé.",
 
             $"L'heure et votre état. {K(ModConfig.Clock)} donne l'heure, le jour, la saison et la météo. " +
-            $"{K(ModConfig.Status)} donne votre santé, votre énergie et votre argent.",
+            $"{K(ModConfig.Status)} donne votre santé, votre mana et votre bourse — pièces, et orbes ou tickets si vous en avez.",
 
             "Les montures. Le sifflet sert à la fois à monter et à descendre : le mod annonce « en selle » ou « à pied » à chaque changement. " +
             "À cheval on va nettement plus vite, mais les outils ne s'utilisent plus. Monter est refusé en intérieur, et le jeu le dit lui-même.",
 
-            "L'énergie. C'est elle que consomment vos outils : à zéro, la pioche, la houe et l'arrosoir cessent d'agir. " +
-            "Le mod prévient à la moitié, au quart, presque à sec, puis à l'épuisement — sans quoi l'outil s'arrêterait " +
-            "d'un coup sans que rien n'explique pourquoi. Une nuit de sommeil la restaure.",
+            "Le mana. Ce n'est pas une réserve de sorts : c'est la jauge que consomment vos outils, et à zéro la pioche, " +
+            "la houe et l'arrosoir cessent d'agir. Le mod prévient à la moitié, au quart, presque à sec, puis à l'épuisement — " +
+            "sans quoi l'outil s'arrêterait d'un coup sans que rien n'explique pourquoi. Une nuit de sommeil le restaure.",
 
             $"Explorer sans bouger : le curseur de case libre. {K(ModConfig.FreeCursorToggle)} l'active. " +
             "Les flèches le déplacent alors case par case n'importe où sur la carte, et chaque case est décrite avec sa direction et sa distance. " +
