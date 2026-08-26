@@ -90,6 +90,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.ReadFullDescription.Value)) AnnounceFullDescription();
             if (Pressed(ModConfig.FreeCursorToggle.Value)) FreeTileCursor.Toggle();
             if (Pressed(ModConfig.FreeCursorRecenter.Value)) FreeTileCursor.Recenter();
+            if (Pressed(ModConfig.PlacementStatus.Value)) PlacementAssistant.AnnounceStatus();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
@@ -364,6 +365,9 @@ namespace SunHavenAccess.Input
                 $"{Strings.KeyName(ModConfig.FreeCursorToggle.Value)}, activer le curseur de case libre : les flèches le déplacent alors partout sur la carte, " +
                 $"Origine décrit la case visée, Contrôle plus Origine vous y conduit, et le clic gauche y agit à distance. " +
                 $"{Strings.KeyName(ModConfig.FreeCursorRecenter.Value)}, ramener le curseur sur vous. " +
+                $"Pour poser un meuble ou un bâtiment : gardez l'objet en main, activez le curseur libre pour viser, " +
+                $"et le mod annonce dès que l'emplacement devient valide ou invalide. " +
+                $"{Strings.KeyName(ModConfig.PlacementStatus.Value)}, redire l'état du placement en cours. " +
                 $"Dans l'inventaire : {Strings.KeyName(ModConfig.SortBackpack.Value)}, trier le sac. " +
                 $"{Strings.KeyName(ModConfig.AnnounceContents.Value)}, résumé du contenu. " +
                 $"{Strings.KeyName(ModConfig.StoreInChests.Value)}, ranger dans les coffres proches. " +

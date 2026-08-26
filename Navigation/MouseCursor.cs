@@ -51,9 +51,19 @@ namespace SunHavenAccess.Navigation
         }
 
         /// <summary>Appelé chaque frame : replace le curseur si la case visée a changé.</summary>
+        /// <summary>
+        /// Cède le pointeur à un autre module tant que c'est à true.
+        ///
+        /// Le curseur souris directionnel repointe sur la case devant le personnage dès que
+        /// celui-ci bouge ou se tourne. Pendant un placement piloté au curseur libre, ce
+        /// repointage arracherait la visée à chaque pas — deux modules écrivant la même position
+        /// Windows, le dernier gagnant de façon imprévisible. Un seul propriétaire à la fois.
+        /// </summary>
+        public static bool ExternalControl { get; set; }
+
         public static void Tick()
         {
-            if (!_enabled) return;
+            if (!_enabled || ExternalControl) return;
             Player player = Player.Instance;
             if (player == null) return;
 

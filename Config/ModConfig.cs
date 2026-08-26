@@ -61,6 +61,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> ReadFullDescription;
         public static ConfigEntry<KeyCode> FreeCursorToggle;
         public static ConfigEntry<KeyCode> FreeCursorRecenter;
+        public static ConfigEntry<KeyCode> PlacementStatus;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -254,6 +255,12 @@ namespace SunHavenAccess.Config
                 "Active ou désactive le curseur de case libre, déplaçable aux flèches partout sur la carte.", "Activer/désactiver le curseur libre");
             FreeCursorRecenter = Bind(config, section, "CurseurLibreRecentrer", KeyCode.KeypadMultiply,
                 "Ramène le curseur libre sur la case où vous vous tenez.", "Curseur libre : recentrer sur soi");
+
+            // ---- Placement de meubles et bâtiments (Info/PlacementAssistant.cs) ----
+            // La validité de l'emplacement ne s'annonce automatiquement qu'à chaque bascule ;
+            // cette touche la redemande, ainsi que l'objet et son emprise au sol.
+            PlacementStatus = Bind(config, section, "EtatPlacement", KeyCode.KeypadPlus,
+                "Redit où en est le placement en cours : objet, emprise et validité de l'emplacement visé.", "Placement : état courant");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,
