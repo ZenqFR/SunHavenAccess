@@ -91,8 +91,14 @@ namespace SunHavenAccess.Config
             // une émote du personnage à chaque pression.
             Help = Bind(config, section, "AideV3", KeyCode.F1,
                 "Ouvre le menu d'aide, parcourable rubrique par rubrique aux flèches.", "Aide");
-            DescribeFront = Bind(config, section, "CaseDevantVousV2", KeyCode.F10,
-                "Décrit la case devant vous (terrain, objet, PNJ...).", "Décrire la case devant vous");
+            // Non assignée par défaut, sur retour d'usage : la case devant soi est DÉJÀ décrite à
+            // chaque pas, et la touche de répétition redit la dernière annonce quand on est à
+            // l'arrêt. Cette touche-ci ne servait donc qu'à réentendre ce qu'on venait d'entendre,
+            // pour le prix d'une touche de fonction. Elle reste dans le menu des raccourcis pour
+            // qui la veut. La clé de config est renommée : BepInEx ne réécrit pas un défaut déjà
+            // enregistré, seul un nouveau nom impose la nouvelle valeur.
+            DescribeFront = Bind(config, section, "CaseDevantVousV3", KeyCode.None,
+                "Décrit la case devant vous (terrain, objet, PNJ...). Non assignée par défaut : cette case est déjà décrite à chaque pas.", "Décrire la case devant vous");
             Position = Bind(config, section, "PositionV2", KeyCode.P,
                 "Annonce votre position et la direction regardée.", "Annoncer votre position");
             NextNpc = Bind(config, section, "PersonnageProcheV2", KeyCode.N,
@@ -141,8 +147,10 @@ namespace SunHavenAccess.Config
                 "Élément suivant du scanner. Avec Ctrl : catégorie suivante.", "Scanner : élément suivant (Ctrl = catégorie suivante)");
             ScannerNearest = Bind(config, section, "ScannerOrigine", KeyCode.Home,
                 "Annonce l'élément actuellement sélectionné par le scanner (ou le plus proche si aucun). Avec Ctrl : lance un cheminement automatique vers lui (Échap pour annuler).", "Scanner : annoncer l'élément sélectionné (Ctrl = s'y rendre)");
-            ScannerCount = Bind(config, section, "ScannerFin", KeyCode.End,
-                "Annonce le nombre d'éléments trouvés dans la catégorie actuelle du scanner.", "Scanner : annoncer le nombre trouvé");
+            // Non assignée par défaut : changer de catégorie annonce déjà le nombre trouvé, donc
+            // cette touche ne fait que le redemander. Conservée dans la liste des raccourcis.
+            ScannerCount = Bind(config, section, "ScannerFinV2", KeyCode.None,
+                "Annonce le nombre d'éléments trouvés dans la catégorie actuelle du scanner. Non assignée par défaut : ce nombre est déjà annoncé au changement de catégorie.", "Scanner : annoncer le nombre trouvé");
 
             // Le tchat/console de debug du jeu (Quantum Console) s'ouvrait par défaut sur Entrée,
             // en plein conflit avec la validation de menu/dialogue du mod — voir

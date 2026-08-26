@@ -121,14 +121,25 @@ namespace SunHavenAccess.Menus
             Strings.KeyName(entry.Value);
 
         /// <summary>
+        /// Mentionne une touche seulement si elle est assignée.
+        ///
+        /// Certaines actions sont livrées sans touche parce qu'elles font doublon avec un
+        /// comportement automatique. Les annoncer quand même donnerait « non assignée décrit la
+        /// case que vous regardez » — une phrase qui n'a aucun sens et laisse croire à un défaut.
+        /// </summary>
+        private static string Optional(BepInEx.Configuration.ConfigEntry<KeyCode> entry, string lead) =>
+            entry.Value == KeyCode.None ? string.Empty : lead + Strings.KeyName(entry.Value) + ".";
+
+        /// <summary>
         /// Une rubrique par sujet, formulée comme une réponse à une question qu'on se pose en
         /// jouant. Chaque rubrique doit se suffire à elle-même : on peut arriver dessus
         /// directement, sans avoir entendu les précédentes.
         /// </summary>
         private static List<string> BuildEntries() => new List<string>
         {
-            $"Savoir ce qu'il y a devant vous. {K(ModConfig.DescribeFront)} décrit la case que vous regardez. " +
-            $"En marchant, elle est décrite automatiquement à chaque pas ; {K(ModConfig.ToggleVerbosity)} coupe ou rétablit cette annonce.",
+            "Savoir ce qu'il y a devant vous. La case que vous regardez est décrite automatiquement à chaque pas. " +
+            $"{K(ModConfig.ToggleVerbosity)} coupe ou rétablit cette annonce, et {K(ModConfig.Repeat)} redit la dernière à l'arrêt." +
+            Optional(ModConfig.DescribeFront, " Une touche dédiée peut aussi la redemander : "),
 
             $"Savoir où vous êtes. {K(ModConfig.Position)} donne vos coordonnées et la direction que vous regardez. " +
             $"{K(ModConfig.TurnLeft)} et {K(ModConfig.TurnRight)} vous font pivoter sans vous déplacer.",
@@ -159,7 +170,7 @@ namespace SunHavenAccess.Menus
             "Page précédente et Page suivante parcourent les éléments trouvés.",
 
             "Se rendre quelque part. Une fois un élément du scanner annoncé, Contrôle plus Origine vous y conduit automatiquement. " +
-            "Échap annule le trajet en cours. Fin donne le nombre d'éléments trouvés dans la catégorie.",
+            "Échap annule le trajet en cours. Le nombre d'éléments trouvés est annoncé à chaque changement de catégorie.",
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 

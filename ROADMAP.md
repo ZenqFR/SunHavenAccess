@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 102 au point** (7 %).
+Mis à jour le 2026-08-26 — **7 sur 103 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 88 |
+| `[ ]` | À tester | jamais essayé en jeu | 89 |
 | `[!]` | À corriger | essayé, ne marche pas | 7 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -395,6 +395,10 @@ Ce qui s'ajuste plutôt que ce qui s'utilise. Ces réglages vivent dans le fichi
 - [ ] **reglages-rendre-les-fleches** — touche : —
   - Faire : Passer NavigationDirectionnelle à false, relancer, et rouvrir un menu.
   - Attendu : Les flèches reviennent au jeu. C'est la soupape prévue si un écran se comporte mal — par exemple si le curseur saute deux cases d'un coup.
+- [ ] **reglages-raccourci-non-assigne** — touche : Suppr
+  - Faire : Dans le menu des raccourcis, choisir une action, puis appuyer sur Retour arrière ou Suppression au lieu d'une touche. Vérifier ensuite qu'elle ne se déclenche plus, et la réassigner.
+  - Attendu : L'action annonce « non assigné » et ne se déclenche plus, tout en restant dans la liste avec sa description. La réassigner la rétablit.
+  - Retour de jeu : F10 (décrire la case devant soi) et Fin (nombre trouvé au scanner) sont désormais livrées SANS touche, sur votre retour : la case devant soi est déjà décrite à chaque pas, et le nombre trouvé est déjà annoncé au changement de catégorie. Les deux restent dans le menu des raccourcis, réassignables quand vous voulez.
 - [ ] **reglages-raccourcis-persistants** — touche : Suppr
   - Faire : Réassigner une touche dans le menu des raccourcis, quitter le jeu, relancer.
   - Attendu : La nouvelle touche est conservée, et l'aide F1 l'affiche à la place de l'ancienne.
