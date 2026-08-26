@@ -56,8 +56,8 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Retour de jeu : RÉGRESSION que j'ai introduite : le test « élément réellement à l'écran », ajouté pour écarter les panneaux des autres onglets, écartait aussi des boutons parfaitement visibles quand la conversion de coordonnées ne convenait pas à ce canevas. Corrigé — le test ne peut plus vider un écran : s'il ne laisse rien, on garde tout. Un écran inatteignable est bien pire que quelques éléments de trop.
 - [ ] **personnage-chargement-personnage** — touche : Flèches
   - Faire : Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.
-  - Attendu : Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom, ferme, jour et saison.
-  - Retour de jeu : Signalé comme à optimiser. Pas encore retravaillé : à regarder après les corrections de navigation, pour voir ce qui manque réellement une fois celles-ci en place.
+  - Attendu : Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom et date. Un emplacement libre annonce qu'il est vide. La touche de description complète ajoute les niveaux et l'or.
+  - Retour de jeu : Retravaillé. Un emplacement libre le dit désormais au lieu de rester muet — on passait devant sans savoir qu'on pouvait y commencer une partie. Et l'annonce est abrégée au nom et à la date, de quoi reconnaître la partie : les cinq niveaux de métier et le montant d'or à chaque déplacement rendaient le parcours interminable. Le détail reste lisible avec la touche de description complète.
 - [ ] **personnage-race** — touche : Flèches
   - Faire : Choisir une race.
   - Attendu : Chaque race est annoncée au passage.

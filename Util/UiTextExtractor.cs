@@ -259,7 +259,13 @@ namespace SunHavenAccess.Util
             if (button == null || button != panel.selectButton) return null;
 
             string name = TextUtil.Clean(panel.playerNameText?.text);
-            if (string.IsNullOrWhiteSpace(name)) return null; // slot vide ou prefab gabarit désactivé
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                // Un emplacement sans nom est un emplacement LIBRE. Renvoyer null faisait retomber
+                // sur la lecture générique, qui n'y trouvait rien : on passait devant sans savoir
+                // qu'on pouvait y commencer une partie.
+                return "Emplacement de sauvegarde vide.";
+            }
 
             var parts = new List<string> { name };
 
@@ -277,12 +283,23 @@ namespace SunHavenAccess.Util
             AddLevel("Pêche", panel.fishingLevelText);
             AddLevel("Minage", panel.miningLevelText);
             AddLevel("Exploration", panel.explorationLevelText);
-            if (levels.Count > 0) parts.Add(string.Join(", ", levels));
+
+            // Version longue : tout. Version courte : de quoi RECONNAÎTRE la partie, c'est-à-dire
+            // son nom et sa date. Cinq niveaux de métier et un montant d'or à chaque déplacement
+            // entre emplacements font une annonce interminable, alors qu'on cherche seulement la
+            // bonne sauvegarde.
+            var full = new List<string>(parts);
+            if (levels.Count > 0) full.Add(string.Join(", ", levels));
 
             string coins = TextUtil.Clean(panel.coinText?.text);
-            if (!string.IsNullOrWhiteSpace(coins)) parts.Add($"{coins} pièces d'or");
+            if (!string.IsNullOrWhiteSpace(coins)) full.Add($"{coins} pièces d'or");
 
-            return string.Join(". ", parts) + ".";
+            string longText = string.Join(". ", full) + ".";
+
+            // Le détail reste accessible : il est mémorisé pour la touche « description complète ».
+            Menus.TooltipReader.RememberFullText(longText);
+
+            return Menus.TooltipReader.BriefMode ? string.Join(". ", parts) + "." : longText;
         }
 
         private static string ExtractFrom(GameObject go)

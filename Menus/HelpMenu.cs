@@ -134,7 +134,8 @@ namespace SunHavenAccess.Menus
             $"{K(ModConfig.TurnLeft)} et {K(ModConfig.TurnRight)} vous font pivoter sans vous déplacer.",
 
             $"Répéter. {K(ModConfig.Repeat)} redit la dernière annonce. " +
-            $"{K(ModConfig.ReadFullDescription)} relit la description complète du dernier objet annoncé.",
+            $"{K(ModConfig.ReadFullDescription)} relit le détail complet de ce qui vient d'être annoncé de façon abrégée — " +
+            "description d'un objet, ou niveaux et or d'une sauvegarde.",
 
             $"L'heure et votre état. {K(ModConfig.Clock)} donne l'heure, le jour, la saison et la météo. " +
             $"{K(ModConfig.Status)} donne votre santé, votre mana et votre bourse — pièces, et orbes ou tickets si vous en avez.",

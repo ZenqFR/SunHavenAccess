@@ -74,6 +74,21 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static string LastFullText => _lastText;
 
+        /// <summary>
+        /// Déclare un texte long qu'un AUTRE lecteur vient d'abréger, pour que la touche
+        /// « description complète » puisse le relire.
+        ///
+        /// La relecture était réservée aux infobulles, ce qui piégeait tout écran abrégeant ses
+        /// annonces par ses propres moyens : le détail disparaissait sans aucun moyen de le
+        /// retrouver. Les emplacements de sauvegarde sont le premier cas — cinq niveaux de métier
+        /// et un montant d'or à chaque déplacement, ou rien du tout.
+        /// </summary>
+        public static void RememberFullText(string full)
+        {
+            if (string.IsNullOrWhiteSpace(full)) return;
+            _lastText = full;
+        }
+
         /// <summary>Le mode bref est-il actif ? Piloté par la config (voir Plugin.Awake).</summary>
         public static bool BriefMode { get; set; } = true;
 
