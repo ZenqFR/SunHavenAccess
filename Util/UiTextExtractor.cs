@@ -28,6 +28,9 @@ namespace SunHavenAccess.Util
             string slotDescription = TrySlotDescription(go);
             if (slotDescription != null) return slotDescription;
 
+            string skillNode = TrySkillNodeDescription(go);
+            if (skillNode != null) return skillNode;
+
             string saveDescription = TrySavePanelDescription(go);
             if (saveDescription != null) return saveDescription;
 
@@ -100,6 +103,98 @@ namespace SunHavenAccess.Util
             // annoncer un numéro générique plutôt que de retomber sur le nom technique brut.
             return $"Onglet {rank + 1}";
         }
+
+        /// <summary>
+        /// Un nœud de l'arbre de compétences. Sans ce cas particulier, un nœud n'est qu'une icône
+        /// sans texte visible : le repli générique ne trouvait rien et retombait sur le nom
+        /// technique de l'objet Unity, ce qui ne dit ni ce que fait la compétence, ni où on en est,
+        /// ni si on peut la prendre. L'arbre était donc parcourable mais illisible.
+        ///
+        /// Ce que le jeu montre visuellement — l'icône grisée d'un nœud verrouillé, le compteur de
+        /// rang, l'infobulle — est ici mis en mots dans l'ordre où il sert : ce que c'est, où on en
+        /// est, si c'est accessible, puis l'effet.
+        /// </summary>
+        private static string TrySkillNodeDescription(GameObject go)
+        {
+            SkillNode node = go.GetComponentInParent<SkillNode>();
+            if (node == null) return null;
+
+            var parts = new List<string>();
+
+            string title = SafeText(() => node.nodeTitle) ?? SafeText(() => node.nodeName);
+            parts.Add(string.IsNullOrWhiteSpace(title) ? "Compétence" : title);
+
+            // Progression. Un nœud à rangs multiples n'a de sens qu'avec les deux nombres ; un
+            // nœud simple se dit « pris » ou « non pris », un « 0 sur 1 » n'apprend rien.
+            int amount = node.NodeAmount;
+            int max = SafeInt(() => node.nodePoints, 1);
+            if (max > 1) parts.Add($"rang {amount} sur {max}");
+            else parts.Add(amount > 0 ? "prise" : "non prise");
+
+            // Disponibilité : `Available` est privée. On la LIT plutôt que de recalculer le seuil
+            // de points par palier — dupliquer une règle du jeu, c'est accepter qu'elle diverge le
+            // jour où le jeu la change.
+            bool? available = ReadAvailable(node);
+            if (available == false)
+            {
+                int tier = SafeInt(() => node.tier, 0);
+                parts.Add(tier > 1
+                    ? $"verrouillée, demande {5 * (tier - 1)} points dépensés dans cet arbre"
+                    : "verrouillée");
+            }
+            else if (amount >= max)
+            {
+                parts.Add("terminée");
+            }
+
+            string description = SafeText(() => node.description);
+            if (!string.IsNullOrWhiteSpace(description)) parts.Add(TextUtil.Clean(description));
+
+            return string.Join(", ", parts) + ".";
+        }
+
+        /// <summary>
+        /// `SkillNode.Available` est une propriété privée. Accesseur mis en cache : la résolution
+        /// par réflexion coûte cher et cette méthode est appelée à chaque déplacement dans l'arbre.
+        /// Retourne null si la propriété a disparu, auquel cas la disponibilité est simplement
+        /// passée sous silence plutôt qu'annoncée à tort.
+        /// </summary>
+        private static System.Reflection.PropertyInfo _availableProperty;
+        private static bool _availableResolved;
+
+        private static bool? ReadAvailable(SkillNode node)
+        {
+            if (!_availableResolved)
+            {
+                _availableResolved = true;
+                _availableProperty = typeof(SkillNode).GetProperty("Available",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                if (_availableProperty == null)
+                    Plugin.Log?.LogWarning("SkillNode.Available introuvable : la disponibilité des compétences ne sera pas annoncée.");
+            }
+
+            if (_availableProperty == null) return null;
+            try { return (bool)_availableProperty.GetValue(node); }
+            catch { return null; }
+        }
+
+        /// <summary>
+        /// Les propriétés de SkillNode passent par la localisation et les données d'asset : sur un
+        /// nœud pas encore initialisé, elles lèvent. Un nœud incomplet doit rester lisible pour ce
+        /// qu'il a, pas faire échouer toute l'annonce.
+        /// </summary>
+        private static string SafeText(System.Func<string> read)
+        {
+            try { return read(); }
+            catch { return null; }
+        }
+
+        private static int SafeInt(System.Func<int> read, int fallback)
+        {
+            try { return read(); }
+            catch { return fallback; }
+        }
+
 
         /// <summary>
         /// Un emplacement d'inventaire/équipement (Wish.Slot ou Wish.ArmorSlot) VIDE n'a ni
