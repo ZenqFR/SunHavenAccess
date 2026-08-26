@@ -36,6 +36,25 @@ namespace SunHavenAccess.Input
                 return;
             }
 
+            // Même règle pour l'aide : tant qu'elle est ouverte, elle capte seule le clavier.
+            // Sans ça, parcourir les rubriques aux flèches piloterait aussi le curseur libre, et
+            // Origine ou Fin déclencheraient le scanner par-dessus.
+            if (Pressed(ModConfig.Help.Value))
+            {
+                HelpMenu.Toggle();
+                return;
+            }
+            if (HelpMenu.IsOpen)
+            {
+                // La navigation native est neutralisée pendant la consultation : si l'aide est
+                // ouverte par-dessus un menu du jeu, les flèches ne doivent pas déplacer aussi la
+                // sélection dessous — on reviendrait à l'aide fermée sur un autre élément que
+                // celui qu'on avait laissé.
+                SuppressNativeNavigation(true);
+                HelpMenu.Tick();
+                return;
+            }
+
             // Pendant la frappe dans un champ de saisie, TOUTES les touches du mod sont
             // suspendues : sinon taper « p » dans le nom de son personnage annoncerait la
             // position, « o » l'horloge, « c » ouvrirait le tchat... Voir Menus/TextInputReader.cs.
@@ -52,7 +71,6 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.Position.Value)) TileCursor.AnnouncePosition();
             if (Pressed(ModConfig.NextNpc.Value)) NPCFinder.AnnounceNext();
             if (Pressed(ModConfig.ToggleVerbosity.Value)) TileCursor.ToggleVerbosity();
-            if (Pressed(ModConfig.Help.Value)) AnnounceHelp();
             if (Pressed(ModConfig.TurnLeft.Value)) TileCursor.Turn(-1);
             if (Pressed(ModConfig.TurnRight.Value)) TileCursor.Turn(1);
             if (Pressed(ModConfig.TestTone.Value)) TestTone.Play(Plugin.Log);
@@ -345,50 +363,6 @@ namespace SunHavenAccess.Input
             {
                 return false;
             }
-        }
-
-        private static void AnnounceHelp()
-        {
-            TolkSpeech.Speak(
-                "Touches d'accessibilité : " +
-                $"{Strings.KeyName(ModConfig.DescribeFront.Value)}, décrire la case devant vous. " +
-                $"{Strings.KeyName(ModConfig.Position.Value)}, votre position. " +
-                $"{Strings.KeyName(ModConfig.Clock.Value)}, l'heure, le jour, la saison et la météo. " +
-                $"{Strings.KeyName(ModConfig.FishingToneToggle.Value)}, activer ou désactiver le bip continu de visée pendant la pêche. " +
-                $"{Strings.KeyName(ModConfig.Status.Value)}, votre santé et votre mana. " +
-                $"{Strings.KeyName(ModConfig.AnnounceQuests.Value)}, annoncer vos quêtes actives. " +
-                $"{Strings.KeyName(ModConfig.AnnounceRelationships.Value)}, annoncer vos relations avec les PNJ. " +
-                $"{Strings.KeyName(ModConfig.AnnounceProfessions.Value)}, annoncer vos niveaux de compétence. " +
-                $"{Strings.KeyName(ModConfig.MapPreviousLocation.Value)} et {Strings.KeyName(ModConfig.MapNextLocation.Value)}, lieu précédent ou suivant sur la carte du monde, carte ouverte. " +
-                $"{Strings.KeyName(ModConfig.AppearancePrevious.Value)} et {Strings.KeyName(ModConfig.AppearanceNext.Value)}, option précédente ou suivante d'apparence en création de personnage. Contrôle plus l'une ou l'autre, catégorie précédente ou suivante. " +
-                $"{Strings.KeyName(ModConfig.AnnounceSkillPoints.Value)}, annoncer les points de compétence disponibles dans chaque arbre. " +
-                $"{Strings.KeyName(ModConfig.AnnounceFestivals.Value)}, annoncer les festivals de la saison actuelle. " +
-                $"{Strings.KeyName(ModConfig.FreeCursorToggle.Value)}, activer le curseur de case libre : les flèches le déplacent alors partout sur la carte, " +
-                $"Origine décrit la case visée, Contrôle plus Origine vous y conduit, et le clic gauche y agit à distance. " +
-                $"{Strings.KeyName(ModConfig.FreeCursorRecenter.Value)}, ramener le curseur sur vous. " +
-                $"Pour poser un meuble ou un bâtiment : gardez l'objet en main, activez le curseur libre pour viser, " +
-                $"et le mod annonce dès que l'emplacement devient valide ou invalide. " +
-                $"{Strings.KeyName(ModConfig.PlacementStatus.Value)}, redire l'état du placement en cours. " +
-                $"{Strings.KeyName(ModConfig.HerdStatus.Value)}, bilan des animaux présents : combien sont à nourrir, à caresser, et combien ont laissé un produit au sol. " +
-                $"Dans l'inventaire : {Strings.KeyName(ModConfig.SortBackpack.Value)}, trier le sac. " +
-                $"{Strings.KeyName(ModConfig.AnnounceContents.Value)}, résumé du contenu. " +
-                $"{Strings.KeyName(ModConfig.StoreInChests.Value)}, ranger dans les coffres proches. " +
-                $"{Strings.KeyName(ModConfig.ReadFullDescription.Value)}, lire la description complète de l'objet annoncé. " +
-                $"{Strings.KeyName(ModConfig.NextNpc.Value)}, personnage proche suivant. " +
-                $"{Strings.KeyName(ModConfig.Repeat.Value)}, répéter. " +
-                $"{Strings.KeyName(ModConfig.ToggleVerbosity.Value)}, activer ou désactiver l'annonce automatique des déplacements. " +
-                $"{Strings.KeyName(ModConfig.TurnLeft.Value)} et {Strings.KeyName(ModConfig.TurnRight.Value)}, tourner sans vous déplacer. " +
-                $"{Strings.KeyName(ModConfig.MouseFollowToggle.Value)}, activer ou désactiver la souris qui pointe vers la case devant vous. " +
-                $"{Strings.KeyName(ModConfig.SimulateLeftClick.Value)}, clic gauche. Contrôle plus {Strings.KeyName(ModConfig.SimulateRightClick.Value)}, clic droit. " +
-                "Dans les menus : flèches directionnelles pour parcourir, Entrée pour un clic gauche, Contrôle plus Entrée pour un clic droit, " +
-                "Contrôle plus flèche gauche ou droite pour ajuster un curseur sélectionné, Contrôle plus Tabulation ou Contrôle plus Majuscule plus Tabulation " +
-                "pour changer d'onglet directement dans le menu principal. " +
-                "Scanner : Page précédente et Page suivante pour parcourir les éléments trouvés, Contrôle plus Page précédente ou suivante pour changer de catégorie " +
-                "parmi personnages, plantations, ressources, bâtiments et portails, animaux et compagnons, ennemis, mobilier et rangement. " +
-                "Origine pour annoncer l'élément sélectionné, Contrôle plus Origine pour vous y rendre automatiquement, Échap pour annuler le trajet, Fin pour connaître le nombre trouvé. " +
-                $"{Strings.KeyName(ModConfig.ChatOpenKey.Value)}, ouvrir le tchat ou la console du jeu (remplace Entrée, qui entrait en conflit avec la validation de menu). " +
-                $"{Strings.KeyName(ModConfig.Help.Value)}, cette aide. " +
-                $"{Strings.KeyName(ModConfig.ShortcutsMenuToggle.Value)}, ouvre le menu complet des raccourcis, qui permet aussi de changer chaque touche.", true);
         }
     }
 }

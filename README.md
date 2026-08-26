@@ -86,6 +86,7 @@ Poser un objet était l'une des dernières actions entièrement fermées : un ap
 <details>
 <summary><strong>Menus, inventaire, dialogues</strong></summary>
 
+- **L'aide (F1) est un menu, pas une tirade.** Elle listait auparavant plus de quarante touches d'un seul bloc : plusieurs minutes à écouter en entier pour atteindre la dernière, et tout à reprendre en cas d'inattention. C'est désormais une liste de rubriques groupées par tâche (« savoir où vous êtes », « explorer sans bouger », « ranger son sac »…), parcourue aux flèches une par une, avec un bip aux extrémités et Origine/Fin pour sauter au début ou à la fin. Les touches y sont affichées avec leur valeur **réellement configurée**, pas le défaut. Lecture seule : changer une touche reste le rôle du menu des raccourcis, pour qu'on ne réassigne rien par erreur en consultant l'aide.
 - Navigation clavier maison (flèches directionnelles + Entrée) pour les écrans du jeu qui n'utilisent jamais la sélection clavier native d'Unity (menu principal, options...) — construite en scannant les éléments interactifs visibles à l'écran.
 - Lecture des infobulles natives du jeu (nom réel des objets d'inventaire/équipement, pas juste "Item").
 - Quantité annoncée AVANT le nom, en une seule phrase ("7, Blé"), pour ne jamais couper le nom de l'objet.

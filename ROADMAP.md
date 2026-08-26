@@ -2,14 +2,14 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **0 sur 69 au point** (0 %).
+Mis à jour le 2026-08-26 — **6 sur 69 au point** (9 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 69 |
+| `[ ]` | À tester | jamais essayé en jeu | 63 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
-| `[x]` | Au point | essayé, rien à redire | 0 |
+| `[x]` | Au point | essayé, rien à redire | 6 |
 
 ⚠️ = à vérifier en priorité.
 
@@ -17,25 +17,26 @@ Mis à jour le 2026-08-26 — **0 sur 69 au point** (0 %).
 
 Installer, et vérifier que le mod se charge. Si ça échoue ici, rien d'autre ne peut marcher.
 
-- [ ] **avant-installateur-clavier** — touche : —
+- [x] **avant-installateur-clavier** — touche : —
   - Faire : Lancer l'installateur et parcourir tous les contrôles au clavier.
   - Attendu : Chaque contrôle est nommé, l'ordre de tabulation suit la lecture, et le compte rendu se relit aux flèches.
-- [ ] **avant-installateur-smartscreen** — touche : —
+- [x] **avant-installateur-smartscreen** — touche : —
   - Faire : Passer l'avertissement SmartScreen de Windows.
   - Attendu : « Informations complémentaires » puis « Exécuter quand même » sont trouvables au lecteur d'écran.
-- [ ] **avant-installateur-detection** — touche : —
+- [x] **avant-installateur-detection** — touche : —
   - Faire : Regarder si le jeu est trouvé tout seul.
   - Attendu : Le chemin de Sun Haven est prérempli sans rien saisir.
-- [ ] **avant-chargement** ⚠️ — touche : —
+- [x] **avant-chargement** ⚠️ — touche : —
   - Faire : Lancer Sun Haven.
   - Attendu : Un message vocal annonce que le mod est chargé et rappelle la touche d'aide.
-- [ ] **avant-test-son** — touche : F11
+- [x] **avant-test-son** — touche : F11
   - Faire : Appuyer sur F11.
   - Attendu : Un son Windows se fait entendre, indépendamment de la synthèse vocale — pour distinguer « mod pas chargé » de « lecteur d'écran muet ».
 - [ ] **avant-aide** — touche : F1
-  - Faire : Appuyer sur F1.
-  - Attendu : La liste des touches principales est lue. F1 est aussi une émote du jeu, le personnage fera donc un geste en plus.
-- [ ] **avant-menu-raccourcis** — touche : Suppr
+  - Faire : Appuyer sur F1, parcourir les rubriques aux flèches, puis fermer avec Échap ou F1.
+  - Attendu : Un menu d'aide s'ouvre et annonce le nombre de rubriques. Les flèches passent d'une rubrique à la suivante, une seule est lue à la fois, et un bip signale les extrémités. Origine et Fin vont à la première et à la dernière. F1 est aussi une émote du jeu, le personnage fera donc un geste en plus.
+  - Retour de jeu : L'ancienne version, qui lisait les quarante touches d'un bloc, était validée mais inexploitable en pratique. Remplacée par ce menu — à revérifier.
+- [x] **avant-menu-raccourcis** — touche : Suppr
   - Faire : Ouvrir le menu des raccourcis, le parcourir, réassigner une touche.
   - Attendu : Chaque raccourci est annoncé avec son libellé et sa touche, et se change sans quitter le jeu.
 
