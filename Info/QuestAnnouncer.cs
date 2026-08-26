@@ -60,16 +60,17 @@ namespace SunHavenAccess.Info
                 return;
             }
 
+            // Une LISTE parcourable plutôt qu'une tirade. Réciter dix quêtes d'affilée obligeait à
+            // tout écouter pour atteindre la dernière, et à tout reprendre en cas d'inattention.
+            // La position dans la liste est annoncée par le menu lui-même, donc pas de « quête 3
+            // sur 10 » à recopier ici.
             var parts = new List<string>();
-            int total = quests.Count;
-            int index = 0;
             foreach (QuestBundle bundle in quests)
             {
-                index++;
                 if (bundle?.quest?.questAsset == null) continue;
 
                 string name = TextUtil.Clean(bundle.quest.questAsset.LocalizedQuestName);
-                string sentence = total > 1 ? $"Quête {index} sur {total} : {name}." : $"Quête : {name}.";
+                string sentence = name;
 
                 // Les quêtes "cachées" (QuestAsset.hidden) n'ont pas de panneau visuel — le jeu
                 // ne leur en crée jamais un (voir QuestList.StartQuest) — juste le nom dans ce cas.
@@ -87,7 +88,7 @@ namespace SunHavenAccess.Info
                 parts.Add(sentence);
             }
 
-            TolkSpeech.Speak(string.Join(" ", parts), true);
+            Menus.ListMenu.Open("Quêtes actives", parts);
         }
     }
 }

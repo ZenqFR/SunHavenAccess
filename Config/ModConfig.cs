@@ -218,7 +218,7 @@ namespace SunHavenAccess.Config
             // Résumé des points de compétence par arbre — pas la navigation dans la grille de
             // nœuds elle-même (voir Info/SkillPointsAnnouncer.cs). Z : dernière lettre libre.
             AnnounceSkillPoints = Bind(config, section, "PointsCompetence", KeyCode.Z,
-                "Annonce les points de compétence disponibles dans chaque arbre.", "Annoncer les points de compétence disponibles");
+                "Ouvre l'arbre de compétences en liste : les métiers, puis les compétences du métier choisi.", "Compétences (liste)");
 
             // Festivals de la saison (Wish.CalendarUI) : écran purement visuel (grille de jours,
             // aucune interaction clavier native) — juste à lire, pas à naviguer. Plus aucune

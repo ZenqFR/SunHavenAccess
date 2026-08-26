@@ -55,6 +55,16 @@ namespace SunHavenAccess.Input
                 return;
             }
 
+            // Une liste vocale ouverte (quêtes, relations, compétences) capte seule le clavier,
+            // pour la même raison que l'aide : sans ça, la parcourir aux flèches piloterait aussi
+            // le curseur libre, et Origine ou Fin déclencheraient le scanner par-dessus.
+            if (ListMenu.IsOpen)
+            {
+                SuppressNativeNavigation(true);
+                ListMenu.Tick();
+                return;
+            }
+
             // Pendant la frappe dans un champ de saisie, TOUTES les touches du mod sont
             // suspendues : sinon taper « p » dans le nom de son personnage annoncerait la
             // position, « o » l'horloge, « c » ouvrirait le tchat... Voir Menus/TextInputReader.cs.
@@ -100,7 +110,7 @@ namespace SunHavenAccess.Input
             {
                 if (ctrl) CharacterAppearanceNavigator.NextCategory(); else CharacterAppearanceNavigator.NextOption();
             }
-            if (Pressed(ModConfig.AnnounceSkillPoints.Value)) SkillPointsAnnouncer.AnnounceAll();
+            if (Pressed(ModConfig.AnnounceSkillPoints.Value)) SkillTreeMenu.Open();
             if (Pressed(ModConfig.AnnounceFestivals.Value)) FestivalAnnouncer.AnnounceThisSeason();
             if (Pressed(ModConfig.SortBackpack.Value)) InventoryActions.SortBackpack();
             if (Pressed(ModConfig.AnnounceContents.Value)) InventoryActions.AnnounceContents();

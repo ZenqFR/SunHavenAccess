@@ -220,7 +220,9 @@ namespace SunHavenAccess.Menus
             $"{K(ModConfig.AnnounceRelationships)} donne vos relations avec les personnages.",
 
             $"Votre progression. {K(ModConfig.AnnounceProfessions)} donne vos niveaux de compétence. " +
-            $"{K(ModConfig.AnnounceSkillPoints)} donne les points disponibles dans chaque arbre. " +
+            $"{K(ModConfig.AnnounceSkillPoints)} ouvre les compétences en LISTE : d'abord les métiers avec leurs points à dépenser, " +
+            "puis, une fois un métier choisi, ses compétences une par une — nom, palier, rang, condition et effet. " +
+            "Rien à se représenter de la grille affichée. " +
             $"{K(ModConfig.AnnounceFestivals)} liste les festivals de la saison en cours.",
 
             $"La carte du monde. Carte ouverte, {K(ModConfig.MapPreviousLocation)} et {K(ModConfig.MapNextLocation)} parcourent les lieux.",

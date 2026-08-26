@@ -71,7 +71,7 @@ namespace SunHavenAccess.Info
                 parts.Add($"{name}, {hearts} sur {maxHearts} cœurs{status}.");
             }
 
-            TolkSpeech.Speak(string.Join(" ", parts), true);
+            Menus.ListMenu.Open("Relations", parts);
         }
     }
 }

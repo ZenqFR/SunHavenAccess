@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 107 au point** (7 %).
+Mis à jour le 2026-08-26 — **7 sur 108 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 92 |
+| `[ ]` | À tester | jamais essayé en jeu | 93 |
 | `[!]` | À corriger | essayé, ne marche pas | 8 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -286,6 +286,10 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
 - [ ] **village-panneau-baraquements** — touche : Pavé Entrée
   - Faire : Essayer au panneau des baraquements.
   - Attendu : Une seule commission est annoncée, pas deux tâches.
+- [ ] **village-listes-simplifiees** ⚠️ — touche : G, V, Z
+  - Faire : Ouvrir les quêtes (G), les relations (V) et les compétences (Z). Parcourir chaque liste aux flèches, sauter au début et à la fin, fermer avec Échap. Dans les compétences, choisir un métier avec Entrée.
+  - Attendu : Chaque panneau devient une LISTE : une entrée à la fois, annoncée avec sa position, un bip aux extrémités. Rien à se représenter de la disposition à l'écran. Les compétences se lisent en deux temps : les métiers, puis les compétences du métier choisi.
+  - Retour de jeu : Changement de principe demandé en jeu : ne plus suivre l'affichage. Ces écrans sont conçus pour l'œil — la position y porte le sens — alors que leur contenu est une simple liste. Le mod lit désormais les DONNÉES du jeu et les présente comme telles, sur le modèle de l'aide F1, seul écran validé sans réserve. Le sac à dos garde sa navigation en grille, qui convient à une grille.
 - [ ] **village-quetes** — touche : G
   - Faire : Accepter une quête, la rendre, puis lister les quêtes actives.
   - Attendu : Acceptation et rendu sont annoncés d'eux-mêmes ; la liste donne nom, description et progression.
