@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 84 au point** (7 %).
+Mis à jour le 2026-08-26 — **6 sur 87 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 78 |
+| `[ ]` | À tester | jamais essayé en jeu | 81 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
@@ -125,6 +125,15 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
 
 La boucle quotidienne : labourer, planter, arroser, récolter.
 
+- [ ] **ferme-energie-alertes** ⚠️ — touche : —
+  - Faire : Miner ou labourer jusqu'à épuiser l'énergie.
+  - Attendu : Une alerte à la moitié, au quart, presque à sec, puis à l'épuisement. Chacune n'est dite qu'une fois, et n'interrompt pas l'annonce en cours.
+- [ ] **ferme-energie-pas-de-spam** — touche : —
+  - Faire : Sous un seuil, consommer et regagner un peu d'énergie plusieurs fois de suite.
+  - Attendu : L'alerte ne se répète pas à chaque oscillation. Elle ne revient qu'après une vraie remontée au-dessus du seuil.
+- [ ] **ferme-energie-lendemain** — touche : —
+  - Faire : Épuiser l'énergie, dormir, puis retravailler le lendemain.
+  - Attendu : Les alertes recommencent normalement au fil de la nouvelle journée — l'état de la veille ne les bloque pas.
 - [ ] **ferme-agriculture** ⚠️ — touche : —
   - Faire : Labourer, arroser, planter, récolter.
   - Attendu : Chaque action est confirmée, et l'arrosoir annonce quand il est vide.

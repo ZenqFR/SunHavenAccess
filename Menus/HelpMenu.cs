@@ -139,6 +139,10 @@ namespace SunHavenAccess.Menus
             $"L'heure et votre état. {K(ModConfig.Clock)} donne l'heure, le jour, la saison et la météo. " +
             $"{K(ModConfig.Status)} donne votre santé, votre énergie et votre argent.",
 
+            "L'énergie. C'est elle que consomment vos outils : à zéro, la pioche, la houe et l'arrosoir cessent d'agir. " +
+            "Le mod prévient à la moitié, au quart, presque à sec, puis à l'épuisement — sans quoi l'outil s'arrêterait " +
+            "d'un coup sans que rien n'explique pourquoi. Une nuit de sommeil la restaure.",
+
             $"Explorer sans bouger : le curseur de case libre. {K(ModConfig.FreeCursorToggle)} l'active. " +
             "Les flèches le déplacent alors case par case n'importe où sur la carte, et chaque case est décrite avec sa direction et sa distance. " +
             $"{K(ModConfig.FreeCursorRecenter)} le ramène sur vous.",

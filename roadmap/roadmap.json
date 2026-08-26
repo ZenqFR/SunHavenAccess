@@ -147,6 +147,15 @@
         "en": "The daily loop: till, plant, water, harvest."
       },
       "items": [
+        { "id": "energie-alertes", "key": "—", "status": "todo", "critical": true,
+          "action":   { "fr": "Miner ou labourer jusqu'à épuiser l'énergie.", "en": "Mine or till until energy runs out." },
+          "expected": { "fr": "Une alerte à la moitié, au quart, presque à sec, puis à l'épuisement. Chacune n'est dite qu'une fois, et n'interrompt pas l'annonce en cours.", "en": "A warning at half, a quarter, nearly empty, then exhaustion. Each is said once, and doesn't interrupt what is being spoken." } },
+        { "id": "energie-pas-de-spam", "key": "—", "status": "todo",
+          "action":   { "fr": "Sous un seuil, consommer et regagner un peu d'énergie plusieurs fois de suite.", "en": "Below a threshold, spend and regain a little energy several times over." },
+          "expected": { "fr": "L'alerte ne se répète pas à chaque oscillation. Elle ne revient qu'après une vraie remontée au-dessus du seuil.", "en": "The warning doesn't repeat on every wobble. It only returns after a real climb back above the threshold." } },
+        { "id": "energie-lendemain", "key": "—", "status": "todo",
+          "action":   { "fr": "Épuiser l'énergie, dormir, puis retravailler le lendemain.", "en": "Run energy out, sleep, then work again the next day." },
+          "expected": { "fr": "Les alertes recommencent normalement au fil de la nouvelle journée — l'état de la veille ne les bloque pas.", "en": "The warnings start again normally through the new day — the previous day's state doesn't block them." } },
         { "id": "agriculture", "key": "—", "status": "todo", "critical": true,
           "action":   { "fr": "Labourer, arroser, planter, récolter.", "en": "Till, water, plant, harvest." },
           "expected": { "fr": "Chaque action est confirmée, et l'arrosoir annonce quand il est vide.", "en": "Each action is confirmed, and the watering can says when it's empty." } },

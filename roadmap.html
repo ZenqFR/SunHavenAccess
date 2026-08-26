@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
 <body>
 <a class="skip-link" href="#main">
@@ -61,8 +61,8 @@
     <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
   </p>
   <span class="status-pill">
-    <span data-lang="fr">Mis à jour le 2026-08-26 — 6 sur 84 au point</span>
-    <span data-lang="en" hidden>Updated 2026-08-26 — 6 of 84 solid</span>
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 6 sur 87 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 6 of 87 solid</span>
   </span>
 </header>
 
@@ -75,9 +75,9 @@
 
   <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
   <div class="card">
-    <p class="roadmap-headline"><span data-lang="fr"><strong>6 points au point sur 84</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>6 of 84 solid</strong> — 7%.</span></p>
+    <p class="roadmap-headline"><span data-lang="fr"><strong>6 points au point sur 87</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>6 of 87 solid</strong> — 7%.</span></p>
     <ul class="legend-list">
-      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 78</span><span data-lang="en" hidden>never tried in game: 78</span></li>
+      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 81</span><span data-lang="en" hidden>never tried in game: 81</span></li>
       <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 0</span><span data-lang="en" hidden>tried, doesn't work: 0</span></li>
       <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
       <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 6</span><span data-lang="en" hidden>tried, nothing to add: 6</span></li>
@@ -266,8 +266,23 @@
   <h2 class="section-title" id="ferme"><span data-lang="fr">5. Travailler sa ferme</span><span data-lang="en" hidden>5. Working your farm</span></h2>
   <div class="card">
     <p><span data-lang="fr">La boucle quotidienne : labourer, planter, arroser, récolter.</span><span data-lang="en" hidden>The daily loop: till, plant, water, harvest.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 4 au point.</span><span data-lang="en" hidden>0 of 4 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 7 au point.</span><span data-lang="en" hidden>0 of 7 solid.</span></p>
     <ol class="roadmap-list">
+      <li class="roadmap-item status-todo is-critical" id="ferme-energie-alertes">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Miner ou labourer jusqu'à épuiser l'énergie.</span><span data-lang="en" hidden>Mine or till until energy runs out.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Une alerte à la moitié, au quart, presque à sec, puis à l'épuisement. Chacune n'est dite qu'une fois, et n'interrompt pas l'annonce en cours.</span><span data-lang="en" hidden>A warning at half, a quarter, nearly empty, then exhaustion. Each is said once, and doesn't interrupt what is being spoken.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="ferme-energie-pas-de-spam">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Sous un seuil, consommer et regagner un peu d'énergie plusieurs fois de suite.</span><span data-lang="en" hidden>Below a threshold, spend and regain a little energy several times over.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">L'alerte ne se répète pas à chaque oscillation. Elle ne revient qu'après une vraie remontée au-dessus du seuil.</span><span data-lang="en" hidden>The warning doesn't repeat on every wobble. It only returns after a real climb back above the threshold.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="ferme-energie-lendemain">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Épuiser l'énergie, dormir, puis retravailler le lendemain.</span><span data-lang="en" hidden>Run energy out, sleep, then work again the next day.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les alertes recommencent normalement au fil de la nouvelle journée — l'état de la veille ne les bloque pas.</span><span data-lang="en" hidden>The warnings start again normally through the new day — the previous day's state doesn't block them.</span></p>
+      </li>
       <li class="roadmap-item status-todo is-critical" id="ferme-agriculture">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Labourer, arroser, planter, récolter.</span><span data-lang="en" hidden>Till, water, plant, harvest.</span></p>

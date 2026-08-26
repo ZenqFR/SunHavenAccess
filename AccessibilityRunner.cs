@@ -48,6 +48,7 @@ namespace SunHavenAccess
             SafeTick("HandItemAnnouncer", HandItemAnnouncer.Tick);
             SafeTick("FishingToneDriver", FishingToneDriver.Tick);
             SafeTick("PlacementAssistant", PlacementAssistant.Tick);
+            SafeTick("ManaWarner", ManaWarner.Tick);
         }
 
         private static void SafeTick(string name, Action tick)

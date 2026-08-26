@@ -83,6 +83,18 @@ Le système de progression au long cours du jeu : on y dépose des objets préci
 
 </details>
 <details>
+<summary><strong>Énergie</strong></summary>
+
+Ce que l'interface appelle « mana » est la jauge que consomment les outils : à zéro, la pioche, la houe et l'arrosoir cessent d'agir. Un joueur voyant voit la barre se vider et rentre se coucher avant la panne ; sans la vue, l'outil s'arrête d'un coup sans que rien n'explique pourquoi — un symptôme qui ressemble à un bug du mod plutôt qu'à une mécanique du jeu.
+
+- Alerte à **la moitié**, au **quart**, **presque à sec**, puis à l'**épuisement**. Seuils volontairement espacés : prévenir tous les dix pour cent transformerait une séance de minage en compte à rebours.
+- Annonce **au franchissement seulement**, sans interrompre la parole en cours. Une hystérésis de 3 % évite qu'une énergie oscillant autour d'un seuil ne réannonce sans fin.
+- Si plusieurs seuils sont franchis d'un coup, seul le plus bas est dit — les intermédiaires n'apprendraient rien.
+- Pas de remise à zéro au changement de journée : l'énergie y remonte au maximum, ce qui réarme le suivi de lui-même.
+- La santé en combat était déjà annoncée progressivement ; l'énergie ne l'était qu'à la demande, alors que c'est elle qui décide de la longueur d'une journée de travail.
+
+</details>
+<details>
 <summary><strong>Animaux de la ferme</strong></summary>
 
 Nourrir, caresser, ramasser les produits : une routine quotidienne dont tout est signalé visuellement (icône au-dessus de la tête, objet posé au sol). Sans la vue, il fallait aller au contact de chaque bête l'une après l'autre, dans un enclos dont on ignore même l'effectif.
