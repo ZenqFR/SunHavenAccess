@@ -31,13 +31,28 @@ namespace SunHavenAccess.Menus
         private static int _index;
         private static Action<int> _onActivate;
 
+        /// <summary>
+        /// Modifie la valeur de l'entrée choisie, et renvoie son nouveau libellé complet.
+        /// Null pour une liste dont les entrées n'ont pas de valeur réglable.
+        /// </summary>
+        private static Func<int, int, string> _onAdjust;
+
         public static bool IsOpen { get; private set; }
 
         /// <summary>
-        /// Ouvre une liste. <paramref name="onActivate"/> est appelée avec l'indice choisi quand
-        /// on valide, ou null pour une liste en lecture seule.
+        /// Ouvre une liste.
+        ///
+        /// <paramref name="onActivate"/> est appelée avec l'indice choisi quand on valide, ou null
+        /// pour une liste sans action.
+        ///
+        /// <paramref name="onAdjust"/> permet de RÉGLER l'entrée courante : gauche et droite
+        /// l'appellent avec -1 ou +1 et annoncent le libellé qu'elle renvoie. Une liste de
+        /// réglages se parcourt ainsi comme n'importe quelle autre, la valeur se changeant sur
+        /// place sans quitter la ligne — c'est ce qu'on attend d'un panneau d'options.
         /// </summary>
-        public static void Open(string title, List<string> entries, Action<int> onActivate = null)
+        public static void Open(string title, List<string> entries,
+                                Action<int> onActivate = null,
+                                Func<int, int, string> onAdjust = null)
         {
             if (entries == null || entries.Count == 0)
             {
@@ -48,10 +63,13 @@ namespace SunHavenAccess.Menus
             _title = title;
             _entries = entries;
             _onActivate = onActivate;
+            _onAdjust = onAdjust;
             _index = 0;
             IsOpen = true;
 
-            string how = onActivate != null ? ", Entrée pour choisir" : string.Empty;
+            string how = onAdjust != null ? ", gauche et droite pour changer la valeur" : string.Empty;
+            if (onActivate != null) how += ", Entrée pour choisir";
+
             TolkSpeech.Speak(
                 $"{title}, {entries.Count} entrée{(entries.Count > 1 ? "s" : "")}. " +
                 $"Flèches haut et bas pour parcourir{how}, Échap pour fermer.", true);
@@ -64,6 +82,7 @@ namespace SunHavenAccess.Menus
             IsOpen = false;
             _entries = new List<string>();
             _onActivate = null;
+            _onAdjust = null;
             TolkSpeech.Speak($"{_title} fermé.", true);
         }
 
@@ -78,10 +97,20 @@ namespace SunHavenAccess.Menus
 
             if (UnityEngine.Input.GetKeyDown(KeyCode.Escape)) { Close(); return; }
 
-            // Haut/bas ET gauche/droite font la même chose : sans voir la liste, on n'a pas à se
-            // souvenir de son orientation.
-            if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) Move(-1);
-            else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) Move(1);
+            // Sur une liste de réglages, gauche et droite changent la VALEUR de la ligne courante :
+            // c'est la convention de tout panneau d'options, et le sens attendu. Ailleurs, elles
+            // doublent haut et bas — sans voir la liste, on n'a pas à se souvenir de son
+            // orientation.
+            if (_onAdjust != null)
+            {
+                if (UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) { Adjust(-1); return; }
+                if (UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) { Adjust(1); return; }
+            }
+
+            if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)
+                || (_onAdjust == null && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow))) Move(-1);
+            else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)
+                || (_onAdjust == null && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow))) Move(1);
             else if (UnityEngine.Input.GetKeyDown(KeyCode.Home)) JumpTo(0);
             else if (UnityEngine.Input.GetKeyDown(KeyCode.End)) JumpTo(_entries.Count - 1);
             else if (UnityEngine.Input.GetKeyDown(KeyCode.PageUp)) Move(-5);
@@ -92,6 +121,25 @@ namespace SunHavenAccess.Menus
 
         private static bool Pressed(BepInEx.Configuration.ConfigEntry<KeyCode> entry) =>
             entry != null && entry.Value != KeyCode.None && UnityEngine.Input.GetKeyDown(entry.Value);
+
+        /// <summary>
+        /// Change la valeur de la ligne courante et annonce le résultat.
+        ///
+        /// Le libellé est remplacé par celui que renvoie le réglage : la liste reste donc juste
+        /// même après plusieurs changements, et rouvrir le menu n'affiche jamais une valeur
+        /// périmée. Un réglage qui refuse de bouger — bout de course d'un curseur — se signale par
+        /// le bip de bord, comme partout ailleurs.
+        /// </summary>
+        private static void Adjust(int direction)
+        {
+            if (_onAdjust == null || _index < 0 || _index >= _entries.Count) return;
+
+            string updated = _onAdjust(_index, direction);
+            if (string.IsNullOrWhiteSpace(updated)) { UiSound.EdgeBump(); return; }
+
+            _entries[_index] = updated;
+            TolkSpeech.Speak(updated, true);
+        }
 
         private static void Activate()
         {

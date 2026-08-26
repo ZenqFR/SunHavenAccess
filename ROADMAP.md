@@ -2,12 +2,12 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 108 au point** (6 %).
+Mis à jour le 2026-08-26 — **7 sur 112 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 93 |
-| `[!]` | À corriger | essayé, ne marche pas | 8 |
+| `[ ]` | À tester | jamais essayé en jeu | 96 |
+| `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
 
@@ -50,6 +50,14 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
 - [ ] **personnage-menu-principal** — touche : Flèches, Entrée
   - Faire : Naviguer dans le menu principal et l'écran de sauvegarde.
   - Attendu : Les boutons sont nommés, et chaque sauvegarde annonce son résumé.
+- [ ] **personnage-reglages-liste** ⚠️ — touche : Pavé 8
+  - Faire : Ouvrir les réglages en liste, parcourir les options aux flèches haut et bas, en changer une avec gauche et droite. Essayer une case à cocher, un curseur et une liste déroulante.
+  - Attendu : Chaque option est annoncée avec son nom ET sa valeur. Gauche et droite changent la valeur sur place, sans quitter la ligne. Les curseurs s'annoncent en pour cent. Les réglages du mod figurent en tête de liste.
+  - Retour de jeu : Les réglages du mod — bip de bord, navigation directionnelle, mode bref — ne se changeaient jusqu'ici qu'en éditant le fichier de configuration à la main. Les contrôles du jeu sont pilotés directement, donc c'est lui qui applique et enregistre.
+- [ ] **personnage-menu-principal-focus** ⚠️ — touche : —
+  - Faire : Lancer le jeu et écouter sans rien presser, puis appuyer une fois sur la flèche du bas.
+  - Attendu : Le premier bouton du menu — Jouer, ou Continuer si une partie existe — est annoncé d'emblée. La première flèche déplace ensuite d'UN cran, pas depuis le bas de la liste.
+  - Retour de jeu : Rapporté en jeu : on arrivait tout en bas. Le jeu ne sélectionne rien de lui-même sur cet écran, il attend la souris ; le mod ne prenait donc la main qu'à la première flèche, qui déplaçait déjà la sélection depuis nulle part. Le bouton est choisi par sa POSITION — le plus haut — et non par son texte : « Jouer » devient « Continuer » quand une partie existe, et se traduit.
 - [!] **personnage-menu-principal-regression** ⚠️ — touche : Flèches
   - Faire : Parcourir le menu principal du jeu aux flèches.
   - Attendu : Tous les boutons sont atteignables et nommés, au moins aussi bien qu'avant.
@@ -286,6 +294,14 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
 - [ ] **village-panneau-baraquements** — touche : Pavé Entrée
   - Faire : Essayer au panneau des baraquements.
   - Attendu : Une seule commission est annoncée, pas deux tâches.
+- [!] **village-listes-exclusives** ⚠️ — touche : G, V, Z
+  - Faire : Ouvrir le menu Tab, puis ouvrir une liste par-dessus (quêtes, relations, compétences) et la parcourir aux flèches.
+  - Attendu : SEULE la liste parle. Le menu du jeu dessous ne doit rien annoncer, même s'il continue de bouger.
+  - Retour de jeu : Rapporté en jeu : « le système de liste n'a rien changé ». Cause probable trouvée — rendre les flèches inertes ne suffit pas, Sun Haven lit le clavier par Rewired, indépendamment du système d'évènements d'Unity, donc sa sélection continuait de bouger sous la liste. Les deux étaient annoncés en même temps, chacun coupant l'autre. Les trois lecteurs du mod (focus, infobulle, survol) se taisent maintenant tant qu'une liste est ouverte.
+- [ ] **village-carte-liste** — touche : X
+  - Faire : Ouvrir la carte du monde, puis la liste des lieux. Parcourir, valider un lieu.
+  - Attendu : Tous les lieux de la région en une liste, avec leur nombre. Valider ouvre le lieu et annonce sa description.
+  - Retour de jeu : Le cheminement à pied depuis la carte a été demandé mais N'EST PAS possible : un lieu de la carte est une icône d'interface, sa position à l'écran n'a aucun rapport avec un endroit du monde, et s'en servir enverrait marcher vers une coordonnée arbitraire. Le jeu ne rattache à ces icônes qu'un nom de scène. Pour se déplacer, c'est le scanner, qui vise de vrais objets avec leur position réelle.
 - [ ] **village-listes-simplifiees** ⚠️ — touche : G, V, Z
   - Faire : Ouvrir les quêtes (G), les relations (V) et les compétences (Z). Parcourir chaque liste aux flèches, sauter au début et à la fin, fermer avec Échap. Dans les compétences, choisir un métier avec Entrée.
   - Attendu : Chaque panneau devient une LISTE : une entrée à la fois, annoncée avec sa position, un bip aux extrémités. Rien à se représenter de la disposition à l'écran. Les compétences se lisent en deux temps : les métiers, puis les compétences du métier choisi.

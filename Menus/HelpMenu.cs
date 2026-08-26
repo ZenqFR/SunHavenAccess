@@ -225,7 +225,11 @@ namespace SunHavenAccess.Menus
             "Rien à se représenter de la grille affichée. " +
             $"{K(ModConfig.AnnounceFestivals)} liste les festivals de la saison en cours.",
 
-            $"La carte du monde. Carte ouverte, {K(ModConfig.MapPreviousLocation)} et {K(ModConfig.MapNextLocation)} parcourent les lieux.",
+            $"La carte du monde. Carte ouverte, {K(ModConfig.MapPreviousLocation)} ouvre la LISTE de tous les lieux : on la parcourt aux flèches " +
+            "et Entrée ouvre celui qu'on a choisi, avec sa description. " +
+            $"{K(ModConfig.MapNextLocation)} garde l'ancien parcours au coup par coup. " +
+            "La carte ne peut pas lancer de trajet à pied : ses lieux sont des icônes d'interface, sans position dans le monde. " +
+            "Pour se déplacer, c'est le scanner, qui vise de vrais objets.",
 
             "Les écrans en colonnes, comme la création de personnage : catégories à gauche, personnalisation au centre, informations à droite. " +
             "Contrôle plus gauche ou droite saute d'une colonne à l'autre, et annonce laquelle. Les flèches seules parcourent l'écran comme d'habitude.",
@@ -239,6 +243,11 @@ namespace SunHavenAccess.Menus
 
             $"Vérifier que le son marche. {K(ModConfig.TestTone)} joue un son Windows indépendant de la synthèse vocale : " +
             "si vous l'entendez sans entendre de parole, le problème vient du lecteur d'écran et non du mod.",
+
+            $"Les réglages. {K(ModConfig.SettingsList)} les ouvre en liste : d'abord ceux du mod — bip de bord, navigation directionnelle, mode bref — " +
+            "puis ceux du jeu affichés à l'écran. Haut et bas parcourent les options, GAUCHE et DROITE changent la valeur de celle où l'on est : " +
+            "une case se coche, un curseur se déplace, une liste déroulante change d'option. Les réglages du mod ne demandaient jusqu'ici " +
+            "rien de moins que d'éditer un fichier de configuration à la main.",
 
             $"Changer une touche. {K(ModConfig.ShortcutsMenuToggle)} ouvre le menu des raccourcis, qui liste chaque action avec sa touche " +
             "et permet de la réassigner sans quitter le jeu. Sur l'écran de saisie, Retour arrière ou Suppression retire l'assignation : " +

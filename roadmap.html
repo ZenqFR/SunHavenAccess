@@ -61,8 +61,8 @@
     <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
   </p>
   <span class="status-pill">
-    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 108 au point</span>
-    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 108 solid</span>
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 112 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 112 solid</span>
   </span>
 </header>
 
@@ -75,10 +75,10 @@
 
   <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
   <div class="card">
-    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 108</strong> — 6&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 108 solid</strong> — 6%.</span></p>
+    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 112</strong> — 6&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 112 solid</strong> — 6%.</span></p>
     <ul class="legend-list">
-      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 93</span><span data-lang="en" hidden>never tried in game: 93</span></li>
-      <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 8</span><span data-lang="en" hidden>tried, doesn't work: 8</span></li>
+      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 96</span><span data-lang="en" hidden>never tried in game: 96</span></li>
+      <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 9</span><span data-lang="en" hidden>tried, doesn't work: 9</span></li>
       <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
       <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 7</span><span data-lang="en" hidden>tried, nothing to add: 7</span></li>
     </ul>
@@ -137,12 +137,24 @@
   <h2 class="section-title" id="personnage"><span data-lang="fr">2. Créer son personnage</span><span data-lang="en" hidden>2. Creating your character</span></h2>
   <div class="card">
     <p><span data-lang="fr">Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le mod : impossible de commencer à jouer.</span><span data-lang="en" hidden>The very first screen of a new game. It was completely silent before the mod: you simply couldn't start playing.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 9 au point.</span><span data-lang="en" hidden>0 of 9 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 11 au point.</span><span data-lang="en" hidden>0 of 11 solid.</span></p>
     <ol class="roadmap-list">
       <li class="roadmap-item status-todo" id="personnage-menu-principal">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches, Entrée — <span data-lang="fr">Naviguer dans le menu principal et l'écran de sauvegarde.</span><span data-lang="en" hidden>Navigate the main menu and the save screen.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les boutons sont nommés, et chaque sauvegarde annonce son résumé.</span><span data-lang="en" hidden>Buttons are named, and each save announces its summary.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="personnage-reglages-liste">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 8 — <span data-lang="fr">Ouvrir les réglages en liste, parcourir les options aux flèches haut et bas, en changer une avec gauche et droite. Essayer une case à cocher, un curseur et une liste déroulante.</span><span data-lang="en" hidden>Open the settings list, browse options with up and down, change one with left and right. Try a checkbox, a slider and a dropdown.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque option est annoncée avec son nom ET sa valeur. Gauche et droite changent la valeur sur place, sans quitter la ligne. Les curseurs s'annoncent en pour cent. Les réglages du mod figurent en tête de liste.</span><span data-lang="en" hidden>Each option is announced with its name AND its value. Left and right change the value in place, without leaving the line. Sliders are announced as percentages. The mod's own settings come first.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Les réglages du mod — bip de bord, navigation directionnelle, mode bref — ne se changeaient jusqu'ici qu'en éditant le fichier de configuration à la main. Les contrôles du jeu sont pilotés directement, donc c'est lui qui applique et enregistre.</span><span data-lang="en" hidden>The mod's own settings — edge beep, directional navigation, brief mode — could until now only be changed by hand-editing the config file. The game's controls are driven directly, so the game applies and saves them.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="personnage-menu-principal-focus">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Lancer le jeu et écouter sans rien presser, puis appuyer une fois sur la flèche du bas.</span><span data-lang="en" hidden>Launch the game and listen without pressing anything, then press the down arrow once.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le premier bouton du menu — Jouer, ou Continuer si une partie existe — est annoncé d'emblée. La première flèche déplace ensuite d'UN cran, pas depuis le bas de la liste.</span><span data-lang="en" hidden>The menu's first button — Play, or Continue if a save exists — is announced straight away. The first arrow then moves by ONE step, not from the bottom of the list.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Rapporté en jeu : on arrivait tout en bas. Le jeu ne sélectionne rien de lui-même sur cet écran, il attend la souris ; le mod ne prenait donc la main qu'à la première flèche, qui déplaçait déjà la sélection depuis nulle part. Le bouton est choisi par sa POSITION — le plus haut — et non par son texte : « Jouer » devient « Continuer » quand une partie existe, et se traduit.</span><span data-lang="en" hidden>Reported in game: you landed at the very bottom. The game selects nothing itself on this screen, it waits for the mouse; the mod only took over at the first arrow, which already moved the selection from nowhere. The button is chosen by POSITION — topmost — not by its text: "Play" becomes "Continue" when a save exists, and it is translated.</span></p>
       </li>
       <li class="roadmap-item status-fix is-critical" id="personnage-menu-principal-regression">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
@@ -460,7 +472,7 @@
   <h2 class="section-title" id="village"><span data-lang="fr">8. Le village et ses habitants</span><span data-lang="en" hidden>8. The village and its people</span></h2>
   <div class="card">
     <p><span data-lang="fr">Parler, acheter, recevoir du courrier, suivre ses quêtes.</span><span data-lang="en" hidden>Talking, buying, getting mail, following your quests.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 17 au point.</span><span data-lang="en" hidden>0 of 17 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 19 au point.</span><span data-lang="en" hidden>0 of 19 solid.</span></p>
     <ol class="roadmap-list">
       <li class="roadmap-item status-todo" id="village-monture">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
@@ -527,6 +539,18 @@
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé Entrée — <span data-lang="fr">Essayer au panneau des baraquements.</span><span data-lang="en" hidden>Try it at the barracks board.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Une seule commission est annoncée, pas deux tâches.</span><span data-lang="en" hidden>A single commission is announced, not two tasks.</span></p>
+      </li>
+      <li class="roadmap-item status-fix is-critical" id="village-listes-exclusives">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> G, V, Z — <span data-lang="fr">Ouvrir le menu Tab, puis ouvrir une liste par-dessus (quêtes, relations, compétences) et la parcourir aux flèches.</span><span data-lang="en" hidden>Open the Tab menu, then open a list on top of it (quests, relationships, skills) and browse it with the arrows.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">SEULE la liste parle. Le menu du jeu dessous ne doit rien annoncer, même s'il continue de bouger.</span><span data-lang="en" hidden>ONLY the list speaks. The game menu underneath must announce nothing, even if it keeps moving.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Rapporté en jeu : « le système de liste n'a rien changé ». Cause probable trouvée — rendre les flèches inertes ne suffit pas, Sun Haven lit le clavier par Rewired, indépendamment du système d'évènements d'Unity, donc sa sélection continuait de bouger sous la liste. Les deux étaient annoncés en même temps, chacun coupant l'autre. Les trois lecteurs du mod (focus, infobulle, survol) se taisent maintenant tant qu'une liste est ouverte.</span><span data-lang="en" hidden>Reported in game: 'the list system changed nothing'. Likely cause found — making the arrows inert is not enough: Sun Haven reads the keyboard through Rewired, independently of Unity's event system, so its selection kept moving under the list. Both were being announced, each cutting the other. The mod's three readers (focus, tooltip, hover) now stay silent while a list is open.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="village-carte-liste">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> X — <span data-lang="fr">Ouvrir la carte du monde, puis la liste des lieux. Parcourir, valider un lieu.</span><span data-lang="en" hidden>Open the world map, then the list of locations. Browse, confirm a location.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Tous les lieux de la région en une liste, avec leur nombre. Valider ouvre le lieu et annonce sa description.</span><span data-lang="en" hidden>Every location in the region as one list, with its count. Confirming opens the location and announces its description.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Le cheminement à pied depuis la carte a été demandé mais N'EST PAS possible : un lieu de la carte est une icône d'interface, sa position à l'écran n'a aucun rapport avec un endroit du monde, et s'en servir enverrait marcher vers une coordonnée arbitraire. Le jeu ne rattache à ces icônes qu'un nom de scène. Pour se déplacer, c'est le scanner, qui vise de vrais objets avec leur position réelle.</span><span data-lang="en" hidden>Walking there from the map was asked for but is NOT possible: a map location is an interface icon, its on-screen position has nothing to do with a place in the world, and using it would send you walking to an arbitrary coordinate. The game attaches only a scene name to these icons. For travel it is the scanner, which targets real objects with real positions.</span></p>
       </li>
       <li class="roadmap-item status-todo is-critical" id="village-listes-simplifiees">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>

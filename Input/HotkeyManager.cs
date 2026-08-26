@@ -91,7 +91,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.AnnounceQuests.Value)) QuestAnnouncer.AnnounceActiveQuests();
             if (Pressed(ModConfig.AnnounceRelationships.Value)) RelationshipAnnouncer.AnnounceAll();
             if (Pressed(ModConfig.AnnounceProfessions.Value)) ProfessionAnnouncer.AnnounceAll();
-            if (Pressed(ModConfig.MapPreviousLocation.Value)) MapNavigator.AnnouncePrevious();
+            if (Pressed(ModConfig.MapPreviousLocation.Value)) MapNavigator.OpenList();
             if (Pressed(ModConfig.MapNextLocation.Value)) MapNavigator.AnnounceNext();
 
             // Navigation de menu : flèches directionnelles (Haut/Gauche = précédent,
@@ -124,6 +124,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.BulletinBoardTasks.Value)) BulletinBoardReader.AnnounceNearest();
             if (Pressed(ModConfig.AnnounceSpells.Value)) SpellAnnouncer.AnnounceEquipped();
             if (Pressed(ModConfig.EquipSpell.Value)) SpellEquipMenu.Advance();
+            if (Pressed(ModConfig.SettingsList.Value)) SettingsMenu.Open();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,

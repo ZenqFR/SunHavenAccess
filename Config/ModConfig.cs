@@ -67,6 +67,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> BulletinBoardTasks;
         public static ConfigEntry<KeyCode> AnnounceSpells;
         public static ConfigEntry<KeyCode> EquipSpell;
+        public static ConfigEntry<KeyCode> SettingsList;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -201,7 +202,7 @@ namespace SunHavenAccess.Config
             // (voir Navigation/MapNavigator.cs) donc invisibles au scan générique de menu —
             // touches dédiées pour les parcourir un par un, actives seulement carte ouverte.
             MapPreviousLocation = Bind(config, section, "CarteLieuPrecedent", KeyCode.X,
-                "Lieu précédent sur la carte du monde (carte ouverte uniquement).", "Carte : lieu précédent");
+                "Lieu précédent sur la carte du monde (carte ouverte uniquement).", "Carte : liste des lieux");
             MapNextLocation = Bind(config, section, "CarteLieuSuivant", KeyCode.Y,
                 "Lieu suivant sur la carte du monde (carte ouverte uniquement).", "Carte : lieu suivant");
 
@@ -292,6 +293,10 @@ namespace SunHavenAccess.Config
                 "Annonce les quatre sorts actuellement équipés, emplacement par emplacement.", "Sorts équipés");
             EquipSpell = Bind(config, section, "ChoisirSort", KeyCode.Keypad7,
                 "Ouvre au clavier le choix de sort d'un emplacement. Chaque appui passe à l'emplacement suivant, puis referme.", "Choisir un sort à équiper");
+
+            // ---- Réglages en liste (Menus/SettingsMenu.cs) ----
+            SettingsList = Bind(config, section, "ReglagesListe", KeyCode.Keypad8,
+                "Ouvre les réglages en liste : ceux du mod, puis ceux du jeu affichés à l'écran. Gauche et droite changent la valeur.", "Réglages (liste)");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

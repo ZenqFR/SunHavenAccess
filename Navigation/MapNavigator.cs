@@ -41,6 +41,63 @@ namespace SunHavenAccess.Navigation
         public static void AnnounceNext() => Cycle(1);
         public static void AnnouncePrevious() => Cycle(-1);
 
+        /// <summary>
+        /// La carte en LISTE : tous les lieux d'un coup, plutôt qu'un cycle où l'on ne sait jamais
+        /// combien il en reste ni où l'on en est.
+        ///
+        /// Valider un lieu l'ouvre exactement comme un clic : la carte se centre dessus et le jeu
+        /// annonce sa description.
+        ///
+        /// PAS de cheminement automatique depuis la carte, malgré la demande. Un lieu de la carte
+        /// n'est qu'une icône d'interface : sa position à l'écran n'a aucun rapport avec un
+        /// endroit du monde, et s'en servir enverrait marcher vers une coordonnée arbitraire. Le
+        /// jeu ne rattache à ces icônes qu'un nom de scène, pas un point où aller — et aucun
+        /// trajet à pied ne relie deux cartes de toute façon.
+        ///
+        /// Pour se rendre quelque part sur la carte où l'on se trouve, c'est le scanner qui le
+        /// fait : il vise de vrais objets du monde, avec leur position réelle.
+        /// </summary>
+        public static void OpenList()
+        {
+            Map map = UIHandler.Instance != null ? UIHandler.Instance.map : null;
+            if (map == null || !map.gameObject.activeInHierarchy)
+            {
+                TolkSpeech.Speak("La carte n'est pas ouverte.", true);
+                return;
+            }
+
+            List<MapImage> visible = GetVisibleLocations(map);
+            if (visible.Count == 0)
+            {
+                TolkSpeech.Speak("Aucun lieu trouvé sur cette carte.", true);
+                return;
+            }
+
+            var labels = visible.Select(NameOf).ToList();
+            Menus.ListMenu.Open("Lieux de la carte", labels, chosen => Choose(visible, chosen));
+        }
+
+        private static string NameOf(MapImage image)
+        {
+            try
+            {
+                string text = Util.TextUtil.Clean(Util.UiTextExtractor.ExtractAll(image.gameObject));
+                if (!string.IsNullOrWhiteSpace(text)) return text;
+            }
+            catch { }
+            return "Lieu sans nom";
+        }
+
+        /// <summary>
+        /// Ouvre le lieu choisi, comme le ferait un clic : centre la carte, remplit la
+        /// description, et déclenche l'annonce via le patch Harmony sur Map.OpenLocation.
+        /// </summary>
+        private static void Choose(List<MapImage> visible, int index)
+        {
+            if (index < 0 || index >= visible.Count) return;
+            visible[index]?.OpenLocation();
+        }
+
         private static void Cycle(int direction)
         {
             Map map = UIHandler.Instance != null ? UIHandler.Instance.map : null;

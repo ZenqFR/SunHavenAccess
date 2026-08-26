@@ -43,6 +43,21 @@ namespace SunHavenAccess.Menus
             if (es == null) return;
 
             GameObject current = es.currentSelectedGameObject;
+
+            // Une liste vocale ouverte par-dessus un menu du jeu est la SEULE chose qui doit
+            // parler. Rendre les flèches inertes pour le jeu ne suffit pas : Sun Haven lit le
+            // clavier par Rewired, indépendamment du système d'évènements d'Unity, donc sa
+            // sélection peut continuer de bouger sous la liste. On annonçait alors les deux à la
+            // fois, chacun coupant l'autre — ce qui donnait l'impression que la liste ne changeait
+            // rien. On suit la sélection sans rien en dire, pour ne pas annoncer un déplacement
+            // périmé au moment où la liste se referme.
+            if (ListMenu.IsOpen || HelpMenu.IsOpen || ShortcutsMenu.IsOpen)
+            {
+                _lastFocused = current;
+                _pendingPrefix = null;
+                return;
+            }
+
             if (current == _lastFocused) return;
             _lastFocused = current;
 
