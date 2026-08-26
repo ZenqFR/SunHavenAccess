@@ -90,10 +90,18 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static bool IsActive()
         {
-            // Hors partie (menu principal, sélection/création de personnage) : aucun UIHandler ni
-            // joueur, mais on est forcément dans un menu — la seule question est s'il y a quelque
-            // chose à parcourir.
-            if (Player.Instance == null) return CurrentSelection() != null;
+            // Hors partie (menu principal, sélection et création de personnage) : aucun UIHandler
+            // ni joueur, mais on est forcément dans un menu.
+            //
+            // On teste « y a-t-il quelque chose à parcourir », PAS « quelque chose est-il
+            // sélectionné ». Ce second test créait un blocage circulaire : la création de
+            // personnage ne sélectionne rien d'elle-même, donc le mod refusait les flèches, donc
+            // rien n'était jamais sélectionné — l'écran restait sourd à toute navigation. C'est
+            // exactement le symptôme rapporté en jeu.
+            //
+            // Le risque qui avait motivé le test de sélection ne s'applique qu'EN PARTIE (Unity y
+            // garde une sélection résiduelle hors menu) : ici il n'y a pas de « hors menu ».
+            if (Player.Instance == null) return MenuNavigator.VisibleSelectables().Any();
 
             // En partie : on s'appuie UNIQUEMENT sur les signaux du jeu « une interface est
             // ouverte ». Se fier à « un élément est-il sélectionné » avait causé une régression
@@ -158,6 +166,16 @@ namespace SunHavenAccess.Menus
         /// avant. Si le découpage se trompe, on atterrit au mauvais endroit avec Ctrl, mais rien
         /// de ce qui fonctionnait déjà ne change.
         /// </summary>
+        /// <summary>
+        /// La colonne qui contient cet élément, ou null si l'écran n'est pas en colonnes.
+        /// </summary>
+        private static List<GameObject> ColumnContaining(List<GameObject> members, GameObject go)
+        {
+            List<List<GameObject>> columns = BuildColumns(members);
+            if (columns.Count < 2) return null;
+            return columns.FirstOrDefault(c => c.Contains(go));
+        }
+
         private static bool MoveAcrossColumns(GameObject currentGo, int dx)
         {
             List<List<GameObject>> columns = BuildColumns(ZoneMembers(Zone.Generic));
@@ -318,11 +336,23 @@ namespace SunHavenAccess.Menus
             if (zone == Zone.Tabs)
             {
                 if (dx != 0) SwitchTab(dx, wrap: false);
-                else UiSound.EdgeBump();
+                else MoveAcrossZones(currentGo, zone, dx, dy);
                 return;
             }
 
-            List<List<GameObject>> rows = BuildRows(ZoneMembers(zone));
+            // Sur un écran en colonnes, on ne parcourt QUE la colonne courante. Sans ça, les
+            // lignes sont reconstruites en groupant par hauteur sur tout l'écran : une « ligne »
+            // traverse alors les trois colonnes, et gauche/droite vagabonde du menu de catégories
+            // au panneau d'informations en passant par la personnalisation. C'est précisément ce
+            // qui rendait la création de personnage incompréhensible.
+            List<GameObject> members = ZoneMembers(zone);
+            if (zone == Zone.Generic)
+            {
+                List<GameObject> column = ColumnContaining(members, currentGo);
+                if (column != null) members = column;
+            }
+
+            List<List<GameObject>> rows = BuildRows(members);
             if (!Locate(rows, Anchor(currentGo), out int row, out int col))
             {
                 UiSound.EdgeBump();
@@ -333,12 +363,29 @@ namespace SunHavenAccess.Menus
                 ? StepHorizontally(rows, row, col, dx)
                 : StepVertically(rows, row, col, dy);
 
-            if (target == null)
+            if (target != null)
             {
-                UiSound.EdgeBump();
+                Select(target);
                 return;
             }
-            Select(target);
+
+            // Une zone d'une SEULE ligne (barre d'onglets, barre d'action) n'a aucun déplacement
+            // vertical qui lui soit propre : y buter reviendrait à rendre haut et bas définitivement
+            // morts, alors que la disposition à l'écran leur donne un sens évident — la première
+            // demande était « Tab me met sur les onglets, puis flèche du bas m'amène dans
+            // l'inventaire ». On suit donc l'adjacence, comme le ferait Contrôle+flèche.
+            //
+            // Ce n'est PAS le cas d'un simple bord de grille : en haut du sac ou de l'équipement,
+            // la flèche continue de buter avec un bip, comme demandé. La distinction est nette —
+            // on ne redirige une touche que lorsqu'elle serait sans effet dans TOUTE la zone,
+            // jamais quand elle bloque un vrai bord à l'intérieur d'une grille.
+            if (dy != 0 && rows.Count <= 1)
+            {
+                MoveAcrossZones(currentGo, zone, dx, dy);
+                return;
+            }
+
+            UiSound.EdgeBump();
         }
 
         /// <summary>Gauche/droite : reste sur la MÊME ligne, bute en bout (pas de retour à la ligne).</summary>

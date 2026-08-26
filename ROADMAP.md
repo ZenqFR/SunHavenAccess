@@ -2,12 +2,12 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 93 au point** (6 %).
+Mis à jour le 2026-08-26 — **6 sur 94 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
 | `[ ]` | À tester | jamais essayé en jeu | 87 |
-| `[!]` | À corriger | essayé, ne marche pas | 0 |
+| `[!]` | À corriger | essayé, ne marche pas | 1 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
 
@@ -53,10 +53,10 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
 - [ ] **personnage-race** — touche : Flèches
   - Faire : Choisir une race.
   - Attendu : Chaque race est annoncée au passage.
-- [ ] **personnage-colonnes** ⚠️ — touche : Ctrl + gauche / droite
+- [!] **personnage-colonnes** ⚠️ — touche : Ctrl + gauche / droite
   - Faire : En création de personnage, sauter d'une colonne à l'autre : catégories à gauche, personnalisation au centre, informations à droite.
   - Attendu : « Colonne 2 sur 3 » est annoncé, suivi de l'élément atteint, d'une seule traite. On arrive à la même hauteur qu'on avait quittée. Un bip signale les bords.
-  - Retour de jeu : Découpage déduit des grands écarts horizontaux entre éléments, sans supposer la hiérarchie de l'écran. Si le compte de colonnes est faux, c'est ce réglage qu'il faut ajuster. Les flèches seules n'ont pas changé.
+  - Retour de jeu : Rapporté en jeu : Ctrl+flèche ne faisait RIEN sur cet écran. Deux causes trouvées et corrigées — le mod refusait les flèches tant que rien n'était sélectionné (blocage circulaire, puisque l'écran ne sélectionne rien de lui-même), et les lignes étaient reconstruites en travers des trois colonnes. À réessayer.
 - [ ] **personnage-apparence** — touche : Virgule / Point
   - Faire : Parcourir les options d'apparence, puis changer de catégorie avec Ctrl.
   - Attendu : Chaque option est annoncée ; Ctrl passe à la catégorie suivante. Les ailes ne sont pas couvertes.
@@ -216,6 +216,10 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
 - [ ] **village-npc-proche** — touche : N
   - Faire : Appuyer sur N plusieurs fois près de personnages.
   - Attendu : On passe d'un personnage proche au suivant, avec nom, direction et distance.
+- [ ] **village-dialogue-choix** ⚠️ — touche : —
+  - Faire : Parler à un personnage jusqu'à obtenir une question à choix, puis sélectionner une réponse aux flèches.
+  - Attendu : La question est suivie de « 2 choix : 1, Oui ; 2, Non. » d'emblée. En naviguant entre les réponses, le mod ne doit PAS relire la question à chaque déplacement.
+  - Retour de jeu : Rapporté en jeu : quelque chose se répétait en boucle pendant la sélection d'une réponse. L'annonce des choix est ajoutée ; la répétition elle-même reste à identifier — dites-moi ce qui est répété exactement.
 - [ ] **village-dialogues** ⚠️ — touche : —
   - Faire : Parler à un personnage, y compris avec des choix de réponse.
   - Attendu : Les lignes sont lues dès le début, sans attendre l'animation. Les choix sont parcourables.

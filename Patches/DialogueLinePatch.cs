@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using TMPro;
@@ -33,7 +34,45 @@ namespace SunHavenAccess.Patches
 
             string speaker = GetSpeakerName(__instance);
             string toSpeak = string.IsNullOrWhiteSpace(speaker) ? clean : $"{speaker} : {clean}";
+
+            // Les réponses possibles étaient reçues ici depuis toujours et purement ignorées : le
+            // mod lisait la question sans jamais dire qu'il y avait un choix, ni lequel. On
+            // découvrait donc l'existence des options en tâtonnant aux flèches.
+            string choices = DescribeChoices(options);
+            if (choices != null) toSpeak += " " + choices;
+
             TolkSpeech.Speak(toSpeak, interrupt: true);
+        }
+
+        /// <summary>
+        /// Énonce les réponses proposées à la suite de la question.
+        ///
+        /// Elles sont dites d'emblée, plutôt que découvertes une à une en naviguant : un joueur
+        /// voyant lit la question ET ses options d'un même regard, et deux ou trois réponses
+        /// courtes tiennent dans la même phrase. Les numéroter permet en outre de savoir combien
+        /// il y en a avant de commencer à choisir.
+        ///
+        /// `Response.responseText` est un délégué évalué à la demande (le jeu y met parfois du
+        /// texte dépendant de l'état de la partie) : chaque appel est donc protégé isolément,
+        /// pour qu'une seule réponse défaillante n'emporte pas toute la liste.
+        /// </summary>
+        private static string DescribeChoices(Dictionary<int, Response> options)
+        {
+            if (options == null || options.Count == 0) return null;
+
+            var texts = new List<string>();
+            foreach (KeyValuePair<int, Response> entry in options.OrderBy(o => o.Key))
+            {
+                string label = null;
+                try { label = TextUtil.Clean(entry.Value?.responseText?.Invoke()); }
+                catch { }
+
+                if (string.IsNullOrWhiteSpace(label)) continue;
+                texts.Add($"{texts.Count + 1}, {label}");
+            }
+
+            if (texts.Count == 0) return null;
+            return $"{texts.Count} choix : {string.Join(" ; ", texts)}.";
         }
 
         private static string GetSpeakerName(DialogueController dc)
