@@ -10,9 +10,18 @@ Tout est vocalisé via [NVDA](https://www.nvaccess.org/) (en direct) ou, à déf
 
 > **Vous découvrez le mod ?** Le guide de démarrage <https://zenqfr.github.io/SunHavenAccess/demarrer.html> vous accompagne de l'installation à votre première heure de jeu, écrit pour un joueur aveugle qui débute.
 
+**[⬇️ Télécharger l'installateur](https://github.com/ZenqFR/SunHavenAccess/releases/latest)** — un seul programme, qui trouve le jeu tout seul et installe BepInEx et le mod. Entièrement pilotable au clavier, chaque contrôle nommé pour le lecteur d'écran, compte rendu dans une zone de texte relisible. N'étant pas signé numériquement, il déclenche l'avertissement SmartScreen de Windows : **Informations complémentaires** puis **Exécuter quand même**.
+
+<details>
+<summary><strong>Installation manuelle</strong></summary>
+
 1. Installer [BepInEx 5.4.23.5 (x64, Mono)](https://github.com/BepInEx/BepInEx/releases) dans le dossier du jeu (`Sun Haven/`), et lancer le jeu une fois pour qu'il génère sa structure de dossiers.
 2. Copier `SunHavenAccess.dll`, `Tolk.dll` et `nvdaControllerClient64.dll` dans `Sun Haven/BepInEx/plugins/SunHavenAccess/`.
 3. Lancer le jeu. Un message vocal confirme le chargement du mod et rappelle la touche d'aide (`F1` par défaut).
+
+</details>
+
+Dans tous les cas, si vous n'entendez rien au lancement : **F11** joue un son Windows indépendant de la synthèse vocale, ce qui distingue « le mod ne s'est pas chargé » de « le lecteur d'écran ne reçoit rien ».
 
 `Tolk.dll` et `nvdaControllerClient64.dll` sont des bibliothèques tierces libres, redistribuées ici pour que le mod fonctionne "out of the box" — voir [Remerciements](#-remerciements).
 

@@ -462,3 +462,7 @@ footer .privacy { margin-top: 0.6em; font-size: 0.8rem; }
 .toc a { text-decoration: none; }
 .toc a:hover { text-decoration: underline; }
 @media (max-width: 560px) { .toc { columns: 1; } }
+
+/* Le bouton de téléchargement de la page Démarrer : même composant .cta que l'accueil,
+   simplement dégagé du texte qui suit. */
+.download-cta { margin: 0 0 1.2em; }

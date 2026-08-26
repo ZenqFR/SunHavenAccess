@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <a class="skip-link" href="#main">
@@ -75,22 +75,37 @@
   </h2>
 
   <div class="card">
-    <p class="note">
-      <span data-lang="fr">⚠️ <strong>Il n'y a pas encore de version publiée à télécharger.</strong> L'installateur graphique est écrit et fonctionne, mais il n'a pas encore été testé sur une machine où le mod n'était pas déjà installé — le publier avant serait vous exposer à un installateur non vérifié. Cette page sera mise à jour dès que ce sera fait.</span>
-      <span data-lang="en" hidden>⚠️ <strong>There is no published download yet.</strong> The graphical installer is written and working, but it hasn't been tested on a machine where the mod wasn't already installed — publishing before that would hand you an unverified installer. This page will be updated as soon as that's done.</span>
+    <p class="download-cta">
+      <a class="cta" href="https://github.com/ZenqFR/SunHavenAccess/releases/latest">
+        <span data-lang="fr">⬇️ Télécharger l'installateur</span><span data-lang="en" hidden>⬇️ Download the installer</span>
+      </a>
     </p>
-
-    <h3 class="sub-title"><span data-lang="fr">L'installateur, une fois publié</span><span data-lang="en" hidden>The installer, once published</span></h3>
     <p>
-      <span data-lang="fr">Ce sera un simple programme à lancer. Il trouve Sun Haven tout seul (y compris si Steam l'a installé sur un autre disque), pose le mod, et vous dit ce qu'il a fait. Tout se pilote au clavier, chaque bouton est nommé pour le lecteur d'écran, et le compte rendu s'écrit dans une zone de texte que vous pouvez relire autant que vous voulez — pas de message qui disparaît, pas de boîte de dialogue à deviner.</span>
-      <span data-lang="en" hidden>It will simply be a program to run. It finds Sun Haven on its own (including when Steam installed it on another drive), places the mod, and tells you what it did. Everything is keyboard-driven, every button is named for the screen reader, and the report is written into a text box you can re-read as much as you like — no vanishing messages, no dialog to guess at.</span>
-    </p>
-    <p class="note">
-      <span data-lang="fr"><strong>À prévoir :</strong> l'installateur n'étant pas signé numériquement (une signature coûte plusieurs centaines d'euros par an), Windows affichera un avertissement « Windows a protégé votre ordinateur ». Pour continuer : activez le bouton <strong>Informations complémentaires</strong>, puis <strong>Exécuter quand même</strong>. C'est le comportement normal de Windows face à tout programme peu diffusé, pas un signe de danger.</span>
-      <span data-lang="en" hidden><strong>Be aware:</strong> since the installer isn't digitally signed (a signature costs several hundred euros a year), Windows will show a "Windows protected your PC" warning. To continue: activate the <strong>More info</strong> button, then <strong>Run anyway</strong>. This is Windows' normal behaviour towards any program without wide distribution, not a sign of danger.</span>
+      <span data-lang="fr">Un seul programme à lancer, <strong><code>Installer-Sun-Haven-Access.exe</code></strong>. Il trouve Sun Haven tout seul (y compris si Steam l'a installé sur un autre disque), installe BepInEx et le mod, et vous dit ce qu'il a fait. Tout se pilote au clavier, chaque bouton est nommé pour le lecteur d'écran, et le compte rendu s'écrit dans une zone de texte que vous pouvez relire autant que vous voulez — pas de message qui disparaît, pas de boîte de dialogue à deviner.</span>
+      <span data-lang="en" hidden>A single program to run, <strong><code>Installer-Sun-Haven-Access.exe</code></strong>. It finds Sun Haven on its own (including when Steam installed it on another drive), installs BepInEx and the mod, and tells you what it did. Everything is keyboard-driven, every button is named for the screen reader, and the report is written into a text box you can re-read as much as you like — no vanishing messages, no dialog to guess at.</span>
     </p>
 
-    <h3 class="sub-title"><span data-lang="fr">En attendant : installation manuelle</span><span data-lang="en" hidden>In the meantime: manual installation</span></h3>
+    <h3 class="sub-title"><span data-lang="fr">Windows va vous avertir — c'est normal</span><span data-lang="en" hidden>Windows will warn you — that's expected</span></h3>
+    <p class="note">
+      <span data-lang="fr">L'installateur n'est pas signé numériquement (une signature coûte plusieurs centaines d'euros par an), donc Windows affiche <strong>« Windows a protégé votre ordinateur »</strong>. Pour continuer : activez le bouton <strong>Informations complémentaires</strong>, puis <strong>Exécuter quand même</strong>. C'est le comportement normal de Windows face à tout programme peu diffusé, pas un signe de danger.</span>
+      <span data-lang="en" hidden>The installer isn't digitally signed (a signature costs several hundred euros a year), so Windows shows <strong>"Windows protected your PC"</strong>. To continue: activate the <strong>More info</strong> button, then <strong>Run anyway</strong>. This is Windows' normal behaviour towards any program without wide distribution, not a sign of danger.</span>
+    </p>
+
+    <h3 class="sub-title"><span data-lang="fr">Vérifier que ça a marché</span><span data-lang="en" hidden>Checking it worked</span></h3>
+    <p>
+      <span data-lang="fr">Lancez Sun Haven : <strong>un message vocal confirme que le mod est chargé</strong>. Si vous l'entendez, tout va bien.</span>
+      <span data-lang="en" hidden>Launch Sun Haven: <strong>a spoken message confirms the mod has loaded</strong>. If you hear it, you're all set.</span>
+    </p>
+    <p class="note">
+      <span data-lang="fr"><strong>Vous n'entendez rien ?</strong> Appuyez sur <strong>F11</strong> : cette touche joue un son Windows, indépendamment de la synthèse vocale. Si vous entendez ce son mais aucune parole, le problème vient du lecteur d'écran ; si vous n'entendez rien du tout, le mod ne s'est pas chargé.</span>
+      <span data-lang="en" hidden><strong>Hearing nothing?</strong> Press <strong>F11</strong>: that key plays a Windows sound, independently of speech. If you hear the sound but no speech, the problem is with the screen reader; if you hear nothing at all, the mod didn't load.</span>
+    </p>
+
+    <h3 class="sub-title"><span data-lang="fr">Installation manuelle</span><span data-lang="en" hidden>Manual installation</span></h3>
+    <p>
+      <span data-lang="fr">Si vous préférez ne pas lancer d'exécutable, ou compiler vous-même :</span>
+      <span data-lang="en" hidden>If you'd rather not run an executable, or want to build it yourself:</span>
+    </p>
     <ol class="install-steps">
       <li>
         <span data-lang="fr">Téléchargez <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5.4.23.5 (x64, Mono)</a> et décompressez-le directement dans le dossier du jeu — celui qui contient <code>Sun Haven.exe</code>.</span>
@@ -108,16 +123,7 @@
         <span data-lang="fr">Copiez <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> et <code>nvdaControllerClient64.dll</code> dans <code>Sun Haven\BepInEx\plugins\SunHavenAccess\</code>.</span>
         <span data-lang="en" hidden>Copy <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> and <code>nvdaControllerClient64.dll</code> into <code>Sun Haven\BepInEx\plugins\SunHavenAccess\</code>.</span>
       </li>
-      <li>
-        <span data-lang="fr">Lancez le jeu. <strong>Un message vocal confirme que le mod est chargé</strong> — si vous l'entendez, tout va bien.</span>
-        <span data-lang="en" hidden>Launch the game. <strong>A spoken message confirms the mod has loaded</strong> — if you hear it, you're all set.</span>
-      </li>
     </ol>
-
-    <p class="note">
-      <span data-lang="fr"><strong>Vous n'entendez rien au lancement ?</strong> Appuyez sur <strong>F11</strong> : cette touche joue un son Windows, indépendamment de la synthèse vocale. Si vous entendez ce son mais aucune parole, le problème vient du lecteur d'écran ; si vous n'entendez rien du tout, le mod ne s'est pas chargé.</span>
-      <span data-lang="en" hidden><strong>Hearing nothing on launch?</strong> Press <strong>F11</strong>: that key plays a Windows sound, independently of speech. If you hear the sound but no speech, the problem is with the screen reader; if you hear nothing at all, the mod didn't load.</span>
-    </p>
   </div>
 
   <h2 class="section-title" id="touches">
@@ -208,7 +214,7 @@
 
 <button type="button" class="to-top" id="to-top" aria-label="Retour en haut de la page">↑</button>
 
-<script src="site.js?v=2"></script>
+<script src="site.js?v=3"></script>
 
 </body>
 </html>
