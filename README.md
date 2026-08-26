@@ -60,6 +60,18 @@ Le mod ne savait lire qu'une seule case : celle devant le personnage. Explorer u
 
 </details>
 <details>
+<summary><strong>Animaux de la ferme</strong></summary>
+
+Nourrir, caresser, ramasser les produits : une routine quotidienne dont tout est signalé visuellement (icône au-dessus de la tête, objet posé au sol). Sans la vue, il fallait aller au contact de chaque bête l'une après l'autre, dans un enclos dont on ignore même l'effectif.
+
+- Une touche donne le **bilan de tout le troupeau** de la scène : effectif, combien restent à nourrir, combien à caresser, combien ont laissé un produit au sol.
+- Les **noms** ne sont cités que pour un petit troupeau (3 au plus). Au-delà, seul le compte : réciter quinze bêtes serait plus long que d'aller les voir.
+- Chaque animal repéré au **scanner** annonce son propre état plutôt que son seul nom.
+- Un animal dont l'état est illisible est **compté à part**, jamais rangé parmi ceux qui n'ont besoin de rien — un compte faussement rassurant serait pire que pas de compte.
+- Données lues : `AnimalPositionData.Hungry`/`hasPetted`/`droppedItem`/`name`, toutes publiques. Filtrage par `ScenePortalManager.ActiveSceneName`, sans quoi on compterait les bêtes des cartes voisines encore chargées.
+
+</details>
+<details>
 <summary><strong>Poser des meubles et des bâtiments</strong></summary>
 
 Poser un objet était l'une des dernières actions entièrement fermées : un aperçu suit la souris et change de teinte — blanc si l'emplacement convient, rouge sinon. Sans la vue, on ne sait ni où vise l'aperçu, ni pourquoi le clic ne fait rien.
@@ -357,6 +369,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Carte du monde** (voir la carte dédiée plus bas) : correction d'une supposition précédente — `Wish.LocationName` répond bien à la sélection/au clic mais N'HÉRITE PAS de `Selectable`, donc invisible au scan générique de menu du mod ; pas "probablement déjà accessible" comme supposé avant, réellement injoignable au clavier sans les touches dédiées ajoutées. Le reste de l'écran (boutons fermer/changer de région) fonctionne lui via le système générique, ce sont de vrais `Selectable`.
 - **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
 - **Placement de meubles et bâtiments** (voir la carte dédiée plus haut) : la lecture de `canBePlaced` et `roundedMousePos` se fait par réflexion sur des champs privés/protégés, et le pilotage de la visée repose sur le fait que le jeu relit la position réelle de la souris à chaque image. Deux points à vérifier en jeu : que l'aperçu suit bien le curseur libre, et que le clic pose l'objet sur la case visée et non devant le personnage. Le mode manette (`MouseVisualManager.UsingController`) prend un tout autre chemin de calcul et n'est pas couvert.
+- **Animaux de la ferme** (voir la carte dédiée plus haut) : lit `AnimalPositionData` (`Hungry`, `hasPetted`, `droppedItem`, `name`) via `Animal.animalItem`, tout en public. Deux inconnues : qu'un animal du joueur ait bien toujours un `animalItem` renseigné (un animal sauvage ou d'ambiance n'en a probablement pas — d'où le compte séparé « état inconnu »), et que `droppedItem` signifie bien « produit disponible au sol » et non « a déjà été ramassé ».
 
 </details>
 

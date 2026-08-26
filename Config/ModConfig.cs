@@ -62,6 +62,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> FreeCursorToggle;
         public static ConfigEntry<KeyCode> FreeCursorRecenter;
         public static ConfigEntry<KeyCode> PlacementStatus;
+        public static ConfigEntry<KeyCode> HerdStatus;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -261,6 +262,10 @@ namespace SunHavenAccess.Config
             // cette touche la redemande, ainsi que l'objet et son emprise au sol.
             PlacementStatus = Bind(config, section, "EtatPlacement", KeyCode.KeypadPlus,
                 "Redit où en est le placement en cours : objet, emprise et validité de l'emplacement visé.", "Placement : état courant");
+
+            // ---- Animaux de la ferme (Info/AnimalAnnouncer.cs) ----
+            HerdStatus = Bind(config, section, "EtatTroupeau", KeyCode.KeypadMinus,
+                "Bilan des animaux présents : combien sont à nourrir, à caresser, et combien ont laissé un produit au sol.", "Animaux : bilan du troupeau");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

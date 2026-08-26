@@ -296,7 +296,7 @@ namespace SunHavenAccess.Navigation
             if (c is NPCAI npc) return npc.LocalizedActualNPCName;
             if (c is Crop crop) return TileCursor.DescribeCrop(crop);
             if (c is ScenePortalSpot portal) return DescribeBuildingEntrance(portal);
-            if (c is Animal animal && !string.IsNullOrWhiteSpace(animal.AnimalName)) return animal.AnimalName;
+            if (c is Animal animal) return Info.AnimalAnnouncer.Describe(animal);
             if (c is EnemyAI enemy && !string.IsNullOrWhiteSpace(enemy.enemyName)) return UiNameTranslator.Translate(enemy.enemyName);
 
             if (c is IInteractable interactable)

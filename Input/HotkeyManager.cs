@@ -91,6 +91,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.FreeCursorToggle.Value)) FreeTileCursor.Toggle();
             if (Pressed(ModConfig.FreeCursorRecenter.Value)) FreeTileCursor.Recenter();
             if (Pressed(ModConfig.PlacementStatus.Value)) PlacementAssistant.AnnounceStatus();
+            if (Pressed(ModConfig.HerdStatus.Value)) AnimalAnnouncer.AnnounceHerdStatus();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,
@@ -368,6 +369,7 @@ namespace SunHavenAccess.Input
                 $"Pour poser un meuble ou un bâtiment : gardez l'objet en main, activez le curseur libre pour viser, " +
                 $"et le mod annonce dès que l'emplacement devient valide ou invalide. " +
                 $"{Strings.KeyName(ModConfig.PlacementStatus.Value)}, redire l'état du placement en cours. " +
+                $"{Strings.KeyName(ModConfig.HerdStatus.Value)}, bilan des animaux présents : combien sont à nourrir, à caresser, et combien ont laissé un produit au sol. " +
                 $"Dans l'inventaire : {Strings.KeyName(ModConfig.SortBackpack.Value)}, trier le sac. " +
                 $"{Strings.KeyName(ModConfig.AnnounceContents.Value)}, résumé du contenu. " +
                 $"{Strings.KeyName(ModConfig.StoreInChests.Value)}, ranger dans les coffres proches. " +

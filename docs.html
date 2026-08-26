@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
 <a class="skip-link" href="#main"><span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span></a>
@@ -38,6 +38,7 @@
   <a href="#deplacement" data-section="deplacement"><span data-lang="fr">Déplacement</span><span data-lang="en" hidden>Movement</span></a>
   <a href="#curseur-libre" data-section="curseur-libre"><span data-lang="fr">Curseur libre</span><span data-lang="en" hidden>Free cursor</span></a>
   <a href="#placement" data-section="placement"><span data-lang="fr">Placement</span><span data-lang="en" hidden>Placing</span></a>
+  <a href="#animaux" data-section="animaux"><span data-lang="fr">Animaux</span><span data-lang="en" hidden>Animals</span></a>
   <a href="#menus" data-section="menus"><span data-lang="fr">Menus</span><span data-lang="en" hidden>Menus</span></a>
   <a href="#scanner" data-section="scanner"><span data-lang="fr">Scanner</span><span data-lang="en" hidden>Scanner</span></a>
   <a href="#autres" data-section="autres"><span data-lang="fr">Autres</span><span data-lang="en" hidden>Other</span></a>
@@ -113,6 +114,7 @@
       <tr><td><span data-lang="fr">Pavé décimal</span><span data-lang="en" hidden>Numpad period</span></td><td><span data-lang="fr">Active/désactive le <strong>curseur de case libre</strong> : les flèches le déplacent alors case par case n'importe où sur la carte, indépendamment de votre personnage. Voir <a href="#curseur-libre">Curseur de case libre</a>.</span><span data-lang="en" hidden>Toggles the <strong>free tile cursor</strong>: the arrow keys then move it tile by tile anywhere on the map, independently of your character. See <a href="#curseur-libre">Free tile cursor</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé multiplier</span><span data-lang="en" hidden>Numpad multiply</span></td><td><span data-lang="fr">Ramène le curseur libre sur la case où vous vous tenez.</span><span data-lang="en" hidden>Brings the free cursor back to the tile you're standing on.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé plus</span><span data-lang="en" hidden>Numpad plus</span></td><td><span data-lang="fr">Redit l'état du placement en cours : objet en main, emprise au sol et validité de l'emplacement visé. Voir <a href="#placement">Poser des meubles et des bâtiments</a>.</span><span data-lang="en" hidden>Re-reads the current placement state: item in hand, footprint and validity of the targeted spot. See <a href="#placement">Placing furniture and buildings</a>.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé moins</span><span data-lang="en" hidden>Numpad minus</span></td><td><span data-lang="fr">Bilan des animaux présents : combien sont à nourrir, à caresser, combien ont laissé un produit au sol. Voir <a href="#animaux">Animaux de la ferme</a>.</span><span data-lang="en" hidden>Status of the animals present: how many need feeding, how many need petting, how many left a product on the ground. See <a href="#animaux">Farm animals</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Flèches (curseur libre actif)</span><span data-lang="en" hidden>Arrows (free cursor active)</span></td><td><span data-lang="fr">Déplacent le curseur d'une case. Un bip court signale le bord de la carte chargée. Les menus gardent la priorité sur les flèches.</span><span data-lang="en" hidden>Move the cursor by one tile. A short beep marks the edge of the loaded map. Menus keep priority over the arrow keys.</span></td></tr>
       <tr><td>C</td><td><span data-lang="fr">Ouvre le tchat/la console de debug du jeu. Remplace Entrée, sa touche par défaut, qui entrait en conflit avec la validation de menu du mod.</span><span data-lang="en" hidden>Opens the game's chat/debug console. Replaces Enter, its default key, which conflicted with the mod's menu confirmation.</span></td></tr>
     </tbody>
@@ -220,6 +222,20 @@
       <span data-lang="fr"><strong>Note technique.</strong> Le mod ne reprogramme pas le placement : le jeu recalcule déjà à chaque image la case visée et sa validité, et le mod se contente de les lire. Ce qui est annoncé est donc exactement ce que le jeu va faire, sans règle dupliquée qui pourrait diverger — et toutes les variantes (maisons, granges, arbres, papier peint) sont couvertes sans code particulier.</span>
       <span data-lang="en" hidden><strong>Technical note.</strong> The mod doesn't reimplement placement: the game already recomputes the target tile and its validity every frame, and the mod merely reads them. What is announced is therefore exactly what the game will do, with no duplicated rule that could drift — and every variant (houses, barns, trees, wallpaper) is covered with no special-case code.</span>
     </p>
+  </div>
+
+  <h2 class="section-title" id="animaux"><span data-lang="fr">Animaux de la ferme</span><span data-lang="en" hidden>Farm animals</span></h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">S'occuper des bêtes est une routine quotidienne — nourrir, caresser, ramasser ce qu'elles produisent — et tout y est signalé visuellement : une icône au-dessus de la tête de l'animal, un objet posé au sol. Sans la vue, il fallait aller au contact de chaque animal l'un après l'autre pour découvrir son état, dans un enclos où l'on ne sait même pas combien de bêtes on possède.</span>
+      <span data-lang="en" hidden>Looking after the animals is a daily routine — feeding, petting, collecting what they produce — and all of it is signalled visually: an icon above the animal's head, an object dropped on the ground. Without sight you had to walk up to each animal in turn to discover its state, in a pen where you don't even know how many animals you own.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Pavé moins</strong> donne le <strong>bilan de tout le troupeau</strong> présent : combien d'animaux, combien restent à nourrir, combien à caresser, et combien ont laissé un produit au sol. En une phrase, la réponse à « me reste-t-il quelque chose à faire avant de me coucher ? » — ce qu'un joueur voyant règle d'un coup d'œil sur l'enclos.</span><span data-lang="en" hidden><strong>Numpad minus</strong> gives the <strong>status of the whole herd</strong> present: how many animals, how many still need feeding, how many need petting, and how many have left a product on the ground. In one sentence, the answer to "is there anything left to do before bed?" — what a sighted player settles with a glance at the pen.</span></li>
+      <li><span data-lang="fr">Pour un petit troupeau, les <strong>noms</strong> des animaux concernés sont cités. Au-delà de trois, seul le compte est donné : réciter quinze bêtes serait plus long que d'aller les voir.</span><span data-lang="en" hidden>For a small herd, the <strong>names</strong> of the animals concerned are given. Beyond three, only the count: reciting fifteen animals would take longer than walking over to them.</span></li>
+      <li><span data-lang="fr">Chaque animal repéré au <a href="#scanner">scanner</a> annonce aussi son propre état, plutôt que son seul nom.</span><span data-lang="en" hidden>Each animal found by the <a href="#scanner">scanner</a> also announces its own state, rather than just its name.</span></li>
+      <li><span data-lang="fr">Un animal dont l'état ne peut pas être lu est <strong>compté à part</strong> et signalé comme tel, jamais rangé parmi ceux qui n'ont besoin de rien : un compte faussement rassurant serait pire que pas de compte du tout.</span><span data-lang="en" hidden>An animal whose state can't be read is <strong>counted separately</strong> and flagged as such, never lumped in with those that need nothing: a falsely reassuring count would be worse than no count at all.</span></li>
+    </ul>
   </div>
 
   <h2 class="section-title" id="menus"><span data-lang="fr">4. Menus, inventaire, dialogues</span><span data-lang="en" hidden>4. Menus, inventory, dialogue</span></h2>
@@ -460,7 +476,7 @@
 
 <button type="button" class="to-top" id="to-top" aria-label="Retour en haut de la page">↑</button>
 
-<script src="site.js?v=3"></script>
+<script src="site.js?v=4"></script>
 
 </body>
 </html>
