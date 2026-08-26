@@ -61,8 +61,8 @@
     <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
   </p>
   <span class="status-pill">
-    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 100 au point</span>
-    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 100 solid</span>
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 101 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 101 solid</span>
   </span>
 </header>
 
@@ -75,9 +75,9 @@
 
   <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
   <div class="card">
-    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 100</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 100 solid</strong> — 7%.</span></p>
+    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 101</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 101 solid</strong> — 7%.</span></p>
     <ul class="legend-list">
-      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 86</span><span data-lang="en" hidden>never tried in game: 86</span></li>
+      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 87</span><span data-lang="en" hidden>never tried in game: 87</span></li>
       <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 7</span><span data-lang="en" hidden>tried, doesn't work: 7</span></li>
       <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
       <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 7</span><span data-lang="en" hidden>tried, nothing to add: 7</span></li>
@@ -236,7 +236,7 @@
   <h2 class="section-title" id="sac"><span data-lang="fr">4. Son sac et son équipement</span><span data-lang="en" hidden>4. Your bag and gear</span></h2>
   <div class="card">
     <p><span data-lang="fr">La navigation dans les menus a été entièrement refaite et n'a jamais été confirmée en jeu. Le point à surveiller : qu'une pression ne provoque pas deux déplacements.</span><span data-lang="en" hidden>Menu navigation was fully rewritten and never confirmed in game. Watch for this: one press must not cause two moves.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 12 au point.</span><span data-lang="en" hidden>0 of 12 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 13 au point.</span><span data-lang="en" hidden>0 of 13 solid.</span></p>
     <ol class="roadmap-list">
       <li class="roadmap-item status-todo" id="sac-onglets">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
@@ -247,7 +247,13 @@
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Ctrl + haut — <span data-lang="fr">Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.</span><span data-lang="en" hidden>Open the Skills tab (or any other), go down into the content, then come back up to the tab bar.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.</span><span data-lang="en" hidden>Ctrl+up ALWAYS returns to the tab bar, from any panel and at any depth.</span></p>
-        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">RÉGRESSION que j'ai introduite avec le saut de bandes : arrivé en haut de l'écran, celui-ci bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé — au sommet, le saut de bandes rend la main au lieu de buter. Note : la flèche haut SEULE continue de buter avec un bip en haut d'une grille, comme demandé ; c'est Ctrl+haut la sortie de secours.</span><span data-lang="en" hidden>A REGRESSION I introduced with band jumping: at the top of the screen it beeped and consumed the key, so the "Ctrl+up returns to the tabs" rule was never reached. Fixed — at the top, band jumping hands back instead of stopping. Note: plain up still stops with a beep at the top of a grid, as requested; Ctrl+up is the escape.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Signalé puis retiré : après plusieurs Tab la navigation redevenait bonne. Le défaut existait néanmoins dans le code — au sommet de l'écran, le saut de bandes bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé. Le tâtonnement venait d'ailleurs : la barre d'onglets ne figurait pas dans l'ordre d'entrée, donc la première flèche après Tab atterrissait dans le sac à dos. Elle y est désormais en premier.</span><span data-lang="en" hidden>Reported then withdrawn: after several Tab presses navigation came good. The defect was real in the code all the same — at the top of the screen, band jumping beeped and consumed the key, so the Ctrl+up-returns-to-the-tabs rule was never reached. Fixed. The fumbling came from elsewhere: the tab bar was missing from the entry order, so the first arrow after Tab landed in the backpack. It now comes first.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="sac-onglets-tous">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Tab puis flèches — <span data-lang="fr">Ouvrir chacun des sept onglets et tenter de parcourir son contenu : Sac à dos, Compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.</span><span data-lang="en" hidden>Open each of the seven tabs and try to browse its content: Backpack, Skills, Relationships, Quests, Map, Statistics, Settings.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque onglet a quelque chose de parcourable et de lu. Les onglets sans rien de cliquable — les Statistiques notamment — deviennent parcourables ligne de texte par ligne de texte, à défaut de mieux.</span><span data-lang="en" hidden>Every tab has something browsable and read aloud. Tabs with nothing clickable — Statistics above all — become browsable text line by text line, for want of better.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Signalé en jeu : Relations, Carte, Statistiques et Paramètres n'étaient pas accessibles. Quêtes l'était déjà par la touche G, Relations par V et la Carte par X et Y, mais ce sont des annonces à la demande, pas une navigation. Un repli sur les textes est ajouté pour les panneaux sans élément cliquable. Dites-moi lesquels restent muets : s'il en reste, c'est qu'ils n'exposent ni bouton ni texte standard, et il faudra un navigateur dédié comme pour la carte du monde.</span><span data-lang="en" hidden>Reported in game: Relationships, Map, Statistics and Settings were not accessible. Quests already had the G key, Relationships V, and the Map X and Y, but those are on-demand announcements, not navigation. A text fallback is added for panels with nothing clickable. Tell me which stay silent: any that do expose neither buttons nor standard text, and will need a dedicated navigator as the world map did.</span></p>
       </li>
       <li class="roadmap-item status-todo is-critical" id="sac-nav-directionnelle">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>

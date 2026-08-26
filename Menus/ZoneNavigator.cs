@@ -574,11 +574,14 @@ namespace SunHavenAccess.Menus
 
         private static void EnterDefault()
         {
-            // Si un coffre est ouvert, c'est très probablement ce qu'on vient d'ouvrir : on y entre
-            // en premier plutôt que dans le sac.
+            // Un coffre ouvert est presque toujours ce qu'on vient d'ouvrir : on y entre d'abord.
+            // Sinon on commence par la BARRE D'ONGLETS, qui manquait purement et simplement à
+            // cette liste : la première flèche après Tab atterrissait donc dans le sac à dos, alors
+            // que le modèle mental annoncé dès le départ est « je fais Tab, ça me met sur les
+            // onglets, puis je descends ». Il fallait tâtonner pour retrouver ses repères.
             Zone[] order = ChestOpen()
                 ? new[] { Zone.Chest, Zone.Backpack, Zone.ActionBar, Zone.Equipment, Zone.Generic }
-                : new[] { Zone.Backpack, Zone.ActionBar, Zone.Equipment, Zone.Generic };
+                : new[] { Zone.Tabs, Zone.Backpack, Zone.ActionBar, Zone.Equipment, Zone.Generic };
 
             foreach (Zone z in order)
             {
@@ -705,7 +708,13 @@ namespace SunHavenAccess.Menus
                 return Zone.Backpack;
             }
 
-            return go.GetComponent<Selectable>() != null ? Zone.Generic : Zone.None;
+            if (go.GetComponent<Selectable>() != null) return Zone.Generic;
+
+            // Un texte pur compte aussi comme élément générique : c'est ce qui rend parcourables
+            // les onglets sans rien de cliquable (voir ReadableTexts). Sans ça, la sélection posée
+            // sur un texte serait classée « aucune zone » et la navigation repartirait de zéro à
+            // chaque touche, laissant l'onglet aussi muet qu'avant.
+            return go.GetComponent<TMPro.TextMeshProUGUI>() != null ? Zone.Generic : Zone.None;
         }
 
         private static bool IsTab(GameObject go)
@@ -737,15 +746,51 @@ namespace SunHavenAccess.Menus
             {
                 // Écrans sans grille connue : on réutilise exactement le filtrage déjà éprouvé de
                 // MenuNavigator (interactable + visible + hors CanvasGroup transparent).
-                return MenuNavigator.VisibleSelectables()
+                List<GameObject> selectables = MenuNavigator.VisibleSelectables()
                     .Where(s => ClassifyZone(s.gameObject) == Zone.Generic)
                     .Select(s => s.gameObject).ToList();
+
+                if (selectables.Count > 0) return selectables;
+
+                // Certains onglets — les Statistiques au premier chef — ne contiennent AUCUN
+                // élément cliquable : uniquement du texte. Il n'y avait donc rien à parcourir, et
+                // l'onglet restait entièrement muet. À défaut de sélectionnables, on rend les
+                // textes eux-mêmes parcourables : lire un panneau ligne à ligne vaut infiniment
+                // mieux que de ne pas pouvoir l'ouvrir du tout.
+                //
+                // Ce repli ne s'applique QUE si rien de cliquable n'existe, donc il ne peut pas
+                // encombrer un écran qui fonctionne déjà.
+                return ReadableTexts();
             }
 
             return Object.FindObjectsOfType<Slot>()
                 .Where(s => s != null && s.gameObject.activeInHierarchy && ClassifyZone(s.gameObject) == zone)
                 .Select(s => s.gameObject)
                 .ToList();
+        }
+
+        /// <summary>
+        /// Les textes affichés à l'écran, utilisables comme éléments de parcours quand un panneau
+        /// n'a rien de cliquable. On écarte le vide et les libellés d'un seul caractère, qui sont
+        /// presque toujours des ornements (séparateurs, chiffres isolés d'une barre de progression)
+        /// et n'apporteraient que du bruit.
+        /// </summary>
+        private static List<GameObject> ReadableTexts()
+        {
+            try
+            {
+                return Object.FindObjectsOfType<TMPro.TextMeshProUGUI>()
+                    .Where(t => t != null
+                                && t.gameObject.activeInHierarchy
+                                && !string.IsNullOrWhiteSpace(t.text)
+                                && t.text.Trim().Length > 1)
+                    .Select(t => t.gameObject)
+                    .ToList();
+            }
+            catch
+            {
+                return new List<GameObject>();
+            }
         }
 
         // ------------------------------------------------------------ Grille

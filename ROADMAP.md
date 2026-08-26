@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 100 au point** (7 %).
+Mis à jour le 2026-08-26 — **7 sur 101 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 86 |
+| `[ ]` | À tester | jamais essayé en jeu | 87 |
 | `[!]` | À corriger | essayé, ne marche pas | 7 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -114,7 +114,11 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
 - [!] **sac-retour-onglets** ⚠️ — touche : Ctrl + haut
   - Faire : Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.
   - Attendu : Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.
-  - Retour de jeu : RÉGRESSION que j'ai introduite avec le saut de bandes : arrivé en haut de l'écran, celui-ci bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé — au sommet, le saut de bandes rend la main au lieu de buter. Note : la flèche haut SEULE continue de buter avec un bip en haut d'une grille, comme demandé ; c'est Ctrl+haut la sortie de secours.
+  - Retour de jeu : Signalé puis retiré : après plusieurs Tab la navigation redevenait bonne. Le défaut existait néanmoins dans le code — au sommet de l'écran, le saut de bandes bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé. Le tâtonnement venait d'ailleurs : la barre d'onglets ne figurait pas dans l'ordre d'entrée, donc la première flèche après Tab atterrissait dans le sac à dos. Elle y est désormais en premier.
+- [ ] **sac-onglets-tous** ⚠️ — touche : Tab puis flèches
+  - Faire : Ouvrir chacun des sept onglets et tenter de parcourir son contenu : Sac à dos, Compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.
+  - Attendu : Chaque onglet a quelque chose de parcourable et de lu. Les onglets sans rien de cliquable — les Statistiques notamment — deviennent parcourables ligne de texte par ligne de texte, à défaut de mieux.
+  - Retour de jeu : Signalé en jeu : Relations, Carte, Statistiques et Paramètres n'étaient pas accessibles. Quêtes l'était déjà par la touche G, Relations par V et la Carte par X et Y, mais ce sont des annonces à la demande, pas une navigation. Un repli sur les textes est ajouté pour les panneaux sans élément cliquable. Dites-moi lesquels restent muets : s'il en reste, c'est qu'ils n'exposent ni bouton ni texte standard, et il faudra un navigateur dédié comme pour la carte du monde.
 - [ ] **sac-nav-directionnelle** ⚠️ — touche : Flèches
   - Faire : Dans le sac, se déplacer ligne par ligne et colonne par colonne.
   - Attendu : Les flèches suivent la disposition visuelle réelle. Gauche/droite butent en bout de ligne avec un bip. Une pression = un seul déplacement.
