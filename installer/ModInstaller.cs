@@ -78,6 +78,22 @@ namespace SunHavenAccess.Installer
 
                 report($"{written} fichier{(written > 1 ? "s" : "")} installé{(written > 1 ? "s" : "")}.");
                 report("");
+
+                // Sans BepInEx, les fichiers du mod sont bien posés mais rien ne les charge, et le
+                // jeu se lance dans le silence le plus complet. Annoncer « terminé » dans ce cas
+                // enverrait l'utilisateur chercher une panne de synthèse vocale qui n'existe pas.
+                if (!BepInExPresent(gameDirectory))
+                {
+                    report("ATTENTION : BepInEx est absent de ce dossier de jeu.");
+                    report("Le mod est bien posé, mais rien ne le chargera tant que BepInEx");
+                    report("n'est pas installé : le jeu démarrera sans aucune annonce vocale.");
+                    report("");
+                    report("Installez BepInEx 5.4.23.5 (x64, Mono) depuis :");
+                    report("  https://github.com/BepInEx/BepInEx/releases");
+                    report("Décompressez-le dans ce même dossier, puis relancez cet installateur.");
+                    return false;
+                }
+
                 report("Installation terminée.");
                 report("Lancez Sun Haven : un message vocal doit confirmer que le mod est chargé.");
                 report("Si vous n'entendez rien, appuyez sur F11 dans le jeu pour vérifier le son.");
@@ -141,6 +157,24 @@ namespace SunHavenAccess.Installer
                 report("Échec de la désinstallation : " + e.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// BepInEx est-il en place dans ce dossier de jeu ?
+        ///
+        /// On teste le chargeur lui-même (`BepInEx/core/BepInEx.dll`) et le point d'entrée natif
+        /// (`winhttp.dll`), et non la simple existence du dossier `BepInEx` : ce dossier est
+        /// justement celui que cet installateur vient de créer pour y poser le mod, donc sa
+        /// présence ne prouve strictement rien.
+        /// </summary>
+        public static bool BepInExPresent(string gameDirectory)
+        {
+            try
+            {
+                return File.Exists(Path.Combine(gameDirectory, @"BepInEx\core\BepInEx.dll"))
+                    && File.Exists(Path.Combine(gameDirectory, "winhttp.dll"));
+            }
+            catch { return false; }
         }
 
         /// <summary>Le mod est-il déjà présent dans ce dossier de jeu ?</summary>
