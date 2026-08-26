@@ -256,6 +256,32 @@
     },
 
     {
+      "id": "paquets",
+      "title": { "fr": "Les paquets à compléter", "en": "Bundles to complete" },
+      "intro": {
+        "fr": "Musée, autel de Dynus, aquarium : les collections qu'on remplit sur toute une partie. Tout nouveau, jamais testé. Le point à vérifier avant tout : que l'objet annoncé soit bien celui que l'emplacement réclame.",
+        "en": "Museum, Dynus altar, aquarium: the collections you fill over a whole playthrough. Brand new, never tested. Check this above all: that the announced item really is the one the slot wants."
+      },
+      "items": [
+        { "id": "paquet-manque", "key": "Pavé diviser", "status": "todo", "critical": true,
+          "action":   { "fr": "Devant un paquet ouvert, demander ce qu'il manque.", "en": "With a bundle open, ask what's missing." },
+          "expected": { "fr": "Le nombre d'emplacements remplis, puis chaque objet manquant avec la quantité déjà déposée — par exemple « Blé, 2 sur 5 ».", "en": "The number of filled slots, then each missing item with the amount already given — for example \"Wheat, 2 of 5\"." } },
+        { "id": "paquet-emplacement", "key": "Flèches", "status": "todo",
+          "action":   { "fr": "Parcourir les emplacements du paquet aux flèches.", "en": "Browse the bundle's slots with the arrows." },
+          "expected": { "fr": "Chaque emplacement annonce l'objet qu'il attend et où en est le dépôt, même s'il est vide — c'est justement vide qu'il porte l'information utile.", "en": "Each slot announces the item it wants and how far along the deposit is, even when empty — empty is precisely when it carries the useful information." } },
+        { "id": "paquet-depot", "key": "Entrée", "status": "todo",
+          "action":   { "fr": "Déposer un objet, puis redemander ce qu'il manque.", "en": "Deposit an item, then ask again what's missing." },
+          "expected": { "fr": "Le compte a bougé et correspond à ce qui vient d'être déposé.", "en": "The count has moved and matches what was just deposited." } },
+        { "id": "paquet-complet", "key": "Pavé diviser", "status": "todo",
+          "action":   { "fr": "Sur un paquet entièrement rempli, demander l'état.", "en": "On a fully filled bundle, ask for its state." },
+          "expected": { "fr": "« Paquet complet » plutôt qu'une liste vide.", "en": "\"Bundle complete\" rather than an empty list." } },
+        { "id": "paquet-coffre", "key": "Pavé diviser", "status": "todo",
+          "action":   { "fr": "Ouvrir un coffre ORDINAIRE et appuyer sur la même touche.", "en": "Open an ORDINARY chest and press the same key." },
+          "expected": { "fr": "« Aucun paquet ouvert » — un coffre normal ne doit pas être pris pour un paquet.", "en": "\"No bundle open\" — a normal chest must not be mistaken for a bundle." } }
+      ]
+    },
+
+    {
       "id": "metiers",
       "title": { "fr": "Pêche, mine et bûcheronnage", "en": "Fishing, mining and logging" },
       "intro": {

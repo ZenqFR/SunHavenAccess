@@ -176,6 +176,10 @@ namespace SunHavenAccess.Menus
             $"Les animaux de la ferme. {K(ModConfig.HerdStatus)} donne le bilan du troupeau présent : " +
             "combien sont à nourrir, combien à caresser, et combien ont laissé un produit au sol.",
 
+            $"Les paquets à compléter : musée, autel, aquarium. Devant un paquet ouvert, {K(ModConfig.BundleStatus)} dit ce qu'il manque encore, " +
+            "objet par objet, avec les quantités déjà déposées. En parcourant les emplacements aux flèches, chacun annonce l'objet qu'il attend " +
+            "et où en est le dépôt.",
+
             $"La pêche. {K(ModConfig.FishingToneToggle)} active ou coupe le bip continu qui aide à viser pendant le mini-jeu.",
 
             $"Vos quêtes et vos relations. {K(ModConfig.AnnounceQuests)} liste vos quêtes actives. " +

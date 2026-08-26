@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 69 au point** (9 %).
+Mis à jour le 2026-08-26 — **6 sur 74 au point** (8 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 63 |
+| `[ ]` | À tester | jamais essayé en jeu | 68 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
@@ -213,7 +213,27 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
   - Faire : Appuyer sur point-virgule.
   - Attendu : Les festivals de la saison en cours sont listés.
 
-## 9. Pêche, mine et bûcheronnage
+## 9. Les paquets à compléter
+
+Musée, autel de Dynus, aquarium : les collections qu'on remplit sur toute une partie. Tout nouveau, jamais testé. Le point à vérifier avant tout : que l'objet annoncé soit bien celui que l'emplacement réclame.
+
+- [ ] **paquets-paquet-manque** ⚠️ — touche : Pavé diviser
+  - Faire : Devant un paquet ouvert, demander ce qu'il manque.
+  - Attendu : Le nombre d'emplacements remplis, puis chaque objet manquant avec la quantité déjà déposée — par exemple « Blé, 2 sur 5 ».
+- [ ] **paquets-paquet-emplacement** — touche : Flèches
+  - Faire : Parcourir les emplacements du paquet aux flèches.
+  - Attendu : Chaque emplacement annonce l'objet qu'il attend et où en est le dépôt, même s'il est vide — c'est justement vide qu'il porte l'information utile.
+- [ ] **paquets-paquet-depot** — touche : Entrée
+  - Faire : Déposer un objet, puis redemander ce qu'il manque.
+  - Attendu : Le compte a bougé et correspond à ce qui vient d'être déposé.
+- [ ] **paquets-paquet-complet** — touche : Pavé diviser
+  - Faire : Sur un paquet entièrement rempli, demander l'état.
+  - Attendu : « Paquet complet » plutôt qu'une liste vide.
+- [ ] **paquets-paquet-coffre** — touche : Pavé diviser
+  - Faire : Ouvrir un coffre ORDINAIRE et appuyer sur la même touche.
+  - Attendu : « Aucun paquet ouvert » — un coffre normal ne doit pas être pris pour un paquet.
+
+## 10. Pêche, mine et bûcheronnage
 
 Les métiers qui font vivre la ferme. La pêche est la plus délicate : son mini-jeu est purement visuel.
 
@@ -227,7 +247,7 @@ Les métiers qui font vivre la ferme. La pêche est la plus délicate : son mini
   - Faire : Frapper un rocher et un arbre, avec un outil trop faible puis adapté.
   - Attendu : Le mod signale l'outil trop faible, et confirme la casse sinon.
 
-## 10. Combat et donjons
+## 11. Combat et donjons
 
 Se battre sans voir arriver les coups.
 
@@ -244,7 +264,7 @@ Se battre sans voir arriver les coups.
   - Faire : Repérer les ennemis au scanner pendant un combat.
   - Attendu : Les ennemis proches sont listés avec direction et distance.
 
-## 11. Bâtir et décorer
+## 12. Bâtir et décorer
 
 Tout nouveau, jamais testé. Si l'aperçu ne suit pas le curseur, c'est le pilotage de la souris qui est en cause.
 
@@ -264,7 +284,7 @@ Tout nouveau, jamais testé. Si l'aperçu ne suit pas le curseur, c'est le pilot
   - Faire : Redemander l'état du placement.
   - Attendu : Objet, emprise et validité sont redits.
 
-## 12. Progresser sur la durée
+## 13. Progresser sur la durée
 
 Les compétences, qu'on dépense au fil des niveaux.
 

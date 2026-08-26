@@ -207,6 +207,11 @@ namespace SunHavenAccess.Util
             Slot slot = go.GetComponentInParent<Slot>();
             if (slot == null) return null;
 
+            // Emplacement de paquet (musée, autel...) : traité AVANT le test « vide », car c'est
+            // justement vide qu'il porte l'information utile — ce qu'il attend encore.
+            string bundle = Info.BundleReader.DescribeSlot(slot);
+            if (bundle != null) return bundle;
+
             bool empty;
             try
             {

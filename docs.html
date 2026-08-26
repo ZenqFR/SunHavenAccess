@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 </head>
 <body>
 <a class="skip-link" href="#main"><span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span></a>
@@ -39,6 +39,7 @@
   <a href="#deplacement" data-section="deplacement"><span data-lang="fr">Déplacement</span><span data-lang="en" hidden>Movement</span></a>
   <a href="#curseur-libre" data-section="curseur-libre"><span data-lang="fr">Curseur libre</span><span data-lang="en" hidden>Free cursor</span></a>
   <a href="#placement" data-section="placement"><span data-lang="fr">Placement</span><span data-lang="en" hidden>Placing</span></a>
+  <a href="#paquets" data-section="paquets"><span data-lang="fr">Paquets</span><span data-lang="en" hidden>Bundles</span></a>
   <a href="#animaux" data-section="animaux"><span data-lang="fr">Animaux</span><span data-lang="en" hidden>Animals</span></a>
   <a href="#menus" data-section="menus"><span data-lang="fr">Menus</span><span data-lang="en" hidden>Menus</span></a>
   <a href="#scanner" data-section="scanner"><span data-lang="fr">Scanner</span><span data-lang="en" hidden>Scanner</span></a>
@@ -117,6 +118,7 @@
       <tr><td><span data-lang="fr">Pavé multiplier</span><span data-lang="en" hidden>Numpad multiply</span></td><td><span data-lang="fr">Ramène le curseur libre sur la case où vous vous tenez.</span><span data-lang="en" hidden>Brings the free cursor back to the tile you're standing on.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé plus</span><span data-lang="en" hidden>Numpad plus</span></td><td><span data-lang="fr">Redit l'état du placement en cours : objet en main, emprise au sol et validité de l'emplacement visé. Voir <a href="#placement">Poser des meubles et des bâtiments</a>.</span><span data-lang="en" hidden>Re-reads the current placement state: item in hand, footprint and validity of the targeted spot. See <a href="#placement">Placing furniture and buildings</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé moins</span><span data-lang="en" hidden>Numpad minus</span></td><td><span data-lang="fr">Bilan des animaux présents : combien sont à nourrir, à caresser, combien ont laissé un produit au sol. Voir <a href="#animaux">Animaux de la ferme</a>.</span><span data-lang="en" hidden>Status of the animals present: how many need feeding, how many need petting, how many left a product on the ground. See <a href="#animaux">Farm animals</a>.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé diviser</span><span data-lang="en" hidden>Numpad divide</span></td><td><span data-lang="fr">Devant un paquet ouvert (musée, autel, aquarium) : dit ce qu'il manque encore, objet par objet, avec les quantités déjà déposées. Voir <a href="#paquets">Les paquets à compléter</a>.</span><span data-lang="en" hidden>With a bundle open (museum, altar, aquarium): says what is still missing, item by item, with the amounts already given. See <a href="#paquets">Bundles to complete</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Flèches (curseur libre actif)</span><span data-lang="en" hidden>Arrows (free cursor active)</span></td><td><span data-lang="fr">Déplacent le curseur d'une case. Un bip court signale le bord de la carte chargée. Les menus gardent la priorité sur les flèches.</span><span data-lang="en" hidden>Move the cursor by one tile. A short beep marks the edge of the loaded map. Menus keep priority over the arrow keys.</span></td></tr>
       <tr><td>C</td><td><span data-lang="fr">Ouvre le tchat/la console de debug du jeu. Remplace Entrée, sa touche par défaut, qui entrait en conflit avec la validation de menu du mod.</span><span data-lang="en" hidden>Opens the game's chat/debug console. Replaces Enter, its default key, which conflicted with the mod's menu confirmation.</span></td></tr>
     </tbody>
@@ -223,6 +225,24 @@
     <p class="note">
       <span data-lang="fr"><strong>Note technique.</strong> Le mod ne reprogramme pas le placement : le jeu recalcule déjà à chaque image la case visée et sa validité, et le mod se contente de les lire. Ce qui est annoncé est donc exactement ce que le jeu va faire, sans règle dupliquée qui pourrait diverger — et toutes les variantes (maisons, granges, arbres, papier peint) sont couvertes sans code particulier.</span>
       <span data-lang="en" hidden><strong>Technical note.</strong> The mod doesn't reimplement placement: the game already recomputes the target tile and its validity every frame, and the mod merely reads them. What is announced is therefore exactly what the game will do, with no duplicated rule that could drift — and every variant (houses, barns, trees, wallpaper) is covered with no special-case code.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="paquets"><span data-lang="fr">Les paquets à compléter</span><span data-lang="en" hidden>Bundles to complete</span></h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Musée, autel de Dynus, aquarium : les collections qu'on remplit sur toute une partie, en y déposant des objets précis en quantité précise. Visuellement, un paquet est une grille d'emplacements montrant chacun l'objet attendu en grisé et un compteur. Sans la vue, impossible de savoir ce qu'un paquet réclamait encore : il fallait déposer au hasard et voir ce que le jeu acceptait.</span>
+      <span data-lang="en" hidden>Museum, Dynus altar, aquarium: the collections you fill over a whole playthrough by depositing specific items in specific amounts. Visually, a bundle is a grid of slots each showing the expected item greyed out, with a counter. Without sight there was no way to know what a bundle still wanted: you deposited at random and watched what the game accepted.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Pavé diviser</strong> répond à la seule question qui se pose devant un paquet : <strong>qu'est-ce que je dois encore rapporter ?</strong> Le nombre d'emplacements remplis, puis chaque objet manquant avec ce qui a déjà été déposé — « Blé, 2 sur 5 ; Truite dorée, 0 sur 1 ».</span><span data-lang="en" hidden><strong>Numpad divide</strong> answers the only question a bundle raises: <strong>what do I still need to bring?</strong> The number of filled slots, then each missing item with what has already been given — "Wheat, 2 of 5; Golden trout, 0 of 1".</span></li>
+      <li><span data-lang="fr">En parcourant les emplacements aux flèches, chacun annonce <strong>l'objet qu'il attend</strong> et où en est le dépôt — <strong>même vide</strong>, puisque c'est justement vide qu'il porte l'information utile.</span><span data-lang="en" hidden>Browsing the slots with the arrows, each announces <strong>the item it wants</strong> and how far along the deposit is — <strong>even when empty</strong>, since empty is precisely when it carries the useful information.</span></li>
+      <li><span data-lang="fr">Un paquet entièrement rempli le dit, plutôt que d'annoncer une liste vide.</span><span data-lang="en" hidden>A fully filled bundle says so, rather than announcing an empty list.</span></li>
+      <li><span data-lang="fr">Un <strong>coffre ordinaire n'est pas pris pour un paquet</strong> : la distinction se fait sur la nature des emplacements (n'accepter qu'un objet imposé), pas sur le type de meuble ouvert — ce qui couvre du même coup toutes les variantes de paquets sans avoir à les énumérer.</span><span data-lang="en" hidden>An <strong>ordinary chest is not mistaken for a bundle</strong>: the distinction rests on the nature of the slots (accepting only one imposed item), not on the type of furniture opened — which covers every bundle variant at once without listing them.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr"><strong>Note technique.</strong> Aucune règle du jeu n'est redéfinie : le mod lit l'objet et la quantité que chaque emplacement réclame, ainsi que ce qui s'y trouve déjà. Si le nom de l'objet reste introuvable, son numéro est annoncé plutôt qu'un mot vague — un numéro se recherche, « objet » ne mène nulle part.</span>
+      <span data-lang="en" hidden><strong>Technical note.</strong> No game rule is reimplemented: the mod reads the item and amount each slot demands, along with what is already in it. If the item's name can't be found, its number is announced rather than a vague word — a number can be looked up, "item" leads nowhere.</span>
     </p>
   </div>
 

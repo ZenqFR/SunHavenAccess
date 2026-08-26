@@ -63,6 +63,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> FreeCursorRecenter;
         public static ConfigEntry<KeyCode> PlacementStatus;
         public static ConfigEntry<KeyCode> HerdStatus;
+        public static ConfigEntry<KeyCode> BundleStatus;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -86,7 +87,7 @@ namespace SunHavenAccess.Config
             // demande explicite de l'utilisateur malgré ça : la touche d'aide déclenchera aussi
             // une émote du personnage à chaque pression.
             Help = Bind(config, section, "AideV3", KeyCode.F1,
-                "Rappelle la liste des touches du mod.", "Aide");
+                "Ouvre le menu d'aide, parcourable rubrique par rubrique aux flèches.", "Aide");
             DescribeFront = Bind(config, section, "CaseDevantVousV2", KeyCode.F10,
                 "Décrit la case devant vous (terrain, objet, PNJ...).", "Décrire la case devant vous");
             Position = Bind(config, section, "PositionV2", KeyCode.P,
@@ -266,6 +267,10 @@ namespace SunHavenAccess.Config
             // ---- Animaux de la ferme (Info/AnimalAnnouncer.cs) ----
             HerdStatus = Bind(config, section, "EtatTroupeau", KeyCode.KeypadMinus,
                 "Bilan des animaux présents : combien sont à nourrir, à caresser, et combien ont laissé un produit au sol.", "Animaux : bilan du troupeau");
+
+            // ---- Paquets à compléter : musée, autel, aquarium (Info/BundleReader.cs) ----
+            BundleStatus = Bind(config, section, "EtatPaquet", KeyCode.KeypadDivide,
+                "Paquet ouvert : dit ce qu'il manque encore, objet par objet, avec les quantités déjà déposées.", "Paquet : ce qu'il manque");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

@@ -110,6 +110,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.FreeCursorRecenter.Value)) FreeTileCursor.Recenter();
             if (Pressed(ModConfig.PlacementStatus.Value)) PlacementAssistant.AnnounceStatus();
             if (Pressed(ModConfig.HerdStatus.Value)) AnimalAnnouncer.AnnounceHerdStatus();
+            if (Pressed(ModConfig.BundleStatus.Value)) BundleReader.AnnounceStatus();
 
             // Ctrl+Tab / Ctrl+Maj+Tab : bascule directement d'onglet dans le menu principal
             // (Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques,

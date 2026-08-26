@@ -60,6 +60,17 @@ Le mod ne savait lire qu'une seule case : celle devant le personnage. Explorer u
 
 </details>
 <details>
+<summary><strong>Les paquets à compléter (musée, autel, aquarium)</strong></summary>
+
+Le système de progression au long cours du jeu : on y dépose des objets précis, en quantité précise, sur toute une partie. Visuellement, un paquet est une grille d'emplacements montrant chacun l'objet attendu en grisé et un compteur. Sans la vue, impossible de savoir ce qu'un paquet réclamait encore — il fallait déposer au hasard et voir ce que le jeu acceptait.
+
+- Une touche répond à la seule question qui se pose devant un paquet : **qu'est-ce que je dois encore rapporter ?** Nombre d'emplacements remplis, puis chaque objet manquant avec ce qui a déjà été déposé.
+- Chaque emplacement parcouru aux flèches annonce **l'objet qu'il attend** et l'état du dépôt, **même vide** — c'est justement vide qu'il porte l'information utile, et la lecture des emplacements vides passe donc AVANT le test « vide » habituel.
+- Un **coffre ordinaire n'est pas pris pour un paquet** : la distinction se fait sur `Slot.onlyAcceptSpecificItem`, pas sur le type de meuble — ce qui couvre toutes les variantes (`BundleType.MuseumBundle`, `DynusAltar`, `Snaccoon`, aquarium) sans les énumérer.
+- Aucune règle du jeu n'est redupliquée : le mod lit `Slot.itemToAccept` / `numberOfItemToAccept` et `SlotItemData.amount`, tous publics. Si le nom reste introuvable, le numéro de l'objet est annoncé plutôt qu'un mot vague — un numéro se recherche.
+
+</details>
+<details>
 <summary><strong>Animaux de la ferme</strong></summary>
 
 Nourrir, caresser, ramasser les produits : une routine quotidienne dont tout est signalé visuellement (icône au-dessus de la tête, objet posé au sol). Sans la vue, il fallait aller au contact de chaque bête l'une après l'autre, dans un enclos dont on ignore même l'effectif.
@@ -371,6 +382,7 @@ Je (l'IA qui développe ce mod) n'ai pas d'yeux ni d'oreilles pour tester en jeu
 - **Donjon de combat** : numéro d'étage et confirmation de salle nettoyée (voir la carte dédiée plus haut) — risque identifié que l'annonce d'étage se répète si le donjon est composé de plusieurs segments/portes séparés, pas vérifiable sans décompiler la structure de scène réelle.
 - **Placement de meubles et bâtiments** (voir la carte dédiée plus haut) : la lecture de `canBePlaced` et `roundedMousePos` se fait par réflexion sur des champs privés/protégés, et le pilotage de la visée repose sur le fait que le jeu relit la position réelle de la souris à chaque image. Deux points à vérifier en jeu : que l'aperçu suit bien le curseur libre, et que le clic pose l'objet sur la case visée et non devant le personnage. Le mode manette (`MouseVisualManager.UsingController`) prend un tout autre chemin de calcul et n'est pas couvert.
 - **Animaux de la ferme** (voir la carte dédiée plus haut) : lit `AnimalPositionData` (`Hungry`, `hasPetted`, `droppedItem`, `name`) via `Animal.animalItem`, tout en public. Deux inconnues : qu'un animal du joueur ait bien toujours un `animalItem` renseigné (un animal sauvage ou d'ambiance n'en a probablement pas — d'où le compte séparé « état inconnu »), et que `droppedItem` signifie bien « produit disponible au sol » et non « a déjà été ramassé ».
+- **Paquets à compléter** (voir la carte dédiée plus haut) : lit `Slot.itemToAccept`/`numberOfItemToAccept` et `SlotItemData.amount` sur l'inventaire externe ouvert. Trois inconnues : que `itemToAccept` soit bien renseigné sur les emplacements de paquet (sinon on retombe sur l'icône grisée, puis sur le numéro d'objet), que l'aquarium et l'autel de Dynus utilisent bien le même mécanisme `onlyAcceptSpecificItem` que le musée, et qu'aucun coffre ordinaire du jeu n'emploie ce même mécanisme — auquel cas il serait annoncé à tort comme un paquet.
 
 </details>
 
