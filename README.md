@@ -94,6 +94,17 @@ Le système de progression au long cours du jeu : on y dépose des objets préci
 
 </details>
 <details>
+<summary><strong>Les sorts équipés</strong></summary>
+
+Quatre emplacements de sorts, affichés uniquement en icônes. Sans la vue, on lance des touches en espérant se souvenir de ce qu'on y avait mis, et on découvre son erreur en plein combat.
+
+- Une touche annonce les quatre emplacements un par un, dit lesquels sont vides, et signale celui en cours d'incantation.
+- **Rien à faire pour la recharge et le manque de mana** : `SpellUseItem.TryNotifyCooldown` et `HasEnoughManaForCost` envoient déjà chacun une notification du jeu, lue par le patch générique. Vérifié avant d'écrire quoi que ce soit.
+- `Player.Spell1` à `Spell4` sont publiques ; seul `SpellUseItem.itemData` est protégé, donc lu par réflexion avec mise en cache et repli silencieux.
+- **Limite connue** : `Wish.SpellSelection`, le menu qui permet de CHANGER un sort équipé, s'ouvre au survol souris (`IPointerEnter`/`IPointerExit`) et n'expose aucun `Selectable`. Le mod ne sait pas le parcourir au clavier. Un navigateur dédié serait possible, sur le modèle de la carte du monde, mais purement spéculatif tant que rien n'est testé en jeu.
+
+</details>
+<details>
 <summary><strong>Le mana (la jauge des outils)</strong></summary>
 
 Le « mana » de Sun Haven n'est pas une réserve de sorts : c'est la jauge que consomment les outils. À zéro, la pioche, la houe et l'arrosoir cessent d'agir. Un joueur voyant voit la barre se vider et rentre se coucher avant la panne ; sans la vue, l'outil s'arrête d'un coup sans que rien n'explique pourquoi — un symptôme qui ressemble à un bug du mod plutôt qu'à une mécanique du jeu.

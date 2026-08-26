@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 <a class="skip-link" href="#main"><span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span></a>
@@ -121,6 +121,7 @@
       <tr><td><span data-lang="fr">Pavé moins</span><span data-lang="en" hidden>Numpad minus</span></td><td><span data-lang="fr">Bilan des animaux présents : combien sont à nourrir, à caresser, combien ont laissé un produit au sol. Voir <a href="#animaux">Animaux de la ferme</a>.</span><span data-lang="en" hidden>Status of the animals present: how many need feeding, how many need petting, how many left a product on the ground. See <a href="#animaux">Farm animals</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé diviser</span><span data-lang="en" hidden>Numpad divide</span></td><td><span data-lang="fr">Devant un paquet ouvert (musée, autel, aquarium) : dit ce qu'il manque encore, objet par objet, avec les quantités déjà déposées. Voir <a href="#paquets">Les paquets à compléter</a>.</span><span data-lang="en" hidden>With a bundle open (museum, altar, aquarium): says what is still missing, item by item, with the amounts already given. See <a href="#paquets">Bundles to complete</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Pavé Entrée</span><span data-lang="en" hidden>Numpad Enter</span></td><td><span data-lang="fr">Près d'un panneau d'affichage : annonce les tâches du jour, si elles sont déjà acceptées, et leur récompense — sans avoir à ouvrir le panneau. Voir <a href="#panneaux">Les panneaux d'affichage</a>.</span><span data-lang="en" hidden>Near a bulletin board: announces the day's tasks, whether they're already accepted, and their reward — without opening the board. See <a href="#panneaux">Bulletin boards</a>.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé 9</span><span data-lang="en" hidden>Numpad 9</span></td><td><span data-lang="fr">Annonce les quatre sorts équipés, emplacement par emplacement, et signale celui en cours d'incantation. Voir <a href="#sorts">Les sorts</a>.</span><span data-lang="en" hidden>Announces the four equipped spells, slot by slot, and flags the one being cast. See <a href="#sorts">Spells</a>.</span></td></tr>
       <tr><td><span data-lang="fr">Flèches (curseur libre actif)</span><span data-lang="en" hidden>Arrows (free cursor active)</span></td><td><span data-lang="fr">Déplacent le curseur d'une case. Un bip court signale le bord de la carte chargée. Les menus gardent la priorité sur les flèches.</span><span data-lang="en" hidden>Move the cursor by one tile. A short beep marks the edge of the loaded map. Menus keep priority over the arrow keys.</span></td></tr>
       <tr><td>C</td><td><span data-lang="fr">Ouvre le tchat/la console de debug du jeu. Remplace Entrée, sa touche par défaut, qui entrait en conflit avec la validation de menu du mod.</span><span data-lang="en" hidden>Opens the game's chat/debug console. Replaces Enter, its default key, which conflicted with the mod's menu confirmation.</span></td></tr>
     </tbody>
@@ -374,6 +375,21 @@
       <li><span data-lang="fr">À cheval, on se déplace nettement plus vite mais <strong>les outils ne s'utilisent plus</strong>. Sans la vue, le seul indice était que les actions cessaient de fonctionner — indiscernable d'une panne.</span><span data-lang="en" hidden>Mounted, you move considerably faster but <strong>tools stop working</strong>. Without sight, the only clue was that actions stopped responding — indistinguishable from a fault.</span></li>
       <li><span data-lang="fr">Monter en intérieur est refusé par le jeu, qui le dit lui-même — ce message est lu comme toutes les notifications.</span><span data-lang="en" hidden>Mounting indoors is refused by the game, which says so itself — that message is read like any other notification.</span></li>
     </ul>
+  </div>
+  </li>
+
+  <li>
+  <h3 class="sub-title" id="sorts">✨ <span data-lang="fr">Les sorts</span><span data-lang="en" hidden>Spells</span></h3>
+  <div class="card">
+    <ul>
+      <li><span data-lang="fr">Sun Haven donne <strong>quatre emplacements de sorts</strong>, qui n'apparaissent qu'en icônes dans une barre. <strong>Pavé 9</strong> les annonce un par un — sans quoi on lance des touches en espérant se souvenir de ce qu'on y avait mis, et on découvre son erreur en plein combat.</span><span data-lang="en" hidden>Sun Haven gives <strong>four spell slots</strong>, shown only as icons in a bar. <strong>Numpad 9</strong> announces them one by one — otherwise you fire keys hoping to remember what you put there, and find out mid-fight that you didn't.</span></li>
+      <li><span data-lang="fr">Les emplacements vides le disent, et celui en cours d'incantation est signalé.</span><span data-lang="en" hidden>Empty slots say so, and the one currently being cast is flagged.</span></li>
+      <li><span data-lang="fr">Un sort <strong>en recharge</strong> ou un <strong>mana insuffisant</strong> n'ont pas besoin du mod : le jeu envoie lui-même une notification dans les deux cas, et elle est lue automatiquement.</span><span data-lang="en" hidden>A spell <strong>on cooldown</strong> or <strong>insufficient mana</strong> need nothing from the mod: the game sends a notification in both cases, and it is read automatically.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr"><strong>Limite connue.</strong> Le menu qui permet de <em>changer</em> un sort équipé s'ouvre au survol de la souris et ne contient aucun élément sélectionnable au clavier : le mod ne sait pas encore le parcourir. Il faut donc équiper ses sorts à la souris, ou avec l'aide de quelqu'un, avant de s'en servir.</span>
+      <span data-lang="en" hidden><strong>Known limitation.</strong> The menu that <em>changes</em> an equipped spell opens on mouse hover and contains no keyboard-selectable element: the mod can't browse it yet. Spells therefore have to be equipped with the mouse, or with someone's help, before use.</span>
+    </p>
   </div>
   </li>
 

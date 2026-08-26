@@ -65,6 +65,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> HerdStatus;
         public static ConfigEntry<KeyCode> BundleStatus;
         public static ConfigEntry<KeyCode> BulletinBoardTasks;
+        public static ConfigEntry<KeyCode> AnnounceSpells;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -276,6 +277,10 @@ namespace SunHavenAccess.Config
             // ---- Panneaux d'affichage des villes (Info/BulletinBoardReader.cs) ----
             BulletinBoardTasks = Bind(config, section, "PanneauAffichage", KeyCode.KeypadEnter,
                 "Près d'un panneau d'affichage : annonce les tâches du jour, si elles sont déjà acceptées, et leur récompense.", "Panneau d'affichage : tâches du jour");
+
+            // ---- Sorts équipés (Info/SpellAnnouncer.cs) ----
+            AnnounceSpells = Bind(config, section, "SortsEquipes", KeyCode.Keypad9,
+                "Annonce les quatre sorts actuellement équipés, emplacement par emplacement.", "Sorts équipés");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

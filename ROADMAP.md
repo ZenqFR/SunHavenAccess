@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 90 au point** (7 %).
+Mis à jour le 2026-08-26 — **6 sur 92 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 84 |
+| `[ ]` | À tester | jamais essayé en jeu | 86 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
@@ -284,6 +284,12 @@ Les métiers qui font vivre la ferme. La pêche est la plus délicate : son mini
 
 Se battre sans voir arriver les coups.
 
+- [ ] **combat-sorts-equipes** — touche : Pavé 9
+  - Faire : Demander les sorts équipés, avec des emplacements remplis et d'autres vides.
+  - Attendu : Les quatre emplacements sont annoncés dans l'ordre, avec le nom du sort ou « vide ». Les noms doivent être ceux du jeu, pas des identifiants techniques.
+- [ ] **combat-sorts-recharge** — touche : —
+  - Faire : Lancer un sort deux fois de suite, puis en lancer un sans avoir assez de mana.
+  - Attendu : Le jeu annonce lui-même « en recharge » et « pas assez de mana » — le mod ne fait que les lire. Vérifier que ces deux messages passent bien.
 - [ ] **combat-combat-degats** ⚠️ — touche : —
   - Faire : Se faire toucher plusieurs fois.
   - Attendu : La santé restante est annoncée à chaque coup, avec une alerte de plus en plus pressante en bas.

@@ -342,6 +342,12 @@
         "en": "Fighting without seeing the blows coming."
       },
       "items": [
+        { "id": "sorts-equipes", "key": "Pavé 9", "status": "todo",
+          "action":   { "fr": "Demander les sorts équipés, avec des emplacements remplis et d'autres vides.", "en": "Ask for the equipped spells, with some slots filled and some empty." },
+          "expected": { "fr": "Les quatre emplacements sont annoncés dans l'ordre, avec le nom du sort ou « vide ». Les noms doivent être ceux du jeu, pas des identifiants techniques.", "en": "All four slots are announced in order, with the spell's name or \"empty\". The names must be the game's, not technical identifiers." } },
+        { "id": "sorts-recharge", "key": "—", "status": "todo",
+          "action":   { "fr": "Lancer un sort deux fois de suite, puis en lancer un sans avoir assez de mana.", "en": "Cast a spell twice in a row, then cast one without enough mana." },
+          "expected": { "fr": "Le jeu annonce lui-même « en recharge » et « pas assez de mana » — le mod ne fait que les lire. Vérifier que ces deux messages passent bien.", "en": "The game itself announces \"on cooldown\" and \"not enough mana\" — the mod only reads them. Check both come through." } },
         { "id": "combat-degats", "key": "—", "status": "todo", "critical": true,
           "action":   { "fr": "Se faire toucher plusieurs fois.", "en": "Take several hits." },
           "expected": { "fr": "La santé restante est annoncée à chaque coup, avec une alerte de plus en plus pressante en bas.", "en": "Remaining health is announced on each hit, with an increasingly urgent warning as it drops." } },

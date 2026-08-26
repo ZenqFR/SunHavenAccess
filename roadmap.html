@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 <a class="skip-link" href="#main">
@@ -61,8 +61,8 @@
     <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
   </p>
   <span class="status-pill">
-    <span data-lang="fr">Mis à jour le 2026-08-26 — 6 sur 90 au point</span>
-    <span data-lang="en" hidden>Updated 2026-08-26 — 6 of 90 solid</span>
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 6 sur 92 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 6 of 92 solid</span>
   </span>
 </header>
 
@@ -75,9 +75,9 @@
 
   <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
   <div class="card">
-    <p class="roadmap-headline"><span data-lang="fr"><strong>6 points au point sur 90</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>6 of 90 solid</strong> — 7%.</span></p>
+    <p class="roadmap-headline"><span data-lang="fr"><strong>6 points au point sur 92</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>6 of 92 solid</strong> — 7%.</span></p>
     <ul class="legend-list">
-      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 84</span><span data-lang="en" hidden>never tried in game: 84</span></li>
+      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 86</span><span data-lang="en" hidden>never tried in game: 86</span></li>
       <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 0</span><span data-lang="en" hidden>tried, doesn't work: 0</span></li>
       <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
       <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 6</span><span data-lang="en" hidden>tried, nothing to add: 6</span></li>
@@ -529,8 +529,18 @@
   <h2 class="section-title" id="combat"><span data-lang="fr">11. Combat et donjons</span><span data-lang="en" hidden>11. Combat and dungeons</span></h2>
   <div class="card">
     <p><span data-lang="fr">Se battre sans voir arriver les coups.</span><span data-lang="en" hidden>Fighting without seeing the blows coming.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 4 au point.</span><span data-lang="en" hidden>0 of 4 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 6 au point.</span><span data-lang="en" hidden>0 of 6 solid.</span></p>
     <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="combat-sorts-equipes">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 9 — <span data-lang="fr">Demander les sorts équipés, avec des emplacements remplis et d'autres vides.</span><span data-lang="en" hidden>Ask for the equipped spells, with some slots filled and some empty.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les quatre emplacements sont annoncés dans l'ordre, avec le nom du sort ou « vide ». Les noms doivent être ceux du jeu, pas des identifiants techniques.</span><span data-lang="en" hidden>All four slots are announced in order, with the spell's name or "empty". The names must be the game's, not technical identifiers.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="combat-sorts-recharge">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Lancer un sort deux fois de suite, puis en lancer un sans avoir assez de mana.</span><span data-lang="en" hidden>Cast a spell twice in a row, then cast one without enough mana.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le jeu annonce lui-même « en recharge » et « pas assez de mana » — le mod ne fait que les lire. Vérifier que ces deux messages passent bien.</span><span data-lang="en" hidden>The game itself announces "on cooldown" and "not enough mana" — the mod only reads them. Check both come through.</span></p>
+      </li>
       <li class="roadmap-item status-todo is-critical" id="combat-combat-degats">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Se faire toucher plusieurs fois.</span><span data-lang="en" hidden>Take several hits.</span></p>

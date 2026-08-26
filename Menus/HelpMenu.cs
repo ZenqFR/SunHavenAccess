@@ -187,6 +187,9 @@ namespace SunHavenAccess.Menus
             "objet par objet, avec les quantités déjà déposées. En parcourant les emplacements aux flèches, chacun annonce l'objet qu'il attend " +
             "et où en est le dépôt.",
 
+            $"Les sorts. {K(ModConfig.AnnounceSpells)} annonce les quatre sorts équipés, emplacement par emplacement, et signale celui en cours d'incantation. " +
+            "Quand un sort est en recharge ou que le mana manque, le jeu le dit lui-même et le mod le lit.",
+
             $"La pêche. {K(ModConfig.FishingToneToggle)} active ou coupe le bip continu qui aide à viser pendant le mini-jeu.",
 
             $"Les panneaux d'affichage des villes. Près d'un panneau, {K(ModConfig.BulletinBoardTasks)} annonce les tâches du jour, " +
