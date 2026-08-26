@@ -2,12 +2,12 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 97 au point** (7 %).
+Mis à jour le 2026-08-26 — **7 sur 100 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
 | `[ ]` | À tester | jamais essayé en jeu | 86 |
-| `[!]` | À corriger | essayé, ne marche pas | 4 |
+| `[!]` | À corriger | essayé, ne marche pas | 7 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
 
@@ -50,6 +50,14 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
 - [ ] **personnage-menu-principal** — touche : Flèches, Entrée
   - Faire : Naviguer dans le menu principal et l'écran de sauvegarde.
   - Attendu : Les boutons sont nommés, et chaque sauvegarde annonce son résumé.
+- [!] **personnage-menu-principal-regression** ⚠️ — touche : Flèches
+  - Faire : Parcourir le menu principal du jeu aux flèches.
+  - Attendu : Tous les boutons sont atteignables et nommés, au moins aussi bien qu'avant.
+  - Retour de jeu : RÉGRESSION que j'ai introduite : le test « élément réellement à l'écran », ajouté pour écarter les panneaux des autres onglets, écartait aussi des boutons parfaitement visibles quand la conversion de coordonnées ne convenait pas à ce canevas. Corrigé — le test ne peut plus vider un écran : s'il ne laisse rien, on garde tout. Un écran inatteignable est bien pire que quelques éléments de trop.
+- [ ] **personnage-chargement-personnage** — touche : Flèches
+  - Faire : Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.
+  - Attendu : Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom, ferme, jour et saison.
+  - Retour de jeu : Signalé comme à optimiser. Pas encore retravaillé : à regarder après les corrections de navigation, pour voir ce qui manque réellement une fois celles-ci en place.
 - [ ] **personnage-race** — touche : Flèches
   - Faire : Choisir une race.
   - Attendu : Chaque race est annoncée au passage.
@@ -103,6 +111,10 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
 - [ ] **sac-onglets** — touche : Tab, puis Ctrl+Tab
   - Faire : Ouvrir le menu principal et passer d'un onglet à l'autre.
   - Attendu : Les 7 onglets sont nommés dans l'ordre : Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.
+- [!] **sac-retour-onglets** ⚠️ — touche : Ctrl + haut
+  - Faire : Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.
+  - Attendu : Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.
+  - Retour de jeu : RÉGRESSION que j'ai introduite avec le saut de bandes : arrivé en haut de l'écran, celui-ci bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé — au sommet, le saut de bandes rend la main au lieu de buter. Note : la flèche haut SEULE continue de buter avec un bip en haut d'une grille, comme demandé ; c'est Ctrl+haut la sortie de secours.
 - [ ] **sac-nav-directionnelle** ⚠️ — touche : Flèches
   - Faire : Dans le sac, se déplacer ligne par ligne et colonne par colonne.
   - Attendu : Les flèches suivent la disposition visuelle réelle. Gauche/droite butent en bout de ligne avec un bip. Une pression = un seul déplacement.
@@ -227,10 +239,10 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
 - [ ] **village-npc-proche** — touche : N
   - Faire : Appuyer sur N plusieurs fois près de personnages.
   - Attendu : On passe d'un personnage proche au suivant, avec nom, direction et distance.
-- [ ] **village-dialogue-choix** ⚠️ — touche : —
+- [!] **village-dialogue-choix** ⚠️ — touche : —
   - Faire : Parler à un personnage jusqu'à obtenir une question à choix, puis sélectionner une réponse aux flèches.
   - Attendu : La question est suivie de « 2 choix : 1, Oui ; 2, Non. » d'emblée. En naviguant entre les réponses, le mod ne doit PAS relire la question à chaque déplacement.
-  - Retour de jeu : Rapporté en jeu : quelque chose se répétait en boucle pendant la sélection d'une réponse. L'annonce des choix est ajoutée ; la répétition elle-même reste à identifier — dites-moi ce qui est répété exactement.
+  - Retour de jeu : Rapporté en jeu : les flèches étaient pénibles pour choisir une réponse et un message se répétait. Cause trouvée — les options d'une bulle ne sont pas des éléments sélectionnables mais de simples textes pilotés par le jeu ; le mod s'emparait quand même des flèches, ne trouvait rien, rejouait son annonce de repli et empêchait le jeu de changer d'option. Le mod rend désormais les flèches au jeu pendant tout dialogue ou cinématique, et les réponses sont énoncées d'emblée avec la question. À réessayer.
 - [ ] **village-dialogues** ⚠️ — touche : —
   - Faire : Parler à un personnage, y compris avec des choix de réponse.
   - Attendu : Les lignes sont lues dès le début, sans attendre l'animation. Les choix sont parcourables.

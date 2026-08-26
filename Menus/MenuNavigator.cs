@@ -241,8 +241,22 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static IEnumerable<Selectable> VisibleSelectables()
         {
-            return Object.FindObjectsOfType<Selectable>()
+            List<Selectable> all = Object.FindObjectsOfType<Selectable>()
                 .Where(s => s != null && s.interactable && s.gameObject.activeInHierarchy && IsVisible(s))
+                .ToList();
+
+            // Le test « réellement à l'écran » sert à écarter les panneaux des autres onglets, que
+            // le jeu garde actifs hors champ. Mais il repose sur une conversion qui dépend du type
+            // de canevas, et rien ne garantit qu'elle soit juste sur tous les écrans.
+            //
+            // On l'applique donc comme un FILTRE, jamais comme un verdict : s'il ne laisse rien,
+            // c'est lui qui a tort, et on garde la liste complète. Un écran devenu totalement
+            // inatteignable au clavier est infiniment pire qu'un écran où quelques éléments de
+            // trop sont proposés — c'est exactement la régression rapportée sur le menu principal.
+            List<Selectable> onScreen = all.Where(IsOnScreen).ToList();
+            List<Selectable> chosen = onScreen.Count > 0 ? onScreen : all;
+
+            return chosen
                 .OrderByDescending(s => s.transform.position.y)
                 .ThenBy(s => s.transform.position.x);
         }
@@ -257,8 +271,7 @@ namespace SunHavenAccess.Menus
         private static bool IsVisible(Selectable s)
         {
             CanvasGroup group = s.GetComponentInParent<CanvasGroup>();
-            if (group != null && group.alpha <= 0.01f) return false;
-            return IsOnScreen(s);
+            return group == null || group.alpha > 0.01f;
         }
 
         /// <summary>
@@ -279,9 +292,15 @@ namespace SunHavenAccess.Menus
             try
             {
                 Canvas canvas = s.GetComponentInParent<Canvas>();
-                Camera camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
-                    ? canvas.worldCamera
-                    : null;
+                Camera camera = null;
+                if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                {
+                    // Un canevas en mode caméra sans caméra assignée retomberait sur une
+                    // conversion « écran » appliquée à des coordonnées monde : le résultat serait
+                    // minuscule et TOUS les éléments seraient déclarés hors champ.
+                    camera = canvas.worldCamera ?? Camera.main;
+                    if (camera == null) return true;
+                }
 
                 Vector2 screen = RectTransformUtility.WorldToScreenPoint(camera, s.transform.position);
                 const float margin = 64f;

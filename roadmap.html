@@ -61,8 +61,8 @@
     <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
   </p>
   <span class="status-pill">
-    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 97 au point</span>
-    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 97 solid</span>
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 100 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 100 solid</span>
   </span>
 </header>
 
@@ -75,10 +75,10 @@
 
   <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
   <div class="card">
-    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 97</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 97 solid</strong> — 7%.</span></p>
+    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 100</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 100 solid</strong> — 7%.</span></p>
     <ul class="legend-list">
       <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 86</span><span data-lang="en" hidden>never tried in game: 86</span></li>
-      <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 4</span><span data-lang="en" hidden>tried, doesn't work: 4</span></li>
+      <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 7</span><span data-lang="en" hidden>tried, doesn't work: 7</span></li>
       <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
       <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 7</span><span data-lang="en" hidden>tried, nothing to add: 7</span></li>
     </ul>
@@ -137,12 +137,24 @@
   <h2 class="section-title" id="personnage"><span data-lang="fr">2. Créer son personnage</span><span data-lang="en" hidden>2. Creating your character</span></h2>
   <div class="card">
     <p><span data-lang="fr">Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le mod : impossible de commencer à jouer.</span><span data-lang="en" hidden>The very first screen of a new game. It was completely silent before the mod: you simply couldn't start playing.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 5 au point.</span><span data-lang="en" hidden>0 of 5 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 7 au point.</span><span data-lang="en" hidden>0 of 7 solid.</span></p>
     <ol class="roadmap-list">
       <li class="roadmap-item status-todo" id="personnage-menu-principal">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches, Entrée — <span data-lang="fr">Naviguer dans le menu principal et l'écran de sauvegarde.</span><span data-lang="en" hidden>Navigate the main menu and the save screen.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les boutons sont nommés, et chaque sauvegarde annonce son résumé.</span><span data-lang="en" hidden>Buttons are named, and each save announces its summary.</span></p>
+      </li>
+      <li class="roadmap-item status-fix is-critical" id="personnage-menu-principal-regression">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Parcourir le menu principal du jeu aux flèches.</span><span data-lang="en" hidden>Browse the game's main menu with the arrows.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Tous les boutons sont atteignables et nommés, au moins aussi bien qu'avant.</span><span data-lang="en" hidden>Every button is reachable and named, at least as well as before.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">RÉGRESSION que j'ai introduite : le test « élément réellement à l'écran », ajouté pour écarter les panneaux des autres onglets, écartait aussi des boutons parfaitement visibles quand la conversion de coordonnées ne convenait pas à ce canevas. Corrigé — le test ne peut plus vider un écran : s'il ne laisse rien, on garde tout. Un écran inatteignable est bien pire que quelques éléments de trop.</span><span data-lang="en" hidden>A REGRESSION I introduced: the "element actually on screen" test, added to exclude other tabs' panels, was also excluding perfectly visible buttons when the coordinate conversion didn't suit that canvas. Fixed — the test can no longer empty a screen: if it leaves nothing, everything is kept. An unreachable screen is far worse than a few extra elements.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="personnage-chargement-personnage">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.</span><span data-lang="en" hidden>Open the character load menu and browse the saves.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom, ferme, jour et saison.</span><span data-lang="en" hidden>Each save is reachable and announces enough to recognise it: name, farm, day and season.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Signalé comme à optimiser. Pas encore retravaillé : à regarder après les corrections de navigation, pour voir ce qui manque réellement une fois celles-ci en place.</span><span data-lang="en" hidden>Flagged as needing work. Not reworked yet: to look at after the navigation fixes, to see what is actually missing once those are in.</span></p>
       </li>
       <li class="roadmap-item status-todo" id="personnage-race">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
@@ -224,12 +236,18 @@
   <h2 class="section-title" id="sac"><span data-lang="fr">4. Son sac et son équipement</span><span data-lang="en" hidden>4. Your bag and gear</span></h2>
   <div class="card">
     <p><span data-lang="fr">La navigation dans les menus a été entièrement refaite et n'a jamais été confirmée en jeu. Le point à surveiller : qu'une pression ne provoque pas deux déplacements.</span><span data-lang="en" hidden>Menu navigation was fully rewritten and never confirmed in game. Watch for this: one press must not cause two moves.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 11 au point.</span><span data-lang="en" hidden>0 of 11 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 12 au point.</span><span data-lang="en" hidden>0 of 12 solid.</span></p>
     <ol class="roadmap-list">
       <li class="roadmap-item status-todo" id="sac-onglets">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Tab, puis Ctrl+Tab — <span data-lang="fr">Ouvrir le menu principal et passer d'un onglet à l'autre.</span><span data-lang="en" hidden>Open the main menu and cycle the tabs.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les 7 onglets sont nommés dans l'ordre : Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.</span><span data-lang="en" hidden>The 7 tabs are named in order: Backpack, Skill Tree, Relationships, Quests, Map, Statistics, Settings.</span></p>
+      </li>
+      <li class="roadmap-item status-fix is-critical" id="sac-retour-onglets">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Ctrl + haut — <span data-lang="fr">Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.</span><span data-lang="en" hidden>Open the Skills tab (or any other), go down into the content, then come back up to the tab bar.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.</span><span data-lang="en" hidden>Ctrl+up ALWAYS returns to the tab bar, from any panel and at any depth.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">RÉGRESSION que j'ai introduite avec le saut de bandes : arrivé en haut de l'écran, celui-ci bipait et consommait la touche, si bien que la règle « Ctrl+haut ramène aux onglets » n'était jamais atteinte. Corrigé — au sommet, le saut de bandes rend la main au lieu de buter. Note : la flèche haut SEULE continue de buter avec un bip en haut d'une grille, comme demandé ; c'est Ctrl+haut la sortie de secours.</span><span data-lang="en" hidden>A REGRESSION I introduced with band jumping: at the top of the screen it beeped and consumed the key, so the "Ctrl+up returns to the tabs" rule was never reached. Fixed — at the top, band jumping hands back instead of stopping. Note: plain up still stops with a beep at the top of a grid, as requested; Ctrl+up is the escape.</span></p>
       </li>
       <li class="roadmap-item status-todo is-critical" id="sac-nav-directionnelle">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
@@ -435,11 +453,11 @@
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> N — <span data-lang="fr">Appuyer sur N plusieurs fois près de personnages.</span><span data-lang="en" hidden>Press N repeatedly near characters.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">On passe d'un personnage proche au suivant, avec nom, direction et distance.</span><span data-lang="en" hidden>You cycle through nearby characters, with name, bearing and distance.</span></p>
       </li>
-      <li class="roadmap-item status-todo is-critical" id="village-dialogue-choix">
-        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+      <li class="roadmap-item status-fix is-critical" id="village-dialogue-choix">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Parler à un personnage jusqu'à obtenir une question à choix, puis sélectionner une réponse aux flèches.</span><span data-lang="en" hidden>Talk to a character until a choice appears, then pick an answer with the arrows.</span></p>
         <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La question est suivie de « 2 choix : 1, Oui ; 2, Non. » d'emblée. En naviguant entre les réponses, le mod ne doit PAS relire la question à chaque déplacement.</span><span data-lang="en" hidden>The question is followed by "2 choices: 1, Yes; 2, No." straight away. Moving between answers must NOT re-read the question each time.</span></p>
-        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Rapporté en jeu : quelque chose se répétait en boucle pendant la sélection d'une réponse. L'annonce des choix est ajoutée ; la répétition elle-même reste à identifier — dites-moi ce qui est répété exactement.</span><span data-lang="en" hidden>Reported in game: something repeated over and over while selecting an answer. The choice announcement is added; the repetition itself is still unidentified — tell me exactly what repeats.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Rapporté en jeu : les flèches étaient pénibles pour choisir une réponse et un message se répétait. Cause trouvée — les options d'une bulle ne sont pas des éléments sélectionnables mais de simples textes pilotés par le jeu ; le mod s'emparait quand même des flèches, ne trouvait rien, rejouait son annonce de repli et empêchait le jeu de changer d'option. Le mod rend désormais les flèches au jeu pendant tout dialogue ou cinématique, et les réponses sont énoncées d'emblée avec la question. À réessayer.</span><span data-lang="en" hidden>Reported in game: arrows were awkward for picking an answer and a message repeated. Cause found — a bubble's options are not selectable elements but plain texts driven by the game; the mod took the arrows anyway, found nothing, replayed its fallback announcement and stopped the game changing option. The mod now leaves the arrows to the game for the whole of any dialogue or cutscene, and the answers are spoken up front with the question. Worth retrying.</span></p>
       </li>
       <li class="roadmap-item status-todo is-critical" id="village-dialogues">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>

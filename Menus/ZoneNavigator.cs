@@ -90,6 +90,19 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static bool IsActive()
         {
+            // Pendant un dialogue ou une cinématique, le mod LAISSE les flèches au jeu.
+            //
+            // Les options d'une bulle de dialogue ne sont pas des éléments sélectionnables mais de
+            // simples textes (`DialogueController._options`), que le jeu pilote lui-même. Le mod
+            // s'en emparait quand même, ne trouvait rien à sélectionner, et rejouait son annonce
+            // de repli à chaque appui — tout en empêchant le jeu de changer d'option. D'où le
+            // symptôme rapporté : choisir une réponse aux flèches devenait pénible et un message
+            // se répétait.
+            //
+            // Les réponses possibles sont désormais énoncées d'emblée avec la question (voir
+            // Patches/DialogueLinePatch.cs), donc rien n'est perdu à rendre les flèches au jeu.
+            if (Dialogue.DialogueReader.DialogueOnGoing) return false;
+
             // Hors partie (menu principal, sélection et création de personnage) : aucun UIHandler
             // ni joueur, mais on est forcément dans un menu.
             //
@@ -201,7 +214,14 @@ namespace SunHavenAccess.Menus
             {
                 // dy positif = vers le haut de l'écran ; les bandes sont ordonnées du haut vers le bas.
                 int target = band + (dy > 0 ? -1 : 1);
-                if (target < 0 || target >= bands.Count) { UiSound.EdgeBump(); return true; }
+
+                // Au SOMMET de l'écran, on ne bute pas : on laisse la main à la logique de zones,
+                // dont la règle « Ctrl+haut ramène toujours à la barre d'onglets » est la sortie
+                // de secours du menu principal. Renvoyer true ici l'avalait — c'est ce qui rendait
+                // la barre d'onglets introuvable depuis l'arbre de compétences.
+                if (target < 0) return false;
+
+                if (target >= bands.Count) { UiSound.EdgeBump(); return true; }
 
                 float x = currentGo.transform.position.x;
                 GameObject entry = bands[target].OrderBy(g => Mathf.Abs(g.transform.position.x - x)).FirstOrDefault();
