@@ -50,6 +50,7 @@ namespace SunHavenAccess
             SafeTick("PlacementAssistant", PlacementAssistant.Tick);
             SafeTick("ManaWarner", ManaWarner.Tick);
             SafeTick("MountAnnouncer", MountAnnouncer.Tick);
+            SafeTick("CharacterCreationGuide", CharacterCreationGuide.Tick);
         }
 
         private static void SafeTick(string name, Action tick)

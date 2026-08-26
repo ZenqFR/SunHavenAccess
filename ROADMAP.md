@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 103 au point** (7 %).
+Mis à jour le 2026-08-26 — **7 sur 105 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 89 |
+| `[ ]` | À tester | jamais essayé en jeu | 91 |
 | `[!]` | À corriger | essayé, ne marche pas | 7 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -58,6 +58,13 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.
   - Attendu : Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom et date. Un emplacement libre annonce qu'il est vide. La touche de description complète ajoute les niveaux et l'or.
   - Retour de jeu : Retravaillé. Un emplacement libre le dit désormais au lieu de rester muet — on passait devant sans savoir qu'on pouvait y commencer une partie. Et l'annonce est abrégée au nom et à la date, de quoi reconnaître la partie : les cinq niveaux de métier et le montant d'or à chaque déplacement rendaient le parcours interminable. Le détail reste lisible avec la touche de description complète.
+- [ ] **personnage-creation-orientation** ⚠️ — touche : —
+  - Faire : Arriver sur l'écran de création de personnage.
+  - Attendu : Une annonce décrit d'emblée les trois colonnes, comment en changer, et prévient qu'un nom et une date d'anniversaire sont obligatoires.
+- [ ] **personnage-creation-ce-qui-manque** ⚠️ — touche : —
+  - Faire : Saisir un nom, puis définir l'anniversaire, en écoutant entre chaque étape.
+  - Attendu : Le mod dit ce qui manque encore à chaque fois que ça change, puis « tout est prêt » quand le bouton Valider devient utilisable. Il ne le répète pas en boucle.
+  - Retour de jeu : Sans ça, on appuie sur Valider et il ne se passe rien : le jeu grise le bouton et affiche ses avertissements en rouge à côté, ce qui n'apprend rien sans la vue.
 - [ ] **personnage-race** — touche : Flèches
   - Faire : Choisir une race.
   - Attendu : Chaque race est annoncée au passage.

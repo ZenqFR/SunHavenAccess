@@ -228,8 +228,10 @@ namespace SunHavenAccess.Menus
             "Les écrans en colonnes, comme la création de personnage : catégories à gauche, personnalisation au centre, informations à droite. " +
             "Contrôle plus gauche ou droite saute d'une colonne à l'autre, et annonce laquelle. Les flèches seules parcourent l'écran comme d'habitude.",
 
-            $"La création de personnage. {K(ModConfig.AppearancePrevious)} et {K(ModConfig.AppearanceNext)} parcourent les options d'apparence ; " +
-            "Contrôle plus l'une ou l'autre change de catégorie.",
+            "La création de personnage. L'écran a trois colonnes : les catégories à gauche, les choix de la catégorie courante au centre, " +
+            "votre personnage, le champ du nom et le bouton Valider à droite. Contrôle plus gauche ou droite change de colonne. " +
+            "Un nom et une date d'anniversaire sont obligatoires : le mod annonce ce qui manque encore, et le dit quand tout est prêt. " +
+            $"{K(ModConfig.AppearancePrevious)} et {K(ModConfig.AppearanceNext)} parcourent aussi les options d'apparence, Contrôle plus l'une ou l'autre change de catégorie.",
 
             $"Parler dans le tchat. {K(ModConfig.ChatOpenKey)} ouvre le tchat ou la console du jeu — Entrée ne le fait pas, elle sert à valider dans les menus.",
 
