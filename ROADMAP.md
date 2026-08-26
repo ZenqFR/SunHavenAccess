@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 101 au point** (7 %).
+Mis à jour le 2026-08-26 — **7 sur 102 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 87 |
+| `[ ]` | À tester | jamais essayé en jeu | 88 |
 | `[!]` | À corriger | essayé, ne marche pas | 7 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -319,6 +319,10 @@ Les métiers qui font vivre la ferme. La pêche est la plus délicate : son mini
 
 Se battre sans voir arriver les coups.
 
+- [ ] **combat-sorts-equiper** ⚠️ — touche : Pavé 7
+  - Faire : Appuyer sur Pavé 7 pour ouvrir le choix de sort du premier emplacement, parcourir les sorts aux flèches, en équiper un avec Entrée. Réappuyer pour passer aux emplacements suivants, puis fermer.
+  - Attendu : Chaque sort disponible est annoncé par son nom, et Entrée l'équipe réellement dans l'emplacement. La liste correspond à ce que vous avez débloqué.
+  - Retour de jeu : Changer un sort équipé était IMPOSSIBLE sans souris : le menu s'ouvre au survol et n'expose rien de sélectionnable. Le mod ouvre maintenant le menu du JEU et y pose la sélection clavier, plutôt que de reconstruire une liste — ce qui aurait obligé à recopier une douzaine de conditions de déblocage dispersées dans les arbres de compétences.
 - [ ] **combat-sorts-equipes** — touche : Pavé 9
   - Faire : Demander les sorts équipés, avec des emplacements remplis et d'autres vides.
   - Attendu : Les quatre emplacements sont annoncés dans l'ordre, avec le nom du sort ou « vide ». Les noms doivent être ceux du jeu, pas des identifiants techniques.

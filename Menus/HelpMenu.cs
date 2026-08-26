@@ -193,6 +193,10 @@ namespace SunHavenAccess.Menus
             "objet par objet, avec les quantités déjà déposées. En parcourant les emplacements aux flèches, chacun annonce l'objet qu'il attend " +
             "et où en est le dépôt.",
 
+            $"Changer un sort équipé. {K(ModConfig.EquipSpell)} ouvre le choix de sort d'un emplacement : chaque appui passe à l'emplacement " +
+            "suivant, puis referme. Les flèches parcourent les sorts disponibles, Entrée équipe celui annoncé. " +
+            "C'est le menu du jeu lui-même qui s'ouvre, donc la liste correspond exactement à ce que vous avez débloqué.",
+
             $"Les sorts. {K(ModConfig.AnnounceSpells)} annonce les quatre sorts équipés, emplacement par emplacement, et signale celui en cours d'incantation. " +
             "Quand un sort est en recharge ou que le mana manque, le jeu le dit lui-même et le mod le lit.",
 

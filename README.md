@@ -101,7 +101,7 @@ Quatre emplacements de sorts, affichés uniquement en icônes. Sans la vue, on l
 - Une touche annonce les quatre emplacements un par un, dit lesquels sont vides, et signale celui en cours d'incantation.
 - **Rien à faire pour la recharge et le manque de mana** : `SpellUseItem.TryNotifyCooldown` et `HasEnoughManaForCost` envoient déjà chacun une notification du jeu, lue par le patch générique. Vérifié avant d'écrire quoi que ce soit.
 - `Player.Spell1` à `Spell4` sont publiques ; seul `SpellUseItem.itemData` est protégé, donc lu par réflexion avec mise en cache et repli silencieux.
-- **Limite connue** : `Wish.SpellSelection`, le menu qui permet de CHANGER un sort équipé, s'ouvre au survol souris (`IPointerEnter`/`IPointerExit`) et n'expose aucun `Selectable`. Le mod ne sait pas le parcourir au clavier. Un navigateur dédié serait possible, sur le modèle de la carte du monde, mais purement spéculatif tant que rien n'est testé en jeu.
+- **Changer un sort équipé** se fait au clavier : une touche ouvre le menu du JEU pour un emplacement (`SpellSelection.ShowSpellSelection`, publique) et y pose la sélection clavier sur la première entrée. Les entrées sont des `ItemImage` : elles déclenchent l'infobulle native (lue par TooltipReader) et implémentent `ISubmitHandler`, donc la validation habituelle les équipe. On ne reconstruit PAS la liste des sorts — il faudrait recopier une douzaine de conditions de déblocage dispersées dans les arbres de compétences, que le jeu peut changer à toute mise à jour. La liste privée `selectables` qu'il vient de remplir est lue par réflexion.
 
 </details>
 <details>

@@ -377,6 +377,10 @@
         "en": "Fighting without seeing the blows coming."
       },
       "items": [
+        { "id": "sorts-equiper", "key": "Pavé 7", "status": "todo", "critical": true,
+          "action":   { "fr": "Appuyer sur Pavé 7 pour ouvrir le choix de sort du premier emplacement, parcourir les sorts aux flèches, en équiper un avec Entrée. Réappuyer pour passer aux emplacements suivants, puis fermer.", "en": "Press Numpad 7 to open the first slot's spell picker, browse the spells with the arrows, equip one with Enter. Press again for the next slots, then to close." },
+          "expected": { "fr": "Chaque sort disponible est annoncé par son nom, et Entrée l'équipe réellement dans l'emplacement. La liste correspond à ce que vous avez débloqué.", "en": "Each available spell is announced by name, and Enter actually equips it in the slot. The list matches what you have unlocked." },
+          "note": { "fr": "Changer un sort équipé était IMPOSSIBLE sans souris : le menu s'ouvre au survol et n'expose rien de sélectionnable. Le mod ouvre maintenant le menu du JEU et y pose la sélection clavier, plutôt que de reconstruire une liste — ce qui aurait obligé à recopier une douzaine de conditions de déblocage dispersées dans les arbres de compétences.", "en": "Changing an equipped spell was IMPOSSIBLE without a mouse: the menu opens on hover and exposes nothing selectable. The mod now opens the GAME's menu and places the keyboard selection in it, rather than rebuilding a list — which would have meant copying a dozen unlock conditions scattered across the skill trees." } },
         { "id": "sorts-equipes", "key": "Pavé 9", "status": "todo",
           "action":   { "fr": "Demander les sorts équipés, avec des emplacements remplis et d'autres vides.", "en": "Ask for the equipped spells, with some slots filled and some empty." },
           "expected": { "fr": "Les quatre emplacements sont annoncés dans l'ordre, avec le nom du sort ou « vide ». Les noms doivent être ceux du jeu, pas des identifiants techniques.", "en": "All four slots are announced in order, with the spell's name or \"empty\". The names must be the game's, not technical identifiers." } },

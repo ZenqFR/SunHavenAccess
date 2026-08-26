@@ -66,6 +66,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> BundleStatus;
         public static ConfigEntry<KeyCode> BulletinBoardTasks;
         public static ConfigEntry<KeyCode> AnnounceSpells;
+        public static ConfigEntry<KeyCode> EquipSpell;
 
         /// <summary>Libellé + entrée, pour le menu des raccourcis (parcourable/modifiable en jeu).</summary>
         public static readonly List<(string Label, ConfigEntry<KeyCode> Entry)> All =
@@ -281,6 +282,8 @@ namespace SunHavenAccess.Config
             // ---- Sorts équipés (Info/SpellAnnouncer.cs) ----
             AnnounceSpells = Bind(config, section, "SortsEquipes", KeyCode.Keypad9,
                 "Annonce les quatre sorts actuellement équipés, emplacement par emplacement.", "Sorts équipés");
+            EquipSpell = Bind(config, section, "ChoisirSort", KeyCode.Keypad7,
+                "Ouvre au clavier le choix de sort d'un emplacement. Chaque appui passe à l'emplacement suivant, puis referme.", "Choisir un sort à équiper");
         }
 
         private static ConfigEntry<KeyCode> Bind(ConfigFile config, string section, string key,

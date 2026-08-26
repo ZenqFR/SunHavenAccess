@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
 <a class="skip-link" href="#main">
@@ -61,8 +61,8 @@
     <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
   </p>
   <span class="status-pill">
-    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 101 au point</span>
-    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 101 solid</span>
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 7 sur 102 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 7 of 102 solid</span>
   </span>
 </header>
 
@@ -75,9 +75,9 @@
 
   <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
   <div class="card">
-    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 101</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 101 solid</strong> — 7%.</span></p>
+    <p class="roadmap-headline"><span data-lang="fr"><strong>7 points au point sur 102</strong> — 7&nbsp;%.</span><span data-lang="en" hidden><strong>7 of 102 solid</strong> — 7%.</span></p>
     <ul class="legend-list">
-      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 87</span><span data-lang="en" hidden>never tried in game: 87</span></li>
+      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 88</span><span data-lang="en" hidden>never tried in game: 88</span></li>
       <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 7</span><span data-lang="en" hidden>tried, doesn't work: 7</span></li>
       <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
       <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 7</span><span data-lang="en" hidden>tried, nothing to add: 7</span></li>
@@ -582,8 +582,14 @@
   <h2 class="section-title" id="combat"><span data-lang="fr">11. Combat et donjons</span><span data-lang="en" hidden>11. Combat and dungeons</span></h2>
   <div class="card">
     <p><span data-lang="fr">Se battre sans voir arriver les coups.</span><span data-lang="en" hidden>Fighting without seeing the blows coming.</span></p>
-    <p class="stage-progress"><span data-lang="fr">0 sur 6 au point.</span><span data-lang="en" hidden>0 of 6 solid.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 7 au point.</span><span data-lang="en" hidden>0 of 7 solid.</span></p>
     <ol class="roadmap-list">
+      <li class="roadmap-item status-todo is-critical" id="combat-sorts-equiper">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 7 — <span data-lang="fr">Appuyer sur Pavé 7 pour ouvrir le choix de sort du premier emplacement, parcourir les sorts aux flèches, en équiper un avec Entrée. Réappuyer pour passer aux emplacements suivants, puis fermer.</span><span data-lang="en" hidden>Press Numpad 7 to open the first slot's spell picker, browse the spells with the arrows, equip one with Enter. Press again for the next slots, then to close.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque sort disponible est annoncé par son nom, et Entrée l'équipe réellement dans l'emplacement. La liste correspond à ce que vous avez débloqué.</span><span data-lang="en" hidden>Each available spell is announced by name, and Enter actually equips it in the slot. The list matches what you have unlocked.</span></p>
+        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> <span data-lang="fr">Changer un sort équipé était IMPOSSIBLE sans souris : le menu s'ouvre au survol et n'expose rien de sélectionnable. Le mod ouvre maintenant le menu du JEU et y pose la sélection clavier, plutôt que de reconstruire une liste — ce qui aurait obligé à recopier une douzaine de conditions de déblocage dispersées dans les arbres de compétences.</span><span data-lang="en" hidden>Changing an equipped spell was IMPOSSIBLE without a mouse: the menu opens on hover and exposes nothing selectable. The mod now opens the GAME's menu and places the keyboard selection in it, rather than rebuilding a list — which would have meant copying a dozen unlock conditions scattered across the skill trees.</span></p>
+      </li>
       <li class="roadmap-item status-todo" id="combat-sorts-equipes">
         <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
         <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 9 — <span data-lang="fr">Demander les sorts équipés, avec des emplacements remplis et d'autres vides.</span><span data-lang="en" hidden>Ask for the equipped spells, with some slots filled and some empty.</span></p>
