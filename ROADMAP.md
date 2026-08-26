@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **6 sur 92 au point** (7 %).
+Mis à jour le 2026-08-26 — **6 sur 93 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 86 |
+| `[ ]` | À tester | jamais essayé en jeu | 87 |
 | `[!]` | À corriger | essayé, ne marche pas | 0 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 6 |
@@ -53,6 +53,10 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
 - [ ] **personnage-race** — touche : Flèches
   - Faire : Choisir une race.
   - Attendu : Chaque race est annoncée au passage.
+- [ ] **personnage-colonnes** ⚠️ — touche : Ctrl + gauche / droite
+  - Faire : En création de personnage, sauter d'une colonne à l'autre : catégories à gauche, personnalisation au centre, informations à droite.
+  - Attendu : « Colonne 2 sur 3 » est annoncé, suivi de l'élément atteint, d'une seule traite. On arrive à la même hauteur qu'on avait quittée. Un bip signale les bords.
+  - Retour de jeu : Découpage déduit des grands écarts horizontaux entre éléments, sans supposer la hiérarchie de l'écran. Si le compte de colonnes est faux, c'est ce réglage qu'il faut ajuster. Les flèches seules n'ont pas changé.
 - [ ] **personnage-apparence** — touche : Virgule / Point
   - Faire : Parcourir les options d'apparence, puis changer de catégorie avec Ctrl.
   - Attendu : Chaque option est annoncée ; Ctrl passe à la catégorie suivante. Les ailes ne sont pas couvertes.

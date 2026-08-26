@@ -135,8 +135,102 @@ namespace SunHavenAccess.Menus
                 return;
             }
 
+            // Écrans en colonnes (création de personnage : catégories à gauche, personnalisation
+            // au centre, informations à droite). Ctrl+gauche/droite y saute d'une colonne à
+            // l'autre, comme il saute de panneau à panneau dans l'inventaire — même geste, même
+            // sens. Les zones nommées du jeu n'existent pas ici, d'où ce traitement à part.
+            if (crossZone && dx != 0 && zone == Zone.Generic && MoveAcrossColumns(currentGo, dx)) return;
+
             if (crossZone) MoveAcrossZones(currentGo, zone, dx, dy);
             else MoveWithinZone(currentGo, zone, dx, dy);
+        }
+
+        /// <summary>
+        /// Saute à la colonne voisine sur un écran qui en comporte plusieurs. Renvoie false si
+        /// l'écran n'est pas en colonnes, auquel cas le comportement habituel reprend la main.
+        ///
+        /// Les colonnes sont déduites GÉOMÉTRIQUEMENT, par les grands écarts horizontaux entre
+        /// éléments : c'est ce que fait l'œil, et surtout ça ne dépend d'aucune supposition sur la
+        /// hiérarchie Unity de l'écran — laquelle varie d'un écran à l'autre et n'est pas
+        /// vérifiable sans lancer le jeu.
+        ///
+        /// Volontairement ADDITIF : les flèches seules continuent de parcourir tout l'écran comme
+        /// avant. Si le découpage se trompe, on atterrit au mauvais endroit avec Ctrl, mais rien
+        /// de ce qui fonctionnait déjà ne change.
+        /// </summary>
+        private static bool MoveAcrossColumns(GameObject currentGo, int dx)
+        {
+            List<List<GameObject>> columns = BuildColumns(ZoneMembers(Zone.Generic));
+            if (columns.Count < 2) return false;
+
+            int currentColumn = columns.FindIndex(c => c.Contains(currentGo));
+            if (currentColumn < 0) return false;
+
+            int target = currentColumn + (dx > 0 ? 1 : -1);
+            if (target < 0 || target >= columns.Count)
+            {
+                UiSound.EdgeBump();
+                return true;
+            }
+
+            // On vise l'élément de la colonne d'arrivée le plus proche EN HAUTEUR de celui qu'on
+            // quitte : passer d'une colonne à l'autre ne doit pas faire perdre sa place verticale.
+            float y = currentGo.transform.position.y;
+            GameObject best = columns[target]
+                .OrderBy(g => Mathf.Abs(g.transform.position.y - y))
+                .FirstOrDefault();
+
+            if (best == null) return false;
+
+            // Le repère de colonne est posé en PRÉFIXE plutôt qu'annoncé séparément : FocusReader
+            // annonce l'élément à la frame suivante en coupant la parole, ce qui avalerait une
+            // annonce faite ici. On obtient ainsi « Colonne 2 sur 3, Cheveux » d'une seule traite.
+            FocusReader.SetPendingPrefix($"Colonne {target + 1} sur {columns.Count}");
+            Select(best);
+            return true;
+        }
+
+        /// <summary>
+        /// Regroupe les éléments en colonnes visuelles. Seuls les écarts horizontaux NETTEMENT
+        /// plus grands que l'écart courant coupent une colonne : une grille dense d'icônes reste
+        /// ainsi d'un seul tenant, alors qu'un panneau séparé par du vide s'en détache.
+        /// </summary>
+        private static List<List<GameObject>> BuildColumns(List<GameObject> members)
+        {
+            var columns = new List<List<GameObject>>();
+            if (members == null || members.Count < 2) return columns;
+
+            var sorted = members.Where(m => m != null)
+                                .OrderBy(m => m.transform.position.x)
+                                .ToList();
+            if (sorted.Count < 2) return columns;
+
+            var gaps = new List<float>();
+            for (int i = 1; i < sorted.Count; i++)
+                gaps.Add(sorted[i].transform.position.x - sorted[i - 1].transform.position.x);
+
+            // Écart de référence : la médiane, insensible aux quelques très grands écarts qu'on
+            // cherche justement à repérer (une moyenne, elle, serait tirée vers le haut par eux).
+            var ordered = gaps.OrderBy(g => g).ToList();
+            float median = ordered[ordered.Count / 2];
+
+            // Un écart coupe s'il dépasse largement l'ordinaire. Le plancher évite de découper un
+            // écran dont tous les éléments sont pratiquement alignés, où la médiane vaut zéro.
+            float threshold = Mathf.Max(median * 4f, 1.5f);
+
+            var current = new List<GameObject> { sorted[0] };
+            for (int i = 1; i < sorted.Count; i++)
+            {
+                if (gaps[i - 1] > threshold)
+                {
+                    columns.Add(current);
+                    current = new List<GameObject>();
+                }
+                current.Add(sorted[i]);
+            }
+            columns.Add(current);
+
+            return columns;
         }
 
         /// <summary>

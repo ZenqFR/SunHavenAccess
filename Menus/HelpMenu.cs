@@ -204,6 +204,9 @@ namespace SunHavenAccess.Menus
 
             $"La carte du monde. Carte ouverte, {K(ModConfig.MapPreviousLocation)} et {K(ModConfig.MapNextLocation)} parcourent les lieux.",
 
+            "Les écrans en colonnes, comme la création de personnage : catégories à gauche, personnalisation au centre, informations à droite. " +
+            "Contrôle plus gauche ou droite saute d'une colonne à l'autre, et annonce laquelle. Les flèches seules parcourent l'écran comme d'habitude.",
+
             $"La création de personnage. {K(ModConfig.AppearancePrevious)} et {K(ModConfig.AppearanceNext)} parcourent les options d'apparence ; " +
             "Contrôle plus l'une ou l'autre change de catégorie.",
 
