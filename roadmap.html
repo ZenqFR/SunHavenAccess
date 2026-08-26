@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feuille de route — Sun Haven Access</title>
+<meta name="description" content="Feuille de route de Sun Haven Access : chaque fonctionnalité, dans l'ordre où on la rencontre en jouant, avec son état — à tester, à corriger, à optimiser, ou au point.">
+<link rel="canonical" href="https://zenqfr.github.io/SunHavenAccess/roadmap.html">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='90'%3E%F0%9F%97%BA%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Feuille de route — Sun Haven Access">
+<meta property="og:description" content="Chaque fonctionnalité dans l'ordre où on la rencontre en jouant, avec son état.">
+<meta property="og:url" content="https://zenqfr.github.io/SunHavenAccess/roadmap.html">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=6">
+</head>
+<body>
+<a class="skip-link" href="#main">
+  <span data-lang="fr">Aller au contenu</span><span data-lang="en" hidden>Skip to content</span>
+</a>
+
+<nav class="portfolio-bar" aria-label="Mes autres projets">
+  <ul>
+    <li><a href="https://zenqfr.github.io/">🏠 ZenqFR</a></li>
+    <li><a href="index.html">Sun Haven Access</a></li>
+    <li aria-current="page"><span data-lang="fr">Feuille de route</span><span data-lang="en" hidden>Roadmap</span></li>
+    <li><a href="docs.html"><span data-lang="fr">Documentation</span><span data-lang="en" hidden>Documentation</span></a></li>
+  </ul>
+  <button type="button" id="lang-toggle" aria-label="Switch language / Changer de langue">English</button>
+</nav>
+
+<nav class="quick-nav" aria-label="Navigation rapide">
+  <a href="#bilan" data-section="bilan"><span data-lang="fr">Bilan</span><span data-lang="en" hidden>Summary</span></a>
+  <a href="#avant" data-section="avant"><span data-lang="fr">1. Avant de lancer le jeu</span><span data-lang="en" hidden>1. Before launching the game</span></a>
+  <a href="#personnage" data-section="personnage"><span data-lang="fr">2. Créer son personnage</span><span data-lang="en" hidden>2. Creating your character</span></a>
+  <a href="#premiers-pas" data-section="premiers-pas"><span data-lang="fr">3. Premiers pas dans le monde</span><span data-lang="en" hidden>3. First steps in the world</span></a>
+  <a href="#sac" data-section="sac"><span data-lang="fr">4. Son sac et son équipement</span><span data-lang="en" hidden>4. Your bag and gear</span></a>
+  <a href="#ferme" data-section="ferme"><span data-lang="fr">5. Travailler sa ferme</span><span data-lang="en" hidden>5. Working your farm</span></a>
+  <a href="#animaux" data-section="animaux"><span data-lang="fr">6. S'occuper des animaux</span><span data-lang="en" hidden>6. Looking after the animals</span></a>
+  <a href="#explorer" data-section="explorer"><span data-lang="fr">7. Explorer et se repérer</span><span data-lang="en" hidden>7. Exploring and finding your way</span></a>
+  <a href="#village" data-section="village"><span data-lang="fr">8. Le village et ses habitants</span><span data-lang="en" hidden>8. The village and its people</span></a>
+  <a href="#metiers" data-section="metiers"><span data-lang="fr">9. Pêche, mine et bûcheronnage</span><span data-lang="en" hidden>9. Fishing, mining and logging</span></a>
+  <a href="#combat" data-section="combat"><span data-lang="fr">10. Combat et donjons</span><span data-lang="en" hidden>10. Combat and dungeons</span></a>
+  <a href="#batir" data-section="batir"><span data-lang="fr">11. Bâtir et décorer</span><span data-lang="en" hidden>11. Building and decorating</span></a>
+  <a href="#progresser" data-section="progresser"><span data-lang="fr">12. Progresser sur la durée</span><span data-lang="en" hidden>12. Progressing over time</span></a>
+</nav>
+
+<header>
+  <span class="emoji" aria-hidden="true">🗺️</span>
+  <h1><span data-lang="fr">Feuille de route</span><span data-lang="en" hidden>Roadmap</span></h1>
+  <p class="tagline">
+    <span data-lang="fr">Chaque fonctionnalité dans l'ordre où on la rencontre en jouant — et où elle en est.</span>
+    <span data-lang="en" hidden>Every feature in the order you meet it while playing — and where it stands.</span>
+  </p>
+  <span class="status-pill">
+    <span data-lang="fr">Mis à jour le 2026-08-26 — 0 sur 69 au point</span>
+    <span data-lang="en" hidden>Updated 2026-08-26 — 0 of 69 solid</span>
+  </span>
+</header>
+
+<p class="intro">
+  <span data-lang="fr">Le mod est écrit en décompilant Sun Haven et en raisonnant dessus, par une IA qui ne peut ni voir ni entendre le jeu. <strong>Seul un essai réel peut confirmer qu'une fonctionnalité marche.</strong> Les étapes suivent la progression d'une partie : on vérifie chaque chose au moment où on la rencontre, plutôt que de tout passer en revue d'un bloc.</span>
+  <span data-lang="en" hidden>The mod is written by decompiling Sun Haven and reasoning about it, by an AI that can neither see nor hear the game. <strong>Only a real trial can confirm a feature works.</strong> The stages follow a playthrough: you check each thing as you meet it, rather than sweeping the whole list at once.</span>
+</p>
+
+<main id="main">
+
+  <h2 class="section-title" id="bilan"><span data-lang="fr">Où en est-on</span><span data-lang="en" hidden>Where things stand</span></h2>
+  <div class="card">
+    <p class="roadmap-headline"><span data-lang="fr"><strong>0 point au point sur 69</strong> — 0&nbsp;%.</span><span data-lang="en" hidden><strong>0 of 69 solid</strong> — 0%.</span></p>
+    <ul class="legend-list">
+      <li class="legend-todo"><strong><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></strong> — <span data-lang="fr">jamais essayé en jeu&nbsp;: 69</span><span data-lang="en" hidden>never tried in game: 69</span></li>
+      <li class="legend-fix"><strong><span data-lang="fr">À corriger</span><span data-lang="en" hidden>Broken</span></strong> — <span data-lang="fr">essayé, ne marche pas&nbsp;: 0</span><span data-lang="en" hidden>tried, doesn't work: 0</span></li>
+      <li class="legend-optimize"><strong><span data-lang="fr">À optimiser</span><span data-lang="en" hidden>Needs work</span></strong> — <span data-lang="fr">marche, mais perfectible&nbsp;: 0</span><span data-lang="en" hidden>works, but could be better: 0</span></li>
+      <li class="legend-ok"><strong><span data-lang="fr">Au point</span><span data-lang="en" hidden>Solid</span></strong> — <span data-lang="fr">essayé, rien à redire&nbsp;: 0</span><span data-lang="en" hidden>tried, nothing to add: 0</span></li>
+    </ul>
+    <p class="note"><span data-lang="fr">« Au point » veut dire : essayé en jeu par un joueur aveugle, et le comportement attendu observé. Rien n'y passe sur la seule foi du code — je ne peux ni voir ni entendre le jeu.</span><span data-lang="en" hidden>"Solid" means: tried in game by a blind player, with the expected behaviour observed. Nothing reaches it on the strength of the code alone — I can neither see nor hear the game.</span></p>
+  </div>
+
+  <h2 class="section-title" id="avant"><span data-lang="fr">1. Avant de lancer le jeu</span><span data-lang="en" hidden>1. Before launching the game</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Installer, et vérifier que le mod se charge. Si ça échoue ici, rien d'autre ne peut marcher.</span><span data-lang="en" hidden>Install, and confirm the mod loads. If this fails, nothing else can work.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 7 au point.</span><span data-lang="en" hidden>0 of 7 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="avant-installateur-clavier">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Lancer l'installateur et parcourir tous les contrôles au clavier.</span><span data-lang="en" hidden>Run the installer and tab through every control.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque contrôle est nommé, l'ordre de tabulation suit la lecture, et le compte rendu se relit aux flèches.</span><span data-lang="en" hidden>Every control is named, tab order follows reading order, and the report re-reads with the arrows.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="avant-installateur-smartscreen">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Passer l'avertissement SmartScreen de Windows.</span><span data-lang="en" hidden>Get past the Windows SmartScreen warning.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">« Informations complémentaires » puis « Exécuter quand même » sont trouvables au lecteur d'écran.</span><span data-lang="en" hidden>"More info" then "Run anyway" are findable with a screen reader.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="avant-installateur-detection">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Regarder si le jeu est trouvé tout seul.</span><span data-lang="en" hidden>See whether the game is found automatically.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le chemin de Sun Haven est prérempli sans rien saisir.</span><span data-lang="en" hidden>Sun Haven's path is pre-filled with no input.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="avant-chargement">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Lancer Sun Haven.</span><span data-lang="en" hidden>Launch Sun Haven.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Un message vocal annonce que le mod est chargé et rappelle la touche d'aide.</span><span data-lang="en" hidden>A spoken message says the mod loaded and names the help key.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="avant-test-son">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> F11 — <span data-lang="fr">Appuyer sur F11.</span><span data-lang="en" hidden>Press F11.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Un son Windows se fait entendre, indépendamment de la synthèse vocale — pour distinguer « mod pas chargé » de « lecteur d'écran muet ».</span><span data-lang="en" hidden>A Windows sound plays, independently of speech — to tell "mod not loaded" from "screen reader silent".</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="avant-aide">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> F1 — <span data-lang="fr">Appuyer sur F1.</span><span data-lang="en" hidden>Press F1.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La liste des touches principales est lue. F1 est aussi une émote du jeu, le personnage fera donc un geste en plus.</span><span data-lang="en" hidden>The main key list is read. F1 is also a game emote, so the character will gesture too.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="avant-menu-raccourcis">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Suppr — <span data-lang="fr">Ouvrir le menu des raccourcis, le parcourir, réassigner une touche.</span><span data-lang="en" hidden>Open the shortcuts menu, browse it, reassign a key.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque raccourci est annoncé avec son libellé et sa touche, et se change sans quitter le jeu.</span><span data-lang="en" hidden>Each shortcut is announced with label and key, and changes without leaving the game.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="personnage"><span data-lang="fr">2. Créer son personnage</span><span data-lang="en" hidden>2. Creating your character</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le mod : impossible de commencer à jouer.</span><span data-lang="en" hidden>The very first screen of a new game. It was completely silent before the mod: you simply couldn't start playing.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 4 au point.</span><span data-lang="en" hidden>0 of 4 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="personnage-menu-principal">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches, Entrée — <span data-lang="fr">Naviguer dans le menu principal et l'écran de sauvegarde.</span><span data-lang="en" hidden>Navigate the main menu and the save screen.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les boutons sont nommés, et chaque sauvegarde annonce son résumé.</span><span data-lang="en" hidden>Buttons are named, and each save announces its summary.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="personnage-race">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Choisir une race.</span><span data-lang="en" hidden>Pick a race.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque race est annoncée au passage.</span><span data-lang="en" hidden>Each race is announced as you pass it.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="personnage-apparence">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Virgule / Point — <span data-lang="fr">Parcourir les options d'apparence, puis changer de catégorie avec Ctrl.</span><span data-lang="en" hidden>Browse appearance options, then change category with Ctrl.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque option est annoncée ; Ctrl passe à la catégorie suivante. Les ailes ne sont pas couvertes.</span><span data-lang="en" hidden>Each option is announced; Ctrl moves to the next category. Wings are not covered.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="personnage-saisie-nom">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Taper le nom du personnage.</span><span data-lang="en" hidden>Type the character's name.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque caractère tapé est annoncé, l'effacement aussi. Aucune touche du mod ne se déclenche pendant la frappe.</span><span data-lang="en" hidden>Each typed character is announced, as is deletion. No mod key fires while typing.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="premiers-pas"><span data-lang="fr">3. Premiers pas dans le monde</span><span data-lang="en" hidden>3. First steps in the world</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Savoir où on est et ce qu'on a devant soi. C'est le socle : tout le reste s'appuie dessus.</span><span data-lang="en" hidden>Knowing where you are and what's in front of you. This is the foundation everything else rests on.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 9 au point.</span><span data-lang="en" hidden>0 of 9 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo is-critical" id="premiers-pas-case-devant-auto">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Marcher.</span><span data-lang="en" hidden>Walk.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La case devant vous est décrite à chaque pas : terrain, culture, obstacle ou objet.</span><span data-lang="en" hidden>The tile ahead is described at every step: terrain, crop, obstacle or object.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-case-devant">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> F10 — <span data-lang="fr">Appuyer sur F10 à l'arrêt.</span><span data-lang="en" hidden>Press F10 while standing still.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La même description, à la demande.</span><span data-lang="en" hidden>The same description, on demand.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-position">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> P — <span data-lang="fr">Appuyer sur P.</span><span data-lang="en" hidden>Press P.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Coordonnées et direction regardée.</span><span data-lang="en" hidden>Coordinates and facing direction.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-tourner">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 4 / Pavé 6 — <span data-lang="fr">Tourner sur place à gauche puis à droite.</span><span data-lang="en" hidden>Turn left then right on the spot.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le personnage pivote sans bouger, et la nouvelle case en face est annoncée.</span><span data-lang="en" hidden>The character pivots without moving, and the new tile ahead is announced.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-repeter">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> B — <span data-lang="fr">Appuyer sur B après n'importe quelle annonce.</span><span data-lang="en" hidden>Press B after any announcement.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La dernière chose annoncée est répétée.</span><span data-lang="en" hidden>The last thing announced is repeated.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-verbosite">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> F9 — <span data-lang="fr">Couper puis remettre la verbosité, en marchant à chaque fois.</span><span data-lang="en" hidden>Turn verbosity off then on, walking each time.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Coupée, plus d'annonce automatique en marchant ; remise, elles reviennent.</span><span data-lang="en" hidden>Off: no automatic announcements while walking; on: they return.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-horloge">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> O — <span data-lang="fr">Appuyer sur O.</span><span data-lang="en" hidden>Press O.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Heure, jour, saison et météo.</span><span data-lang="en" hidden>Time, day, season and weather.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-statut">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> H — <span data-lang="fr">Appuyer sur H.</span><span data-lang="en" hidden>Press H.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Santé, énergie et argent.</span><span data-lang="en" hidden>Health, energy and money.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="premiers-pas-notifications">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Provoquer un message du jeu (entrer dans une boutique fermée, action impossible).</span><span data-lang="en" hidden>Trigger a game message (enter a closed shop, attempt something impossible).</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La bulle éphémère en haut à gauche est lue automatiquement.</span><span data-lang="en" hidden>The transient bubble at the top-left is read automatically.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="sac"><span data-lang="fr">4. Son sac et son équipement</span><span data-lang="en" hidden>4. Your bag and gear</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">La navigation dans les menus a été entièrement refaite et n'a jamais été confirmée en jeu. Le point à surveiller : qu'une pression ne provoque pas deux déplacements.</span><span data-lang="en" hidden>Menu navigation was fully rewritten and never confirmed in game. Watch for this: one press must not cause two moves.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 8 au point.</span><span data-lang="en" hidden>0 of 8 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="sac-onglets">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Tab, puis Ctrl+Tab — <span data-lang="fr">Ouvrir le menu principal et passer d'un onglet à l'autre.</span><span data-lang="en" hidden>Open the main menu and cycle the tabs.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les 7 onglets sont nommés dans l'ordre : Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.</span><span data-lang="en" hidden>The 7 tabs are named in order: Backpack, Skill Tree, Relationships, Quests, Map, Statistics, Settings.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="sac-nav-directionnelle">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Dans le sac, se déplacer ligne par ligne et colonne par colonne.</span><span data-lang="en" hidden>In the backpack, move row by row and column by column.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les flèches suivent la disposition visuelle réelle. Gauche/droite butent en bout de ligne avec un bip. Une pression = un seul déplacement.</span><span data-lang="en" hidden>Arrows follow the real visual layout. Left/right stop at the row's end with a beep. One press = one move.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="sac-infobulles">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Passer sur des objets du sac et de l'équipement.</span><span data-lang="en" hidden>Move over items in the bag and gear.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le NOM et la DESCRIPTION sont lus, pas seulement la quantité. Les emplacements vides le disent.</span><span data-lang="en" hidden>The NAME and DESCRIPTION are read, not just the quantity. Empty slots say so.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="sac-zones">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Ctrl + flèches — <span data-lang="fr">Sauter entre les zones : onglets, équipement, sac, barre d'action.</span><span data-lang="en" hidden>Jump between zones: tabs, gear, bag, action bar.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque zone est atteignable, et Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau.</span><span data-lang="en" hidden>Every zone is reachable, and Ctrl+up ALWAYS returns to the tab bar from any panel.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="sac-barre-action">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> 1 à 0 — <span data-lang="fr">Sur un objet du sac, appuyer sur un chiffre.</span><span data-lang="en" hidden>With a bag item selected, press a digit.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">L'objet part vers le slot de barre d'action correspondant — et le même geste le récupère.</span><span data-lang="en" hidden>The item moves to the matching action bar slot — and the same gesture brings it back.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="sac-description-complete">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 0 — <span data-lang="fr">Après l'annonce d'un objet, demander la description complète.</span><span data-lang="en" hidden>After an item is announced, ask for the full description.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La description longue est relue en entier.</span><span data-lang="en" hidden>The long description is read in full.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="sac-confort-sac">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Apostrophe, Antislash, Égal — <span data-lang="fr">Trier le sac, demander son résumé, ranger dans les coffres proches.</span><span data-lang="en" hidden>Sort the bag, ask for its summary, store into nearby chests.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les trois actions se font et sont confirmées vocalement.</span><span data-lang="en" hidden>All three happen and are confirmed aloud.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="sac-coffres">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Ouvrir un coffre et naviguer dedans.</span><span data-lang="en" hidden>Open a chest and navigate inside.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le contenu du coffre est une zone à part, avec ses propres frontières.</span><span data-lang="en" hidden>The chest's contents form their own zone, with their own edges.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="ferme"><span data-lang="fr">5. Travailler sa ferme</span><span data-lang="en" hidden>5. Working your farm</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">La boucle quotidienne : labourer, planter, arroser, récolter.</span><span data-lang="en" hidden>The daily loop: till, plant, water, harvest.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 4 au point.</span><span data-lang="en" hidden>0 of 4 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo is-critical" id="ferme-agriculture">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Labourer, arroser, planter, récolter.</span><span data-lang="en" hidden>Till, water, plant, harvest.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque action est confirmée, et l'arrosoir annonce quand il est vide.</span><span data-lang="en" hidden>Each action is confirmed, and the watering can says when it's empty.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="ferme-cultures">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> F10 — <span data-lang="fr">Se placer devant une culture à différents stades.</span><span data-lang="en" hidden>Stand before a crop at various stages.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le stade de croissance et l'état d'arrosage sont annoncés.</span><span data-lang="en" hidden>The growth stage and watered state are announced.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="ferme-souris-directionnelle">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> J — <span data-lang="fr">Activer la souris directionnelle, puis se déplacer et tourner.</span><span data-lang="en" hidden>Turn on the directional mouse, then move and turn.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le pointeur suit toujours la case devant le personnage.</span><span data-lang="en" hidden>The pointer always follows the tile ahead.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="ferme-clic-monde">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 5 / Deux-points — <span data-lang="fr">Simuler un clic gauche puis un clic droit dans le monde.</span><span data-lang="en" hidden>Simulate a left then a right click in the world.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">L'action correspondante se déclenche sur la case visée.</span><span data-lang="en" hidden>The matching action fires on the targeted tile.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="animaux"><span data-lang="fr">6. S'occuper des animaux</span><span data-lang="en" hidden>6. Looking after the animals</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Tout nouveau, jamais testé. Le point à vérifier avant tout : que le compte annoncé corresponde à la réalité.</span><span data-lang="en" hidden>Brand new, never tested. Check this above all: that the announced count matches reality.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 3 au point.</span><span data-lang="en" hidden>0 of 3 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="animaux-troupeau">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé moins — <span data-lang="fr">Dans un enclos avec des animaux, demander le bilan.</span><span data-lang="en" hidden>In a pen with animals, ask for the herd status.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Effectif, combien à nourrir, combien à caresser, combien de produits au sol. Les noms sont cités jusqu'à trois animaux.</span><span data-lang="en" hidden>Headcount, how many to feed, to pet, and how many products on the ground. Names given up to three animals.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="animaux-troupeau-exact">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé moins — <span data-lang="fr">Nourrir et caresser un animal, puis redemander le bilan.</span><span data-lang="en" hidden>Feed and pet one animal, then ask again.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le compte diminue en conséquence, et correspond à la réalité.</span><span data-lang="en" hidden>The count drops accordingly, and matches reality.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="animaux-animal-scanner">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Page haut/bas puis Origine — <span data-lang="fr">Trouver les animaux au scanner.</span><span data-lang="en" hidden>Find the animals with the scanner.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque animal annonce son état, pas seulement son nom.</span><span data-lang="en" hidden>Each animal announces its state, not just its name.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="explorer"><span data-lang="fr">7. Explorer et se repérer</span><span data-lang="en" hidden>7. Exploring and finding your way</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Le curseur libre est l'outil qui ouvre l'exploration. Son premier test vérifie la conversion entre cases et monde : si elle est fausse, tout le reste du curseur l'est au même endroit.</span><span data-lang="en" hidden>The free cursor is what opens up exploration. Its first check tests the tile-to-world conversion: if that's wrong, everything else about the cursor is wrong in the same place.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 10 au point.</span><span data-lang="en" hidden>0 of 10 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo is-critical" id="explorer-curseur-autoverif">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé décimal — <span data-lang="fr">Activer le curseur, puis le déplacer d'une case dans la direction regardée.</span><span data-lang="en" hidden>Turn on the cursor, then move it one tile in the direction you face.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">À l'activation il décrit la case où vous vous tenez. Après un cran, il doit dire exactement ce que dit F10. Si ça diverge, la conversion est fausse et le correctif tient dans une seule fonction.</span><span data-lang="en" hidden>On activation it describes the tile you stand on. After one step it must say exactly what F10 says. If they diverge, the conversion is wrong and the fix lives in one function.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="explorer-curseur-deplacement">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Déplacer le curseur dans les quatre directions.</span><span data-lang="en" hidden>Move the cursor in all four directions.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque déplacement annonce le contenu de la case, sa direction et sa distance.</span><span data-lang="en" hidden>Each move announces the tile's contents, bearing and distance.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="explorer-curseur-menus">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Ouvrir un menu pendant que le curseur est actif, puis utiliser les flèches.</span><span data-lang="en" hidden>Open a menu while the cursor is active, then use the arrows.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les flèches pilotent le MENU, pas le curseur. C'est le piège qui a déjà cassé la navigation deux fois.</span><span data-lang="en" hidden>Arrows drive the MENU, not the cursor. This trap has already broken navigation twice.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="explorer-curseur-bord">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Pousser le curseur jusqu'au bord de la carte chargée.</span><span data-lang="en" hidden>Push the cursor to the edge of the loaded map.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Un bip court signale la butée, le curseur ne sort pas.</span><span data-lang="en" hidden>A short beep marks the limit; the cursor doesn't leave.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="explorer-curseur-clic">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 5 — <span data-lang="fr">Curseur actif, agir sur une case à distance.</span><span data-lang="en" hidden>With the cursor active, act on a distant tile.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">L'action porte sur la case visée, pas sur celle devant le personnage.</span><span data-lang="en" hidden>The action applies to the targeted tile, not the one ahead of you.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="explorer-curseur-recentrer">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé multiplier — <span data-lang="fr">Après avoir éloigné le curseur, le recentrer.</span><span data-lang="en" hidden>After moving the cursor away, recentre it.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le curseur revient sur votre case sans quitter le mode.</span><span data-lang="en" hidden>The cursor returns to your tile without leaving the mode.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="explorer-scanner-categories">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Page haut / Page bas — <span data-lang="fr">Changer de catégorie du scanner.</span><span data-lang="en" hidden>Change the scanner category.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les 7 catégories défilent et sont nommées.</span><span data-lang="en" hidden>The 7 categories cycle and are named.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="explorer-scanner-parcours">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Origine / Fin — <span data-lang="fr">Parcourir les éléments de la catégorie courante.</span><span data-lang="en" hidden>Move through the current category's entries.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque élément est annoncé avec sa direction et sa distance.</span><span data-lang="en" hidden>Each entry is announced with bearing and distance.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="explorer-scanner-trajet">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Ctrl + Origine — <span data-lang="fr">Lancer le cheminement vers l'élément annoncé, ou vers la case du curseur.</span><span data-lang="en" hidden>Start pathing to the announced entry, or to the cursor's tile.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le personnage s'y rend seul. En cas d'échec, la raison est dite (trop loin, chemin bloqué).</span><span data-lang="en" hidden>The character walks there alone. On failure, the reason is spoken (too far, blocked).</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="explorer-carte">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> X / Y — <span data-lang="fr">Ouvrir la carte du monde et parcourir les lieux.</span><span data-lang="en" hidden>Open the world map and browse locations.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les lieux sont nommés un par un.</span><span data-lang="en" hidden>Locations are named one by one.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="village"><span data-lang="fr">8. Le village et ses habitants</span><span data-lang="en" hidden>8. The village and its people</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Parler, acheter, recevoir du courrier, suivre ses quêtes.</span><span data-lang="en" hidden>Talking, buying, getting mail, following your quests.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 8 au point.</span><span data-lang="en" hidden>0 of 8 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="village-npc-proche">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> N — <span data-lang="fr">Appuyer sur N plusieurs fois près de personnages.</span><span data-lang="en" hidden>Press N repeatedly near characters.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">On passe d'un personnage proche au suivant, avec nom, direction et distance.</span><span data-lang="en" hidden>You cycle through nearby characters, with name, bearing and distance.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="village-dialogues">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Parler à un personnage, y compris avec des choix de réponse.</span><span data-lang="en" hidden>Talk to a character, including with dialogue choices.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les lignes sont lues dès le début, sans attendre l'animation. Les choix sont parcourables.</span><span data-lang="en" hidden>Lines are read from the start, without waiting for the animation. Choices can be browsed.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="village-boutique">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Acheter et vendre chez un marchand.</span><span data-lang="en" hidden>Buy and sell from a merchant.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Noms, prix et devise (or, tickets, orbes) sont annoncés correctement.</span><span data-lang="en" hidden>Names, prices and currency (gold, tickets, orbs) are announced correctly.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="village-artisanat">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Fabriquer un objet, y compris en cherchant dans le champ de tri.</span><span data-lang="en" hidden>Craft an item, including searching in the sort field.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Recettes, ingrédients et manques sont annoncés ; la frappe dans le champ de recherche est vocalisée.</span><span data-lang="en" hidden>Recipes, ingredients and shortfalls are announced; typing in the search field is spoken.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="village-courrier">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Ouvrir une lettre dans la boîte aux lettres.</span><span data-lang="en" hidden>Open a letter in the mailbox.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le contenu complet est lu : message, signature, post-scriptum.</span><span data-lang="en" hidden>The full content is read: message, signature, postscript.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="village-quetes">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> G — <span data-lang="fr">Accepter une quête, la rendre, puis lister les quêtes actives.</span><span data-lang="en" hidden>Accept a quest, hand it in, then list active quests.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Acceptation et rendu sont annoncés d'eux-mêmes ; la liste donne nom, description et progression.</span><span data-lang="en" hidden>Accepting and handing in announce themselves; the list gives name, description and progress.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="village-relations">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> V — <span data-lang="fr">Appuyer sur V.</span><span data-lang="en" hidden>Press V.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les cœurs de chaque personnage romançable, avec le statut (en couple, marié).</span><span data-lang="en" hidden>Hearts for each romanceable character, with status (dating, married).</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="village-festivals">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Point-virgule — <span data-lang="fr">Appuyer sur point-virgule.</span><span data-lang="en" hidden>Press semicolon.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les festivals de la saison en cours sont listés.</span><span data-lang="en" hidden>The current season's festivals are listed.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="metiers"><span data-lang="fr">9. Pêche, mine et bûcheronnage</span><span data-lang="en" hidden>9. Fishing, mining and logging</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Les métiers qui font vivre la ferme. La pêche est la plus délicate : son mini-jeu est purement visuel.</span><span data-lang="en" hidden>The trades that keep the farm going. Fishing is the trickiest: its minigame is purely visual.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 3 au point.</span><span data-lang="en" hidden>0 of 3 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="metiers-peche-touche">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Lancer la ligne et attendre.</span><span data-lang="en" hidden>Cast and wait.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La touche du poisson est annoncée, et le résultat de la tentative aussi.</span><span data-lang="en" hidden>The bite is announced, and so is the attempt's result.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="metiers-peche-bip">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> F8 — <span data-lang="fr">Pêcher avec le bip de visée, puis le couper et recommencer.</span><span data-lang="en" hidden>Fish with the aiming beep, then turn it off and try again.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le bip continu permet de suivre la zone de visée pendant le mini-jeu. C'est la fonctionnalité la plus expérimentale du mod.</span><span data-lang="en" hidden>The continuous beep lets you track the aiming zone during the minigame. This is the mod's most experimental feature.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="metiers-minage">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Frapper un rocher et un arbre, avec un outil trop faible puis adapté.</span><span data-lang="en" hidden>Hit a rock and a tree, with too weak a tool then the right one.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le mod signale l'outil trop faible, et confirme la casse sinon.</span><span data-lang="en" hidden>The mod flags a too-weak tool, and confirms the break otherwise.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="combat"><span data-lang="fr">10. Combat et donjons</span><span data-lang="en" hidden>10. Combat and dungeons</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Se battre sans voir arriver les coups.</span><span data-lang="en" hidden>Fighting without seeing the blows coming.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 4 au point.</span><span data-lang="en" hidden>0 of 4 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo is-critical" id="combat-combat-degats">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Se faire toucher plusieurs fois.</span><span data-lang="en" hidden>Take several hits.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">La santé restante est annoncée à chaque coup, avec une alerte de plus en plus pressante en bas.</span><span data-lang="en" hidden>Remaining health is announced on each hit, with an increasingly urgent warning as it drops.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="combat-combat-etat">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Entrer en combat, vaincre un ennemi, en sortir.</span><span data-lang="en" hidden>Enter combat, defeat an enemy, leave.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Entrée et sortie de combat sont signalées, et l'ennemi vaincu annoncé.</span><span data-lang="en" hidden>Entering and leaving combat are flagged, and the defeated enemy announced.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="combat-donjon">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Entrer dans un donjon, nettoyer une salle.</span><span data-lang="en" hidden>Enter a dungeon, clear a room.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le numéro d'étage est dit à l'entrée d'une salle, et la salle nettoyée confirmée.</span><span data-lang="en" hidden>The floor number is given on entering a room, and clearing it is confirmed.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="combat-ennemis-scanner">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Page haut/bas — <span data-lang="fr">Repérer les ennemis au scanner pendant un combat.</span><span data-lang="en" hidden>Locate enemies with the scanner during a fight.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les ennemis proches sont listés avec direction et distance.</span><span data-lang="en" hidden>Nearby enemies are listed with bearing and distance.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="batir"><span data-lang="fr">11. Bâtir et décorer</span><span data-lang="en" hidden>11. Building and decorating</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Tout nouveau, jamais testé. Si l'aperçu ne suit pas le curseur, c'est le pilotage de la souris qui est en cause.</span><span data-lang="en" hidden>Brand new, never tested. If the preview doesn't follow the cursor, the mouse steering is the culprit.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 5 au point.</span><span data-lang="en" hidden>0 of 5 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="batir-placement-mode">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Prendre un meuble en main.</span><span data-lang="en" hidden>Take a piece of furniture in hand.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">« Mode placement » est annoncé, avec le nom de l'objet et son emprise si elle dépasse une case.</span><span data-lang="en" hidden>"Placement mode" is announced, with the object's name and footprint if larger than one tile.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="batir-placement-visee">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé décimal + flèches — <span data-lang="fr">Activer le curseur libre et déplacer la visée.</span><span data-lang="en" hidden>Turn on the free cursor and move the aim.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">L'aperçu du jeu suit la case du curseur.</span><span data-lang="en" hidden>The game's preview follows the cursor's tile.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="batir-placement-validite">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> — — <span data-lang="fr">Balayer des cases valides puis invalides.</span><span data-lang="en" hidden>Sweep across valid then invalid tiles.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">« Emplacement valide » / « invalide » n'est dit qu'AUX BASCULES, sans couper la description de case.</span><span data-lang="en" hidden>"Valid spot" / "invalid" is said only ON FLIPS, without cutting off the tile description.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="batir-placement-pose">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé 5 — <span data-lang="fr">Poser l'objet.</span><span data-lang="en" hidden>Place the object.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">L'objet se pose sur la case visée, pas devant le personnage.</span><span data-lang="en" hidden>The object lands on the targeted tile, not in front of the character.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="batir-placement-etat">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Pavé plus — <span data-lang="fr">Redemander l'état du placement.</span><span data-lang="en" hidden>Ask for the placement state again.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Objet, emprise et validité sont redits.</span><span data-lang="en" hidden>Object, footprint and validity are repeated.</span></p>
+      </li>
+    </ol>
+  </div>
+
+  <h2 class="section-title" id="progresser"><span data-lang="fr">12. Progresser sur la durée</span><span data-lang="en" hidden>12. Progressing over time</span></h2>
+  <div class="card">
+    <p><span data-lang="fr">Les compétences, qu'on dépense au fil des niveaux.</span><span data-lang="en" hidden>Skills, spent as your levels climb.</span></p>
+    <p class="stage-progress"><span data-lang="fr">0 sur 4 au point.</span><span data-lang="en" hidden>0 of 4 solid.</span></p>
+    <ol class="roadmap-list">
+      <li class="roadmap-item status-todo" id="progresser-competences">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> U puis Z — <span data-lang="fr">Demander les niveaux, puis les points disponibles.</span><span data-lang="en" hidden>Ask for levels, then for available points.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Niveaux par métier, puis points restants par arbre.</span><span data-lang="en" hidden>Levels per profession, then remaining points per tree.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="progresser-arbre-lecture">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Ouvrir l'arbre de compétences et se placer sur des nœuds.</span><span data-lang="en" hidden>Open the skill tree and land on some nodes.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Chaque nœud dit son nom, son rang, s'il est verrouillé et à quelle condition, puis son effet.</span><span data-lang="en" hidden>Each node says its name, rank, whether it's locked and under what condition, then its effect.</span></p>
+      </li>
+      <li class="roadmap-item status-todo is-critical" id="progresser-arbre-deplacement">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span> <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Flèches — <span data-lang="fr">Se déplacer de nœud en nœud dans la grille.</span><span data-lang="en" hidden>Move from node to node across the grid.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Les flèches passent bien d'un nœud à l'autre — c'est ce qui n'a jamais été confirmé.</span><span data-lang="en" hidden>The arrows really do move between nodes — this is what has never been confirmed.</span></p>
+      </li>
+      <li class="roadmap-item status-todo" id="progresser-arbre-validation">
+        <p class="status-line"><span class="status-tag"><span data-lang="fr">À tester</span><span data-lang="en" hidden>To test</span></span></p>
+        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> Entrée — <span data-lang="fr">Prendre une compétence disponible.</span><span data-lang="en" hidden>Take an available skill.</span></p>
+        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> <span data-lang="fr">Le nœud est débloqué et le point décompté.</span><span data-lang="en" hidden>The node unlocks and the point is spent.</span></p>
+      </li>
+    </ol>
+  </div>
+
+
+</main>
+
+<footer>
+  <p>
+    <span data-lang="fr">Un point ne se comporte pas comme annoncé ? Dites-le, ou ouvrez une <a href="https://github.com/ZenqFR/SunHavenAccess/issues">issue</a> — c'est ce qui fait avancer ce mod.</span>
+    <span data-lang="en" hidden>Something doesn't behave as described? Say so, or open an <a href="https://github.com/ZenqFR/SunHavenAccess/issues">issue</a> — that's what moves this mod forward.</span>
+  </p>
+</footer>
+
+<script src="site.js?v=5"></script>
+</body>
+</html>

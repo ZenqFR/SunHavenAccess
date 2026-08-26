@@ -27,6 +27,7 @@
   --leaf: #2fa83e;
   --leaf-text: #1c7a28;
   --leaf-deep: #16651f;
+  --alert-text: #a3231f;
   --sky: #1f97d4;
   --sky-text: #0d6ea3;
   --pill-bg: rgba(255, 255, 255, 0.55);
@@ -470,3 +471,67 @@ footer .privacy { margin-top: 0.6em; font-size: 0.8rem; }
 /* Le bouton de téléchargement de la page Démarrer : même composant .cta que l'accueil,
    simplement dégagé du texte qui suit. */
 .download-cta { margin: 0 0 1.2em; }
+
+/* ---------- Feuille de route (roadmap.html) ----------
+   L'état de chaque point est écrit EN TOUTES LETTRES dans la page ; la couleur et le liseré ne
+   font que le redoubler pour qui voit. Une pastille colorée seule serait invisible au lecteur
+   d'écran — et indistinguable pour un daltonien. */
+.legend-list { list-style: none; padding: 0; margin: 0.8em 0 0; }
+.legend-list li {
+  margin: 0 0 0.5em;
+  padding-left: 0.9em;
+  border-left: 5px solid var(--text-faint);
+}
+.legend-todo     { border-left-color: var(--sky-text) !important; }
+.legend-fix      { border-left-color: var(--alert-text) !important; }
+.legend-optimize { border-left-color: var(--accent-strong) !important; }
+.legend-ok       { border-left-color: var(--leaf-text) !important; }
+
+.roadmap-headline { font-size: 1.15rem; }
+.stage-progress { color: var(--text-dim); font-weight: 600; margin-top: -0.4em; }
+
+.roadmap-list { margin: 1em 0 0; padding-left: 1.4em; }
+.roadmap-item {
+  margin: 0 0 1.4em;
+  padding: 0.7em 0 0.7em 1em;
+  border-left: 5px solid var(--text-faint);
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.roadmap-item > p { margin: 0 0 0.4em; }
+.roadmap-item > p:last-child { margin-bottom: 0; }
+
+.status-todo     { border-left-color: var(--sky-text); }
+.status-fix      { border-left-color: var(--alert-text); }
+.status-optimize { border-left-color: var(--accent-strong); }
+.status-ok       { border-left-color: var(--leaf-text); }
+
+.status-line { font-weight: 700; }
+.status-tag { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.85rem; }
+.status-todo     .status-tag { color: var(--sky-text); }
+.status-fix      .status-tag { color: var(--alert-text); }
+.status-optimize .status-tag { color: var(--accent-strong); }
+.status-ok       .status-tag { color: var(--leaf-text); }
+
+.crit-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--alert-text);
+}
+.crit-tag::before { content: "⚠ "; }
+
+/* Un retour de jeu est la seule information de cette page qui vienne d'un essai réel : il mérite
+   de se détacher du reste, qui n'est encore que du prévisionnel. */
+.roadmap-note {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  padding: 0.5em 0.7em;
+}
+
+/* La barre de navigation de cette page porte onze étapes numérotées : elle déborde sur un écran
+   étroit, on la laisse défiler horizontalement plutôt que de la tasser illisiblement. */
+@media (max-width: 900px) {
+  .quick-nav { justify-content: flex-start; overflow-x: auto; flex-wrap: nowrap; }
+}
