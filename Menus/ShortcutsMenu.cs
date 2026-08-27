@@ -25,6 +25,7 @@ namespace SunHavenAccess.Menus
             _awaitingKey = false;
             if (_open)
             {
+                if (!HasShortcuts()) return; // liste vide : on n'ouvre pas un menu qui planterait
                 _index = 0;
                 TolkSpeech.Speak(Localization.Language.T(
                     "Menu des raccourcis ouvert. Utilisez les touches de navigation de menu pour " +
@@ -60,14 +61,34 @@ namespace SunHavenAccess.Menus
             else if (UnityEngine.Input.GetKeyDown(ModConfig.MenuActivate.Value)) BeginRebind();
         }
 
+        /// <summary>
+        /// La liste des raccourcis est-elle exploitable ?
+        ///
+        /// Elle est remplie au chargement de la configuration ; si cette étape a échoué, elle
+        /// reste vide. Les déplacements calculent alors un reste de division PAR ZÉRO, ce qui lève
+        /// une exception dans le menu même qui sert à réparer un raccourci — l'écran le plus mal
+        /// choisi pour tomber en panne.
+        /// </summary>
+        private static bool HasShortcuts()
+        {
+            if (ModConfig.All != null && ModConfig.All.Count > 0) return true;
+
+            TolkSpeech.Speak(Localization.Language.T(
+                "Aucun raccourci n'a pu être chargé.", "No shortcut could be loaded."), true);
+            _open = false;
+            return false;
+        }
+
         private static void MoveNext()
         {
+            if (!HasShortcuts()) return;
             _index = (_index + 1) % ModConfig.All.Count;
             AnnounceCurrent();
         }
 
         private static void MovePrevious()
         {
+            if (!HasShortcuts()) return;
             _index = (_index - 1 + ModConfig.All.Count) % ModConfig.All.Count;
             AnnounceCurrent();
         }

@@ -89,6 +89,30 @@ namespace SunHavenAccess.Menus
         /// d'Unity, ce qui rendait vrai un test de sélection même hors de tout menu, et volait
         /// alors toutes les flèches à la navigation normale).
         /// </summary>
+        private static float _nextBrowseCheck;
+        private static bool _lastBrowseAnswer;
+
+        /// <summary>
+        /// Y a-t-il quelque chose à parcourir sur cet écran ? Réponse mise en cache un court instant.
+        ///
+        /// La question demande un balayage complet de la scène, et `IsActive` est appelée à CHAQUE
+        /// IMAGE par le gestionnaire de touches. Hors partie — menu principal, choix et création de
+        /// personnage — on payait donc un `FindObjectsOfType` soixante fois par seconde pour une
+        /// réponse qui ne change qu'au changement d'écran. C'est le genre de coût qu'un joueur qui
+        /// n'utilise même pas la fonction finit par sentir.
+        ///
+        /// Un cinquième de seconde est bien en deçà du temps de bascule d'un écran, donc invisible
+        /// à l'usage, et divise le coût par une douzaine.
+        /// </summary>
+        private static bool AnythingToBrowse()
+        {
+            if (Time.unscaledTime < _nextBrowseCheck) return _lastBrowseAnswer;
+
+            _nextBrowseCheck = Time.unscaledTime + 0.2f;
+            _lastBrowseAnswer = MenuNavigator.VisibleSelectables().Any();
+            return _lastBrowseAnswer;
+        }
+
         public static bool IsActive()
         {
             // Pendant un dialogue ou une cinématique, le mod LAISSE les flèches au jeu.
@@ -115,7 +139,7 @@ namespace SunHavenAccess.Menus
             //
             // Le risque qui avait motivé le test de sélection ne s'applique qu'EN PARTIE (Unity y
             // garde une sélection résiduelle hors menu) : ici il n'y a pas de « hors menu ».
-            if (Player.Instance == null) return MenuNavigator.VisibleSelectables().Any();
+            if (Player.Instance == null) return AnythingToBrowse();
 
             // En partie : on s'appuie UNIQUEMENT sur les signaux du jeu « une interface est
             // ouverte ». Se fier à « un élément est-il sélectionné » avait causé une régression

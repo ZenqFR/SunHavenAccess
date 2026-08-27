@@ -25,6 +25,7 @@ namespace SunHavenAccess.Menus
     public static class MainMenuFocus
     {
         private static bool _placed;
+        private static float _nextAttempt;
 
         public static void Tick()
         {
@@ -44,6 +45,13 @@ namespace SunHavenAccess.Menus
             // on n'y touche pas.
             if (EventSystem.current == null) return;
             if (EventSystem.current.currentSelectedGameObject != null) { _placed = true; return; }
+
+            // Chercher où poser la sélection demande un balayage complet de la scène. Tant qu'un
+            // écran n'offre RIEN à sélectionner, on ne pose jamais le drapeau et l'on rebalayait
+            // donc à chaque image, indéfiniment. Espacer les tentatives ne retarde l'arrivée que
+            // d'un cinquième de seconde, imperceptible, et supprime ce balayage permanent.
+            if (Time.unscaledTime < _nextAttempt) return;
+            _nextAttempt = Time.unscaledTime + 0.2f;
 
             var candidates = MenuNavigator.VisibleSelectables()
                 .OrderByDescending(s => s.transform.position.y)
