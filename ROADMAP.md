@@ -69,7 +69,7 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
 - [ ] **personnage-sauvegardes-auto** ⚠️ — touche : —
   - Faire : Arriver sur l'écran de choix de personnage sans appuyer sur aucune touche. Puis fermer la liste avec Échap, et la rouvrir avec Pavé 3.
   - Attendu : La liste des parties s'ouvre toute seule, sans raccourci à connaître. Échap la referme et rend l'écran normal ; Pavé 3 la rouvre.
-  - Retour de jeu : C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute.
+  - Retour de jeu : C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute. DÉFAUT SIGNALÉ ET CORRIGÉ : la liste ne s'ouvrait jamais seule. Je repérais l'écran en comptant les fiches trouvées dans toute la scène, alors qu'elles ne sont pas encore là — ou pas encore actives — au moment où l'écran s'ouvre. On demande maintenant au jeu, qui le sait : « MainMenuController.loadCharacterMenu » est l'objet même de cet écran, et il est public. Et comme les fiches se peuplent après, l'ouverture est retentée pendant trois secondes plutôt que d'annoncer un écran vide.
 - [ ] **personnage-sauvegardes-details** — touche : Entrée
   - Faire : Valider une partie dans la liste, puis choisir « Détails complets ».
   - Attendu : Une liste donne la date, l'heure, l'emplacement, les pièces, orbes et tickets, les cinq niveaux de métier et la quête en cours — une entrée à la fois. La date est en FRANÇAIS, pas « Summer 11, Year 1 ».

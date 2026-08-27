@@ -44,19 +44,64 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static void Tick()
         {
-            // Repérer l'écran demande un balayage complet de la scène (FindObjectsOfType), bien
-            // trop coûteux soixante fois par seconde pour une question dont la réponse ne change
-            // qu'au changement d'écran. Un quart de seconde reste imperceptible à l'arrivée.
+            // Un quart de seconde suffit : la réponse ne change qu'au changement d'écran, et le
+            // délai reste imperceptible à l'arrivée.
             if (Time.unscaledTime < _nextCheck) return;
             _nextCheck = Time.unscaledTime + 0.25f;
 
-            bool present = Panels().Count > 0;
+            bool present = OnLoadScreen();
 
-            if (present == _onScreen) return;
-            _onScreen = present;
+            if (present != _onScreen)
+            {
+                _onScreen = present;
+                // À l'arrivée sur l'écran, on n'ouvre pas tout de suite : le jeu peuple ses fiches
+                // au fil des images suivantes. On note qu'il y a une ouverture à faire, et on
+                // réessaie jusqu'à ce que les fiches soient là.
+                _pendingOpen = present;
+                _attempts = 0;
+                if (!present) ListMenu.Close(false); // on quitte l'écran : le jeu parle déjà
+            }
 
-            if (present) Open();
-            else ListMenu.Close(false); // on quitte l'écran : rien à annoncer, le jeu parle déjà
+            if (!_pendingOpen) return;
+
+            if (Panels().Count > 0)
+            {
+                _pendingOpen = false;
+                Open();
+                return;
+            }
+
+            // Au bout de quelques secondes, on renonce en silence plutôt que d'essayer
+            // indéfiniment : mieux vaut un écran ordinaire, encore navigable aux flèches, qu'un
+            // module qui tourne pour rien. La touche dédiée reste là pour rouvrir à la main.
+            if (++_attempts > MaxAttempts) _pendingOpen = false;
+        }
+
+        /// <summary>Ouverture en attente que les fiches du jeu apparaissent.</summary>
+        private static bool _pendingOpen;
+        private static int _attempts;
+
+        /// <summary>Environ trois secondes, au rythme d'un essai par quart de seconde.</summary>
+        private const int MaxAttempts = 12;
+
+        /// <summary>
+        /// Sommes-nous sur l'écran « Charger un personnage » ?
+        ///
+        /// On le demande au jeu, qui le sait : `MainMenuController.loadCharacterMenu` est l'objet
+        /// même de cet écran, et il est public. Compter les fiches trouvées dans toute la scène —
+        /// ce que faisait la première version — ne marchait pas : les fiches ne sont pas encore
+        /// présentes, ou pas encore actives, au moment où l'écran s'ouvre, si bien que la liste ne
+        /// s'ouvrait jamais d'elle-même. Demander l'état plutôt que le déduire d'un balayage est
+        /// aussi bien plus économique.
+        /// </summary>
+        private static bool OnLoadScreen()
+        {
+            try
+            {
+                GameObject screen = MainMenuController.Instance?.loadCharacterMenu;
+                return screen != null && screen.activeInHierarchy;
+            }
+            catch { return false; }
         }
 
         public static void Open()
@@ -185,12 +230,23 @@ namespace SunHavenAccess.Menus
         /// <summary>
         /// Les fiches de sauvegarde affichées, de haut en bas — l'ordre à l'écran, donc celui des
         /// emplacements. Les gabarits désactivés que le jeu garde dans la hiérarchie sont écartés.
+        ///
+        /// On cherche À L'INTÉRIEUR de l'écran de chargement plutôt que dans toute la scène : le
+        /// menu principal garde d'autres écrans en mémoire, et un balayage global ramasserait
+        /// leurs fiches en plus des nôtres. Le balayage global ne sert plus que de repli, si le
+        /// jeu venait à renommer cet objet.
         /// </summary>
         private static List<SavePanel> Panels()
         {
             try
             {
-                return Object.FindObjectsOfType<SavePanel>()
+                GameObject screen = MainMenuController.Instance?.loadCharacterMenu;
+
+                IEnumerable<SavePanel> found = screen != null
+                    ? screen.GetComponentsInChildren<SavePanel>(true)
+                    : Object.FindObjectsOfType<SavePanel>();
+
+                return found
                     .Where(p => p != null && p.gameObject.activeInHierarchy)
                     .OrderByDescending(p => p.transform.position.y)
                     .ThenBy(p => p.transform.position.x)
