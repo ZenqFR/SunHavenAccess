@@ -15,11 +15,39 @@ namespace SunHavenAccess.Patches
     /// (la distance à cette zone) suffit donc à viser au son — voir Speech/FishingToneCue.cs
     /// pour le bip dont la hauteur varie en fonction de cette distance, le vrai cœur du
     /// problème que les annonces ponctuelles ci-dessous ne résolvaient pas à elles seules.
+    ///
+    /// Le bouchon appartient-il au joueur local ?
+    ///
+    /// TOUS ces patches se déclenchent pour n'importe quel bouchon de la partie. En coopération,
+    /// le partenaire qui pêche à côté déclenchait donc « Ça mord ! » chez vous et lançait votre
+    /// bip de visée sur SA jauge — impossible de pêcher à deux.
+    ///
+    /// `Bobber.FishingRod` est publique, et `FishingRod : Tool : Weapon : UseItem` expose
+    /// `UseItem.Player`, elle aussi publique : le propriétaire se remonte donc sans réflexion.
+    /// En cas de doute — canne pas encore reliée — on considère que c'est le nôtre, pour ne jamais
+    /// rendre la pêche muette à celui qui pêche vraiment.
     /// </summary>
+    internal static class BobberOwner
+    {
+        internal static bool IsLocal(Bobber bobber)
+        {
+            try
+            {
+                Player owner = bobber?.FishingRod?.Player;
+                return owner == null || owner == Player.Instance;
+            }
+            catch { return true; }
+        }
+    }
+
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.Bite))]
     public static class FishBitePatch
     {
-        private static void Postfix() => TolkSpeech.Speak("Ça mord !", interrupt: true);
+        private static void Postfix(Bobber __instance)
+        {
+            if (!BobberOwner.IsLocal(__instance)) return;
+            TolkSpeech.Speak("Ça mord !", interrupt: true);
+        }
     }
 
     /// <summary>
@@ -33,6 +61,9 @@ namespace SunHavenAccess.Patches
     {
         private static void Postfix(Bobber __instance)
         {
+            // Sans ce test, le mini-jeu du partenaire prenait la main sur VOTRE bip de visée : il
+            // se mettait à suivre sa jauge à lui, rendant votre propre pêche impossible.
+            if (!BobberOwner.IsLocal(__instance)) return;
             FishingToneDriver.SetActiveBobber(__instance);
         }
     }
@@ -47,8 +78,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.FinishMiniGame))]
     public static class FishMinigameResultPatch
     {
-        private static void Postfix(bool __result, ref bool miniGameComplete)
+        private static void Postfix(Bobber __instance, bool __result, ref bool miniGameComplete)
         {
+            if (!BobberOwner.IsLocal(__instance)) return;
             TolkSpeech.Speak(__result ? "Touché !" : "Manqué.", interrupt: true);
             if (miniGameComplete) FishingToneDriver.SetActiveBobber(null);
         }
@@ -57,8 +89,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.FailMiniGame))]
     public static class FishMinigameFailPatch
     {
-        private static void Postfix()
+        private static void Postfix(Bobber __instance)
         {
+            if (!BobberOwner.IsLocal(__instance)) return;
             TolkSpeech.Speak("Le poisson s'est échappé.", interrupt: true);
             FishingToneDriver.SetActiveBobber(null);
         }
@@ -67,7 +100,13 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.ResetMiniGame))]
     public static class FishMinigameResetPatch
     {
-        private static void Postfix() => FishingToneDriver.SetActiveBobber(null);
+        private static void Postfix(Bobber __instance)
+        {
+            // Le filtre compte ici aussi : le bouchon du partenaire qui se réinitialise coupait
+            // VOTRE bip de visée en pleine pêche.
+            if (!BobberOwner.IsLocal(__instance)) return;
+            FishingToneDriver.SetActiveBobber(null);
+        }
     }
 
     /// <summary>

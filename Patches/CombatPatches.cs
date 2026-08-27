@@ -16,6 +16,13 @@ namespace SunHavenAccess.Patches
     {
         private static void Postfix(Player __instance, DamageHit __result)
         {
+            // Ce patch se déclenche pour TOUS les joueurs, pas seulement le vôtre : en
+            // coopération, un coup encaissé par votre partenaire annonçait SA santé comme si
+            // c'était la vôtre — de quoi croire qu'on est en train de mourir alors qu'on cultive
+            // tranquillement. Les patches de récolte filtraient déjà de la sorte, via le paramètre
+            // `hitFromLocalPlayer` que le jeu leur fournit ; ici il faut comparer nous-mêmes.
+            if (__instance != Player.Instance) return;
+
             if (__result == null || !__result.hit) return;
 
             int health = UnityEngine.Mathf.CeilToInt(UnityEngine.Mathf.Max(0f, __instance.Health));
@@ -34,8 +41,13 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(EnemyAI), nameof(EnemyAI.Die))]
     public static class EnemyDeathPatch
     {
-        private static void Postfix(EnemyAI __instance)
+        private static void Postfix(EnemyAI __instance, bool fromLocalPlayer)
         {
+            // Le jeu indique lui-même qui a porté le coup fatal — même paramètre que celui déjà
+            // utilisé par les patches de récolte. En coopération, sans ce test, un partenaire qui
+            // combat produisait un flux continu d'annonces pendant qu'on cultivait tranquillement.
+            if (!fromLocalPlayer) return;
+
             // Wish.NPCAI hérite de Wish.EnemyAI (voir Navigation/Scanner.cs) : en principe les
             // PNJ n'appellent jamais Die(), mais on exclut quand même par sécurité pour ne
             // jamais annoncer à tort "PNJ vaincu".
@@ -60,6 +72,10 @@ namespace SunHavenAccess.Patches
     {
         private static void Postfix(Player __instance)
         {
+            // Même piège qu'au-dessus : sans ce test, la mort du partenaire s'annonçait
+            // « Vous êtes tombé au combat ».
+            if (__instance != Player.Instance) return;
+
             if (__instance.Dying)
             {
                 TolkSpeech.Speak("Vous êtes tombé au combat.", interrupt: true);

@@ -68,7 +68,20 @@ namespace SunHavenAccess.Patches
         private static void Postfix(ref GameObject[] __result)
         {
             if (__result == null || NoKillPatch.ProtectedRoot == null) return;
-            __result = __result.Where(go => go != NoKillPatch.ProtectedRoot).ToArray();
+
+            // On ne reconstruit le tableau que si l'objet protégé s'y trouve VRAIMENT.
+            //
+            // `Scene.GetRootGameObjects` est appelée très souvent par le moteur et par le jeu ;
+            // reconstruire systématiquement allouait un tableau neuf à chaque appel, pour un
+            // résultat presque toujours identique à l'entrée. Un parcours sans allocation coûte
+            // infiniment moins qu'une allocation permanente sur un chemin aussi chaud — le mod ne
+            // doit rien coûter à un joueur qui, lui, ne s'en sert pas.
+            for (int i = 0; i < __result.Length; i++)
+            {
+                if (__result[i] != NoKillPatch.ProtectedRoot) continue;
+                __result = __result.Where(go => go != NoKillPatch.ProtectedRoot).ToArray();
+                return;
+            }
         }
     }
 

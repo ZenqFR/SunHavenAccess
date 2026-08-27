@@ -192,13 +192,47 @@ namespace SunHavenAccess.Navigation
         {
             if (c is Decoration deco) return deco.sceneID == ScenePortalManager.ActiveSceneIndex;
             if (c is AI ai) return ai.Scene == ScenePortalManager.ActiveSceneName;
+
+            // Les joueurs ne vivent PAS dans la scène de la carte : Sun Haven charge chaque carte
+            // en scène additive, alors que les joueurs sont dans une scène persistante. Le repli
+            // par nom de scène ci-dessous les aurait donc tous écartés en silence, et l'ajout des
+            // autres joueurs au scanner n'aurait rien donné du tout.
+            //
+            // Le filtre de distance suffit à les cantonner : un partenaire sur une autre carte est
+            // à des centaines de cases, donc hors rayon.
+            if (c is Player) return true;
+
             return c.gameObject.scene.name == ScenePortalManager.ActiveSceneName;
         }
 
+        /// <summary>
+        /// Les personnages : PNJ du jeu ET autres joueurs.
+        ///
+        /// `NPCManager._npcsList` ne contient que les PNJ. En coopération, un joueur aveugle ne
+        /// pouvait donc pas localiser son partenaire — le seul personnage de la carte qu'on
+        /// cherche vraiment à rejoindre. Les autres joueurs sont ajoutés ici, et distingués à
+        /// l'annonce (voir Describe) : « joueur » plutôt qu'un nom de villageois.
+        ///
+        /// Le joueur local est évidemment écarté : s'annoncer soi-même à trois cases de distance
+        /// n'apprendrait rien.
+        /// </summary>
         private static IEnumerable<Component> FindNpcs()
         {
             NPCManager mgr = NPCManager.Instance;
-            return mgr != null ? mgr._npcsList.Cast<Component>() : System.Array.Empty<Component>();
+            IEnumerable<Component> npcs = mgr != null
+                ? mgr._npcsList.Cast<Component>()
+                : System.Array.Empty<Component>();
+
+            IEnumerable<Component> others;
+            try
+            {
+                others = Object.FindObjectsOfType<Player>()
+                    .Where(p => p != null && p != Player.Instance)
+                    .Cast<Component>();
+            }
+            catch { others = System.Array.Empty<Component>(); }
+
+            return npcs.Concat(others);
         }
 
         private static IEnumerable<Component> FindResources()
@@ -296,6 +330,15 @@ namespace SunHavenAccess.Navigation
 
         private static string Describe(Component c)
         {
+            // Un autre joueur AVANT le test NPCAI : c'est la distinction qui compte en
+            // coopération, et on ne veut surtout pas qu'un partenaire soit annoncé comme un
+            // villageois.
+            if (c is Player other && other != Player.Instance)
+            {
+                string playerName = TextUtil.Clean(other.name);
+                return string.IsNullOrWhiteSpace(playerName) ? "Autre joueur" : $"{playerName}, joueur";
+            }
+
             if (c is NPCAI npc) return npc.LocalizedActualNPCName;
             if (c is Crop crop) return TileCursor.DescribeCrop(crop);
             if (c is ScenePortalSpot portal) return DescribeBuildingEntrance(portal);
