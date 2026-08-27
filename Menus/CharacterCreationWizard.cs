@@ -211,7 +211,7 @@ namespace SunHavenAccess.Menus
         /// </summary>
         private static string DescribeProfession(StartingProfessionInfo profession)
         {
-            string name = TextUtil.Clean(profession.name);
+            string name = ProfessionName(TextUtil.Clean(profession.name));
 
             try
             {
@@ -230,6 +230,61 @@ namespace SunHavenAccess.Menus
             catch { }
 
             return name;
+        }
+
+        /// <summary>
+        /// Le nom d'un métier de départ, en français.
+        ///
+        /// `StartingProfessionInfo` ne porte qu'un `name` brut, sans clé de traduction — contrairement
+        /// aux races, qui ont la leur. Le jeu affiche donc ce libellé autrement, par un composant de
+        /// l'écran que le mod ne voit pas. On traduit ici les noms connus, et tout nom inattendu
+        /// ressort tel quel : mieux vaut un mot anglais reconnaissable qu'une invention.
+        /// </summary>
+        private static readonly Dictionary<string, string> ProfessionNames =
+            new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase)
+            {
+                { "Farmer", "Agriculteur" },     { "Farming", "Agriculture" },
+                { "Miner", "Mineur" },           { "Mining", "Minage" },
+                { "Fisher", "Pêcheur" },         { "Fishing", "Pêche" },
+                { "Fisherman", "Pêcheur" },
+                { "Explorer", "Explorateur" },   { "Exploration", "Exploration" },
+                { "Warrior", "Guerrier" },       { "Combat", "Combat" },
+                { "Fighter", "Combattant" },
+                { "Rancher", "Éleveur" },        { "Ranching", "Élevage" },
+                { "Chef", "Cuisinier" },         { "Cooking", "Cuisine" },
+                { "Crafter", "Artisan" },        { "Crafting", "Artisanat" },
+            };
+
+        private static string ProfessionName(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return raw;
+            if (Localization.Language.IsEnglish) return raw; // déjà dans la bonne langue
+
+            LogProfessionNames();
+            return ProfessionNames.TryGetValue(raw.Trim(), out string french) ? french : raw;
+        }
+
+        private static bool _loggedProfessions;
+
+        /// <summary>
+        /// Journalise une fois les noms bruts que le jeu expose. Ils ne sont pas devinables depuis
+        /// le code décompilé — ce sont des chaînes posées dans la scène — et cette trace évite un
+        /// aller-retour de plus si l'un d'eux manque à la table ci-dessus.
+        /// </summary>
+        private static void LogProfessionNames()
+        {
+            if (_loggedProfessions) return;
+            _loggedProfessions = true;
+
+            try
+            {
+                var raw = (Creator()?.professionInfos ?? new StartingProfessionInfo[0])
+                    .Where(p => p != null)
+                    .Select(p => "\"" + p.name + "\"");
+
+                Plugin.Log?.LogInfo("Métiers de départ, noms bruts du jeu : " + string.Join(", ", raw));
+            }
+            catch { }
         }
 
         // ------------------------------------------------------------------ 3. L'anniversaire
