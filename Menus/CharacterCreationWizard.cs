@@ -311,12 +311,48 @@ namespace SunHavenAccess.Menus
                 catch { }
             }
 
+            // Aucune convention ne répond — c'est le cas de trois métiers sur dix, dont « Orchard
+            // Farmer » et « Royalty in Your Last Life ». Plutôt qu'une hypothèse de plus sur la
+            // forme du nom, on retourne le problème : le libellé interne EST le texte anglais de
+            // la traduction cherchée. On demande donc au jeu la liste de ses termes, et on retient
+            // celui dont la version anglaise est exactement ce libellé. Ce n'est plus une
+            // supposition mais une correspondance.
+            if (found == null) found = TermWithEnglishValue(raw);
+
             _keyCache[raw] = found;
             Plugin.Log?.LogInfo(found != null
                 ? $"Métier « {raw} » : clé de traduction trouvée, « {found} »."
                 : $"Métier « {raw} » : aucune clé de traduction ne répond, le libellé interne sera lu.");
 
             return found;
+        }
+
+        /// <summary>
+        /// Le terme de traduction dont la version ANGLAISE vaut ce texte.
+        ///
+        /// Le parcours complet de la table est coûteux, mais il n'a lieu que pour les libellés
+        /// qu'aucune convention de nom ne retrouve, une seule fois par session et sur un écran de
+        /// menu. C'est le prix d'une réponse exacte, contre une suite d'hypothèses qui ont déjà
+        /// coûté plusieurs essais en jeu.
+        /// </summary>
+        private static string TermWithEnglishValue(string englishText)
+        {
+            try
+            {
+                string wanted = englishText.Trim();
+
+                foreach (string term in LocalizationManager.GetTermsList())
+                {
+                    if (string.IsNullOrEmpty(term)) continue;
+
+                    string english = LocalizationManager.GetTranslation(term, overrideLanguage: "English");
+                    if (string.Equals(english?.Trim(), wanted, StringComparison.CurrentCultureIgnoreCase))
+                        return term;
+                }
+            }
+            catch { }
+
+            return null;
         }
 
         private static bool _loggedProfessions;
