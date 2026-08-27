@@ -69,7 +69,7 @@ namespace SunHavenAccess.Localization
             });
         }
 
-        private static readonly Regex GroupReference = new Regex(@"\$(\d+)", RegexOptions.Compiled);
+        private static readonly Regex GroupReference = new Regex(@"\$(\d+)");
 
         /// <summary>Phrases fixes, telles qu'écrites dans le code.</summary>
         private static readonly Dictionary<string, string> Sentences = new Dictionary<string, string>
@@ -447,6 +447,6 @@ namespace SunHavenAccess.Localization
         };
 
         private static KeyValuePair<Regex, string> P(string pattern, string replacement) =>
-            new KeyValuePair<Regex, string>(new Regex(pattern, RegexOptions.Compiled), replacement);
+            new KeyValuePair<Regex, string>(new Regex(pattern), replacement);
     }
 }

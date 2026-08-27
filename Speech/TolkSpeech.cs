@@ -22,6 +22,9 @@ namespace SunHavenAccess.Speech
         private static bool _nvdaAvailable;
         private static bool _sapiAvailable;
 
+        /// <summary>Une seule trace par session : Speak est appelée des milliers de fois.</summary>
+        private static bool _translationFailed;
+
         // --- Client officiel NVDA ---
         [DllImport("nvdaControllerClient64.dll")]
         private static extern int nvdaController_testIfRunning();
@@ -111,7 +114,20 @@ namespace SunHavenAccess.Speech
             // endroits d'où l'on parle : le français écrit dans le code reste la seule version
             // vérifiée à l'oreille, et l'anglais ne peut donc rien casser de ce qui marche.
             // En français, Translate rend la chaîne inchangée sans rien parcourir.
-            text = SunHavenAccess.Localization.Translator.Translate(text);
+            //
+            // Sous garde, et sans exception près : traduire est un CONFORT, parler est la raison
+            // d'être du mod. Une erreur ici — table mal formée, expression régulière refusée par
+            // le Mono d'Unity — ne doit jamais coûter la parole à qui n'a que ça. On dit alors la
+            // phrase française telle quelle, ce qui est très exactement ce qu'on faisait avant.
+            try { text = SunHavenAccess.Localization.Translator.Translate(text); }
+            catch (Exception e)
+            {
+                if (!_translationFailed)
+                {
+                    _translationFailed = true;
+                    _log?.LogWarning("Traduction désactivée pour la session : " + e);
+                }
+            }
 
             _lastMessage = text;
             bool spoken = false;
