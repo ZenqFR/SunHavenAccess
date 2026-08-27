@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **7 sur 132 au point** (5 %).
+Mis à jour le 2026-08-27 — **7 sur 133 au point** (5 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 116 |
+| `[ ]` | À tester | jamais essayé en jeu | 117 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -70,6 +70,10 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Arriver sur l'écran de choix de personnage PAR LES DEUX CHEMINS : directement depuis le menu principal, puis par Jouer, Solo, Charger un personnage. Dans chaque cas, ne toucher à rien, puis fermer avec Échap et rouvrir avec Pavé 3.
   - Attendu : La liste des parties s'ouvre toute seule, sans raccourci à connaître, et contient TOUTES vos sauvegardes — y compris celles qui ne tiennent pas dans le cadre et qu'il faudrait faire défiler à la souris. Échap la referme et rend l'écran normal ; Pavé 3 la rouvre.
   - Retour de jeu : C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute. DÉFAUT SIGNALÉ ET CORRIGÉ : la liste ne s'ouvrait jamais seule. Je repérais l'écran en comptant les fiches trouvées dans toute la scène, alors qu'elles ne sont pas encore là — ou pas encore actives — au moment où l'écran s'ouvre. DEUX fausses pistes avant la bonne, notées pour qu'on n'y retourne pas. D'abord « y a-t-il des fiches dans la scène » : le menu principal en garde en permanence, hors champ, donc la réponse était vraie dès la première image et la transition « on vient d'arriver » ne se produisait jamais. Ensuite « l'objet loadCharacterMenu est-il actif » : exact pour un chemin, faux pour l'autre — le jeu mène à cet écran par deux routes, et restreindre la recherche à cet objet a du même coup cassé la touche Pavé 3. Ce qui vaut dans tous les cas est ce que le joueur voit : des fiches réellement À L'ÉCRAN. Le repli « si le test de présence ne laisse rien, on garde tout » est volontairement écarté pour la détection — il ramènerait le premier bug — mais conservé quand le joueur appuie sur la touche, puisqu'il nous dit alors où il est. TROISIÈME DÉFAUT, signalé depuis : avec plus de deux personnages, seuls deux apparaissaient. La liste défile, et je ne gardais que les fiches tenant dans le cadre — les autres, parfaitement réelles, étaient simplement plus bas. Une fiche visible sert désormais à identifier la LISTE, pas à en dresser le contenu : on remonte à son conteneur et on prend toutes ses sœurs, défilées ou non, dans l'ordre des frères plutôt que par position à l'écran, qui ne veut plus rien dire une fois défilée.
+- [ ] **personnage-sauvegardes-suppression** ⚠️ — touche : Entrée
+  - Faire : Choisir une partie, puis « Supprimer ». Écouter la confirmation, la REFUSER une première fois, recommencer et l'accepter.
+  - Attendu : La question du jeu est lue, et la sélection est posée sur son premier bouton — accepter ou refuser se fait aux flèches, sans rien chercher. Dans les deux cas, la liste des sauvegardes se rouvre ensuite, à jour.
+  - Retour de jeu : Signalé en jeu : la confirmation s'ouvrait sans rien de sélectionné, et après suppression on retombait sur l'écran brut sans liste. La confirmation est câblée dans la scène, sans classe qu'on puisse nommer : on relève donc les boutons AVANT le clic, et celui qui apparaît en plus est la confirmation. Repérer un changement plutôt qu'un type survit à une refonte de cet écran. La liste ne se rouvre qu'une fois la confirmation DISPARUE, jamais après un simple délai : tant qu'elle est là, le joueur répond, et lui voler les flèches juste avant d'effacer une partie serait le pire moment.
 - [ ] **personnage-sauvegardes-details** — touche : Entrée
   - Faire : Valider une partie dans la liste, puis choisir « Détails complets ».
   - Attendu : Une liste donne la date, l'heure, l'emplacement, les pièces, orbes et tickets, les cinq niveaux de métier et la quête en cours — une entrée à la fois. La date est en FRANÇAIS, pas « Summer 11, Year 1 ».

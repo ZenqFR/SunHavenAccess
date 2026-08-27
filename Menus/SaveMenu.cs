@@ -53,6 +53,8 @@ namespace SunHavenAccess.Menus
             if (Time.unscaledTime < _nextCheck) return;
             _nextCheck = Time.unscaledTime + 0.25f;
 
+            WatchConfirmation();
+
             bool present = OnLoadScreen();
             if (present == _onScreen) return;
             _onScreen = present;
@@ -262,7 +264,143 @@ namespace SunHavenAccess.Menus
             }
 
             TolkSpeech.Speak(Localization.Language.T($"Suppression de {name}.", $"Deleting {name}."), true);
+
+            // On relève les boutons présents AVANT le clic. La confirmation du jeu est câblée dans
+            // la scène, sans classe qu'on puisse nommer : ce qui apparaît en plus après le clic,
+            // c'est elle. Repérer un changement plutôt qu'un type survit à n'importe quelle
+            // refonte de cet écran.
+            _buttonsBeforeDelete = OnScreenButtons();
+            _watchUntil = Time.unscaledTime + WatchSeconds;
+            _reopenAt = 0f;
+
             button.onClick.Invoke();
+        }
+
+        // --------------------------------------------------------------- Confirmation et retour
+
+        /// <summary>Boutons visibles juste avant de déclencher la suppression.</summary>
+        private static HashSet<int> _buttonsBeforeDelete = new HashSet<int>();
+
+        /// <summary>Jusqu'à quand guetter l'apparition de la confirmation.</summary>
+        private static float _watchUntil;
+
+        /// <summary>Quand rouvrir la liste après une suppression, ou 0 si rien n'est prévu.</summary>
+        private static float _reopenAt;
+
+        private const float WatchSeconds = 4f;
+
+        /// <summary>
+        /// Guette la boîte de confirmation, y pose la sélection, et rouvre la liste ensuite.
+        ///
+        /// Deux manques signalés en jeu. La confirmation s'ouvrait sans que rien n'y soit
+        /// sélectionné : accepter ou refuser demandait de retrouver des boutons à l'aveugle. Et
+        /// une fois la partie supprimée, on se retrouvait devant l'écran brut, la liste ne se
+        /// rouvrant pas — l'écran n'ayant pas « changé », la détection d'arrivée ne repartait pas.
+        /// </summary>
+        private static void WatchConfirmation()
+        {
+            if (_watchUntil > 0f && Time.unscaledTime <= _watchUntil)
+            {
+                UnityEngine.UI.Button appeared = OnScreenButtonObjects()
+                    .FirstOrDefault(b => !_buttonsBeforeDelete.Contains(b.GetInstanceID()));
+
+                if (appeared != null)
+                {
+                    _watchUntil = 0f;
+                    // La liste ne doit plus capter les flèches : c'est au dialogue du jeu de
+                    // répondre, avec ses propres boutons.
+                    ListMenu.Close(false);
+                    FocusConfirmation(appeared);
+                    _confirmButton = appeared; // on attendra sa disparition pour rouvrir
+                    return;
+                }
+            }
+            else if (_watchUntil > 0f)
+            {
+                // Aucune confirmation n'est apparue : le jeu a peut-être supprimé directement.
+                _watchUntil = 0f;
+                _reopenAt = Time.unscaledTime + 1f;
+            }
+
+            // On attend que la confirmation ait DISPARU, jamais un simple délai : tant qu'elle est
+            // là, le joueur est en train de répondre, et rouvrir la liste lui volerait les flèches
+            // au pire moment — juste avant d'effacer une partie.
+            if (_confirmButton != null)
+            {
+                if (_confirmButton.gameObject.activeInHierarchy) return;
+                _confirmButton = null;
+                _reopenAt = Time.unscaledTime + 0.5f; // laisser le jeu reconstruire ses fiches
+            }
+
+            if (_reopenAt > 0f && Time.unscaledTime >= _reopenAt)
+            {
+                _reopenAt = 0f;
+                // Forcer la redétection : la liste se rouvre alors d'elle-même au prochain relevé,
+                // avec la partie supprimée en moins.
+                _onScreen = false;
+            }
+        }
+
+        /// <summary>Bouton de la confirmation en cours, tant qu'elle est affichée.</summary>
+        private static UnityEngine.UI.Button _confirmButton;
+
+        /// <summary>
+        /// Pose la sélection sur le premier bouton de la confirmation et lit la question.
+        ///
+        /// La question d'abord, sans interrompre : savoir sur quoi l'on répond passe avant le
+        /// libellé du bouton, que le lecteur de sélection annoncera juste après.
+        /// </summary>
+        private static void FocusConfirmation(UnityEngine.UI.Button first)
+        {
+            try
+            {
+                string question = ConfirmationText(first);
+                if (!string.IsNullOrWhiteSpace(question)) TolkSpeech.Speak(question, false);
+
+                if (UnityEngine.EventSystems.EventSystem.current != null)
+                    UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(first.gameObject);
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// Le texte de la boîte, cherché sur l'ancêtre commun des boutons apparus. On remonte de
+        /// deux crans depuis le bouton : assez pour attraper le panneau et sa question, pas assez
+        /// pour ramasser tout l'écran.
+        /// </summary>
+        private static string ConfirmationText(UnityEngine.UI.Button button)
+        {
+            try
+            {
+                Transform panel = button.transform.parent?.parent ?? button.transform.parent;
+                if (panel == null) return null;
+
+                var parts = panel.GetComponentsInChildren<TMPro.TextMeshProUGUI>(false)
+                    .Select(t => TextUtil.Clean(t.text))
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Distinct()
+                    .ToList();
+
+                return parts.Count == 0 ? null : string.Join(". ", parts);
+            }
+            catch { return null; }
+        }
+
+        private static HashSet<int> OnScreenButtons() =>
+            new HashSet<int>(OnScreenButtonObjects().Select(b => b.GetInstanceID()));
+
+        private static List<UnityEngine.UI.Button> OnScreenButtonObjects()
+        {
+            try
+            {
+                return UnityEngine.Object.FindObjectsOfType<UnityEngine.UI.Button>()
+                    .Where(b => b != null && b.gameObject.activeInHierarchy && b.interactable
+                                && MenuNavigator.IsOnScreen(b))
+                    .OrderByDescending(b => b.transform.position.y)
+                    .ThenBy(b => b.transform.position.x)
+                    .ToList();
+            }
+            catch { return new List<UnityEngine.UI.Button>(); }
         }
 
         /// <summary>Le bouton de suppression de la fiche portant ce nom, s'il est présent à l'écran.</summary>
