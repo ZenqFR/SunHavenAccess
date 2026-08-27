@@ -2,14 +2,14 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **7 sur 131 au point** (5 %).
+Mis à jour le 2026-08-27 — **8 sur 131 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 115 |
+| `[ ]` | À tester | jamais essayé en jeu | 114 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
-| `[x]` | Au point | essayé, rien à redire | 7 |
+| `[x]` | Au point | essayé, rien à redire | 8 |
 
 ⚠️ = à vérifier en priorité.
 
@@ -66,7 +66,7 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Sur l'écran de choix de personnage, ouvrir les sauvegardes en liste, choisir une partie, puis Charger. Réessayer sur un emplacement vide.
   - Attendu : Une ligne par partie : nom et date. Valider propose « Charger la partie de X » ou « Supprimer la partie de X », l'action nommée avec la partie. Un emplacement vide lance directement une nouvelle partie.
   - Retour de jeu : L'écran affiche chaque sauvegarde comme une fiche avec deux boutons quelque part dedans ; en suivant la mise en page, rien ne dit à quelle partie appartient le bouton où l'on se trouve. Les deux boutons déclenchés sont ceux du jeu, donc c'est lui qui charge, supprime, et impose sa confirmation.
-- [ ] **personnage-sauvegardes-auto** ⚠️ — touche : —
+- [x] **personnage-sauvegardes-auto** ⚠️ — touche : —
   - Faire : Arriver sur l'écran de choix de personnage sans appuyer sur aucune touche. Puis fermer la liste avec Échap, et la rouvrir avec Pavé 3.
   - Attendu : La liste des parties s'ouvre toute seule, sans raccourci à connaître. Échap la referme et rend l'écran normal ; Pavé 3 la rouvre.
   - Retour de jeu : C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute. DÉFAUT SIGNALÉ ET CORRIGÉ : la liste ne s'ouvrait jamais seule. Je repérais l'écran en comptant les fiches trouvées dans toute la scène, alors qu'elles ne sont pas encore là — ou pas encore actives — au moment où l'écran s'ouvre. On demande maintenant au jeu, qui le sait : « MainMenuController.loadCharacterMenu » est l'objet même de cet écran, et il est public. Et comme les fiches se peuplent après, l'ouverture est retentée pendant trois secondes plutôt que d'annoncer un écran vide.
@@ -325,7 +325,7 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
 - [!] **village-listes-exclusives** ⚠️ — touche : G, V, Z
   - Faire : Ouvrir le menu Tab, puis ouvrir une liste par-dessus (quêtes, relations, compétences) et la parcourir aux flèches.
   - Attendu : SEULE la liste parle. Le menu du jeu dessous ne doit rien annoncer, même s'il continue de bouger.
-  - Retour de jeu : Rapporté en jeu : « le système de liste n'a rien changé ». Cause probable trouvée — rendre les flèches inertes ne suffit pas, Sun Haven lit le clavier par Rewired, indépendamment du système d'évènements d'Unity, donc sa sélection continuait de bouger sous la liste. Les deux étaient annoncés en même temps, chacun coupant l'autre. Les trois lecteurs du mod (focus, infobulle, survol) se taisent maintenant tant qu'une liste est ouverte.
+  - Retour de jeu : Rapporté en jeu : « le système de liste n'a rien changé ». Cause probable trouvée — rendre les flèches inertes ne suffit pas, Sun Haven lit le clavier par Rewired, indépendamment du système d'évènements d'Unity, donc sa sélection continuait de bouger sous la liste. Les deux étaient annoncés en même temps, chacun coupant l'autre. Les trois lecteurs du mod (focus, infobulle, survol) se taisent maintenant tant qu'une liste est ouverte. DEUXIÈME DÉFAUT, signalé depuis : le curseur de case, lui, continuait de décrire le terrain — chaque flèche dans la liste des relations était suivie d'une description mise en file derrière l'entrée qu'on voulait entendre. La règle était recopiée à trois endroits et le quatrième avait été oublié ; elle tient désormais en un seul (Menus/VoiceMenus.cs), ce qui couvre aussi l'assistant de placement.
 - [ ] **village-carte-liste** — touche : X
   - Faire : Ouvrir la carte du monde, puis la liste des lieux. Parcourir, valider un lieu.
   - Attendu : Tous les lieux de la région en une liste, avec leur nombre. Valider ouvre le lieu et annonce sa description.

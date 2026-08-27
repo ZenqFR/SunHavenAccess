@@ -65,6 +65,19 @@ namespace SunHavenAccess.Cursor
 
             Vector2Int tile = player.Position;
             Direction dir = player.facingDirection;
+
+            // Un menu vocal a la parole : on se tait, mais on RETIENT la position. Sans cela, la
+            // case courante serait annoncée d'un coup à la fermeture du menu, comme si l'on venait
+            // d'y arriver. Signalé en jeu : la liste des relations était suivie, à chaque flèche,
+            // d'une description du terrain mise en file derrière l'entrée qu'on voulait entendre.
+            if (Menus.VoiceMenus.AnyOpen)
+            {
+                _lastTile = tile;
+                _lastDir = dir;
+                _hasLast = true;
+                return;
+            }
+
             if (_hasLast && tile == _lastTile && dir == _lastDir) return;
 
             // Anti-rebond : une case/direction "différente" détectée moins de

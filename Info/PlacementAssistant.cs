@@ -73,6 +73,10 @@ namespace SunHavenAccess.Info
         {
             if (CanBePlacedRef == null) return;
 
+            // Même règle que le curseur de case : un menu vocal a la parole seul. Viser un
+            // emplacement pendant qu'on parcourt une liste n'a de toute façon aucun sens.
+            if (Menus.VoiceMenus.AnyOpen) return;
+
             Player player = Player.Instance;
             var placeable = player?.UseItem as Placeable;
 

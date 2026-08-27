@@ -35,7 +35,7 @@ namespace SunHavenAccess.Menus
         public static void Tick()
         {
             // Idem : rien ne doit se superposer à une liste vocale ouverte.
-            if (ListMenu.IsOpen || HelpMenu.IsOpen || ShortcutsMenu.IsOpen) return;
+            if (VoiceMenus.AnyOpen) return;
 
             if (EventSystem.current == null) return;
             if (DialogueReader.DialogueOnGoing) return; // ne pas parasiter la lecture d'un dialogue en cours

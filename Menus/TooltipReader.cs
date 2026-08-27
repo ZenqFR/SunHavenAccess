@@ -30,7 +30,7 @@ namespace SunHavenAccess.Menus
         {
             // Une liste vocale ouverte est la seule chose qui doit parler : une infobulle du jeu
             // qui s'ouvrirait dessous la couperait à chaque déplacement.
-            if (ListMenu.IsOpen || HelpMenu.IsOpen || ShortcutsMenu.IsOpen) return;
+            if (VoiceMenus.AnyOpen) return;
 
             Tooltip tooltip = Tooltip.Instance;
             if (tooltip == null)

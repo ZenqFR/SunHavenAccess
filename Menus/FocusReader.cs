@@ -51,7 +51,7 @@ namespace SunHavenAccess.Menus
             // fois, chacun coupant l'autre — ce qui donnait l'impression que la liste ne changeait
             // rien. On suit la sélection sans rien en dire, pour ne pas annoncer un déplacement
             // périmé au moment où la liste se referme.
-            if (ListMenu.IsOpen || HelpMenu.IsOpen || ShortcutsMenu.IsOpen)
+            if (VoiceMenus.AnyOpen)
             {
                 _lastFocused = current;
                 _pendingPrefix = null;
