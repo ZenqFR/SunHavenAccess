@@ -596,6 +596,24 @@ namespace SunHavenAccess.Menus
             return Adjacency.TryGetValue((from, dx, dy), out target);
         }
 
+        /// <summary>
+        /// Pose la sélection sur la barre d'onglets, sur l'onglet courant.
+        ///
+        /// Publique parce que ce n'est plus seulement l'aboutissement d'un Ctrl+flèche : c'est
+        /// aussi la sortie d'une liste d'onglet par Ctrl+haut. Le geste doit être le même dans les
+        /// deux cas, et il n'y a qu'une bonne façon de le faire — passer par `OpenMajorPanel`, la
+        /// méthode publique du jeu qui active le panneau ET déplace la sélection, plutôt que de
+        /// cliquer un objet trouvé par son nom.
+        /// </summary>
+        public static void FocusTabs()
+        {
+            PlayerInventory inv = Player.Instance != null ? Player.Instance.PlayerInventory : null;
+            if (inv == null) { UiSound.EdgeBump(); return; }
+
+            FocusReader.SetPendingPrefix(Localization.Translator.Translate(ZoneNames[Zone.Tabs]));
+            inv.OpenMajorPanel(inv.majorTabIndex); // re-sélectionne l'onglet courant
+        }
+
         private static bool HasMembers(Zone zone)
         {
             List<GameObject> members = ZoneMembers(zone);
@@ -612,12 +630,14 @@ namespace SunHavenAccess.Menus
                 return;
             }
 
+            // Depuis la barre d'onglets, Ctrl+bas rouvre la LISTE de l'onglet courant quand il en a
+            // une. Sans cela, on quittait une liste par Ctrl+haut sans aucun moyen d'y revenir :
+            // Ctrl+bas ramenait dans le panneau brut, celui-là même que la liste remplace.
+            if (zone == Zone.Tabs && dy < 0 && TabListDriver.OpenForCurrentTab()) return;
+
             if (target == Zone.Tabs)
             {
-                PlayerInventory inv = Player.Instance != null ? Player.Instance.PlayerInventory : null;
-                if (inv == null) { UiSound.EdgeBump(); return; }
-                FocusReader.SetPendingPrefix(Localization.Translator.Translate(ZoneNames[Zone.Tabs]));
-                inv.OpenMajorPanel(inv.majorTabIndex); // re-sélectionne l'onglet courant
+                FocusTabs();
                 return;
             }
 

@@ -37,6 +37,24 @@ namespace SunHavenAccess.Menus
         /// </summary>
         private static Func<int, int, string> _onAdjust;
 
+        /// <summary>
+        /// Que faire quand on quitte la liste par le haut (Ctrl+haut). Null pour une liste dont on
+        /// ne sort que par Échap — le choix d'une sauvegarde, par exemple, n'a rien au-dessus.
+        /// </summary>
+        private static Action _onExitUp;
+
+        /// <summary>
+        /// Déclare comment quitter la liste par le haut, une fois celle-ci ouverte.
+        ///
+        /// Posé après l'ouverture plutôt que passé en paramètre : les modules qui construisent ces
+        /// listes servent aussi aux touches directes (G, V, Z…), où il n'y a pas d'onglet au-dessus,
+        /// et ils n'ont pas à savoir d'où on les a appelés.
+        /// </summary>
+        public static void SetExitUp(Action onExitUp)
+        {
+            if (IsOpen) _onExitUp = onExitUp;
+        }
+
         public static bool IsOpen { get; private set; }
 
         /// <summary>
@@ -52,7 +70,8 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static void Open(string title, List<string> entries,
                                 Action<int> onActivate = null,
-                                Func<int, int, string> onAdjust = null)
+                                Func<int, int, string> onAdjust = null,
+                                Action onExitUp = null)
         {
             if (entries == null || entries.Count == 0)
             {
@@ -64,6 +83,7 @@ namespace SunHavenAccess.Menus
             _entries = entries;
             _onActivate = onActivate;
             _onAdjust = onAdjust;
+            _onExitUp = onExitUp;
             _index = 0;
             IsOpen = true;
 
@@ -99,6 +119,7 @@ namespace SunHavenAccess.Menus
             _entries = new List<string>();
             _onActivate = null;
             _onAdjust = null;
+            _onExitUp = null;
             if (announce) TolkSpeech.Speak($"{SunHavenAccess.Localization.Translator.Translate(_title)} fermé.", true);
         }
 
@@ -112,6 +133,23 @@ namespace SunHavenAccess.Menus
             if (!IsOpen) return;
 
             if (UnityEngine.Input.GetKeyDown(KeyCode.Escape)) { Close(); return; }
+
+            // Ctrl+haut quitte la liste par le haut, sans la fermer « pour de bon ».
+            //
+            // Une liste d'onglet capte tout le clavier tant qu'elle est ouverte : sans cette
+            // sortie, arriver sur l'arbre de compétences enfermait dans sa liste, la barre
+            // d'onglets devenant inatteignable. On réemploie le geste que le mod utilise déjà
+            // partout ailleurs — Ctrl+haut ramène aux onglets, Ctrl+bas redescend dans le contenu
+            // — plutôt que d'inventer une touche de plus à retenir.
+            if (_onExitUp != null
+                && UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)
+                && (UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl)))
+            {
+                Action exit = _onExitUp;
+                Close(announce: false); // la barre d'onglets s'annonce juste après : ne pas la couvrir
+                exit();
+                return;
+            }
 
             // Sur une liste de réglages, gauche et droite changent la VALEUR de la ligne courante :
             // c'est la convention de tout panneau d'options, et le sens attendu. Ailleurs, elles

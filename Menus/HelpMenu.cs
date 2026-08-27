@@ -231,6 +231,12 @@ namespace SunHavenAccess.Menus
             "Entrée pour valider et Échap pour refermer. Les touches dédiées à chacune de ces listes restent utilisables " +
             "pour les consulter sans ouvrir le menu.",
 
+            "Sortir d'une liste d'onglet, et y revenir. Une liste ouverte capte tout le clavier : " +
+            "CONTRÔLE PLUS HAUT en ressort et ramène à la barre d'onglets, CONTRÔLE PLUS BAS y entre à nouveau. " +
+            "C'est le même geste que pour changer de zone partout ailleurs dans les menus. " +
+            "Tant que vous êtes ressorti, changer d'onglet ne rouvre plus rien : vous parcourez les onglets tranquillement " +
+            "aux flèches, puis vous entrez dans celui que vous voulez.",
+
             $"Ranger son sac. {K(ModConfig.SortBackpack)} trie le sac. {K(ModConfig.AnnounceContents)} en donne un résumé. " +
             $"{K(ModConfig.StoreInChests)} range dans les coffres proches. Les touches 1 à 0 envoient l'objet sélectionné vers la barre d'action, ou l'en retirent.",
 
@@ -366,6 +372,12 @@ namespace SunHavenAccess.Menus
             "Nothing more to remember than Tab to open, left and right to change tab, up and down to browse, " +
             "Enter to confirm and Escape to close. The keys dedicated to each of these lists still work, " +
             "to consult them without opening the menu.",
+
+            "Leaving a tab's list, and coming back. An open list captures the whole keyboard: " +
+            "CONTROL PLUS UP leaves it and returns to the tab bar, CONTROL PLUS DOWN enters it again. " +
+            "It's the same gesture used to change area everywhere else in the menus. " +
+            "While you're out, changing tab no longer reopens anything: you browse the tabs freely with the arrows, " +
+            "then enter the one you want.",
 
             $"Tidying your bag. {K(ModConfig.SortBackpack)} sorts the bag. {K(ModConfig.AnnounceContents)} gives a summary of it. " +
             $"{K(ModConfig.StoreInChests)} puts things away in nearby chests. The 1 to 0 keys send the selected item to the action bar, or take it off.",

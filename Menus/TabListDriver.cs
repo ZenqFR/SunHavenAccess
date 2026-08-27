@@ -15,6 +15,13 @@ namespace SunHavenAccess.Menus
     /// Désormais le geste tient en trois choses, et rien d'autre n'est à retenir :
     /// Tab ouvre le menu, gauche et droite changent d'onglet, et l'onglet choisi ouvre sa liste.
     ///
+    /// La liste n'est pas une impasse. Signalé en jeu : arriver sur l'arbre de compétences y
+    /// enfermait, puisqu'une liste ouverte capte tout le clavier — la barre d'onglets devenait
+    /// inatteignable. **Ctrl+haut en ressort vers les onglets, Ctrl+bas y entre à nouveau**, le
+    /// geste que le mod emploie déjà partout ailleurs pour changer de zone. Et tant qu'on est
+    /// ressorti, changer d'onglet ne rouvre plus rien : on parcourt les onglets tranquillement,
+    /// puis on entre dans celui qu'on veut.
+    ///
     /// Le sac à dos fait exception : c'est une vraie grille, sa navigation en grille lui convient,
     /// et elle a été confirmée fluide en jeu. La remplacer par une liste serait un recul.
     ///
@@ -32,6 +39,16 @@ namespace SunHavenAccess.Menus
         /// </summary>
         private static int _lastTab = -1;
 
+        /// <summary>
+        /// L'utilisateur a demandé à rester sur la barre d'onglets (Ctrl+haut depuis une liste).
+        ///
+        /// Tant que ce drapeau tient, changer d'onglet n'ouvre plus la liste automatiquement. Sans
+        /// lui, quitter une liste par le haut ne servait à rien : la flèche suivante changeait
+        /// d'onglet, la liste se rouvrait aussitôt et reprenait le clavier — impossible de
+        /// parcourir les onglets pour voir ce qu'ils contiennent. Ctrl+bas lève le drapeau.
+        /// </summary>
+        private static bool _stayOnTabs;
+
         public static void Tick()
         {
             if (!MenuOpen())
@@ -41,6 +58,7 @@ namespace SunHavenAccess.Menus
                 if (_lastTab >= 0)
                 {
                     _lastTab = -1;
+                    _stayOnTabs = false; // la prochaine ouverture du menu repart sur l'automatisme
                     ListMenu.Close();
                 }
                 return;
@@ -58,7 +76,16 @@ namespace SunHavenAccess.Menus
                 return;
             }
 
+            if (_stayOnTabs) return; // on parcourt les onglets : Ctrl+bas pour entrer dans celui-ci
+
             OpenListFor(tab);
+        }
+
+        /// <summary>Appelée quand on quitte une liste d'onglet par le haut.</summary>
+        private static void ExitToTabs()
+        {
+            _stayOnTabs = true;
+            ZoneNavigator.FocusTabs();
         }
 
         private static bool MenuOpen()
@@ -75,6 +102,27 @@ namespace SunHavenAccess.Menus
                 return inventory != null ? inventory.majorTabIndex : -1;
             }
             catch { return -1; }
+        }
+
+        /// <summary>
+        /// Rouvre la liste de l'onglet courant, à la demande — c'est ce que fait Ctrl+bas depuis la
+        /// barre d'onglets. Renvoie false si cet onglet n'a pas de liste (le sac à dos), auquel cas
+        /// l'appelant reprend son comportement habituel et descend dans le panneau.
+        ///
+        /// Sans ce chemin, quitter une liste par Ctrl+haut était sans retour : Ctrl+bas ramenait
+        /// dans le panneau brut, celui-là même que la liste remplace.
+        /// </summary>
+        public static bool OpenForCurrentTab()
+        {
+            if (!MenuOpen() || ListMenu.IsOpen) return false;
+
+            int tab = CurrentTab();
+            if (tab <= BackpackTab) return false;
+
+            _stayOnTabs = false; // demande explicite d'entrer : l'automatisme reprend
+            _lastTab = tab;
+            OpenListFor(tab);
+            return ListMenu.IsOpen; // une liste vide ne s'ouvre pas : ne pas prétendre le contraire
         }
 
         /// <summary>
@@ -95,6 +143,12 @@ namespace SunHavenAccess.Menus
                 case 6: SettingsMenu.Open(); break;               // Paramètres
                 default: ListMenu.Close(); break;
             }
+
+            // Toute liste ouverte depuis un onglet se quitte par le haut vers la barre d'onglets.
+            // On le pose après coup : les modules qui construisent ces listes n'ont pas à savoir
+            // d'où on les a ouvertes, et ils servent aussi aux touches directes (G, V, Z…), où il
+            // n'y a pas d'onglet au-dessus.
+            if (ListMenu.IsOpen) ListMenu.SetExitUp(ExitToTabs);
         }
     }
 }

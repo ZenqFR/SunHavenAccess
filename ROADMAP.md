@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **8 sur 131 au point** (6 %).
+Mis à jour le 2026-08-27 — **8 sur 132 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 114 |
+| `[ ]` | À tester | jamais essayé en jeu | 115 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 8 |
@@ -138,6 +138,10 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
 - [ ] **sac-onglets** — touche : Tab, puis Ctrl+Tab
   - Faire : Ouvrir le menu principal et passer d'un onglet à l'autre.
   - Attendu : Les 7 onglets sont nommés dans l'ordre : Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.
+- [ ] **sac-onglets-liste-sortie** ⚠️ — touche : Ctrl + haut, Ctrl + bas
+  - Faire : Dans une liste d'onglet, faire Ctrl+haut. Puis changer d'onglet aux flèches plusieurs fois. Puis Ctrl+bas sur l'onglet voulu.
+  - Attendu : Ctrl+haut ramène à la barre d'onglets. Ensuite, changer d'onglet ne rouvre PLUS la liste : on parcourt les onglets librement. Ctrl+bas entre dans la liste de l'onglet courant, et l'automatisme reprend.
+  - Retour de jeu : Signalé en jeu : arriver sur l'arbre de compétences enfermait dans sa liste, puisqu'une liste ouverte capte tout le clavier — la barre d'onglets devenait inatteignable. Le geste réemployé est celui que le mod utilise déjà partout pour changer de zone, plutôt qu'une touche de plus à retenir. Le drapeau « rester sur les onglets » était indispensable : sans lui, la flèche suivant Ctrl+haut changeait d'onglet et rouvrait la liste aussitôt, ce qui annulait la sortie.
 - [ ] **sac-onglets-liste-auto** ⚠️ — touche : Tab, puis gauche et droite
   - Faire : Ouvrir le menu avec Tab, puis passer sur Compétences, Relations, Quêtes, Carte, Statistiques et Paramètres, sans appuyer sur aucune autre touche.
   - Attendu : Chaque onglet ouvre SA liste tout seul, dès qu'on arrive dessus. Haut et bas la parcourent une entrée à la fois, Entrée valide, Échap referme. Le sac à dos ne change pas : il garde sa grille.
