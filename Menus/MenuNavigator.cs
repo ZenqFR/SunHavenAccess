@@ -264,8 +264,12 @@ namespace SunHavenAccess.Menus
             // cliquable posé PLUS HAUT que les boutons du menu, mais hors de celui-ci : trié par
             // position, il passait donc devant. Aucune règle géométrique ne pouvait le distinguer
             // des vrais boutons — c'est l'appartenance au panneau qui le fait, et le jeu la connaît.
+            // Sur ces écrans, l'ordre suit la HIÉRARCHIE et non la position : c'est celui dans
+            // lequel le jeu a posé ses boutons, donc celui qu'il affiche. Trier par hauteur y
+            // plaçait « Magasin » avant « Jouer », ces écrans mêlant une rangée de petits boutons
+            // à la pile principale — deux grappes qu'aucune coordonnée ne départage correctement.
             List<Selectable> inPanel = WithinActiveMainMenuPanel(chosen);
-            if (inPanel.Count > 0) chosen = inPanel;
+            if (inPanel.Count > 0) return inPanel;
 
             return chosen
                 .OrderByDescending(s => s.transform.position.y)
@@ -316,10 +320,22 @@ namespace SunHavenAccess.Menus
                 GameObject active = panels.FirstOrDefault(p => p != null && p.activeInHierarchy);
                 if (active == null) return new List<Selectable>();
 
-                Transform root = active.transform;
-                return candidates.Where(s => s.transform.IsChildOf(root)).ToList();
+                // Parcours en profondeur : on ressort les éléments dans l'ordre où le jeu les a
+                // posés dans sa hiérarchie, qui est celui de son affichage.
+                var wanted = new HashSet<Selectable>(candidates);
+                var ordered = new List<Selectable>();
+                Collect(active.transform, wanted, ordered);
+                return ordered;
             }
             catch { return new List<Selectable>(); }
+        }
+
+        private static void Collect(Transform node, HashSet<Selectable> wanted, List<Selectable> into)
+        {
+            foreach (Selectable s in node.GetComponents<Selectable>())
+                if (wanted.Contains(s)) into.Add(s);
+
+            for (int i = 0; i < node.childCount; i++) Collect(node.GetChild(i), wanted, into);
         }
 
         private static void Rescan()

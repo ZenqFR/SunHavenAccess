@@ -69,15 +69,19 @@ namespace SunHavenAccess.Menus
         /// une lecture au lieu d'un aller-retour de plus. Rien n'est prononcé : c'est pour le
         /// journal, pas pour le joueur.
         /// </summary>
-        private static bool _logged;
+        private static readonly System.Collections.Generic.HashSet<string> _logged =
+            new System.Collections.Generic.HashSet<string>();
 
         private static void LogCandidates(System.Collections.Generic.List<Selectable> candidates)
         {
-            if (_logged) return;
-            _logged = true;
-
             try
             {
+                // Une trace par ÉCRAN, pas une par session : la première fois, tout est parti sur
+                // l'écran de chargement et l'écran d'accueil — celui qui posait problème — n'a
+                // jamais été journalisé.
+                string screen = candidates.Count > 0 ? RootName(candidates[0].transform) : "?";
+                if (!_logged.Add(screen)) return;
+
                 var lines = candidates.Take(6).Select(s =>
                 {
                     string path = s.name;
@@ -90,9 +94,20 @@ namespace SunHavenAccess.Menus
                     return $"  {path}  [{components}]";
                 });
 
-                Plugin.Log?.LogInfo("Menu principal, premiers candidats à la sélection :\n" + string.Join("\n", lines));
+                Plugin.Log?.LogInfo($"Menu principal ({screen}), premiers candidats à la sélection :\n"
+                                    + string.Join("\n", lines));
             }
             catch { }
+        }
+
+        /// <summary>Le nom du panneau d'écran auquel appartient cet élément, pour distinguer les traces.</summary>
+        private static string RootName(Transform t)
+        {
+            string name = t.name;
+            for (Transform p = t.parent; p != null; p = p.parent)
+                if (p.name.StartsWith("[")) return p.name; // convention du jeu : [HomeMenu], [LoadCharacterMenu]…
+                else name = p.name;
+            return name;
         }
     }
 }
