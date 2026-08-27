@@ -2,14 +2,14 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **8 sur 132 au point** (6 %).
+Mis à jour le 2026-08-27 — **7 sur 132 au point** (5 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 115 |
+| `[ ]` | À tester | jamais essayé en jeu | 116 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
-| `[x]` | Au point | essayé, rien à redire | 8 |
+| `[x]` | Au point | essayé, rien à redire | 7 |
 
 ⚠️ = à vérifier en priorité.
 
@@ -66,10 +66,10 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Sur l'écran de choix de personnage, ouvrir les sauvegardes en liste, choisir une partie, puis Charger. Réessayer sur un emplacement vide.
   - Attendu : Une ligne par partie : nom et date. Valider propose « Charger la partie de X » ou « Supprimer la partie de X », l'action nommée avec la partie. Un emplacement vide lance directement une nouvelle partie.
   - Retour de jeu : L'écran affiche chaque sauvegarde comme une fiche avec deux boutons quelque part dedans ; en suivant la mise en page, rien ne dit à quelle partie appartient le bouton où l'on se trouve. Les deux boutons déclenchés sont ceux du jeu, donc c'est lui qui charge, supprime, et impose sa confirmation.
-- [x] **personnage-sauvegardes-auto** ⚠️ — touche : —
-  - Faire : Arriver sur l'écran de choix de personnage sans appuyer sur aucune touche. Puis fermer la liste avec Échap, et la rouvrir avec Pavé 3.
+- [ ] **personnage-sauvegardes-auto** ⚠️ — touche : —
+  - Faire : Arriver sur l'écran de choix de personnage PAR LES DEUX CHEMINS : directement depuis le menu principal, puis par Jouer, Solo, Charger un personnage. Dans chaque cas, ne toucher à rien, puis fermer avec Échap et rouvrir avec Pavé 3.
   - Attendu : La liste des parties s'ouvre toute seule, sans raccourci à connaître. Échap la referme et rend l'écran normal ; Pavé 3 la rouvre.
-  - Retour de jeu : C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute. DÉFAUT SIGNALÉ ET CORRIGÉ : la liste ne s'ouvrait jamais seule. Je repérais l'écran en comptant les fiches trouvées dans toute la scène, alors qu'elles ne sont pas encore là — ou pas encore actives — au moment où l'écran s'ouvre. On demande maintenant au jeu, qui le sait : « MainMenuController.loadCharacterMenu » est l'objet même de cet écran, et il est public. Et comme les fiches se peuplent après, l'ouverture est retentée pendant trois secondes plutôt que d'annoncer un écran vide.
+  - Retour de jeu : C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute. DÉFAUT SIGNALÉ ET CORRIGÉ : la liste ne s'ouvrait jamais seule. Je repérais l'écran en comptant les fiches trouvées dans toute la scène, alors qu'elles ne sont pas encore là — ou pas encore actives — au moment où l'écran s'ouvre. DEUX fausses pistes avant la bonne, notées pour qu'on n'y retourne pas. D'abord « y a-t-il des fiches dans la scène » : le menu principal en garde en permanence, hors champ, donc la réponse était vraie dès la première image et la transition « on vient d'arriver » ne se produisait jamais. Ensuite « l'objet loadCharacterMenu est-il actif » : exact pour un chemin, faux pour l'autre — le jeu mène à cet écran par deux routes, et restreindre la recherche à cet objet a du même coup cassé la touche Pavé 3. Ce qui vaut dans tous les cas est ce que le joueur voit : des fiches réellement À L'ÉCRAN. Le repli « si le test de présence ne laisse rien, on garde tout » est volontairement écarté pour la détection — il ramènerait le premier bug — mais conservé quand le joueur appuie sur la touche, puisqu'il nous dit alors où il est.
 - [ ] **personnage-sauvegardes-details** — touche : Entrée
   - Faire : Valider une partie dans la liste, puis choisir « Détails complets ».
   - Attendu : Une liste donne la date, l'heure, l'emplacement, les pièces, orbes et tickets, les cinq niveaux de métier et la quête en cours — une entrée à la fois. La date est en FRANÇAIS, pas « Summer 11, Year 1 ».

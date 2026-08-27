@@ -85,28 +85,31 @@ namespace SunHavenAccess.Menus
         private const int MaxAttempts = 12;
 
         /// <summary>
-        /// Sommes-nous sur l'écran « Charger un personnage » ?
+        /// Sommes-nous devant des fiches de sauvegarde RÉELLEMENT affichées ?
         ///
-        /// On le demande au jeu, qui le sait : `MainMenuController.loadCharacterMenu` est l'objet
-        /// même de cet écran, et il est public. Compter les fiches trouvées dans toute la scène —
-        /// ce que faisait la première version — ne marchait pas : les fiches ne sont pas encore
-        /// présentes, ou pas encore actives, au moment où l'écran s'ouvre, si bien que la liste ne
-        /// s'ouvrait jamais d'elle-même. Demander l'état plutôt que le déduire d'un balayage est
-        /// aussi bien plus économique.
+        /// Deux fausses pistes déjà parcourues, gardées ici pour qu'on n'y retourne pas.
+        ///
+        /// D'abord « y a-t-il des fiches dans la scène » : le menu principal en garde en
+        /// permanence, hors champ. La réponse était donc vraie dès la première image, la
+        /// transition « on vient d'arriver » ne se produisait jamais, et la liste ne s'ouvrait
+        /// pas d'elle-même.
+        ///
+        /// Ensuite « l'objet loadCharacterMenu est-il actif » : exact pour un chemin, faux pour
+        /// l'autre. Le jeu mène à ce même écran par deux routes (Continuer directement, ou Jouer
+        /// puis Solo puis Charger), et les fiches ne pendent pas toujours sous cet objet-là.
+        /// Restreindre la recherche à lui a du même coup cassé la touche dédiée.
+        ///
+        /// Ce qui vaut dans TOUS les cas est ce que le joueur voit : des fiches à l'écran. On
+        /// s'appuie donc sur le filtre de présence déjà employé partout ailleurs dans le mod,
+        /// plutôt que sur la route empruntée pour arriver là.
         /// </summary>
-        private static bool OnLoadScreen()
-        {
-            try
-            {
-                GameObject screen = MainMenuController.Instance?.loadCharacterMenu;
-                return screen != null && screen.activeInHierarchy;
-            }
-            catch { return false; }
-        }
+        private static bool OnLoadScreen() => Panels().Count > 0;
 
         public static void Open()
         {
-            List<SavePanel> panels = Panels();
+            // Demande explicite : on accepte les fiches actives même si le test de présence n'a
+            // rien retenu. Le joueur sait où il est mieux que notre conversion de coordonnées.
+            List<SavePanel> panels = Panels(onScreenOnly: false);
             if (panels.Count == 0)
             {
                 TolkSpeech.Speak("Aucune sauvegarde à afficher ici.", true);
@@ -236,18 +239,28 @@ namespace SunHavenAccess.Menus
         /// leurs fiches en plus des nôtres. Le balayage global ne sert plus que de repli, si le
         /// jeu venait à renommer cet objet.
         /// </summary>
-        private static List<SavePanel> Panels()
+        /// <param name="onScreenOnly">
+        /// Vrai pour DÉTECTER l'écran, faux quand le joueur a explicitement demandé la liste.
+        ///
+        /// La distinction est essentielle. Le repli habituel du mod — « si le test de présence ne
+        /// laisse rien, on garde tout » — vaut pour rendre un écran navigable, jamais pour savoir
+        /// sur quel écran on est : appliqué ici, il rendrait vraies en permanence les fiches que
+        /// le menu principal garde hors champ, et l'ouverture automatique ne partirait plus
+        /// jamais. Mais quand le joueur appuie sur la touche dédiée, il nous DIT où il est : le
+        /// repli redevient alors le bon comportement, et vaut mieux qu'un refus.
+        /// </param>
+        private static List<SavePanel> Panels(bool onScreenOnly = true)
         {
             try
             {
-                GameObject screen = MainMenuController.Instance?.loadCharacterMenu;
-
-                IEnumerable<SavePanel> found = screen != null
-                    ? screen.GetComponentsInChildren<SavePanel>(true)
-                    : Object.FindObjectsOfType<SavePanel>();
-
-                return found
+                List<SavePanel> active = Object.FindObjectsOfType<SavePanel>()
                     .Where(p => p != null && p.gameObject.activeInHierarchy)
+                    .ToList();
+
+                List<SavePanel> onScreen = active.Where(p => MenuNavigator.IsOnScreen(p)).ToList();
+                List<SavePanel> kept = (onScreen.Count > 0 || onScreenOnly) ? onScreen : active;
+
+                return kept
                     .OrderByDescending(p => p.transform.position.y)
                     .ThenBy(p => p.transform.position.x)
                     .ToList();
