@@ -251,14 +251,72 @@ namespace SunHavenAccess.Menus
 
             LogProfessionNames();
 
-            try
+            string key = TranslationKeyFor(raw);
+            if (key != null)
             {
-                string translated = TextUtil.Clean(LocalizeText.TranslateText(raw, raw));
-                if (!string.IsNullOrWhiteSpace(translated)) return translated;
+                try
+                {
+                    string translated = TextUtil.Clean(LocalizeText.TranslateText(key, Missing));
+                    if (!string.IsNullOrWhiteSpace(translated) && translated != Missing) return translated;
+                }
+                catch { }
             }
-            catch { }
 
-            return raw;
+            return raw; // aucune clé ne répond : le libellé interne, plutôt qu'une invention
+        }
+
+        /// <summary>
+        /// Sentinelle de repli : le traducteur du jeu renvoie ce qu'on lui donne par défaut quand
+        /// il ne connaît pas la clé. Une valeur qu'aucune traduction ne peut valoir rend donc
+        /// l'échec reconnaissable, ce qu'une chaîne vide ne permettrait pas.
+        /// </summary>
+        private const string Missing = "?";
+
+        private static readonly Dictionary<string, string> _keyCache = new Dictionary<string, string>();
+
+        /// <summary>
+        /// La clé de traduction d'un métier, cherchée par essais successifs.
+        ///
+        /// Le libellé interne n'est pas la clé — passer « Orchard Farmer » ne donne rien. Les clés
+        /// de ce jeu suivent des conventions visibles ailleurs dans sa table (« ..._Name »), mais
+        /// rien dans le code décompilé ne dit laquelle s'applique ici : ces boutons portent leur
+        /// terme dans la scène, hors de portée. On essaie donc les formes plausibles et on retient
+        /// la première qui répond — puis on la journalise, pour qu'un seul essai en jeu suffise à
+        /// trancher au lieu d'un aller-retour par hypothèse.
+        /// </summary>
+        private static string TranslationKeyFor(string raw)
+        {
+            if (_keyCache.TryGetValue(raw, out string cached)) return cached;
+
+            string tight = raw.Replace(" ", "").Replace("'", "");
+            string[] attempts =
+            {
+                raw,
+                tight,
+                tight + "_Name",
+                raw + "_Name",
+                "Profession_" + tight,
+                "StartingProfession_" + tight,
+                "Profession/" + tight,
+            };
+
+            string found = null;
+            foreach (string attempt in attempts)
+            {
+                try
+                {
+                    string result = LocalizeText.TranslateText(attempt, Missing);
+                    if (!string.IsNullOrWhiteSpace(result) && result != Missing) { found = attempt; break; }
+                }
+                catch { }
+            }
+
+            _keyCache[raw] = found;
+            Plugin.Log?.LogInfo(found != null
+                ? $"Métier « {raw} » : clé de traduction trouvée, « {found} »."
+                : $"Métier « {raw} » : aucune clé de traduction ne répond, le libellé interne sera lu.");
+
+            return found;
         }
 
         private static bool _loggedProfessions;
@@ -360,6 +418,18 @@ namespace SunHavenAccess.Menus
 
         private static void TickNameEntry()
         {
+            // Pendant la saisie, la liste est fermée : la sortie par Échap doit donc être gérée
+            // ici, sinon l'assistant n'aurait plus aucune porte de sortie à cette étape — la
+            // seule où il ne tient pas le clavier.
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape))
+            {
+                _step = Step.Idle;
+                TolkSpeech.Speak(Localization.Language.T(
+                    "Assistant fermé. L'écran de création reste utilisable aux flèches.",
+                    "Wizard closed. The creation screen is still usable with the arrows."), true);
+                return;
+            }
+
             if (!UnityEngine.Input.GetKeyDown(KeyCode.Return) && !UnityEngine.Input.GetKeyDown(KeyCode.KeypadEnter))
                 return;
 
