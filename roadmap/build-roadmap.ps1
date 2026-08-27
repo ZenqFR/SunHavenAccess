@@ -61,39 +61,75 @@ Add '    <p class="note"><span data-lang="fr">« Au point » veut dire : essayé
 Add '  </div>'
 Add ''
 
+# --- Filtres ----------------------------------------------------------------------------------
+# Une case par statut, plus deux boutons pour tout déplier ou tout replier. Sans filtre, la page
+# fait 131 points d'affilée : on cherche « ce qu'il me reste à tester » dans un mur de texte. Les
+# cases sont de vraies cases à cocher et les étapes de vrais éléments dépliables, donc annoncés
+# comme tels par le lecteur d'écran, sans qu'aucun code d'accessibilité ait à être simulé.
+Add '  <section class="filters" aria-labelledby="filters-title">'
+Add '    <h2 class="filters-title" id="filters-title"><span data-lang="fr">Afficher</span><span data-lang="en" hidden>Show</span></h2>'
+Add '    <div class="filter-boxes">'
+foreach ($s in $order) {
+    $l = $data.legend.$s
+    Add ('      <label class="filter-box filter-' + $s + '"><input type="checkbox" data-filter="' + $s + '" checked> <span data-lang="fr">' + (Esc $l.fr) + ' (' + $counts[$s] + ')</span><span data-lang="en" hidden>' + (Esc $l.en) + ' (' + $counts[$s] + ')</span></label>')
+}
+Add '    </div>'
+Add '    <div class="filter-actions">'
+Add '      <button type="button" id="filter-remaining"><span data-lang="fr">Ce qu''il me reste à faire</span><span data-lang="en" hidden>What''s left to do</span></button>'
+Add '      <button type="button" id="expand-all"><span data-lang="fr">Tout déplier</span><span data-lang="en" hidden>Expand all</span></button>'
+Add '      <button type="button" id="collapse-all"><span data-lang="fr">Tout replier</span><span data-lang="en" hidden>Collapse all</span></button>'
+Add '    </div>'
+Add '    <p class="filter-result" id="filter-result" role="status" aria-live="polite"><span data-lang="fr"></span><span data-lang="en" hidden></span></p>'
+Add '  </section>'
+Add ''
+
 # --- Étapes -----------------------------------------------------------------------------------
+# Chaque étape est un <details> REPLIÉ par défaut : la page se réduit alors à seize intitulés
+# qu'on parcourt en quelques secondes, et on n'ouvre que celle où l'on en est.
 $stageNumber = 0
 foreach ($stage in $data.stages) {
     $stageNumber++
     $stageTotal = $stage.items.Count
     $stageDone = ($stage.items | Where-Object { $_.status -eq 'ok' }).Count
 
-    Add ('  <h2 class="section-title" id="' + $stage.id + '"><span data-lang="fr">' + $stageNumber + '. ' + (Esc $stage.title.fr) + '</span><span data-lang="en" hidden>' + $stageNumber + '. ' + (Esc $stage.title.en) + '</span></h2>')
-    Add '  <div class="card">'
-    Add ('    <p>' + (Bi $stage.intro) + '</p>')
-    Add ('    <p class="stage-progress"><span data-lang="fr">' + $stageDone + ' sur ' + $stageTotal + ' au point.</span><span data-lang="en" hidden>' + $stageDone + ' of ' + $stageTotal + ' solid.</span></p>')
-    Add '    <ol class="roadmap-list">'
+    # `data-done` et `data-total` permettent au script de restituer « X sur Y au point » quand
+    # aucun filtre n'est actif : hors filtrage, la progression dit bien plus que le simple nombre
+    # de points affichés, qui vaut alors le total.
+    Add ('  <details class="stage" id="' + $stage.id + '" data-stage data-done="' + $stageDone + '" data-total="' + $stageTotal + '">')
+    Add '    <summary>'
+    Add ('      <span class="stage-name"><span data-lang="fr">' + $stageNumber + '. ' + (Esc $stage.title.fr) + '</span><span data-lang="en" hidden>' + $stageNumber + '. ' + (Esc $stage.title.en) + '</span></span>')
+    Add ('      <span class="stage-count" data-stage-count><span data-lang="fr">' + $stageDone + ' sur ' + $stageTotal + ' au point</span><span data-lang="en" hidden>' + $stageDone + ' of ' + $stageTotal + ' solid</span></span>')
+    Add '    </summary>'
+    Add '    <div class="stage-body">'
+    Add ('      <p class="stage-intro">' + (Bi $stage.intro) + '</p>')
+    Add '      <ol class="roadmap-list">'
 
     foreach ($item in $stage.items) {
         $l = $data.legend.($item.status)
         $crit = if ($item.critical) { ' is-critical' } else { '' }
 
-        Add ('      <li class="roadmap-item status-' + $item.status + $crit + '" id="' + $stage.id + '-' + $item.id + '">')
+        Add ('        <li class="roadmap-item status-' + $item.status + $crit + '" id="' + $stage.id + '-' + $item.id + '" data-status="' + $item.status + '">')
         $statusLine = '<span class="status-tag"><span data-lang="fr">' + (Esc $l.fr) + '</span><span data-lang="en" hidden>' + (Esc $l.en) + '</span></span>'
         if ($item.critical) {
             $statusLine += ' <span class="crit-tag"><span data-lang="fr">à vérifier en priorité</span><span data-lang="en" hidden>check this first</span></span>'
         }
-        Add ('        <p class="status-line">' + $statusLine + '</p>')
-        Add ('        <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> ' + (Esc $item.key) + ' — ' + (Bi $item.action) + '</p>')
-        Add ('        <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> ' + (Bi $item.expected) + '</p>')
+        Add ('          <p class="status-line">' + $statusLine + '</p>')
+        Add ('          <p><strong><span data-lang="fr">Touche&nbsp;:</span><span data-lang="en" hidden>Key:</span></strong> ' + (Esc $item.key) + ' — ' + (Bi $item.action) + '</p>')
+        Add ('          <p><strong><span data-lang="fr">Attendu&nbsp;:</span><span data-lang="en" hidden>Expected:</span></strong> ' + (Bi $item.expected) + '</p>')
+        # La note est le gros du texte et n'est utile qu'après coup : repliée, elle ne s'interpose
+        # plus entre « ce qu'il faut faire » et « ce qu'on doit entendre », qui sont l'essentiel.
         if ($item.note) {
-            Add ('        <p class="roadmap-note"><strong><span data-lang="fr">Retour de jeu&nbsp;:</span><span data-lang="en" hidden>Game feedback:</span></strong> ' + (Bi $item.note) + '</p>')
+            Add '          <details class="item-note">'
+            Add '            <summary><span data-lang="fr">Pourquoi, et ce qui a déjà été dit</span><span data-lang="en" hidden>Why, and what was already reported</span></summary>'
+            Add ('            <p>' + (Bi $item.note) + '</p>')
+            Add '          </details>'
         }
-        Add '      </li>'
+        Add '        </li>'
     }
 
-    Add '    </ol>'
-    Add '  </div>'
+    Add '      </ol>'
+    Add '    </div>'
+    Add '  </details>'
     Add ''
 }
 
@@ -128,7 +164,7 @@ $html = @"
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 <a class="skip-link" href="#main">
@@ -164,8 +200,8 @@ $nav
 </header>
 
 <p class="intro">
-  <span data-lang="fr">Le mod couvre désormais tous les grands systèmes du jeu, mais <strong>à ce stade tout reste à éprouver en conditions réelles</strong> : chaque fonctionnalité listée ici attend d'être essayée. Plus il y a de tests, plus l'accessibilité se précise — un seul retour transforme un « ça devrait marcher » en « ça marche », ou dit exactement ce qu'il faut corriger. Les étapes suivent la progression d'une partie : on vérifie chaque chose au moment où on la rencontre, plutôt que de tout passer en revue d'un bloc.</span>
-  <span data-lang="en" hidden>The mod now covers every major system in the game, but <strong>at this stage everything still needs proving in real conditions</strong>: every feature listed here is waiting to be tried. The more testing it gets, the sharper the accessibility becomes — a single report turns "it should work" into "it works", or says exactly what needs fixing. The stages follow a playthrough: you check each thing as you meet it, rather than sweeping the whole list at once.</span>
+  <span data-lang="fr">Le mod couvre désormais tous les grands systèmes du jeu, mais <strong>à ce stade tout reste à éprouver en conditions réelles</strong> : chaque fonctionnalité listée ici attend d'être essayée. Plus il y a de tests, plus l'accessibilité se précise — un seul retour transforme un « ça devrait marcher » en « ça marche », ou dit exactement ce qu'il faut corriger. Les étapes suivent la progression d'une partie : on vérifie chaque chose au moment où on la rencontre, plutôt que de tout passer en revue d'un bloc. <strong>Les étapes sont repliées</strong> : ouvrez celle où vous en êtes, et servez-vous des cases ci-dessous pour ne garder que ce qui vous intéresse.</span>
+  <span data-lang="en" hidden>The mod now covers every major system in the game, but <strong>at this stage everything still needs proving in real conditions</strong>: every feature listed here is waiting to be tried. The more testing it gets, the sharper the accessibility becomes — a single report turns "it should work" into "it works", or says exactly what needs fixing. The stages follow a playthrough: you check each thing as you meet it, rather than sweeping the whole list at once. <strong>Stages are collapsed</strong>: open the one you're on, and use the boxes below to keep only what you care about.</span>
 </p>
 
 <main id="main">
@@ -180,7 +216,7 @@ $body
   </p>
 </footer>
 
-<script src="site.js?v=5"></script>
+<script src="site.js?v=6"></script>
 </body>
 </html>
 "@

@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Démarrer — Sun Haven Access</title>
-<meta name="description" content="Guide de démarrage de Sun Haven Access, écrit pour un joueur aveugle qui découvre : installation, création de personnage, premières heures, touches essentielles.">
+<meta name="description" content="Guide complet de Sun Haven Access pour un joueur aveugle : installation, menu principal, choix et création du personnage, puis tout ce qu'il faut savoir pour jouer.">
 <link rel="canonical" href="https://zenqfr.github.io/SunHavenAccess/demarrer.html">
 <meta name="robots" content="index, follow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.85em' font-size='90'%3E%F0%9F%8C%BB%3C/text%3E%3C/svg%3E">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Démarrer — Sun Haven Access">
-<meta property="og:description" content="De l'installation à votre première heure de jeu, écrit pour un joueur aveugle qui découvre.">
+<meta property="og:description" content="Du lancement du jeu à votre première journée à la ferme, écran par écran, pour un joueur aveugle qui découvre.">
 <meta property="og:url" content="https://zenqfr.github.io/SunHavenAccess/demarrer.html">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:locale:alternate" content="en_US">
@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 <a class="skip-link" href="#main">
@@ -36,169 +36,360 @@
 </nav>
 
 <nav class="quick-nav" aria-label="Navigation rapide">
-  <a href="#besoin" data-section="besoin"><span data-lang="fr">Ce qu'il faut</span><span data-lang="en" hidden>What you need</span></a>
   <a href="#installer" data-section="installer"><span data-lang="fr">Installer</span><span data-lang="en" hidden>Install</span></a>
-  <a href="#touches" data-section="touches"><span data-lang="fr">Touches vitales</span><span data-lang="en" hidden>Vital keys</span></a>
-  <a href="#personnage" data-section="personnage"><span data-lang="fr">Créer son personnage</span><span data-lang="en" hidden>Create a character</span></a>
-  <a href="#premiere-heure" data-section="premiere-heure"><span data-lang="fr">Première heure</span><span data-lang="en" hidden>First hour</span></a>
-  <a href="#aide" data-section="aide"><span data-lang="fr">Besoin d'aide</span><span data-lang="en" hidden>Need help</span></a>
+  <a href="#touches" data-section="touches"><span data-lang="fr">Touches de départ</span><span data-lang="en" hidden>Starter keys</span></a>
+  <a href="#menu-principal" data-section="menu-principal"><span data-lang="fr">Menu principal</span><span data-lang="en" hidden>Main menu</span></a>
+  <a href="#choisir" data-section="choisir"><span data-lang="fr">Choisir un personnage</span><span data-lang="en" hidden>Choose a character</span></a>
+  <a href="#creer" data-section="creer"><span data-lang="fr">Créer son personnage</span><span data-lang="en" hidden>Create a character</span></a>
+  <a href="#bouger" data-section="bouger"><span data-lang="fr">Se déplacer</span><span data-lang="en" hidden>Moving</span></a>
+  <a href="#trouver" data-section="trouver"><span data-lang="fr">Trouver et s'y rendre</span><span data-lang="en" hidden>Find and travel</span></a>
+  <a href="#agir" data-section="agir"><span data-lang="fr">Agir sur le monde</span><span data-lang="en" hidden>Acting on the world</span></a>
+  <a href="#ferme" data-section="ferme"><span data-lang="fr">Votre ferme</span><span data-lang="en" hidden>Your farm</span></a>
+  <a href="#menus" data-section="menus"><span data-lang="fr">Sac et menus</span><span data-lang="en" hidden>Bag and menus</span></a>
+  <a href="#gens" data-section="gens"><span data-lang="fr">Habitants et quêtes</span><span data-lang="en" hidden>Townsfolk and quests</span></a>
+  <a href="#reglages" data-section="reglages"><span data-lang="fr">Régler le mod</span><span data-lang="en" hidden>Configure</span></a>
+  <a href="#aide" data-section="aide"><span data-lang="fr">Si ça coince</span><span data-lang="en" hidden>If stuck</span></a>
   <a href="docs.html"><span data-lang="fr">📖 Documentation</span><span data-lang="en" hidden>📖 Documentation</span></a>
-  <a href="roadmap.html"><span data-lang="fr">🗺️ Feuille de route</span><span data-lang="en" hidden>🗺️ Roadmap</span></a>
 </nav>
 
 <header>
   <span class="emoji" aria-hidden="true">🚀</span>
   <h1><span data-lang="fr">Démarrer</span><span data-lang="en" hidden>Get started</span></h1>
   <p class="tagline">
-    <span data-lang="fr">De l'installation à votre première heure de jeu. Écrit pour quelqu'un qui découvre Sun Haven et joue au lecteur d'écran.</span>
-    <span data-lang="en" hidden>From installation to your first hour of play. Written for someone discovering Sun Haven and playing with a screen reader.</span>
+    <span data-lang="fr">Du lancement du jeu à votre première journée à la ferme, écran par écran. Écrit pour quelqu'un qui découvre Sun Haven et joue au lecteur d'écran.</span>
+    <span data-lang="en" hidden>From launching the game to your first day on the farm, screen by screen. Written for someone discovering Sun Haven and playing with a screen reader.</span>
   </p>
 </header>
 
 <main id="main">
 
-  <h2 class="section-title" id="besoin">
-    <span data-lang="fr">Ce qu'il vous faut</span><span data-lang="en" hidden>What you need</span>
-  </h2>
-  <div class="card">
-    <ul>
-      <li><span data-lang="fr"><strong>Sun Haven</strong> installé (version Steam, sous Windows).</span><span data-lang="en" hidden><strong>Sun Haven</strong> installed (Steam version, on Windows).</span></li>
-      <li><span data-lang="fr"><strong>Un lecteur d'écran.</strong> <a href="https://www.nvaccess.org/" target="_blank" rel="noopener">NVDA</a> est recommandé et gratuit : le mod lui parle directement. Si NVDA n'est pas détecté, le mod bascule automatiquement sur la synthèse vocale de Windows.</span><span data-lang="en" hidden><strong>A screen reader.</strong> <a href="https://www.nvaccess.org/" target="_blank" rel="noopener">NVDA</a> is recommended and free: the mod talks to it directly. If NVDA isn't detected, the mod automatically falls back to Windows speech.</span></li>
-      <li><span data-lang="fr">C'est tout — le reste est fourni.</span><span data-lang="en" hidden>That's all — everything else is included.</span></li>
-    </ul>
+  <div class="card intro">
+    <p>
+      <span data-lang="fr"><strong>Lisez-le dans l'ordre la première fois.</strong> Chaque section reprend là où la précédente s'arrête : vous lancez le jeu, vous choisissez une partie, vous créez un personnage, puis vous jouez. Ensuite, servez-vous-en comme d'un aide-mémoire — la navigation rapide en haut mène directement à la section voulue.</span>
+      <span data-lang="en" hidden><strong>Read it in order the first time.</strong> Each section picks up where the last one ends: you launch the game, choose a save, create a character, then play. After that, use it as a reference — the quick navigation at the top jumps straight to any section.</span>
+    </p>
     <p class="note">
-      <span data-lang="fr"><strong>Un conseil avant de commencer :</strong> laissez NVDA parler jusqu'au bout des annonces plutôt que de l'interrompre. Le mod annonce souvent plusieurs informations en une seule phrase (« 7, Blé » pour la quantité puis le nom, par exemple), et couper trop tôt fait perdre la seconde moitié.</span>
-      <span data-lang="en" hidden><strong>One tip before you start:</strong> let NVDA finish its announcements rather than interrupting. The mod often packs several pieces of information into one sentence ("7, Wheat" for quantity then name, for instance), and cutting it short loses the second half.</span>
+      <span data-lang="fr">Ce mod est récent et son auteur ne peut pas le tester lui-même — il ne voit pas l'écran et n'entend pas le jeu. Beaucoup de ce qui suit décrit ce que le mod <em>fait</em> sans avoir encore été confirmé en conditions réelles. La <a href="roadmap.html">feuille de route</a> dit précisément ce qui est vérifié et ce qui ne l'est pas. Si quelque chose ne se passe pas comme décrit ici, ce n'est pas vous : c'est un défaut, et le signaler est ce qui fait avancer le mod.</span>
+      <span data-lang="en" hidden>This mod is young and its author cannot test it himself — he neither sees the screen nor hears the game. Much of what follows describes what the mod <em>does</em> without having been confirmed in real conditions yet. The <a href="roadmap.html">roadmap</a> says exactly what is verified and what isn't. If something doesn't happen as described here, it isn't you: it's a defect, and reporting it is what moves the mod forward.</span>
     </p>
   </div>
 
   <h2 class="section-title" id="installer">
-    <span data-lang="fr">Installer le mod</span><span data-lang="en" hidden>Install the mod</span>
+    <span data-lang="fr">1. Installer</span><span data-lang="en" hidden>1. Install</span>
   </h2>
-
   <div class="card">
-    <p class="download-cta">
-      <a class="cta" href="https://github.com/ZenqFR/SunHavenAccess/releases/latest">
-        <span data-lang="fr">⬇️ Télécharger l'installateur</span><span data-lang="en" hidden>⬇️ Download the installer</span>
-      </a>
-    </p>
     <p>
-      <span data-lang="fr">Un seul programme à lancer, <strong><code>Installer-Sun-Haven-Access.exe</code></strong>. Il trouve Sun Haven tout seul (y compris si Steam l'a installé sur un autre disque), installe BepInEx et le mod, et vous dit ce qu'il a fait. Tout se pilote au clavier, chaque bouton est nommé pour le lecteur d'écran, et le compte rendu s'écrit dans une zone de texte que vous pouvez relire autant que vous voulez — pas de message qui disparaît, pas de boîte de dialogue à deviner.</span>
-      <span data-lang="en" hidden>A single program to run, <strong><code>Installer-Sun-Haven-Access.exe</code></strong>. It finds Sun Haven on its own (including when Steam installed it on another drive), installs BepInEx and the mod, and tells you what it did. Everything is keyboard-driven, every button is named for the screen reader, and the report is written into a text box you can re-read as much as you like — no vanishing messages, no dialog to guess at.</span>
-    </p>
-
-    <h3 class="sub-title"><span data-lang="fr">Windows va vous avertir — c'est normal</span><span data-lang="en" hidden>Windows will warn you — that's expected</span></h3>
-    <p class="note">
-      <span data-lang="fr">L'installateur n'est pas signé numériquement (une signature coûte plusieurs centaines d'euros par an), donc Windows affiche <strong>« Windows a protégé votre ordinateur »</strong>. Pour continuer : activez le bouton <strong>Informations complémentaires</strong>, puis <strong>Exécuter quand même</strong>. C'est le comportement normal de Windows face à tout programme peu diffusé, pas un signe de danger.</span>
-      <span data-lang="en" hidden>The installer isn't digitally signed (a signature costs several hundred euros a year), so Windows shows <strong>"Windows protected your PC"</strong>. To continue: activate the <strong>More info</strong> button, then <strong>Run anyway</strong>. This is Windows' normal behaviour towards any program without wide distribution, not a sign of danger.</span>
-    </p>
-
-    <h3 class="sub-title"><span data-lang="fr">Vérifier que ça a marché</span><span data-lang="en" hidden>Checking it worked</span></h3>
-    <p>
-      <span data-lang="fr">Lancez Sun Haven : <strong>un message vocal confirme que le mod est chargé</strong>. Si vous l'entendez, tout va bien.</span>
-      <span data-lang="en" hidden>Launch Sun Haven: <strong>a spoken message confirms the mod has loaded</strong>. If you hear it, you're all set.</span>
-    </p>
-    <p class="note">
-      <span data-lang="fr"><strong>Vous n'entendez rien ?</strong> Appuyez sur <strong>F11</strong> : cette touche joue un son Windows, indépendamment de la synthèse vocale. Si vous entendez ce son mais aucune parole, le problème vient du lecteur d'écran ; si vous n'entendez rien du tout, le mod ne s'est pas chargé.</span>
-      <span data-lang="en" hidden><strong>Hearing nothing?</strong> Press <strong>F11</strong>: that key plays a Windows sound, independently of speech. If you hear the sound but no speech, the problem is with the screen reader; if you hear nothing at all, the mod didn't load.</span>
-    </p>
-
-    <h3 class="sub-title"><span data-lang="fr">Installation manuelle</span><span data-lang="en" hidden>Manual installation</span></h3>
-    <p>
-      <span data-lang="fr">Si vous préférez ne pas lancer d'exécutable, ou compiler vous-même :</span>
-      <span data-lang="en" hidden>If you'd rather not run an executable, or want to build it yourself:</span>
+      <span data-lang="fr">Il vous faut <strong>Sun Haven sur PC Windows</strong> et un <strong>lecteur d'écran</strong>. NVDA est reconnu directement ; à défaut, le mod parle par la voix Windows intégrée, sans rien à installer.</span>
+      <span data-lang="en" hidden>You need <strong>Sun Haven on Windows PC</strong> and a <strong>screen reader</strong>. NVDA is supported directly; otherwise the mod speaks through the built-in Windows voice, with nothing to install.</span>
     </p>
     <ol class="install-steps">
-      <li>
-        <span data-lang="fr">Téléchargez <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5.4.23.5 (x64, Mono)</a> et décompressez-le directement dans le dossier du jeu — celui qui contient <code>Sun Haven.exe</code>.</span>
-        <span data-lang="en" hidden>Download <a href="https://github.com/BepInEx/BepInEx/releases" target="_blank" rel="noopener">BepInEx 5.4.23.5 (x64, Mono)</a> and extract it straight into the game folder — the one containing <code>Sun Haven.exe</code>.</span>
-      </li>
-      <li>
-        <span data-lang="fr">Lancez Sun Haven une fois, puis quittez. BepInEx crée alors ses dossiers.</span>
-        <span data-lang="en" hidden>Launch Sun Haven once, then quit. BepInEx creates its folders at that point.</span>
-      </li>
-      <li>
-        <span data-lang="fr">Récupérez le mod depuis <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">le dépôt GitHub</a> et compilez-le (<code>dotnet build -c Release</code>).</span>
-        <span data-lang="en" hidden>Get the mod from <a href="https://github.com/ZenqFR/SunHavenAccess" target="_blank" rel="noopener">the GitHub repository</a> and build it (<code>dotnet build -c Release</code>).</span>
-      </li>
-      <li>
-        <span data-lang="fr">Copiez <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> et <code>nvdaControllerClient64.dll</code> dans <code>Sun Haven\BepInEx\plugins\SunHavenAccess\</code>.</span>
-        <span data-lang="en" hidden>Copy <code>SunHavenAccess.dll</code>, <code>Tolk.dll</code> and <code>nvdaControllerClient64.dll</code> into <code>Sun Haven\BepInEx\plugins\SunHavenAccess\</code>.</span>
-      </li>
+      <li><span data-lang="fr">Téléchargez <strong>Installer-Sun-Haven-Access.exe</strong> depuis la <a href="https://github.com/ZenqFR/SunHavenAccess/releases/latest" target="_blank" rel="noopener">dernière version</a>.</span><span data-lang="en" hidden>Download <strong>Installer-Sun-Haven-Access.exe</strong> from the <a href="https://github.com/ZenqFR/SunHavenAccess/releases/latest" target="_blank" rel="noopener">latest release</a>.</span></li>
+      <li><span data-lang="fr">Lancez-le. <strong>Windows va vous avertir</strong> — c'est normal pour un programme sans certificat payant. Cherchez « Informations complémentaires », puis « Exécuter quand même ».</span><span data-lang="en" hidden>Run it. <strong>Windows will warn you</strong> — normal for a program without a paid certificate. Look for "More info", then "Run anyway".</span></li>
+      <li><span data-lang="fr">Le chemin du jeu est <strong>trouvé tout seul</strong> dans la quasi-totalité des cas. Sinon, indiquez le dossier contenant <code>Sun Haven.exe</code>.</span><span data-lang="en" hidden>The game's path is <strong>found automatically</strong> in nearly every case. Otherwise, point it at the folder containing <code>Sun Haven.exe</code>.</span></li>
+      <li><span data-lang="fr">Activez le bouton principal. Il annonce « Installer » ou « Mettre à jour » selon que le mod est déjà là. Le compte rendu se relit aux flèches : aucune fenêtre ne disparaît avant que vous l'ayez lue.</span><span data-lang="en" hidden>Activate the main button. It says "Install" or "Update" depending on whether the mod is already there. The report can be re-read with the arrows: no window disappears before you've read it.</span></li>
     </ol>
+    <p class="note">
+      <span data-lang="fr">L'installateur pose aussi <strong>BepInEx</strong>, la couche qui permet aux mods de fonctionner. Il ne la retire pas à la désinstallation : d'autres mods peuvent en dépendre.</span>
+      <span data-lang="en" hidden>The installer also sets up <strong>BepInEx</strong>, the layer that lets mods run. It doesn't remove it on uninstall: other mods may depend on it.</span>
+    </p>
+  </div>
+
+  <h3 class="sub-title"><span data-lang="fr">Vérifier que ça a marché</span><span data-lang="en" hidden>Checking it worked</span></h3>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Lancez Sun Haven. Au bout de quelques secondes, une voix annonce <strong>« Mod d'accessibilité Sun Haven chargé. Touche F1 pour l'aide. »</strong> C'est le seul signe dont vous avez besoin.</span>
+      <span data-lang="en" hidden>Launch Sun Haven. After a few seconds, a voice says <strong>"Sun Haven Access loaded. Press F1 for help."</strong> That's the only sign you need.</span>
+    </p>
+    <p>
+      <span data-lang="fr"><strong>Silence complet ?</strong> Appuyez sur <strong>F11</strong>. Cette touche joue un son Windows qui ne passe pas par la synthèse vocale. Si vous <em>entendez</em> ce son mais aucune parole, le problème vient du lecteur d'écran. Si vous n'entendez <em>rien du tout</em>, le mod ne s'est pas chargé — voir <a href="#aide">« Si ça coince »</a>.</span>
+      <span data-lang="en" hidden><strong>Total silence?</strong> Press <strong>F11</strong>. That key plays a Windows sound that doesn't go through speech. If you <em>hear</em> that sound but no speech, the problem is the screen reader. If you hear <em>nothing at all</em>, the mod didn't load — see <a href="#aide">"If stuck"</a>.</span>
+    </p>
   </div>
 
   <h2 class="section-title" id="touches">
-    <span data-lang="fr">Les touches vraiment vitales</span><span data-lang="en" hidden>The keys that really matter</span>
+    <span data-lang="fr">2. Les touches pour commencer</span><span data-lang="en" hidden>2. The keys to start with</span>
   </h2>
   <p>
-    <span data-lang="fr">Le mod compte plus de 40 raccourcis. N'essayez pas de tous les retenir : voici les dix qui suffisent pour commencer à jouer. Le reste est dans la <a href="docs.html#touches">documentation</a>, et <strong>F1</strong> vous rappelle les principales à tout moment.</span>
-    <span data-lang="en" hidden>The mod has over 40 shortcuts. Don't try to memorise them all: here are the ten that are enough to start playing. The rest is in the <a href="docs.html#touches">documentation</a>, and <strong>F1</strong> reminds you of the main ones at any time.</span>
+    <span data-lang="fr">Le mod compte plus de quarante raccourcis. <strong>N'essayez pas de les retenir.</strong> Ces huit-là suffisent pour tout le reste de cette page, et <strong>F1</strong> vous rappelle les autres à tout moment, sous forme de menu qu'on parcourt aux flèches — pas une tirade de quarante touches.</span>
+    <span data-lang="en" hidden>The mod has over forty shortcuts. <strong>Don't try to memorise them.</strong> These eight are enough for the rest of this page, and <strong>F1</strong> reminds you of the others at any time, as a menu you browse with the arrows — not a forty-key monologue.</span>
   </p>
   <table class="keys">
-    <caption class="sr-only"><span data-lang="fr">Les dix touches essentielles pour débuter</span><span data-lang="en" hidden>The ten essential keys to get started</span></caption>
+    <caption class="sr-only"><span data-lang="fr">Les huit touches essentielles pour débuter</span><span data-lang="en" hidden>The eight essential keys to get started</span></caption>
     <thead><tr>
       <th scope="col"><span data-lang="fr">Touche</span><span data-lang="en" hidden>Key</span></th>
       <th scope="col"><span data-lang="fr">À quoi ça sert</span><span data-lang="en" hidden>What it does</span></th>
     </tr></thead>
     <tbody>
-      <tr><td>F1</td><td><span data-lang="fr">Rappelle les touches principales. Votre filet de sécurité.</span><span data-lang="en" hidden>Reminds you of the main keys. Your safety net.</span></td></tr>
-      <tr><td>F10</td><td><span data-lang="fr">Décrit la case devant vous. La touche la plus utilisée du mod.</span><span data-lang="en" hidden>Describes the tile in front of you. The mod's most-used key.</span></td></tr>
+      <tr><td>F1</td><td><span data-lang="fr">L'aide, en menu. Votre filet de sécurité : tout est là.</span><span data-lang="en" hidden>The help, as a menu. Your safety net: everything is in there.</span></td></tr>
       <tr><td>B</td><td><span data-lang="fr">Répète la dernière annonce, si vous l'avez manquée.</span><span data-lang="en" hidden>Repeats the last announcement, if you missed it.</span></td></tr>
-      <tr><td>P</td><td><span data-lang="fr">Votre position et la direction que vous regardez.</span><span data-lang="en" hidden>Your position and the direction you're facing.</span></td></tr>
-      <tr><td>O</td><td><span data-lang="fr">Heure, jour, saison et météo. Utile : les boutiques ferment.</span><span data-lang="en" hidden>Time, day, season and weather. Useful: shops close.</span></td></tr>
-      <tr><td>H</td><td><span data-lang="fr">Votre santé et votre mana.</span><span data-lang="en" hidden>Your health and mana.</span></td></tr>
-      <tr><td><span data-lang="fr">Pavé 4 et Pavé 6</span><span data-lang="en" hidden>Numpad 4 and Numpad 6</span></td><td><span data-lang="fr">Tourner sur place sans avancer, pour inspecter autour de vous.</span><span data-lang="en" hidden>Turn in place without moving, to inspect your surroundings.</span></td></tr>
-      <tr><td><span data-lang="fr">Page précédente / suivante</span><span data-lang="en" hidden>Page Up / Page Down</span></td><td><span data-lang="fr">Parcourir ce qui vous entoure (le scanner). Ctrl+ces touches change de catégorie.</span><span data-lang="en" hidden>Browse what's around you (the scanner). Ctrl+these switches category.</span></td></tr>
-      <tr><td><span data-lang="fr">Origine, puis Ctrl+Origine</span><span data-lang="en" hidden>Home, then Ctrl+Home</span></td><td><span data-lang="fr">Décrit la cible repérée, puis vous y conduit automatiquement.</span><span data-lang="en" hidden>Describes the spotted target, then walks you there automatically.</span></td></tr>
-      <tr><td><span data-lang="fr">Flèches, dans un menu</span><span data-lang="en" hidden>Arrows, inside a menu</span></td><td><span data-lang="fr">Se déplacer selon la disposition réelle. Un bip court signale un bord.</span><span data-lang="en" hidden>Move according to the real layout. A short beep means you've hit an edge.</span></td></tr>
+      <tr><td>P</td><td><span data-lang="fr">Où vous êtes et dans quelle direction vous regardez.</span><span data-lang="en" hidden>Where you are and which way you're facing.</span></td></tr>
+      <tr><td>O</td><td><span data-lang="fr">Heure, jour, saison, météo. Les boutiques ferment : c'est utile.</span><span data-lang="en" hidden>Time, day, season, weather. Shops close, so this matters.</span></td></tr>
+      <tr><td>H</td><td><span data-lang="fr">Santé, mana et argent.</span><span data-lang="en" hidden>Health, mana and money.</span></td></tr>
+      <tr><td><span data-lang="fr">Pavé 4 / Pavé 6</span><span data-lang="en" hidden>Numpad 4 / Numpad 6</span></td><td><span data-lang="fr">Tourner sur place sans avancer, pour écouter autour de vous.</span><span data-lang="en" hidden>Turn in place without moving, to listen around you.</span></td></tr>
+      <tr><td><span data-lang="fr">Page préc. / suiv.</span><span data-lang="en" hidden>Page Up / Down</span></td><td><span data-lang="fr">Le scanner : parcourt ce qui vous entoure.</span><span data-lang="en" hidden>The scanner: browses what's around you.</span></td></tr>
+      <tr><td><span data-lang="fr">Ctrl + Origine</span><span data-lang="en" hidden>Ctrl + Home</span></td><td><span data-lang="fr">Vous conduit automatiquement à la cible repérée.</span><span data-lang="en" hidden>Walks you automatically to the spotted target.</span></td></tr>
     </tbody>
   </table>
   <p class="note">
-    <span data-lang="fr">Toutes les touches sont réassignables : <strong>Suppr</strong> ouvre un menu vocal qui les liste et permet de les changer sans quitter le jeu.</span>
-    <span data-lang="en" hidden>Every key can be reassigned: <strong>Delete</strong> opens a voice menu listing them all, letting you change them without leaving the game.</span>
+    <span data-lang="fr">Toutes sont réassignables : <strong>Suppr</strong> ouvre un menu qui les liste et permet d'en changer sans quitter le jeu. Une touche peut aussi n'être assignée à <em>rien</em> — c'est le cas de deux d'entre elles par défaut, parce qu'elles font doublon avec un comportement automatique.</span>
+    <span data-lang="en" hidden>All can be reassigned: <strong>Delete</strong> opens a menu listing them, letting you change them without leaving the game. A key can also be bound to <em>nothing</em> — two are shipped that way, because they duplicate something automatic.</span>
   </p>
 
-  <h2 class="section-title" id="personnage">
-    <span data-lang="fr">Créer son personnage</span><span data-lang="en" hidden>Creating your character</span>
+  <h2 class="section-title" id="menu-principal">
+    <span data-lang="fr">3. Le menu principal</span><span data-lang="en" hidden>3. The main menu</span>
   </h2>
   <div class="card">
+    <p>
+      <span data-lang="fr">C'est le premier écran après le chargement. <strong>La sélection est posée d'emblée sur le bouton du haut</strong>, et il est annoncé — vous savez donc où vous êtes sans avoir rien pressé.</span>
+      <span data-lang="en" hidden>This is the first screen after loading. <strong>The selection is placed on the top button straight away</strong>, and it's announced — so you know where you are without having pressed anything.</span>
+    </p>
     <ul>
-      <li><span data-lang="fr">Naviguez dans les menus aux <strong>flèches</strong>, validez avec <strong>Entrée</strong>.</span><span data-lang="en" hidden>Navigate menus with the <strong>arrow keys</strong>, confirm with <strong>Enter</strong>.</span></li>
-      <li><span data-lang="fr"><strong>Le champ du nom</strong> s'annonce quand vous y arrivez, puis chaque lettre tapée est répétée. Pendant que vous écrivez, les touches du mod sont suspendues — taper « p » ou « o » n'annoncera donc pas votre position ni l'heure.</span><span data-lang="en" hidden><strong>The name field</strong> announces itself when you reach it, then every letter you type is echoed back. While you're typing, the mod's keys stand down — so typing "p" or "o" won't announce your position or the time.</span></li>
-      <li><span data-lang="fr"><strong>La race</strong> est annoncée avec sa description et sa capacité spéciale à chaque changement.</span><span data-lang="en" hidden><strong>Your race</strong> is announced with its description and special ability on each change.</span></li>
-      <li><span data-lang="fr"><strong>L'apparence</strong> (corps, cheveux, yeux, visage, torse, jambes, tête, queue) se parcourt avec <strong>virgule</strong> et <strong>point</strong> pour changer d'option, et <strong>Ctrl</strong> avec ces mêmes touches pour changer de catégorie.</span><span data-lang="en" hidden><strong>Appearance</strong> (body, hair, eyes, face, chest, pants, head, tail) is browsed with <strong>comma</strong> and <strong>period</strong> to change option, and <strong>Ctrl</strong> plus those same keys to change category.</span></li>
+      <li><span data-lang="fr"><strong>Flèches haut et bas</strong> pour parcourir les boutons, <strong>Entrée</strong> pour valider.</span><span data-lang="en" hidden><strong>Up and down arrows</strong> to browse the buttons, <strong>Enter</strong> to confirm.</span></li>
+      <li><span data-lang="fr">Le premier bouton dit <strong>« Jouer »</strong>, ou <strong>« Continuer »</strong> si vous avez déjà une partie. C'est celui qui vous mène à la suite.</span><span data-lang="en" hidden>The first button says <strong>"Play"</strong>, or <strong>"Continue"</strong> if you already have a save. That's the one that takes you onward.</span></li>
+      <li><span data-lang="fr">Un <strong>bip court</strong> signale que vous êtes au bout de la liste et que la flèche n'a rien changé. Ce bip revient partout dans le mod, avec toujours ce sens-là.</span><span data-lang="en" hidden>A <strong>short beep</strong> means you've hit the end of the list and the arrow changed nothing. That beep recurs throughout the mod, always with that meaning.</span></li>
+    </ul>
+  </div>
+
+  <h2 class="section-title" id="choisir">
+    <span data-lang="fr">4. Choisir son personnage</span><span data-lang="en" hidden>4. Choosing your character</span>
+  </h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Vous arrivez sur l'écran des sauvegardes. <strong>Une liste s'ouvre toute seule</strong> — aucune touche à connaître. Elle annonce combien de parties elle contient, puis lit la première.</span>
+      <span data-lang="en" hidden>You arrive at the saves screen. <strong>A list opens by itself</strong> — no key to know. It announces how many saves it holds, then reads the first one.</span>
+    </p>
+    <p>
+      <span data-lang="fr">Chaque ligne donne <strong>le nom et la date</strong> de la partie : de quoi la reconnaître, rien de plus. Les niveaux de métier et l'or sont volontairement mis de côté — les réciter à chaque déplacement rendrait le parcours interminable alors que vous cherchez juste la bonne partie.</span>
+      <span data-lang="en" hidden>Each line gives <strong>the name and date</strong> of the save: enough to recognise it, nothing more. Profession levels and gold are deliberately left out — reciting them on every move would make browsing endless when you're just looking for the right save.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Haut et bas</strong> parcourent les parties, une à la fois.</span><span data-lang="en" hidden><strong>Up and down</strong> browse the saves, one at a time.</span></li>
+      <li><span data-lang="fr"><strong>Entrée</strong> ouvre trois actions pour la partie choisie, chacune nommée <em>avec elle</em> : « Charger la partie de Camille », « Détails complets de Camille », « Supprimer la partie de Camille ». Impossible d'effacer la mauvaise en se trompant de ligne.</span><span data-lang="en" hidden><strong>Enter</strong> opens three actions for the chosen save, each named <em>with it</em>: "Load Camille's game", "Full details for Camille", "Delete Camille's game". You can't erase the wrong one by picking the wrong line.</span></li>
+      <li><span data-lang="fr"><strong>« Supprimer » est placée en dernier</strong>, derrière une action inoffensive : valider la première entrée d'une liste est un geste réflexe, et il ne doit jamais détruire une partie.</span><span data-lang="en" hidden><strong>"Delete" comes last</strong>, behind a harmless action: confirming a list's first entry is a reflex, and it must never destroy a save.</span></li>
+      <li><span data-lang="fr"><strong>« Détails complets »</strong> ouvre une seconde liste : date, heure, emplacement, pièces, orbes, tickets, les cinq niveaux de métier et la quête en cours — une entrée à la fois, à votre rythme.</span><span data-lang="en" hidden><strong>"Full details"</strong> opens a second list: date, time, slot, coins, orbs, tickets, the five profession levels and the current quest — one entry at a time, at your pace.</span></li>
+      <li><span data-lang="fr">Un <strong>emplacement libre</strong> le dit, et le valider lance directement une nouvelle partie.</span><span data-lang="en" hidden>An <strong>empty slot</strong> says so, and confirming it starts a new game directly.</span></li>
+      <li><span data-lang="fr"><strong>Échap</strong> referme la liste si vous préférez l'écran normal. <strong>Pavé 3</strong> la rouvre.</span><span data-lang="en" hidden><strong>Escape</strong> closes the list if you'd rather have the normal screen. <strong>Numpad 3</strong> reopens it.</span></li>
     </ul>
     <p class="note">
-      <span data-lang="fr">L'apparence est purement esthétique : si elle vous indiffère, laissez les valeurs par défaut et commencez à jouer. La <strong>race</strong>, en revanche, donne une capacité spéciale — elle vaut la peine d'être écoutée.</span>
-      <span data-lang="en" hidden>Appearance is purely cosmetic: if you don't care about it, leave the defaults and start playing. Your <strong>race</strong>, however, grants a special ability — that one is worth listening to.</span>
+      <span data-lang="fr">C'est le jeu lui-même qui charge et qui supprime — le mod ne fait qu'activer ses boutons. La confirmation de suppression est donc celle du jeu, avec ses propres garde-fous.</span>
+      <span data-lang="en" hidden>The game itself loads and deletes — the mod only triggers its buttons. So the delete confirmation is the game's own, with its own safeguards.</span>
     </p>
   </div>
 
-  <h2 class="section-title" id="premiere-heure">
-    <span data-lang="fr">Votre première heure</span><span data-lang="en" hidden>Your first hour</span>
+  <h2 class="section-title" id="creer">
+    <span data-lang="fr">5. Créer son personnage</span><span data-lang="en" hidden>5. Creating your character</span>
   </h2>
   <div class="card">
-    <ol class="install-steps">
-      <li><span data-lang="fr"><strong>Prenez vos repères.</strong> Déplacez-vous en ZQSD (ou WASD). À chaque pas, la case devant vous est décrite. Utilisez Pavé 4 et Pavé 6 pour tourner sur place et écouter ce qu'il y a dans chaque direction.</span><span data-lang="en" hidden><strong>Get your bearings.</strong> Move with WASD. On every step, the tile ahead is described. Use Numpad 4 and Numpad 6 to turn in place and hear what lies in each direction.</span></li>
-      <li><span data-lang="fr"><strong>Repérez ce qui vous entoure.</strong> Page précédente et Page suivante parcourent les éléments trouvés autour de vous ; Ctrl+ces touches change de catégorie (personnages, plantations, ressources, bâtiments…). Ctrl+Origine vous conduit automatiquement à la cible choisie.</span><span data-lang="en" hidden><strong>Survey your surroundings.</strong> Page Up and Page Down browse what's been found around you; Ctrl+those switches category (characters, crops, resources, buildings…). Ctrl+Home walks you to the chosen target automatically.</span></li>
-      <li><span data-lang="fr"><strong>Cultivez.</strong> Beaucoup d'actions passent par un clic souris et non par une touche d'interaction. Activez la souris directionnelle avec <strong>J</strong> : le curseur pointera en permanence la case devant vous. Ensuite <strong>Pavé 5</strong> clique. Labourer, planter, arroser, récolter : chaque action est confirmée à la voix.</span><span data-lang="en" hidden><strong>Farm.</strong> Many actions go through a mouse click rather than an interact key. Turn on the directional mouse with <strong>J</strong>: the cursor will permanently aim at the tile in front of you. Then <strong>Numpad 5</strong> clicks. Tilling, planting, watering, harvesting: each action is confirmed aloud.</span></li>
-      <li><span data-lang="fr"><strong>Parlez aux habitants.</strong> Le scanner trouve les personnages ; approchez-vous et appuyez sur <strong>E</strong>. Les dialogues sont lus automatiquement, dès le début de chaque ligne.</span><span data-lang="en" hidden><strong>Talk to the townsfolk.</strong> The scanner finds characters; walk up and press <strong>E</strong>. Dialogue is read automatically, from the start of each line.</span></li>
-      <li><span data-lang="fr"><strong>Gérez votre sac.</strong> Tab ouvre le menu. Les flèches suivent la disposition réelle, Ctrl+flèche saute d'une zone à l'autre (onglets, équipement, sac, barre d'action). L'apostrophe trie le sac, ce qui raccourcit beaucoup le parcours.</span><span data-lang="en" hidden><strong>Manage your bag.</strong> Tab opens the menu. Arrows follow the real layout, Ctrl+arrow jumps between zones (tabs, equipment, bag, action bar). The apostrophe sorts the bag, which shortens browsing considerably.</span></li>
-      <li><span data-lang="fr"><strong>Suivez vos quêtes.</strong> Elles sont annoncées quand vous les acceptez et quand vous les rendez ; <strong>G</strong> vous en donne la liste complète à tout moment.</span><span data-lang="en" hidden><strong>Track your quests.</strong> They're announced when accepted and when handed in; <strong>G</strong> gives you the full list at any time.</span></li>
-    </ol>
+    <p>
+      <span data-lang="fr">Dès votre arrivée, une annonce décrit l'écran : <strong>trois colonnes</strong>. À gauche les catégories (race, corps, cheveux, métier, anniversaire), au centre les choix de la catégorie courante, à droite votre personnage, le champ du nom et le bouton Valider.</span>
+      <span data-lang="en" hidden>On arrival, an announcement describes the screen: <strong>three columns</strong>. On the left the categories (race, body, hair, profession, birthday), in the centre the current category's choices, on the right your character, the name field and the Confirm button.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Ctrl + gauche ou droite</strong> saute d'une colonne à l'autre, et annonce laquelle. Les flèches seules parcourent la colonne où vous êtes.</span><span data-lang="en" hidden><strong>Ctrl + left or right</strong> jumps between columns, and says which. Plain arrows browse the column you're in.</span></li>
+      <li><span data-lang="fr"><strong>Deux choses sont obligatoires</strong> : un nom et une date d'anniversaire. Le mod vous dit ce qui manque encore à chaque changement, et vous prévient quand tout est prêt — vous ne resterez pas bloqué devant un bouton qui refuse sans expliquer pourquoi.</span><span data-lang="en" hidden><strong>Two things are required</strong>: a name and a birthday. The mod tells you what's still missing on each change, and says when everything is ready — you won't be stuck at a button that refuses without saying why.</span></li>
+      <li><span data-lang="fr"><strong>Le champ du nom</strong> s'annonce quand vous l'atteignez, puis chaque lettre tapée est répétée. Pendant la saisie, les touches du mod sont suspendues : taper « p » ou « o » n'annoncera donc ni votre position ni l'heure.</span><span data-lang="en" hidden><strong>The name field</strong> announces itself when you reach it, then every letter typed is echoed. While typing, the mod's keys stand down: typing "p" or "o" won't announce your position or the time.</span></li>
+      <li><span data-lang="fr"><strong>La race</strong> est annoncée avec sa description et sa capacité spéciale à chaque changement. C'est le seul choix qui a un effet sur le jeu : il mérite d'être écouté.</span><span data-lang="en" hidden><strong>Your race</strong> is announced with its description and special ability on each change. It's the only choice that affects gameplay: worth listening to.</span></li>
+      <li><span data-lang="fr"><strong>L'apparence</strong> se parcourt aussi avec <strong>virgule</strong> et <strong>point</strong> pour changer d'option, <strong>Ctrl</strong> avec ces mêmes touches pour changer de catégorie — utile quand la grille centrale est dense.</span><span data-lang="en" hidden><strong>Appearance</strong> can also be browsed with <strong>comma</strong> and <strong>period</strong> to change option, <strong>Ctrl</strong> plus those to change category — handy when the centre grid is dense.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr">L'apparence est purement esthétique. Si elle vous indiffère, laissez les valeurs par défaut, tapez un nom, choisissez un anniversaire, et lancez la partie.</span>
+      <span data-lang="en" hidden>Appearance is purely cosmetic. If you don't care, leave the defaults, type a name, pick a birthday, and start the game.</span>
+    </p>
   </div>
 
-  <h2 class="section-title" id="aide">
-    <span data-lang="fr">Si quelque chose ne va pas</span><span data-lang="en" hidden>If something goes wrong</span>
+  <h2 class="section-title" id="bouger">
+    <span data-lang="fr">6. Se déplacer et savoir où l'on est</span><span data-lang="en" hidden>6. Moving and knowing where you are</span>
+  </h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Vous voilà dans le monde. Déplacez-vous avec <strong>ZQSD</strong> (ou WASD selon votre clavier). <strong>À chaque pas, la case devant vous est décrite automatiquement</strong> : le terrain, ce qui s'y trouve, ou l'obstacle qui vous bloque. C'est le cœur du mod, et vous n'avez aucune touche à presser pour l'obtenir.</span>
+      <span data-lang="en" hidden>You're in the world. Move with <strong>WASD</strong>. <strong>At every step, the tile in front of you is described automatically</strong>: the terrain, what's on it, or the obstacle blocking you. That's the heart of the mod, and you press nothing to get it.</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Pavé 4</strong> et <strong>Pavé 6</strong> vous font <em>pivoter sur place</em>. C'est le geste à prendre : tourner sur soi et écouter les quatre directions vaut mieux que d'avancer au hasard.</span><span data-lang="en" hidden><strong>Numpad 4</strong> and <strong>Numpad 6</strong> <em>turn you in place</em>. Get into this habit: turning and listening to all four directions beats walking blindly.</span></li>
+      <li><span data-lang="fr"><strong>P</strong> annonce vos coordonnées et la direction que vous regardez. <strong>B</strong> répète la dernière annonce.</span><span data-lang="en" hidden><strong>P</strong> announces your coordinates and facing direction. <strong>B</strong> repeats the last announcement.</span></li>
+      <li><span data-lang="fr"><strong>F9</strong> coupe ou rétablit la description automatique, si elle devient bavarde pendant un long trajet.</span><span data-lang="en" hidden><strong>F9</strong> turns the automatic description off and back on, if it gets chatty on a long walk.</span></li>
+      <li><span data-lang="fr"><strong>Espace</strong> saute, <strong>E</strong> interagit avec ce qui est devant vous — parler à quelqu'un, ouvrir un coffre, franchir une porte.</span><span data-lang="en" hidden><strong>Space</strong> jumps, <strong>E</strong> interacts with what's ahead — talking to someone, opening a chest, going through a door.</span></li>
+    </ul>
+    <h3 class="sub-title"><span data-lang="fr">Explorer sans bouger</span><span data-lang="en" hidden>Exploring without moving</span></h3>
+    <p>
+      <span data-lang="fr"><strong>Pavé point</strong> active le <strong>curseur de case libre</strong>. Les flèches le déplacent alors case par case n'importe où sur la carte, et chaque case est décrite avec sa direction et sa distance, sans que votre personnage bouge. <strong>Pavé étoile</strong> le ramène sur vous. C'est l'outil pour comprendre une pièce ou un champ avant de s'y engager.</span>
+      <span data-lang="en" hidden><strong>Numpad period</strong> turns on the <strong>free tile cursor</strong>. The arrows then move it tile by tile anywhere on the map, each tile described with its direction and distance, without your character moving. <strong>Numpad asterisk</strong> brings it back to you. This is the tool for understanding a room or a field before committing to it.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="trouver">
+    <span data-lang="fr">7. Trouver quelque chose et s'y rendre</span><span data-lang="en" hidden>7. Finding something and getting there</span>
+  </h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">C'est la fonction qui remplace le coup d'œil. <strong>Le scanner</strong> passe en revue ce qui vous entoure, par catégories.</span>
+      <span data-lang="en" hidden>This is the function that replaces a glance around. <strong>The scanner</strong> reviews what's around you, by category.</span>
+    </p>
+    <ol class="install-steps">
+      <li><span data-lang="fr"><strong>Ctrl + Page précédente ou suivante</strong> change de catégorie : personnages, plantations, ressources, bâtiments et portails, animaux et compagnons, ennemis, mobilier et rangement. Le nombre trouvé est annoncé à chaque fois, et les catégories vides sont sautées.</span><span data-lang="en" hidden><strong>Ctrl + Page Up or Page Down</strong> changes category: characters, crops, resources, buildings and portals, animals and pets, enemies, furniture and storage. The count is announced each time, and empty categories are skipped.</span></li>
+      <li><span data-lang="fr"><strong>Page précédente et Page suivante</strong> parcourent les éléments trouvés, du plus proche au plus loin. Chacun annonce son nom, sa direction et sa distance en cases.</span><span data-lang="en" hidden><strong>Page Up and Page Down</strong> browse the results, nearest first. Each announces its name, direction and distance in tiles.</span></li>
+      <li><span data-lang="fr"><strong>Ctrl + Origine</strong> vous y conduit à pied, automatiquement, en contournant les obstacles. <strong>Échap</strong> annule le trajet.</span><span data-lang="en" hidden><strong>Ctrl + Home</strong> walks you there automatically, going around obstacles. <strong>Escape</strong> cancels the walk.</span></li>
+    </ol>
+    <p class="note">
+      <span data-lang="fr"><strong>N</strong> fait plus court quand vous ne cherchez qu'une personne : elle passe au personnage proche suivant et l'annonce. Et <strong>X</strong>, carte ouverte, donne la liste des lieux de la région avec leur description — mais la carte ne peut pas lancer de trajet : ses lieux sont des icônes d'interface, sans position dans le monde. Pour se déplacer, c'est le scanner.</span>
+      <span data-lang="en" hidden><strong>N</strong> is quicker when you only want a person: it moves to the next nearby character and announces them. And <strong>X</strong>, with the map open, lists the region's locations with their descriptions — but the map can't start a walk: its locations are interface icons with no position in the world. To travel, use the scanner.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="agir">
+    <span data-lang="fr">8. Agir sur le monde</span><span data-lang="en" hidden>8. Acting on the world</span>
+  </h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr"><strong>Voici le point qui bloque tout le monde au début</strong>, alors lisez-le en entier. Dans Sun Haven, beaucoup d'actions ne passent pas par une touche mais par un <strong>clic de souris à un endroit précis</strong> : labourer, arroser, planter, miner, couper du bois, pêcher.</span>
+      <span data-lang="en" hidden><strong>This is the point that stops everyone at first</strong>, so read it all. In Sun Haven, many actions don't use a key but a <strong>mouse click at a precise spot</strong>: tilling, watering, planting, mining, chopping, fishing.</span>
+    </p>
+    <p>
+      <span data-lang="fr">La solution tient en deux touches :</span>
+      <span data-lang="en" hidden>The solution is two keys:</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>J</strong> active la <strong>souris directionnelle</strong>. Le curseur pointe alors en permanence la case devant vous, et vous suit quand vous tournez ou avancez. Vous n'avez plus jamais à viser.</span><span data-lang="en" hidden><strong>J</strong> turns on the <strong>directional mouse</strong>. The cursor then permanently points at the tile in front of you, following as you turn or walk. You never have to aim again.</span></li>
+      <li><span data-lang="fr"><strong>Pavé 5</strong> fait un <strong>clic gauche</strong> à cet endroit. <strong>Deux-points</strong> fait un clic droit.</span><span data-lang="en" hidden><strong>Numpad 5</strong> makes a <strong>left click</strong> there. <strong>Colon</strong> makes a right click.</span></li>
+    </ul>
+    <p>
+      <span data-lang="fr">Autrement dit : <strong>tournez-vous vers la case, puis Pavé 5</strong>. Chaque action réussie est confirmée à la voix — « Terre labourée », « Planté », « Arrosé », « Récolté », « Arbre abattu », « Rocher brisé ».</span>
+      <span data-lang="en" hidden>In short: <strong>face the tile, then Numpad 5</strong>. Every successful action is confirmed aloud — "Soil tilled", "Planted", "Watered", "Harvested", "Tree felled", "Rock broken".</span>
+    </p>
+    <p class="note">
+      <span data-lang="fr">Si l'outil ne fait rien et que rien n'est annoncé, deux causes possibles, toutes deux dites par le mod : <strong>l'outil est trop faible</strong> pour cet arbre ou ce rocher, ou <strong>votre mana est à zéro</strong> — voir juste en dessous.</span>
+      <span data-lang="en" hidden>If the tool does nothing and nothing is announced, two likely causes, both spoken by the mod: <strong>the tool is too weak</strong> for that tree or rock, or <strong>your mana is at zero</strong> — see just below.</span>
+    </p>
+  </div>
+
+  <h3 class="sub-title"><span data-lang="fr">Le mana : la chose qu'on ne devine pas</span><span data-lang="en" hidden>Mana: the thing nobody guesses</span></h3>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Le mana n'est <strong>pas</strong> une réserve de sorts. C'est la jauge que consomment <strong>vos outils</strong> : à zéro, la pioche, la houe et l'arrosoir cessent simplement d'agir. Sans explication, on croit à un bug du mod.</span>
+      <span data-lang="en" hidden>Mana is <strong>not</strong> a spell reserve. It's the gauge <strong>your tools</strong> drain: at zero, the pickaxe, hoe and watering can simply stop working. With no explanation, it looks like a bug in the mod.</span>
+    </p>
+    <p>
+      <span data-lang="fr">Le mod vous prévient donc <strong>à la moitié, au quart, presque à sec, puis à l'épuisement</strong>. <strong>H</strong> donne l'état exact à tout moment. Une nuit de sommeil le restaure entièrement.</span>
+      <span data-lang="en" hidden>So the mod warns you <strong>at half, at a quarter, nearly dry, then empty</strong>. <strong>H</strong> gives the exact state at any time. A night's sleep restores it fully.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="ferme">
+    <span data-lang="fr">9. Votre ferme, pas à pas</span><span data-lang="en" hidden>9. Your farm, step by step</span>
+  </h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr">Le cycle complet d'une culture, avec ce que vous entendez à chaque étape :</span>
+      <span data-lang="en" hidden>A crop's full cycle, with what you hear at each step:</span>
+    </p>
+    <ol class="install-steps">
+      <li><span data-lang="fr"><strong>Trouvez de la terre.</strong> En marchant, une case cultivable s'annonce « Terre cultivable, pas encore labourée ».</span><span data-lang="en" hidden><strong>Find soil.</strong> As you walk, a farmable tile announces "Farmable soil, not tilled yet".</span></li>
+      <li><span data-lang="fr"><strong>Labourez.</strong> Houe en main, face à la case, <strong>Pavé 5</strong>. → « Terre labourée. »</span><span data-lang="en" hidden><strong>Till.</strong> Hoe in hand, facing the tile, <strong>Numpad 5</strong>. → "Soil tilled."</span></li>
+      <li><span data-lang="fr"><strong>Plantez.</strong> Graines en main, <strong>Pavé 5</strong>. → « Planté. »</span><span data-lang="en" hidden><strong>Plant.</strong> Seeds in hand, <strong>Numpad 5</strong>. → "Planted."</span></li>
+      <li><span data-lang="fr"><strong>Arrosez.</strong> Arrosoir en main, <strong>Pavé 5</strong>. → « Arrosé. » Si rien ne se passe : « Arrosoir vide » — remplissez-le à un point d'eau, que le scanner trouve.</span><span data-lang="en" hidden><strong>Water.</strong> Watering can in hand, <strong>Numpad 5</strong>. → "Watered." If nothing happens: "Watering can empty" — refill at water, which the scanner finds.</span></li>
+      <li><span data-lang="fr"><strong>Attendez.</strong> En repassant devant, la case dit son état : « Culture, arrosée, encore 2 jours avant maturité », puis « prête à récolter ».</span><span data-lang="en" hidden><strong>Wait.</strong> Walking past again, the tile says its state: "Crop, watered, 2 more days to ripen", then "ready to harvest".</span></li>
+      <li><span data-lang="fr"><strong>Récoltez.</strong> <strong>Pavé 5</strong>. → « Récolté. »</span><span data-lang="en" hidden><strong>Harvest.</strong> <strong>Numpad 5</strong>. → "Harvested."</span></li>
+    </ol>
+    <p class="note">
+      <span data-lang="fr">La catégorie <strong>Plantations</strong> du scanner retrouve toutes vos cultures et leur état — bien plus rapide que de parcourir le champ case par case pour savoir ce qui a soif.</span>
+      <span data-lang="en" hidden>The scanner's <strong>Crops</strong> category finds all your plantings and their state — far quicker than walking the field tile by tile to find out what's thirsty.</span>
+    </p>
+    <p>
+      <span data-lang="fr">Pour les <strong>animaux</strong>, <strong>Pavé moins</strong> donne le bilan du troupeau en une phrase : combien sont à nourrir, combien à caresser, combien ont laissé un produit au sol. C'est la réponse à « me reste-t-il quelque chose à faire avant de me coucher ? », qu'un joueur voyant règle d'un coup d'œil sur l'enclos.</span>
+      <span data-lang="en" hidden>For <strong>animals</strong>, <strong>Numpad minus</strong> gives the herd's status in one sentence: how many need feeding, how many need petting, how many left a product on the ground. It answers "is there anything left to do before bed?", which a sighted player settles with a glance at the pen.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="menus">
+    <span data-lang="fr">10. Le sac et les menus</span><span data-lang="en" hidden>10. The bag and the menus</span>
+  </h2>
+  <div class="card">
+    <p>
+      <span data-lang="fr"><strong>Tab</strong> (ou <strong>I</strong>) ouvre le menu principal. Il compte sept onglets : sac à dos, arbre de compétences, relations, quêtes, carte, statistiques, paramètres.</span>
+      <span data-lang="en" hidden><strong>Tab</strong> (or <strong>I</strong>) opens the main menu. It has seven tabs: backpack, skill tree, relationships, quests, map, statistics, settings.</span>
+    </p>
+    <p>
+      <span data-lang="fr"><strong>Chaque onglet, sauf le sac à dos, ouvre sa liste tout seul</strong> dès que vous arrivez dessus. Rien de plus à retenir que ceci :</span>
+      <span data-lang="en" hidden><strong>Every tab except the backpack opens its list by itself</strong> as soon as you land on it. Nothing more to remember than this:</span>
+    </p>
+    <ul>
+      <li><span data-lang="fr"><strong>Tab</strong> ouvre · <strong>gauche et droite</strong> changent d'onglet · <strong>haut et bas</strong> parcourent la liste · <strong>Entrée</strong> valide · <strong>Échap</strong> referme.</span><span data-lang="en" hidden><strong>Tab</strong> opens · <strong>left and right</strong> change tab · <strong>up and down</strong> browse the list · <strong>Enter</strong> confirms · <strong>Escape</strong> closes.</span></li>
+    </ul>
+    <p>
+      <span data-lang="fr">C'est voulu : ces panneaux sont conçus pour l'œil — colonnes, encarts, icônes dont la position porte le sens. Les parcourir tels quels oblige à se représenter une image qu'on ne voit pas. Or leur contenu est presque toujours une simple liste, alors c'est ainsi qu'il est présenté.</span>
+      <span data-lang="en" hidden>This is deliberate: those panels are built for the eye — columns, boxes, icons whose position carries meaning. Browsing them as-is forces you to picture an image you can't see. Their content, though, is almost always a plain list, so that's how it's presented.</span>
+    </p>
+    <h3 class="sub-title"><span data-lang="fr">Le sac à dos garde sa grille</span><span data-lang="en" hidden>The backpack keeps its grid</span></h3>
+    <ul>
+      <li><span data-lang="fr">Les <strong>flèches</strong> suivent la disposition réelle : gauche et droite restent sur la ligne et butent en bout avec un bip, haut et bas changent de ligne.</span><span data-lang="en" hidden><strong>Arrows</strong> follow the real layout: left and right stay on the row and stop at its end with a beep, up and down change row.</span></li>
+      <li><span data-lang="fr"><strong>Ctrl + flèche</strong> saute d'une zone à l'autre : onglets en haut, équipement à gauche, sac à droite, barre d'action en bas. <strong>Ctrl + haut</strong> ramène toujours aux onglets.</span><span data-lang="en" hidden><strong>Ctrl + arrow</strong> jumps between areas: tabs on top, equipment left, bag right, action bar at the bottom. <strong>Ctrl + up</strong> always returns to the tabs.</span></li>
+      <li><span data-lang="fr">Les touches <strong>1 à 0</strong> envoient l'objet sélectionné vers la barre d'action, ou l'en retirent.</span><span data-lang="en" hidden>Keys <strong>1 to 0</strong> send the selected item to the action bar, or take it off.</span></li>
+      <li><span data-lang="fr"><strong>Apostrophe</strong> trie le sac — ça raccourcit beaucoup le parcours. <strong>Antislash</strong> en donne un résumé. <strong>Égal</strong> range dans les coffres proches tout ce dont ils contiennent déjà un exemplaire.</span><span data-lang="en" hidden><strong>Apostrophe</strong> sorts the bag — this shortens browsing a lot. <strong>Backslash</strong> gives a summary. <strong>Equals</strong> puts away in nearby chests everything they already hold one of.</span></li>
+    </ul>
+    <p class="note">
+      <span data-lang="fr">Chaque liste a aussi sa touche directe, pour la consulter <em>sans</em> ouvrir le menu : <strong>G</strong> les quêtes, <strong>V</strong> les relations, <strong>Z</strong> l'arbre de compétences, <strong>U</strong> vos niveaux, <strong>Pavé 8</strong> les réglages.</span>
+      <span data-lang="en" hidden>Each list also has its own key, to consult it <em>without</em> opening the menu: <strong>G</strong> quests, <strong>V</strong> relationships, <strong>Z</strong> the skill tree, <strong>U</strong> your levels, <strong>Numpad 8</strong> the settings.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="gens">
+    <span data-lang="fr">11. Les habitants, les quêtes, les boutiques</span><span data-lang="en" hidden>11. Townsfolk, quests, shops</span>
   </h2>
   <div class="card">
     <ul>
-      <li><span data-lang="fr"><strong>Le mod ne parle pas du tout</strong> : appuyez sur F11 pour distinguer un problème de synthèse vocale d'un problème de chargement du mod (voir plus haut).</span><span data-lang="en" hidden><strong>The mod doesn't speak at all</strong>: press F11 to tell a speech problem apart from a mod-loading problem (see above).</span></li>
-      <li><span data-lang="fr"><strong>Les flèches se comportent bizarrement dans un menu</strong> : le mod prend la main sur les flèches pour offrir une navigation en ligne et colonne. Ce comportement se désactive dans le fichier de configuration, section <code>Navigation</code>.</span><span data-lang="en" hidden><strong>Arrows behave oddly in a menu</strong>: the mod takes over the arrow keys to provide row-and-column navigation. That behaviour can be turned off in the configuration file, <code>Navigation</code> section.</span></li>
-      <li><span data-lang="fr"><strong>Une touche entre en conflit avec autre chose</strong> : ouvrez le menu des raccourcis avec <strong>Suppr</strong> et réassignez-la.</span><span data-lang="en" hidden><strong>A key clashes with something else</strong>: open the shortcuts menu with <strong>Delete</strong> and reassign it.</span></li>
-      <li><span data-lang="fr"><strong>Autre chose ?</strong> Le mod est jeune et développé sans pouvoir être testé par son auteur — vos retours sont ce qui le fait avancer. Signalez le problème sur <a href="https://github.com/ZenqFR/SunHavenAccess/issues" target="_blank" rel="noopener">GitHub</a> ou sur <a href="https://discord.gg/DD7bP3r7Qd" target="_blank" rel="noopener">le Discord QGDV</a>.</span><span data-lang="en" hidden><strong>Anything else?</strong> The mod is young and developed without its author being able to test it — your feedback is what moves it forward. Report the problem on <a href="https://github.com/ZenqFR/SunHavenAccess/issues" target="_blank" rel="noopener">GitHub</a> or on <a href="https://discord.gg/DD7bP3r7Qd" target="_blank" rel="noopener">the QGDV Discord</a>.</span></li>
+      <li><span data-lang="fr"><strong>Parler.</strong> Le scanner, catégorie Personnages, les trouve ; approchez-vous et appuyez sur <strong>E</strong>. Les dialogues sont lus dès le <em>début</em> de la ligne, sans attendre l'animation. Quand une réponse est à choisir, les flèches parcourent les choix et Entrée valide.</span><span data-lang="en" hidden><strong>Talking.</strong> The scanner's Characters category finds them; walk up and press <strong>E</strong>. Dialogue is read from the <em>start</em> of the line, without waiting for the animation. When a reply is to be chosen, the arrows browse the options and Enter confirms.</span></li>
+      <li><span data-lang="fr"><strong>Les quêtes</strong> sont annoncées quand vous les acceptez et quand vous les rendez. <strong>G</strong> en donne la liste à tout moment : nom, progression, où les rendre.</span><span data-lang="en" hidden><strong>Quests</strong> are announced when accepted and when handed in. <strong>G</strong> gives the list at any time: name, progress, where to hand them in.</span></li>
+      <li><span data-lang="fr"><strong>Les panneaux d'affichage</strong> des villes proposent des tâches quotidiennes. Près d'un panneau, <strong>Pavé Entrée</strong> annonce celles du jour, si vous les avez déjà acceptées, et ce qu'elles rapportent — <em>sans avoir à ouvrir le panneau</em>, donc sans détour inutile.</span><span data-lang="en" hidden><strong>Town bulletin boards</strong> offer daily tasks. Near a board, <strong>Numpad Enter</strong> announces the day's tasks, whether you've already accepted them, and what they pay — <em>without opening the board</em>, so no wasted trip.</span></li>
+      <li><span data-lang="fr"><strong>Les relations.</strong> <strong>V</strong> liste les personnages que vous connaissez avec leurs cœurs et votre statut. Offrir des cadeaux les fait monter.</span><span data-lang="en" hidden><strong>Relationships.</strong> <strong>V</strong> lists the characters you know with their hearts and your status. Gifts raise them.</span></li>
+      <li><span data-lang="fr"><strong>Les boutiques et l'artisanat</strong> se parcourent comme un menu ordinaire. Le prix et les ingrédients y sont toujours annoncés en entier, même si vous avez activé le mode bref pour l'inventaire : devant un achat, ils sont indispensables.</span><span data-lang="en" hidden><strong>Shops and crafting</strong> browse like any menu. Price and ingredients are always announced in full there, even with brief mode on for the inventory: facing a purchase, they're essential.</span></li>
+      <li><span data-lang="fr"><strong>Les paquets à compléter</strong> (musée, autel, aquarium) : devant un paquet ouvert, <strong>Pavé slash</strong> dit ce qu'il manque encore, objet par objet, avec les quantités déjà déposées.</span><span data-lang="en" hidden><strong>Bundles to complete</strong> (museum, altar, aquarium): with a bundle open, <strong>Numpad slash</strong> says what's still missing, item by item, with the quantities already handed in.</span></li>
     </ul>
+  </div>
+
+  <h2 class="section-title" id="reglages">
+    <span data-lang="fr">12. Régler le mod à votre main</span><span data-lang="en" hidden>12. Tuning the mod to suit you</span>
+  </h2>
+  <div class="card">
+    <ul>
+      <li><span data-lang="fr"><strong>Pavé 8</strong> ouvre les <strong>réglages en liste</strong> : d'abord ceux du mod, puis ceux du jeu affichés à l'écran. Haut et bas parcourent les options, <strong>gauche et droite changent la valeur</strong> de celle où vous êtes — une case se coche, un curseur se déplace.</span><span data-lang="en" hidden><strong>Numpad 8</strong> opens the <strong>settings as a list</strong>: the mod's own first, then the game's as shown on screen. Up and down browse the options, <strong>left and right change the value</strong> of the one you're on — a box ticks, a slider moves.</span></li>
+      <li><span data-lang="fr">En première entrée : <strong>la langue des annonces</strong> — comme le jeu, Français, ou English. Le mod suit le jeu par défaut.</span><span data-lang="en" hidden>First entry: <strong>the announcement language</strong> — same as the game, Français, or English. The mod follows the game by default.</span></li>
+      <li><span data-lang="fr">Puis le <strong>bip de bord</strong>, la <strong>navigation directionnelle</strong> (à couper si un écran se comporte mal), et le <strong>mode bref</strong> dans l'inventaire.</span><span data-lang="en" hidden>Then the <strong>edge beep</strong>, <strong>directional navigation</strong> (turn it off if a screen misbehaves), and <strong>brief mode</strong> in the inventory.</span></li>
+      <li><span data-lang="fr"><strong>Suppr</strong> ouvre le <strong>menu des raccourcis</strong> : chaque action avec sa touche et son explication, réassignable sans quitter le jeu. Sur l'écran de saisie, <strong>Retour arrière</strong> ou <strong>Suppression</strong> retire l'assignation — l'action reste disponible, mais n'occupe plus aucune touche.</span><span data-lang="en" hidden><strong>Delete</strong> opens the <strong>shortcuts menu</strong>: every action with its key and explanation, reassignable without leaving the game. On the entry screen, <strong>Backspace</strong> or <strong>Delete</strong> clears the binding — the action stays available but no longer occupies a key.</span></li>
+    </ul>
+  </div>
+
+  <h3 class="sub-title"><span data-lang="fr">Jouer à plusieurs</span><span data-lang="en" hidden>Playing together</span></h3>
+  <div class="card">
+    <p>
+      <span data-lang="fr"><strong>Vos partenaires n'ont rien à installer.</strong> Le mod est entièrement local : il n'envoie ni ne reçoit rien sur le réseau. Quelqu'un qui joue avec vous sans le mod ne constate aucune différence.</span>
+      <span data-lang="en" hidden><strong>Your partners need install nothing.</strong> The mod is entirely local: it sends and receives nothing over the network. Someone playing with you without it notices no difference.</span>
+    </p>
+    <p>
+      <span data-lang="fr">Le mod annonce <strong>qui rejoint et qui quitte</strong> la partie, nomme <strong>qui parle</strong> dans le tchat, et fait apparaître les autres joueurs dans la catégorie Personnages du scanner. Il n'annonce que <strong>vos</strong> actions : les coups reçus, les prises et les récoltes de vos partenaires restent silencieux.</span>
+      <span data-lang="en" hidden>The mod announces <strong>who joins and who leaves</strong>, names <strong>who is speaking</strong> in chat, and shows other players in the scanner's Characters category. It announces only <strong>your</strong> actions: hits taken, catches and harvests by your partners stay silent.</span>
+    </p>
+  </div>
+
+  <h2 class="section-title" id="aide">
+    <span data-lang="fr">13. Si ça coince</span><span data-lang="en" hidden>13. If you get stuck</span>
+  </h2>
+  <div class="card">
+    <ul>
+      <li><span data-lang="fr"><strong>Le mod ne parle pas du tout.</strong> Appuyez sur <strong>F11</strong> : si vous entendez le son mais pas de parole, le problème vient du lecteur d'écran. Sinon, ouvrez <code>Sun Haven\BepInEx\LogOutput.log</code> — il nomme la cause en clair.</span><span data-lang="en" hidden><strong>The mod doesn't speak at all.</strong> Press <strong>F11</strong>: if you hear the sound but no speech, the problem is the screen reader. Otherwise open <code>Sun Haven\BepInEx\LogOutput.log</code> — it names the cause in plain words.</span></li>
+      <li><span data-lang="fr"><strong>Un outil ne fait rien.</strong> Vérifiez le mana avec <strong>H</strong>, et que vous êtes bien tourné vers la case. La souris directionnelle (<strong>J</strong>) doit être active.</span><span data-lang="en" hidden><strong>A tool does nothing.</strong> Check mana with <strong>H</strong>, and that you're facing the tile. The directional mouse (<strong>J</strong>) must be on.</span></li>
+      <li><span data-lang="fr"><strong>Les flèches se comportent bizarrement dans un menu.</strong> Le mod prend la main sur elles pour offrir une navigation en ligne et colonne. Coupez la <em>navigation directionnelle</em> dans les réglages (<strong>Pavé 8</strong>) : les flèches reviennent au jeu.</span><span data-lang="en" hidden><strong>Arrows behave oddly in a menu.</strong> The mod takes them over to provide row-and-column navigation. Turn off <em>directional navigation</em> in the settings (<strong>Numpad 8</strong>): the arrows go back to the game.</span></li>
+      <li><span data-lang="fr"><strong>Une touche entre en conflit.</strong> Ouvrez <strong>Suppr</strong> et réassignez-la, ou retirez-lui toute touche.</span><span data-lang="en" hidden><strong>A key clashes.</strong> Open <strong>Delete</strong> and reassign it, or clear its binding entirely.</span></li>
+      <li><span data-lang="fr"><strong>Vous êtes perdu.</strong> <strong>F1</strong>, toujours. Le menu d'aide couvre tout ce qui est sur cette page, avec vos touches réellement configurées.</span><span data-lang="en" hidden><strong>You're lost.</strong> <strong>F1</strong>, always. The help menu covers everything on this page, with your actually-configured keys.</span></li>
+      <li><span data-lang="fr"><strong>Autre chose ?</strong> Le mod est développé sans que son auteur puisse le tester — vos retours sont littéralement ce qui le fait avancer. Signalez sur <a href="https://github.com/ZenqFR/SunHavenAccess/issues" target="_blank" rel="noopener">GitHub</a> ou sur <a href="https://discord.gg/DD7bP3r7Qd" target="_blank" rel="noopener">le Discord QGDV</a>.</span><span data-lang="en" hidden><strong>Anything else?</strong> The mod is built without its author being able to test it — your feedback is literally what moves it forward. Report on <a href="https://github.com/ZenqFR/SunHavenAccess/issues" target="_blank" rel="noopener">GitHub</a> or on <a href="https://discord.gg/DD7bP3r7Qd" target="_blank" rel="noopener">the QGDV Discord</a>.</span></li>
+    </ul>
+  </div>
+
+  <div class="card intro">
+    <p>
+      <span data-lang="fr"><strong>La suite ?</strong> La <a href="docs.html">documentation complète</a> détaille les quarante et quelques touches, le combat, les donjons, la pêche, les sorts et le reste. La <a href="roadmap.html">feuille de route</a> vous dit ce qui est confirmé et ce qui attend encore d'être essayé.</span>
+      <span data-lang="en" hidden><strong>What next?</strong> The <a href="docs.html">full documentation</a> details the forty-odd keys, combat, dungeons, fishing, spells and the rest. The <a href="roadmap.html">roadmap</a> tells you what's confirmed and what's still waiting to be tried.</span>
+    </p>
   </div>
 
 </main>
@@ -216,7 +407,7 @@
 
 <button type="button" class="to-top" id="to-top" aria-label="Retour en haut de la page">↑</button>
 
-<script src="site.js?v=5"></script>
+<script src="site.js?v=6"></script>
 
 </body>
 </html>
