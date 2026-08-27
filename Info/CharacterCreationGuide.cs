@@ -34,6 +34,12 @@ namespace SunHavenAccess.Info
 
         public static void Tick()
         {
+            // L'assistant pose les questions une par une : décrire en même temps la disposition de
+            // l'écran, que l'assistant dispense justement d'explorer, ne ferait que parler par
+            // dessus. Ce guide reprend la main dès qu'on ferme l'assistant pour régler l'écran
+            // soi-même — c'est exactement le cas où il sert.
+            if (Menus.CharacterCreationWizard.IsRunning) return;
+
             // Le jeu expose son singleton : le chercher dans toute la scène à chaque image coûterait
             // cher pour un écran qui n'existe qu'une fois.
             NewCharacterCreator creator = SingletonBehaviour<NewCharacterCreator>.Instance;

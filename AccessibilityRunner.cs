@@ -51,6 +51,7 @@ namespace SunHavenAccess
             SafeTick("PlacementAssistant", PlacementAssistant.Tick);
             SafeTick("ManaWarner", ManaWarner.Tick);
             SafeTick("MountAnnouncer", MountAnnouncer.Tick);
+            SafeTick("CharacterCreationWizard", Menus.CharacterCreationWizard.Tick);
             SafeTick("CharacterCreationGuide", CharacterCreationGuide.Tick);
             SafeTick("MainMenuFocus", Menus.MainMenuFocus.Tick);
             SafeTick("TabListDriver", Menus.TabListDriver.Tick);

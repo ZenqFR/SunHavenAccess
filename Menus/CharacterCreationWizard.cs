@@ -1,0 +1,444 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using I2.Loc;
+using UnityEngine;
+using UnityEngine.UI;
+using Wish;
+using SunHavenAccess.Speech;
+using SunHavenAccess.Util;
+
+namespace SunHavenAccess.Menus
+{
+    /// <summary>
+    /// La création de personnage refaite en questions successives, plutôt qu'en écran à explorer.
+    ///
+    /// L'écran du jeu est fait de trois colonnes et d'une grille d'apparence : des cheveux, des
+    /// yeux, des couleurs. Pour un joueur aveugle, l'essentiel de cet écran ne sert à rien — on ne
+    /// choisit pas une coiffure qu'on ne verra jamais — et le peu qui compte vraiment y est noyé.
+    /// Or trois choix seulement changent la partie : la RACE, qui donne un atout ; le MÉTIER, qui
+    /// donne l'équipement de départ ; et l'ANNIVERSAIRE, que les habitants retiennent.
+    ///
+    /// L'assistant ne pose donc que ces questions-là, une par une, chacune avec ce qu'il faut pour
+    /// décider — la description de chaque race et son atout, les objets de départ de chaque métier.
+    /// L'apparence garde ses valeurs par défaut ; qui veut la régler peut toujours fermer
+    /// l'assistant et parcourir l'écran du jeu comme avant.
+    ///
+    /// Rien n'est réimplémenté : chaque réponse appelle la méthode publique correspondante du jeu
+    /// (`SetRace`, `UpdateProfession`, `SetBirthdayMonthDay`, `AddNewCharacter`). Ce que l'assistant
+    /// construit, c'est l'ORDRE des questions, pas les règles.
+    /// </summary>
+    public static class CharacterCreationWizard
+    {
+        /// <summary>Une saison compte 28 jours — `DayCycle.MonthDay` en fait foi.</summary>
+        private const int DaysPerSeason = 28;
+
+        private enum Step { Idle, Race, Profession, BirthSeason, BirthDay, Name, SkipIntro, Confirm }
+
+        private static Step _step = Step.Idle;
+        private static bool _onScreen;
+        private static float _nextCheck;
+
+        // Retenus au fil des questions, pour le récapitulatif final.
+        private static string _raceLabel;
+        private static string _professionLabel;
+        private static Season _season;
+        private static int _day;
+
+        public static bool IsRunning => _step != Step.Idle;
+
+        // ------------------------------------------------------------------ Déclenchement
+
+        /// <summary>
+        /// Ouvre l'assistant dès que l'écran de création apparaît. C'est le seul écran du jeu où
+        /// l'on ne peut rien faire tant qu'on n'a pas compris sa disposition : le proposer d'emblée
+        /// évite d'avoir à connaître une touche pour commencer sa partie.
+        /// </summary>
+        public static void Tick()
+        {
+            if (Time.unscaledTime < _nextCheck) return;
+            _nextCheck = Time.unscaledTime + 0.25f;
+
+            bool present = Creator() != null;
+            if (present != _onScreen)
+            {
+                _onScreen = present;
+                if (present) Start();
+                else Cancel();
+            }
+
+            if (_step == Step.Name) { TickNameEntry(); return; }
+
+            // Échap ferme la liste : l'assistant s'arrête avec elle. Sans cela il resterait en
+            // attente d'une réponse à une question qui n'est plus posée, et il faudrait quitter
+            // l'écran pour s'en sortir. C'est aussi la porte de sortie annoncée à l'ouverture, pour
+            // qui veut régler l'apparence à la main.
+            if (_step != Step.Idle && !ListMenu.IsOpen)
+            {
+                _step = Step.Idle;
+                TolkSpeech.Speak(Localization.Language.T(
+                    "Assistant fermé. L'écran de création reste utilisable aux flèches.",
+                    "Wizard closed. The creation screen is still usable with the arrows."), true);
+            }
+        }
+
+        private static NewCharacterCreator Creator()
+        {
+            try
+            {
+                NewCharacterCreator creator = SingletonBehaviour<NewCharacterCreator>.Instance;
+                return creator != null && creator.isActiveAndEnabled ? creator : null;
+            }
+            catch { return null; }
+        }
+
+        public static void Start()
+        {
+            if (Creator() == null)
+            {
+                TolkSpeech.Speak("La création de personnage n'est pas ouverte.", true);
+                return;
+            }
+
+            TolkSpeech.Speak(Localization.Language.T(
+                "Création de personnage. Quatre questions : la race, le métier, l'anniversaire et le nom. " +
+                "L'apparence garde ses valeurs par défaut — Échap à tout moment pour fermer l'assistant et régler l'écran vous-même.",
+                "Character creation. Four questions: race, profession, birthday and name. " +
+                "Appearance keeps its defaults — Escape at any time to close this and set the screen up yourself."), true);
+
+            AskRace();
+        }
+
+        private static void Cancel()
+        {
+            _step = Step.Idle;
+            ListMenu.Close(false);
+        }
+
+        // ------------------------------------------------------------------ 1. La race
+
+        private static void AskRace()
+        {
+            _step = Step.Race;
+
+            List<Race> races = Enum.GetValues(typeof(Race)).Cast<Race>().ToList();
+            var labels = races.Select(DescribeRace).ToList();
+
+            ListMenu.Open(Localization.Language.T("Choisir une race", "Choose a race"), labels, chosen =>
+            {
+                Race race = races[chosen];
+                _raceLabel = RaceName(race);
+                Apply(() => Creator().SetRace(race));
+                AskProfession();
+            });
+        }
+
+        /// <summary>
+        /// Une race avec de quoi la choisir : son nom, ce qu'elle est, et l'atout qu'elle donne.
+        ///
+        /// L'atout est la seule chose qui change réellement la partie — le reste est du décor. On
+        /// le dit donc systématiquement, même quand la description est longue : c'est précisément
+        /// l'information qu'on vient chercher.
+        /// </summary>
+        private static string DescribeRace(Race race)
+        {
+            var parts = new List<string> { RaceName(race) };
+
+            try
+            {
+                if (Creator().raceInfo.TryGetValue(race, out RaceInfo info) && info != null)
+                {
+                    string description = TextUtil.Clean(LocalizeText.TranslateText(info.keyDescription, info.description));
+                    if (!string.IsNullOrWhiteSpace(description)) parts.Add(description);
+
+                    string perk = TextUtil.Clean(LocalizeText.TranslateText(info.keyPerkDescription, info.perkDescription));
+                    if (!string.IsNullOrWhiteSpace(perk))
+                        parts.Add(Localization.Language.T("Atout : ", "Perk: ") + perk);
+                }
+            }
+            catch { }
+
+            return string.Join(". ", parts) + ".";
+        }
+
+        private static string RaceName(Race race)
+        {
+            // En anglais, les noms de l'énumération sont déjà les bons mots.
+            if (Localization.Language.IsEnglish) return race.ToString();
+
+            switch (race)
+            {
+                case Race.Human:     return "Humain";
+                case Race.Elf:       return "Elfe";
+                case Race.Amari:     return "Amari";
+                case Race.Naga:      return "Naga";
+                case Race.Elemental: return "Élémentaire";
+                case Race.Angel:     return "Ange";
+                case Race.Demon:     return "Démon";
+                default:             return race.ToString();
+            }
+        }
+
+        // ------------------------------------------------------------------ 2. Le métier
+
+        private static void AskProfession()
+        {
+            _step = Step.Profession;
+
+            StartingProfessionInfo[] professions;
+            try { professions = Creator().professionInfos ?? new StartingProfessionInfo[0]; }
+            catch { professions = new StartingProfessionInfo[0]; }
+
+            if (professions.Length == 0) { AskBirthSeason(); return; } // rien à choisir : on passe
+
+            var labels = professions.Select(DescribeProfession).ToList();
+
+            ListMenu.Open(Localization.Language.T("Choisir un métier de départ", "Choose a starting profession"),
+                labels, chosen =>
+                {
+                    _professionLabel = TextUtil.Clean(professions[chosen].name);
+                    int index = chosen;
+                    Apply(() => Creator().UpdateProfession(index));
+                    AskBirthSeason();
+                });
+        }
+
+        /// <summary>
+        /// Un métier se distingue par son ÉQUIPEMENT DE DÉPART, et par rien d'autre à ce stade :
+        /// aucun n'est verrouillé, aucun ne ferme de voie. Les citer est donc la seule façon
+        /// honnête d'expliquer la différence.
+        /// </summary>
+        private static string DescribeProfession(StartingProfessionInfo profession)
+        {
+            string name = TextUtil.Clean(profession.name);
+
+            try
+            {
+                var items = (profession.startingItems ?? new List<ItemInfo>())
+                    .Where(i => i?.item != null)
+                    .Select(i => i.amount > 1
+                        ? $"{i.amount} {i.item.UnformattedDisplayName}"
+                        : i.item.UnformattedDisplayName)
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToList();
+
+                if (items.Count > 0)
+                    return name + Localization.Language.T(". Objets de départ : ", ". Starting items: ")
+                                + string.Join(", ", items) + ".";
+            }
+            catch { }
+
+            return name;
+        }
+
+        // ------------------------------------------------------------------ 3. L'anniversaire
+
+        private static void AskBirthSeason()
+        {
+            _step = Step.BirthSeason;
+
+            var seasons = new[] { Season.Spring, Season.Summer, Season.Fall, Season.Winter };
+            var labels = seasons.Select(SeasonName).ToList();
+
+            ListMenu.Open(Localization.Language.T("Saison de votre anniversaire", "Season of your birthday"),
+                labels, chosen =>
+                {
+                    _season = seasons[chosen];
+                    AskBirthDay();
+                });
+        }
+
+        private static void AskBirthDay()
+        {
+            _step = Step.BirthDay;
+
+            var labels = Enumerable.Range(1, DaysPerSeason)
+                .Select(d => Localization.Language.T($"Jour {d}", $"Day {d}"))
+                .ToList();
+
+            ListMenu.Open(Localization.Language.T($"Jour de votre anniversaire, {SeasonName(_season)}",
+                                                  $"Day of your birthday, {SeasonName(_season)}"),
+                labels, chosen =>
+                {
+                    _day = chosen + 1;
+                    Apply(() =>
+                    {
+                        Creator().SetBirthdayMonthDay(_season, _day);
+                        Creator().SetBirthdayConfirmed();
+                    });
+                    AskName();
+                });
+        }
+
+        private static string SeasonName(Season season)
+        {
+            try
+            {
+                string translated = TextUtil.Clean(Utilities.TranslateSeason(season));
+                if (!string.IsNullOrWhiteSpace(translated)) return translated;
+            }
+            catch { }
+            return season.ToString();
+        }
+
+        // ------------------------------------------------------------------ 4. Le nom
+
+        /// <summary>
+        /// Le seul moment où l'on quitte la liste : taper un nom demande le clavier entier.
+        ///
+        /// On donne le champ du jeu au joueur plutôt que d'inventer une saisie à nous : la lecture
+        /// caractère par caractère et la suspension des touches du mod pendant la frappe existent
+        /// déjà et fonctionnent (voir Menus/TextInputReader.cs).
+        /// </summary>
+        private static void AskName()
+        {
+            _step = Step.Name;
+            ListMenu.Close(false);
+
+            TMPro.SunHavenInputField field = NameField();
+            if (field == null) { AskSkipIntro(); return; }
+
+            try { field.Select(); field.ActivateInputField(); } catch { }
+
+            TolkSpeech.Speak(Localization.Language.T(
+                "Nom du personnage : tapez-le, puis Entrée pour continuer.",
+                "Character name: type it, then press Enter to continue."), true);
+        }
+
+        private static void TickNameEntry()
+        {
+            if (!UnityEngine.Input.GetKeyDown(KeyCode.Return) && !UnityEngine.Input.GetKeyDown(KeyCode.KeypadEnter))
+                return;
+
+            TMPro.SunHavenInputField field = NameField();
+            string typed = field != null ? TextUtil.Clean(field.text) : null;
+
+            if (string.IsNullOrWhiteSpace(typed))
+            {
+                TolkSpeech.Speak(Localization.Language.T(
+                    "Le nom ne peut pas être vide. Tapez un nom, puis Entrée.",
+                    "The name cannot be empty. Type a name, then press Enter."), true);
+                return;
+            }
+
+            Apply(() => Creator().SetCharacterName());
+            TolkSpeech.Speak(Localization.Language.T($"Nom : {typed}.", $"Name: {typed}."), true);
+            AskSkipIntro();
+        }
+
+        private static FieldInfo _nameFieldInfo;
+        private static bool _nameFieldResolved;
+
+        private static TMPro.SunHavenInputField NameField()
+        {
+            try
+            {
+                if (!_nameFieldResolved)
+                {
+                    _nameFieldResolved = true;
+                    _nameFieldInfo = typeof(NewCharacterCreator).GetField("nameInputField",
+                        BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
+                    if (_nameFieldInfo == null)
+                        Plugin.Log?.LogWarning("NewCharacterCreator.nameInputField introuvable : l'assistant sautera l'étape du nom.");
+                }
+
+                return _nameFieldInfo?.GetValue(Creator()) as TMPro.SunHavenInputField;
+            }
+            catch { return null; }
+        }
+
+        // ------------------------------------------------------------------ 5. L'introduction
+
+        private static void AskSkipIntro()
+        {
+            _step = Step.SkipIntro;
+
+            Toggle toggle;
+            try { toggle = Creator().skipIntroToggle; } catch { toggle = null; }
+
+            if (toggle == null) { AskConfirm(); return; }
+
+            var labels = new List<string>
+            {
+                Localization.Language.T("Voir l'introduction", "Watch the introduction"),
+                Localization.Language.T("Passer l'introduction", "Skip the introduction"),
+            };
+
+            ListMenu.Open(Localization.Language.T("L'introduction du jeu", "The game's introduction"),
+                labels, chosen =>
+                {
+                    Apply(() => toggle.isOn = chosen == 1);
+                    AskConfirm();
+                });
+        }
+
+        // ------------------------------------------------------------------ 6. Confirmer
+
+        /// <summary>
+        /// Le récapitulatif avant de lancer : c'est le dernier moment où l'on peut se raviser, et
+        /// la seule occasion d'entendre ses choix d'affilée plutôt qu'un par un.
+        /// </summary>
+        private static void AskConfirm()
+        {
+            _step = Step.Confirm;
+
+            var summary = new List<string>();
+            if (!string.IsNullOrWhiteSpace(_raceLabel))
+                summary.Add(Localization.Language.Pair(Localization.Language.T("Race", "Race"), _raceLabel));
+            if (!string.IsNullOrWhiteSpace(_professionLabel))
+                summary.Add(Localization.Language.Pair(Localization.Language.T("Métier", "Profession"), _professionLabel));
+            if (_day > 0)
+                summary.Add(Localization.Language.Pair(Localization.Language.T("Anniversaire", "Birthday"),
+                                                       $"{SeasonName(_season)} {_day}"));
+
+            // Le récapitulatif est DIT, pas mis dans la liste : une liste dont la moitié des
+            // entrées ne fait rien quand on les valide est une liste qui ment sur ce qu'elle est.
+            // La touche de répétition le redonne autant de fois qu'on veut.
+            if (summary.Count > 0)
+                TolkSpeech.Speak(Localization.Language.T("Vos choix : ", "Your choices: ")
+                                 + string.Join(". ", summary) + ".", true);
+
+            var labels = new List<string>
+            {
+                Localization.Language.T("Commencer la partie", "Start the game"),
+                Localization.Language.T("Recommencer les questions", "Start the questions again"),
+            };
+
+            ListMenu.Open(Localization.Language.T("Prêt à commencer", "Ready to start"), labels, chosen =>
+            {
+                if (chosen == 0)
+                {
+                    _step = Step.Idle;
+                    ListMenu.Close(false);
+                    TolkSpeech.Speak(Localization.Language.T("La partie commence.", "The game is starting."), true);
+                    Apply(() => Creator().AddNewCharacter());
+                }
+                else AskRace();
+            });
+        }
+
+        // ------------------------------------------------------------------ Interne
+
+        /// <summary>
+        /// Applique un choix en passant par le jeu. Si l'écran a disparu entre-temps — le joueur a
+        /// pu reculer — on abandonne sans rien casser plutôt que de lever une exception dans la
+        /// boucle du mod.
+        /// </summary>
+        private static void Apply(Action action)
+        {
+            try
+            {
+                if (Creator() == null) { Cancel(); return; }
+                action();
+            }
+            catch (Exception e)
+            {
+                Plugin.Log?.LogWarning("Création de personnage, étape refusée par le jeu : " + e.Message);
+                TolkSpeech.Speak(Localization.Language.T("Ce choix n'a pas pu être appliqué.",
+                                                          "That choice could not be applied."), true);
+            }
+        }
+    }
+}

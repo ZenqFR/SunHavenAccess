@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **11 sur 133 au point** (8 %).
+Mis à jour le 2026-08-27 — **11 sur 135 au point** (8 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 114 |
+| `[ ]` | À tester | jamais essayé en jeu | 116 |
 | `[!]` | À corriger | essayé, ne marche pas | 8 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 11 |
@@ -82,6 +82,14 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.
   - Attendu : Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom et date. Un emplacement libre annonce qu'il est vide. La touche de description complète ajoute les niveaux et l'or.
   - Retour de jeu : Retravaillé. Un emplacement libre le dit désormais au lieu de rester muet — on passait devant sans savoir qu'on pouvait y commencer une partie. Et l'annonce est abrégée au nom et à la date, de quoi reconnaître la partie : les cinq niveaux de métier et le montant d'or à chaque déplacement rendaient le parcours interminable. Le détail reste lisible avec la touche de description complète.
+- [ ] **personnage-creation-assistant** ⚠️ — touche : —
+  - Faire : Arriver sur l'écran de création de personnage et se laisser guider : choisir une race, un métier, une saison et un jour d'anniversaire, taper un nom, répondre sur l'introduction, puis commencer.
+  - Attendu : Un assistant s'ouvre tout seul et pose QUATRE questions, une liste à la fois. Chaque race est annoncée avec sa description et son atout ; chaque métier avec ses objets de départ. Un récapitulatif est dit avant de lancer. Aucune apparence à régler.
+  - Retour de jeu : Demandé en jeu : « la personnalisation pour un aveugle, c'est nul ». C'est juste — on ne choisit pas une coiffure qu'on ne verra jamais, et les trois choix qui changent vraiment la partie (race, métier, anniversaire) étaient noyés dans une grille d'apparence. L'assistant ne pose que ces questions-là. Rien n'est réimplémenté : chaque réponse appelle la méthode publique du jeu (SetRace, UpdateProfession, SetBirthdayMonthDay, AddNewCharacter) ; l'assistant ne construit que l'ORDRE des questions. Échap le ferme et rend l'écran d'origine, pour qui veut régler l'apparence.
+- [ ] **personnage-creation-nom-assistant** — touche : Entrée
+  - Faire : À l'étape du nom, taper un nom puis Entrée. Réessayer en laissant le champ vide.
+  - Attendu : Le champ du jeu prend le focus, chaque caractère tapé est lu, et aucune touche du mod ne se déclenche pendant la frappe. Entrée sur un champ vide refuse et le dit, au lieu de laisser passer.
+  - Retour de jeu : C'est le seul moment où l'assistant quitte la liste : taper un nom demande le clavier entier. On donne le champ du jeu plutôt que d'inventer une saisie, la lecture caractère par caractère existant déjà et fonctionnant.
 - [ ] **personnage-creation-orientation** ⚠️ — touche : —
   - Faire : Arriver sur l'écran de création de personnage.
   - Attendu : Une annonce décrit d'emblée les trois colonnes, comment en changer, et prévient qu'un nom et une date d'anniversaire sont obligatoires.
