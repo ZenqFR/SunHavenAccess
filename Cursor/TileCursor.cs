@@ -128,7 +128,7 @@ namespace SunHavenAccess.Cursor
             string underfoot = DescribeGroundTile(p);
             string ground = string.IsNullOrWhiteSpace(underfoot)
                 ? string.Empty
-                : Localization.Language.T($" Vous êtes sur {underfoot}.", $" You are on {underfoot}.");
+                : Localization.Language.T($" Sol : {underfoot}.", $" Ground: {underfoot}.");
 
             TolkSpeech.Speak(Localization.Language.T(
                 $"Position {p.x}, {p.y}. Vous regardez vers le {direction}.{ground}",
@@ -212,8 +212,8 @@ namespace SunHavenAccess.Cursor
             string underfoot = DescribeGroundTile(player.Position);
             if (!string.IsNullOrWhiteSpace(underfoot))
                 return Localization.Language.T(
-                    $"Rien devant vous, côté {facing}. Vous êtes sur {underfoot}.",
-                    $"Nothing in front of you, {facing} side. You are on {underfoot}.");
+                    $"Rien devant vous, côté {facing}. Sol sous vos pieds : {underfoot}.",
+                    $"Nothing in front of you, {facing} side. Ground underfoot: {underfoot}.");
 
             return Localization.Language.T($"Rien devant vous, côté {facing}.",
                                            $"Nothing in front of you, {facing} side.");
@@ -256,10 +256,25 @@ namespace SunHavenAccess.Cursor
                     if (tilemap == null) continue;
                     TileBase tileAsset = tilemap.GetTile(cell);
                     if (tileAsset == null) continue;
-                    // TranslateTerrain plutôt que Translate : celui-ci renvoie null quand aucun mot
-                    // n'est reconnu, au lieu de laisser passer le nom d'asset anglais. Le terrain
-                    // étant décrit à chaque pas, un seul nom brut s'entendrait des dizaines de fois
-                    // par minute.
+
+                    // La NATURE du sol, telle que le jeu la connaît lui-même.
+                    //
+                    // `SunHavenTile.footstepType` est ce qui décide du bruit de pas : terre,
+                    // herbe, pierre, bois, sable, neige, eau peu profonde. C'est une valeur
+                    // d'énumération, donc juste par construction — là où lire le nom de la
+                    // texture ne donnait un résultat que si ce nom figurait dans un dictionnaire,
+                    // et « rien devant vous » le reste du temps. Signalé en jeu : « je veux savoir
+                    // ce qui est devant moi comme sol ».
+                    if (tileAsset is SunHavenTile havenTile)
+                    {
+                        groundName = FootstepName(havenTile.footstepType);
+                        if (!string.IsNullOrWhiteSpace(groundName)) break;
+                    }
+
+                    // Repli : le nom de la texture, quand il est reconnu. TranslateTerrain renvoie
+                    // null si aucun mot ne l'est, plutôt que de lâcher un nom d'asset anglais —
+                    // le terrain étant décrit à chaque pas, un seul nom brut s'entendrait des
+                    // dizaines de fois par minute.
                     string translated = UiNameTranslator.TranslateTerrain(tileAsset.name);
                     if (!string.IsNullOrWhiteSpace(translated)) { groundName = translated; break; }
                 }
@@ -272,6 +287,24 @@ namespace SunHavenAccess.Cursor
                 // Best-effort : en cas de souci (tuilemap inattendue...), on retombe sur le
                 // message générique plutôt que de planter.
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Le nom du type de sol. Sept valeurs, celles dont le jeu se sert pour ses bruits de pas.
+        /// </summary>
+        private static string FootstepName(FootstepType type)
+        {
+            switch (type)
+            {
+                case FootstepType.Dirt:         return Localization.Language.T("terre", "dirt");
+                case FootstepType.Grass:        return Localization.Language.T("herbe", "grass");
+                case FootstepType.Stone:        return Localization.Language.T("pierre", "stone");
+                case FootstepType.Wood:         return Localization.Language.T("bois", "wood");
+                case FootstepType.Sand:         return Localization.Language.T("sable", "sand");
+                case FootstepType.Snow:         return Localization.Language.T("neige", "snow");
+                case FootstepType.ShallowWater: return Localization.Language.T("eau peu profonde", "shallow water");
+                default:                        return null;
             }
         }
 
