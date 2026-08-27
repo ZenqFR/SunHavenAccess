@@ -58,10 +58,15 @@ namespace SunHavenAccess.Info
                 return;
             }
 
-            var parts = new List<string> { $"Panneau d'affichage, {BoardName(type.Value)}." };
+            var parts = new List<string>
+            {
+                Localization.Language.T($"Panneau d'affichage, {BoardName(type.Value)}.",
+                                        $"Bulletin board, {BoardName(type.Value)}.")
+            };
             List<string> tasks = DescribeTasks(type.Value);
 
-            if (tasks.Count == 0) parts.Add("Aucune tâche proposée aujourd'hui.");
+            if (tasks.Count == 0) parts.Add(Localization.Language.T(
+                "Aucune tâche proposée aujourd'hui.", "No task on offer today."));
             else parts.AddRange(tasks);
 
             TolkSpeech.Speak(string.Join(" ", parts), true);
@@ -101,15 +106,20 @@ namespace SunHavenAccess.Info
         {
             if (quest == null) return;
 
-            string name = TextUtil.Clean(Safe(() => quest.LocalizedQuestName)) ?? "tâche sans nom";
+            string name = TextUtil.Clean(Safe(() => quest.LocalizedQuestName))
+                          ?? Localization.Language.T("tâche sans nom", "unnamed task");
             string description = TextUtil.Clean(LocalizedBoardDescription(quest));
-            string state = accepted ? "déjà acceptée" : "à prendre";
+            string state = Localization.Language.T(
+                accepted ? "déjà acceptée" : "à prendre",
+                accepted ? "already accepted" : "up for grabs");
 
-            string line = $"Tâche {number} : {name}, {state}.";
+            string line = Localization.Language.T($"Tâche {number} : {name}, {state}.",
+                                                  $"Task {number}: {name}, {state}.");
             if (!string.IsNullOrWhiteSpace(description)) line += $" {description}";
 
             string reward = DescribeRewards(quest);
-            if (reward != null) line += $" Récompense : {reward}.";
+            if (reward != null) line += " " + Localization.Language.Pair(
+                Localization.Language.T("Récompense", "Reward"), reward) + ".";
 
             into.Add(line);
         }
@@ -221,8 +231,8 @@ namespace SunHavenAccess.Info
                 case BulletinBoardType.Withergate: return "Withergate";
                 case BulletinBoardType.Nelvari:    return "Nelvari";
                 case BulletinBoardType.Brinestone: return "Brinestone";
-                case BulletinBoardType.GreatCity:  return "la Grande Cité";
-                case BulletinBoardType.Barracks:   return "les baraquements";
+                case BulletinBoardType.GreatCity:  return Localization.Language.T("la Grande Cité", "the Great City");
+                case BulletinBoardType.Barracks:   return Localization.Language.T("les baraquements", "the barracks");
                 default:                           return type.ToString();
             }
         }

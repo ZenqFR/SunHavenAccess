@@ -320,15 +320,29 @@ namespace SunHavenAccess.Menus
         {
             string text = UiTextExtractor.ExtractAll(sel.gameObject);
             string suffix = "";
-            if (sel is Toggle t) suffix = t.isOn ? ", coché" : ", non coché";
+            if (sel is Toggle t)
+                suffix = Localization.Language.T(t.isOn ? ", coché" : ", non coché",
+                                                 t.isOn ? ", ticked" : ", not ticked");
             else if (sel is Slider s)
             {
                 string valueText = s.wholeNumbers
-                    ? $"{Mathf.RoundToInt(s.value)} sur {Mathf.RoundToInt(s.maxValue)}"
-                    : $"{Mathf.RoundToInt((s.value - s.minValue) / Mathf.Max(s.maxValue - s.minValue, 0.0001f) * 100f)} pour cent";
-                suffix = $", curseur, valeur {valueText} (Contrôle plus gauche/droite pour ajuster)";
+                    ? Localization.Language.T(
+                        $"{Mathf.RoundToInt(s.value)} sur {Mathf.RoundToInt(s.maxValue)}",
+                        $"{Mathf.RoundToInt(s.value)} of {Mathf.RoundToInt(s.maxValue)}")
+                    : Localization.Language.T(
+                        $"{Percent(s)} pour cent",
+                        $"{Percent(s)} per cent");
+                suffix = Localization.Language.T(
+                    $", curseur, valeur {valueText} (Contrôle plus gauche/droite pour ajuster)",
+                    $", slider, value {valueText} (Control plus left or right to adjust)");
             }
-            TolkSpeech.Speak($"{text}{suffix}. Élément {_index + 1} sur {_items.Count}.", true);
+
+            TolkSpeech.Speak(Localization.Language.T(
+                $"{text}{suffix}. Élément {_index + 1} sur {_items.Count}.",
+                $"{text}{suffix}. Item {_index + 1} of {_items.Count}."), true);
         }
+
+        private static int Percent(Slider s) =>
+            Mathf.RoundToInt((s.value - s.minValue) / Mathf.Max(s.maxValue - s.minValue, 0.0001f) * 100f);
     }
 }

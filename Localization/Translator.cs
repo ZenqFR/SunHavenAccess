@@ -76,6 +76,8 @@ namespace SunHavenAccess.Localization
         {
             // État et actions
             { "Activé.", "On." },
+            { "Coché.", "Ticked." },
+            { "Décoché.", "Unticked." },
             { "Arbre abattu.", "Tree felled." },
             { "Arrosoir rempli.", "Watering can filled." },
             { "Arrosoir vide.", "Watering can empty." },

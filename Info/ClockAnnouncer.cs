@@ -35,8 +35,11 @@ namespace SunHavenAccess.Info
             }
 
             DateTime time = dayCycle.Time;
-            string heure = $"{time.Hour} heure{(time.Hour > 1 ? "s" : "")}" +
-                (time.Minute > 0 ? $" {time.Minute:00}" : "");
+            // En anglais on garde l'heure telle que la dit le jeu — « 7:30 » — plutôt qu'une
+            // tournure calquée du français : « 7 hours 30 » ne se dit pas.
+            string heure = Localization.Language.T(
+                $"{time.Hour} heure{(time.Hour > 1 ? "s" : "")}" + (time.Minute > 0 ? $" {time.Minute:00}" : ""),
+                $"{time.Hour}:{time.Minute:00}");
 
             string jourSemaine = WeekdayName(DayCycle.Weekday);
             int monthDay = DayCycle.MonthDay;
@@ -45,23 +48,29 @@ namespace SunHavenAccess.Info
 
             string meteo = DescribeWeather(dayCycle);
 
-            string jour = jourSemaine != null ? $"{jourSemaine} {monthDay}" : $"jour {monthDay}";
-            TolkSpeech.Speak(
+            string jour = jourSemaine != null
+                ? $"{jourSemaine} {monthDay}"
+                : Localization.Language.T($"jour {monthDay}", $"day {monthDay}");
+
+            TolkSpeech.Speak(Localization.Language.T(
                 $"Il est {heure}. {jour} de {saison}, année {year}. Météo : {meteo}.",
+                $"It is {heure}. {jour} of {saison}, year {year}. Weather: {meteo}."),
                 true);
         }
 
         private static string DescribeWeather(DayCycle dayCycle)
         {
             var parts = new List<string>();
-            if (dayCycle.GloomyRain) parts.Add("pluie battante");
-            else if (dayCycle.Raining) parts.Add("pluie");
-            if (dayCycle.LightSnow) parts.Add("légère neige");
-            if (dayCycle.Heatwave) parts.Add("canicule");
-            if (dayCycle.Foggy) parts.Add("brouillard");
-            if (dayCycle.Windy) parts.Add("vent");
+            if (dayCycle.GloomyRain) parts.Add(Localization.Language.T("pluie battante", "heavy rain"));
+            else if (dayCycle.Raining) parts.Add(Localization.Language.T("pluie", "rain"));
+            if (dayCycle.LightSnow) parts.Add(Localization.Language.T("légère neige", "light snow"));
+            if (dayCycle.Heatwave) parts.Add(Localization.Language.T("canicule", "heatwave"));
+            if (dayCycle.Foggy) parts.Add(Localization.Language.T("brouillard", "fog"));
+            if (dayCycle.Windy) parts.Add(Localization.Language.T("vent", "wind"));
 
-            return parts.Count > 0 ? string.Join(", ", parts) : "ciel dégagé";
+            return parts.Count > 0
+                ? string.Join(", ", parts)
+                : Localization.Language.T("ciel dégagé", "clear skies");
         }
 
         /// <summary>

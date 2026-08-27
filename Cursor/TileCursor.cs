@@ -48,8 +48,11 @@ namespace SunHavenAccess.Cursor
         {
             _verbose = !_verbose;
             TolkSpeech.Speak(_verbose
-                ? "Annonce automatique des cases activée."
-                : "Annonce automatique des cases désactivée. Utilisez la touche dédiée pour l'annoncer manuellement.", true);
+                ? Localization.Language.T("Annonce automatique des cases activée.",
+                                          "Automatic tile announcements on.")
+                : Localization.Language.T(
+                    "Annonce automatique des cases désactivée. Utilisez la touche dédiée pour l'annoncer manuellement.",
+                    "Automatic tile announcements off. Use the dedicated key to ask for one."), true);
         }
 
         /// <summary>Appelé chaque frame : annonce la case en face uniquement si elle a changé.</summary>
@@ -175,9 +178,11 @@ namespace SunHavenAccess.Cursor
             // donnée de case n'est trouvée nulle part (demandé : chaque case a un contenu réel,
             // même en dehors des zones cultivables).
             string ground = DescribeGroundTile(GetFrontTileCoord(player));
-            if (ground != null) return $"{ground}, côté {facing}.";
+            if (ground != null)
+                return Localization.Language.T($"{ground}, côté {facing}.", $"{ground}, {facing} side.");
 
-            return $"Rien devant vous, côté {facing}.";
+            return Localization.Language.T($"Rien devant vous, côté {facing}.",
+                                           $"Nothing in front of you, {facing} side.");
         }
 
         /// <summary>
@@ -243,8 +248,8 @@ namespace SunHavenAccess.Cursor
             if (dataTile == null) return null;
             return dataTile.waterType switch
             {
-                WaterType.FishableWater => "eau où l'on peut pêcher",
-                WaterType.Water => "eau",
+                WaterType.FishableWater => Localization.Language.T("eau où l'on peut pêcher", "fishable water"),
+                WaterType.Water => Localization.Language.T("eau", "water"),
                 _ => null,
             };
         }
@@ -269,16 +274,22 @@ namespace SunHavenAccess.Cursor
         /// </summary>
         public static string DescribeCrop(Crop crop)
         {
-            if (crop.data == null) return "Culture.";
+            if (crop.data == null) return Localization.Language.T("Culture.", "Crop.");
 
-            if (crop.data.dead) return "Culture morte.";
+            if (crop.data.dead) return Localization.Language.T("Culture morte.", "Dead crop.");
 
-            string watered = crop.data.watered ? "arrosée" : "non arrosée";
+            string watered = Localization.Language.T(
+                crop.data.watered ? "arrosée" : "non arrosée",
+                crop.data.watered ? "watered" : "not watered");
+
+            int days = Mathf.Max(crop.DaysLeft, 0);
             string growth = crop.CheckGrowth
-                ? "prête à récolter"
-                : $"encore {Mathf.Max(crop.DaysLeft, 0)} jour{(crop.DaysLeft > 1 ? "s" : "")} avant maturité";
+                ? Localization.Language.T("prête à récolter", "ready to harvest")
+                : Localization.Language.T(
+                    $"encore {days} jour{(days > 1 ? "s" : "")} avant maturité",
+                    $"{days} more day{(days > 1 ? "s" : "")} to ripen");
 
-            return $"Culture, {watered}, {growth}.";
+            return Localization.Language.T($"Culture, {watered}, {growth}.", $"Crop, {watered}, {growth}.");
         }
 
         /// <summary>
@@ -295,9 +306,12 @@ namespace SunHavenAccess.Cursor
 
                 return info switch
                 {
-                    FarmingTileInfo.Farmable => "Terre cultivable, pas encore labourée.",
-                    FarmingTileInfo.Hoed => "Terre labourée, pas arrosée.",
-                    FarmingTileInfo.Watered => "Terre labourée et arrosée, rien de planté.",
+                    FarmingTileInfo.Farmable => Localization.Language.T(
+                        "Terre cultivable, pas encore labourée.", "Farmable soil, not tilled yet."),
+                    FarmingTileInfo.Hoed => Localization.Language.T(
+                        "Terre labourée, pas arrosée.", "Tilled soil, not watered."),
+                    FarmingTileInfo.Watered => Localization.Language.T(
+                        "Terre labourée et arrosée, rien de planté.", "Tilled and watered soil, nothing planted."),
                     _ => null,
                 };
             }
@@ -324,7 +338,9 @@ namespace SunHavenAccess.Cursor
                     if (hit == null || hit.isTrigger) continue;
                     if (hit.attachedRigidbody != null && hit.attachedRigidbody.gameObject == player.gameObject) continue;
                     if (hit.transform.IsChildOf(player.transform)) continue;
-                    return $"Quelque chose bloque le passage devant vous, côté {facing}.";
+                    return Localization.Language.T(
+                        $"Quelque chose bloque le passage devant vous, côté {facing}.",
+                        $"Something is blocking the way in front of you, {facing} side.");
                 }
             }
             catch

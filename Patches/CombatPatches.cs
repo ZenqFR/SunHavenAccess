@@ -29,9 +29,14 @@ namespace SunHavenAccess.Patches
             int maxHealth = UnityEngine.Mathf.CeilToInt(__instance.MaxHealth);
             float percentage = __instance.HealthPercentage;
 
-            string alerte = percentage <= 0f ? " Vous êtes à terre !"
-                : percentage <= 0.2f ? " Attention, santé critique !"
-                : percentage <= 0.4f ? " Santé basse."
+            // Seul le complément d'alerte est traduit ici : le début de la phrase est reconnu par
+            // motif dans Translator, qui reporte tel quel ce qui suit le point.
+            string alerte = percentage <= 0f
+                    ? SunHavenAccess.Localization.Language.T(" Vous êtes à terre !", " You are down!")
+                : percentage <= 0.2f
+                    ? SunHavenAccess.Localization.Language.T(" Attention, santé critique !", " Careful, health critical!")
+                : percentage <= 0.4f
+                    ? SunHavenAccess.Localization.Language.T(" Santé basse.", " Health low.")
                 : "";
 
             TolkSpeech.Speak($"Touché ! Santé : {health} sur {maxHealth}.{alerte}", interrupt: true);

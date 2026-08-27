@@ -63,12 +63,18 @@ namespace SunHavenAccess.Info
         /// </summary>
         private static void AnnounceOrientation()
         {
-            TolkSpeech.Speak(
+            TolkSpeech.Speak(Localization.Language.T(
                 "Création de personnage. L'écran a trois colonnes : à gauche les catégories — race, corps, cheveux, " +
                 "métier, anniversaire — au centre les choix de la catégorie courante, à droite votre personnage, " +
                 "le champ du nom et le bouton Valider. " +
                 "Contrôle plus gauche ou droite change de colonne, les flèches parcourent la colonne, Entrée choisit. " +
                 "Un nom et une date d'anniversaire sont obligatoires pour commencer la partie.",
+
+                "Character creation. The screen has three columns: on the left the categories — race, body, hair, " +
+                "profession, birthday — in the centre the current category's choices, on the right your character, " +
+                "the name field and the Confirm button. " +
+                "Control plus left or right changes column, the arrows browse the column, Enter chooses. " +
+                "A name and a birthday are required to start the game."),
                 true);
         }
 
@@ -91,10 +97,16 @@ namespace SunHavenAccess.Info
             bool birthdayMissing = !creator.isBirthdaySet;
 
             string remaining;
-            if (nameMissing && birthdayMissing) remaining = "Il reste à saisir un nom et à définir votre anniversaire.";
-            else if (nameMissing) remaining = "Il reste à saisir un nom.";
-            else if (birthdayMissing) remaining = "Il reste à définir votre anniversaire.";
-            else remaining = "Tout est prêt : le bouton Valider lance la partie.";
+            if (nameMissing && birthdayMissing) remaining = Localization.Language.T(
+                "Il reste à saisir un nom et à définir votre anniversaire.",
+                "Still to do: enter a name and set your birthday.");
+            else if (nameMissing) remaining = Localization.Language.T(
+                "Il reste à saisir un nom.", "Still to do: enter a name.");
+            else if (birthdayMissing) remaining = Localization.Language.T(
+                "Il reste à définir votre anniversaire.", "Still to do: set your birthday.");
+            else remaining = Localization.Language.T(
+                "Tout est prêt : le bouton Valider lance la partie.",
+                "Everything is ready: the Confirm button starts the game.");
 
             if (remaining == _lastRemaining) return;
 

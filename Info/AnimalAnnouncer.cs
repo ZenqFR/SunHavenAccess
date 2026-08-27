@@ -33,11 +33,13 @@ namespace SunHavenAccess.Info
             if (data == null) return name;
 
             var todo = new List<string>();
-            if (data.Hungry) todo.Add("à nourrir");
-            if (!data.hasPetted) todo.Add("à caresser");
-            if (data.droppedItem) todo.Add("produit au sol");
+            if (data.Hungry) todo.Add(Localization.Language.T("à nourrir", "to feed"));
+            if (!data.hasPetted) todo.Add(Localization.Language.T("à caresser", "to pet"));
+            if (data.droppedItem) todo.Add(Localization.Language.T("produit au sol", "product on the ground"));
 
-            return todo.Count == 0 ? $"{name}, rien à faire" : $"{name}, {string.Join(", ", todo)}";
+            return todo.Count == 0
+                ? Localization.Language.T($"{name}, rien à faire", $"{name}, nothing to do")
+                : $"{name}, {string.Join(", ", todo)}";
         }
 
         /// <summary>
@@ -74,24 +76,33 @@ namespace SunHavenAccess.Info
                 if (data.droppedItem) products++;
             }
 
-            var parts = new List<string> { $"{animals.Length} animal{(animals.Length > 1 ? "ux" : "")}" };
+            var parts = new List<string>
+            {
+                Localization.Language.T(
+                    $"{animals.Length} animal{(animals.Length > 1 ? "ux" : "")}",
+                    $"{animals.Length} animal{(animals.Length > 1 ? "s" : "")}")
+            };
 
             parts.Add(hungry.Count == 0
-                ? "tous nourris"
-                : $"{Count(hungry.Count, "à nourrir")}{Names(hungry)}");
+                ? Localization.Language.T("tous nourris", "all fed")
+                : Count(hungry.Count, Localization.Language.T("à nourrir", "to feed")) + Names(hungry));
 
             parts.Add(unpetted.Count == 0
-                ? "tous caressés"
-                : $"{Count(unpetted.Count, "à caresser")}{Names(unpetted)}");
+                ? Localization.Language.T("tous caressés", "all petted")
+                : Count(unpetted.Count, Localization.Language.T("à caresser", "to pet")) + Names(unpetted));
 
             if (products > 0)
-                parts.Add($"{products} produit{(products > 1 ? "s" : "")} au sol");
+                parts.Add(Localization.Language.T(
+                    $"{products} produit{(products > 1 ? "s" : "")} au sol",
+                    $"{products} product{(products > 1 ? "s" : "")} on the ground"));
 
             // Un animal sans données n'est pas encore initialisé, ou n'appartient pas au joueur.
             // Le dire plutôt que de le compter comme « rien à faire » : un compte faussement
             // rassurant est pire que pas de compte du tout.
             if (unknown > 0)
-                parts.Add($"{unknown} dont l'état est inconnu");
+                parts.Add(Localization.Language.T(
+                    $"{unknown} dont l'état est inconnu",
+                    $"{unknown} whose state is unknown"));
 
             TolkSpeech.Speak(string.Join(", ", parts) + ".", true);
         }

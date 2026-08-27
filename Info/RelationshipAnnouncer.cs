@@ -67,8 +67,13 @@ namespace SunHavenAccess.Info
                 int maxHearts = Mathf.FloorToInt(max / PointsPerHeart);
 
                 string name = TextUtil.Clean(npc.LocalizedActualNPCName);
-                string status = married ? ", marié(e)" : (dating ? ", en couple" : "");
-                parts.Add($"{name}, {hearts} sur {maxHearts} cœurs{status}.");
+                string status = married
+                    ? Localization.Language.T(", marié(e)", ", married")
+                    : (dating ? Localization.Language.T(", en couple", ", dating") : "");
+
+                parts.Add(Localization.Language.T(
+                    $"{name}, {hearts} sur {maxHearts} cœurs{status}.",
+                    $"{name}, {hearts} of {maxHearts} hearts{status}."));
             }
 
             Menus.ListMenu.Open("Relations", parts);
