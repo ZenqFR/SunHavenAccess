@@ -45,17 +45,54 @@ namespace SunHavenAccess.Menus
             if (EventSystem.current == null) return;
             if (EventSystem.current.currentSelectedGameObject != null) { _placed = true; return; }
 
-            Selectable first = MenuNavigator.VisibleSelectables()
+            var candidates = MenuNavigator.VisibleSelectables()
                 .OrderByDescending(s => s.transform.position.y)
                 .ThenBy(s => s.transform.position.x)
-                .FirstOrDefault();
+                .ToList();
 
+            Selectable first = candidates.FirstOrDefault();
             if (first == null) return; // écran pas encore construit : on réessaiera à la frame suivante
 
             _placed = true;
+            LogCandidates(candidates);
             EventSystem.current.SetSelectedGameObject(first.gameObject);
             // Pas d'annonce ici : FocusReader annonce l'élément sélectionné de lui-même, et le
             // doubler ne ferait que se couper la parole.
+        }
+
+        /// <summary>
+        /// Journalise les premiers candidats à la sélection, une seule fois par session.
+        ///
+        /// Deux tentatives ont échoué à écarter le bouton du studio de la tête de liste, faute de
+        /// savoir ce qu'il est réellement : je raisonnais sur des suppositions. Ces quelques lignes
+        /// donnent son nom, son chemin dans la hiérarchie et ses composants — de quoi trancher en
+        /// une lecture au lieu d'un aller-retour de plus. Rien n'est prononcé : c'est pour le
+        /// journal, pas pour le joueur.
+        /// </summary>
+        private static bool _logged;
+
+        private static void LogCandidates(System.Collections.Generic.List<Selectable> candidates)
+        {
+            if (_logged) return;
+            _logged = true;
+
+            try
+            {
+                var lines = candidates.Take(6).Select(s =>
+                {
+                    string path = s.name;
+                    for (Transform t = s.transform.parent; t != null; t = t.parent) path = t.name + "/" + path;
+
+                    string components = string.Join(", ", s.GetComponents<Component>()
+                        .Where(c => c != null)
+                        .Select(c => c.GetType().Name));
+
+                    return $"  {path}  [{components}]";
+                });
+
+                Plugin.Log?.LogInfo("Menu principal, premiers candidats à la sélection :\n" + string.Join("\n", lines));
+            }
+            catch { }
         }
     }
 }

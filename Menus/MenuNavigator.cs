@@ -243,6 +243,7 @@ namespace SunHavenAccess.Menus
         {
             List<Selectable> all = Object.FindObjectsOfType<Selectable>()
                 .Where(s => s != null && s.interactable && s.gameObject.activeInHierarchy && IsVisible(s))
+                .Where(s => !IsExternalLink(s))
                 .ToList();
 
             // Le test « réellement à l'écran » sert à écarter les panneaux des autres onglets, que
@@ -269,6 +270,25 @@ namespace SunHavenAccess.Menus
             return chosen
                 .OrderByDescending(s => s.transform.position.y)
                 .ThenBy(s => s.transform.position.x);
+        }
+
+        /// <summary>
+        /// Un bouton qui ouvre un site web plutôt qu'un écran du jeu.
+        ///
+        /// Le logo du studio et les liens vers les réseaux sont posés PLUS HAUT que les boutons du
+        /// menu. Triés par position, ils passaient devant : la première flèche annonçait
+        /// « Pixelsprout Studios » et il fallait remonter plusieurs fois pour atteindre « Jouer ».
+        /// Les restreindre au panneau de menu n'a rien changé — ils y sont bel et bien.
+        ///
+        /// Ce qui les distingue vraiment, c'est ce qu'ils FONT : le jeu leur attache un
+        /// `Wish.OpenURL`, dont le seul rôle est d'ouvrir une adresse dans le navigateur. Aucun
+        /// n'a sa place dans la navigation d'un menu — les écarter, c'est retirer du parcours ce
+        /// qui n'y avait rien à faire, pas masquer une fonctionnalité du jeu.
+        /// </summary>
+        private static bool IsExternalLink(Selectable s)
+        {
+            try { return s.GetComponentInParent<Wish.OpenURL>() != null; }
+            catch { return false; }
         }
 
         /// <summary>
