@@ -24,7 +24,7 @@
         { "id": "installateur-detection", "key": "—", "status": "ok",
           "action":   { "fr": "Regarder si le jeu est trouvé tout seul.", "en": "See whether the game is found automatically." },
           "expected": { "fr": "Le chemin de Sun Haven est prérempli sans rien saisir.", "en": "Sun Haven's path is pre-filled with no input." } },
-        { "id": "installateur-mise-a-jour", "key": "—", "status": "todo",
+        { "id": "installateur-mise-a-jour", "key": "—", "status": "ok",
           "action":   { "fr": "Relancer l'installateur alors que le mod est déjà installé.", "en": "Run the installer again with the mod already installed." },
           "expected": { "fr": "Le bouton principal annonce « Mettre à jour le mod » et non « Installer ». Après une désinstallation, il redevient « Installer ».", "en": "The main button announces \"Update the mod\", not \"Install\". After an uninstall it becomes \"Install\" again." } },
         { "id": "chargement", "key": "—", "status": "ok", "critical": true,

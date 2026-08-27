@@ -2,14 +2,14 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **7 sur 133 au point** (5 %).
+Mis à jour le 2026-08-27 — **8 sur 133 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 117 |
+| `[ ]` | À tester | jamais essayé en jeu | 116 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
-| `[x]` | Au point | essayé, rien à redire | 7 |
+| `[x]` | Au point | essayé, rien à redire | 8 |
 
 ⚠️ = à vérifier en priorité.
 
@@ -26,7 +26,7 @@ Installer, et vérifier que le mod se charge. Si ça échoue ici, rien d'autre n
 - [x] **avant-installateur-detection** — touche : —
   - Faire : Regarder si le jeu est trouvé tout seul.
   - Attendu : Le chemin de Sun Haven est prérempli sans rien saisir.
-- [ ] **avant-installateur-mise-a-jour** — touche : —
+- [x] **avant-installateur-mise-a-jour** — touche : —
   - Faire : Relancer l'installateur alors que le mod est déjà installé.
   - Attendu : Le bouton principal annonce « Mettre à jour le mod » et non « Installer ». Après une désinstallation, il redevient « Installer ».
 - [x] **avant-chargement** ⚠️ — touche : —
