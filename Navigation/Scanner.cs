@@ -70,16 +70,36 @@ namespace SunHavenAccess.Navigation
         private static string CategoryName() =>
             Localization.Translator.Translate(CategoryNames[_categoryIndex]);
 
-        public static void NextItem()
-        {
-            Rescan();
-            Move(1);
-        }
+        public static void NextItem() => Step(1);
+        public static void PreviousItem() => Step(-1);
 
-        public static void PreviousItem()
+        /// <summary>
+        /// Passe à l'élément suivant ou précédent, en RETROUVANT d'abord où l'on en était.
+        ///
+        /// Le balayage remet l'index à zéro : enchaîner balayage puis déplacement repartait donc
+        /// toujours du premier élément, et parcourir la liste était impossible — on réentendait le
+        /// même, ou l'on sautait au hasard dès que le décor changeait. C'est exactement le défaut
+        /// déjà corrigé dans MenuNavigator, jamais reporté ici.
+        ///
+        /// On repère donc l'OBJET courant avant de rebalayer, puis on repart de sa nouvelle
+        /// position. Le monde bouge — on marche, les bêtes se déplacent — mais l'objet qu'on
+        /// écoutait, lui, reste le même.
+        /// </summary>
+        private static void Step(int direction)
         {
+            Component previous = (_itemIndex >= 0 && _itemIndex < _items.Count) ? _items[_itemIndex].Obj : null;
+
             Rescan();
-            Move(-1);
+            if (_items.Count == 0)
+            {
+                TolkSpeech.Speak(Localization.Language.T($"Rien trouvé en {CategoryName()}.",
+                                                          $"Nothing found in {CategoryName()}."), true);
+                return;
+            }
+
+            int baseIndex = previous != null ? _items.FindIndex(i => i.Obj == previous) : -1;
+            _itemIndex = ((baseIndex + direction) % _items.Count + _items.Count) % _items.Count;
+            AnnounceCurrent();
         }
 
         /// <summary>
@@ -127,17 +147,6 @@ namespace SunHavenAccess.Navigation
                 $"{_items.Count} élément{(_items.Count > 1 ? "s" : "")} trouvé{(_items.Count > 1 ? "s" : "")} " +
                 $"en {CategoryName()}.",
                 $"{_items.Count} found in {CategoryName()}."), true);
-        }
-
-        private static void Move(int direction)
-        {
-            if (_items.Count == 0)
-            {
-                TolkSpeech.Speak(Localization.Language.T($"Rien trouvé en {CategoryName()}.", $"Nothing found in {CategoryName()}."), true);
-                return;
-            }
-            _itemIndex = ((_itemIndex + direction) % _items.Count + _items.Count) % _items.Count;
-            AnnounceCurrent();
         }
 
         private static void AnnounceCurrent()
@@ -342,7 +351,7 @@ namespace SunHavenAccess.Navigation
             return "Entrée.";
         }
 
-        private static string Describe(Component c)
+        internal static string Describe(Component c)
         {
             // Un autre joueur AVANT le test NPCAI : c'est la distinction qui compte en
             // coopération, et on ne veut surtout pas qu'un partenaire soit annoncé comme un

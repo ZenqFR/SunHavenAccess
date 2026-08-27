@@ -121,8 +121,18 @@ namespace SunHavenAccess.Cursor
                 return;
             }
             Vector2Int p = player.Position;
-            TolkSpeech.Speak(
-                $"Position {p.x}, {p.y}. Vous regardez vers le {Strings.DirectionName(player.facingDirection)}.",
+            string direction = Strings.DirectionName(player.facingDirection);
+
+            // La case sous les pieds fait partie de « où suis-je » autant que les coordonnées :
+            // deux nombres situent sur une carte qu'on ne voit pas, le sol situe dans le monde.
+            string underfoot = DescribeGroundTile(p);
+            string ground = string.IsNullOrWhiteSpace(underfoot)
+                ? string.Empty
+                : Localization.Language.T($" Vous êtes sur {underfoot}.", $" You are on {underfoot}.");
+
+            TolkSpeech.Speak(Localization.Language.T(
+                $"Position {p.x}, {p.y}. Vous regardez vers le {direction}.{ground}",
+                $"Position {p.x}, {p.y}. You are facing {direction}.{ground}"),
                 true);
         }
 
@@ -193,6 +203,17 @@ namespace SunHavenAccess.Cursor
             string ground = DescribeGroundTile(GetFrontTileCoord(player));
             if (ground != null)
                 return Localization.Language.T($"{ground}, côté {facing}.", $"{ground}, {facing} side.");
+
+            // Quand il n'y a rien devant, on dit au moins SUR QUOI l'on se tient.
+            //
+            // Signalé en jeu : « rien devant vous, d'accord, mais c'est quoi la case sous mes
+            // pieds ? ». La question est juste — « rien devant vous » ne situe nulle part, alors
+            // que le sol sous soi est le seul repère qui reste quand la case suivante est vide.
+            string underfoot = DescribeGroundTile(player.Position);
+            if (!string.IsNullOrWhiteSpace(underfoot))
+                return Localization.Language.T(
+                    $"Rien devant vous, côté {facing}. Vous êtes sur {underfoot}.",
+                    $"Nothing in front of you, {facing} side. You are on {underfoot}.");
 
             return Localization.Language.T($"Rien devant vous, côté {facing}.",
                                            $"Nothing in front of you, {facing} side.");
@@ -351,6 +372,18 @@ namespace SunHavenAccess.Cursor
                     if (hit == null || hit.isTrigger) continue;
                     if (hit.attachedRigidbody != null && hit.attachedRigidbody.gameObject == player.gameObject) continue;
                     if (hit.transform.IsChildOf(player.transform)) continue;
+
+                    // Nommer l'obstacle plutôt que signaler qu'il y en a un.
+                    //
+                    // Signalé en jeu : « quelque chose bloque votre passage, toujours sans savoir
+                    // quoi ». Un obstacle sans nom n'apprend rien — on sait déjà qu'on est bloqué,
+                    // puisqu'on n'avance pas. Ce qu'on veut savoir, c'est si c'est un arbre à
+                    // abattre, un rocher à miner, un meuble à déplacer ou un mur à contourner.
+                    string name = NameOfObstacle(hit);
+                    if (!string.IsNullOrWhiteSpace(name))
+                        return Localization.Language.T($"{name} bloque le passage, côté {facing}.",
+                                                       $"{name} is blocking the way, {facing} side.");
+
                     return Localization.Language.T(
                         $"Quelque chose bloque le passage devant vous, côté {facing}.",
                         $"Something is blocking the way in front of you, {facing} side.");
@@ -361,6 +394,34 @@ namespace SunHavenAccess.Cursor
                 // Détection best-effort : en cas de souci, on se contente du message par défaut.
             }
             return null;
+        }
+
+        /// <summary>
+        /// Le nom de ce qui bloque, cherché d'abord sur les composants du jeu.
+        ///
+        /// On réemploie le descripteur du scanner : il sait déjà nommer un rocher, un arbre, un
+        /// personnage, un meuble ou un portail, et une seconde façon de nommer les mêmes choses
+        /// finirait par diverger de la première. Le collisionneur est souvent porté par un enfant,
+        /// d'où la remontée vers le parent avant d'abandonner.
+        /// </summary>
+        private static string NameOfObstacle(Collider2D hit)
+        {
+            try
+            {
+                foreach (Component c in hit.GetComponentsInParent<Component>(true))
+                {
+                    if (c == null || c is Transform || c is Collider2D) continue;
+
+                    string described = Navigation.Scanner.Describe(c);
+                    if (!string.IsNullOrWhiteSpace(described)) return described;
+                }
+            }
+            catch { }
+
+            // Dernier repli : le nom technique de l'objet, mis en mots. Il ne dit pas tout, mais
+            // « Clôture » vaut infiniment mieux que « quelque chose ».
+            try { return UiNameTranslator.TranslateTerrain(hit.gameObject.name); }
+            catch { return null; }
         }
     }
 }
