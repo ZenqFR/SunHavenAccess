@@ -233,35 +233,32 @@ namespace SunHavenAccess.Menus
         }
 
         /// <summary>
-        /// Le nom d'un métier de départ, en français.
+        /// Le nom d'un métier de départ, tel que le JEU l'affiche.
         ///
-        /// `StartingProfessionInfo` ne porte qu'un `name` brut, sans clé de traduction — contrairement
-        /// aux races, qui ont la leur. Le jeu affiche donc ce libellé autrement, par un composant de
-        /// l'écran que le mod ne voit pas. On traduit ici les noms connus, et tout nom inattendu
-        /// ressort tel quel : mieux vaut un mot anglais reconnaissable qu'une invention.
+        /// `StartingProfessionInfo.name` est un libellé interne, en anglais ; le nom traduit est
+        /// porté par les boutons de l'écran, en dehors de ce que cette classe expose. On demande
+        /// donc sa traduction au jeu, en passant le libellé interne comme clé — c'est ainsi que
+        /// ses propres boutons la retrouvent.
+        ///
+        /// Le mod ne traduit RIEN ici de son côté. J'avais d'abord écrit une table de noms
+        /// français maison : c'était l'erreur, puisque le jeu affichait déjà les bons noms et que
+        /// ma table ne faisait que les remplacer par de l'anglais. Une traduction qui existe déjà
+        /// se demande, elle ne se réécrit pas.
         /// </summary>
-        private static readonly Dictionary<string, string> ProfessionNames =
-            new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase)
-            {
-                { "Farmer", "Agriculteur" },     { "Farming", "Agriculture" },
-                { "Miner", "Mineur" },           { "Mining", "Minage" },
-                { "Fisher", "Pêcheur" },         { "Fishing", "Pêche" },
-                { "Fisherman", "Pêcheur" },
-                { "Explorer", "Explorateur" },   { "Exploration", "Exploration" },
-                { "Warrior", "Guerrier" },       { "Combat", "Combat" },
-                { "Fighter", "Combattant" },
-                { "Rancher", "Éleveur" },        { "Ranching", "Élevage" },
-                { "Chef", "Cuisinier" },         { "Cooking", "Cuisine" },
-                { "Crafter", "Artisan" },        { "Crafting", "Artisanat" },
-            };
-
         private static string ProfessionName(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return raw;
-            if (Localization.Language.IsEnglish) return raw; // déjà dans la bonne langue
 
             LogProfessionNames();
-            return ProfessionNames.TryGetValue(raw.Trim(), out string french) ? french : raw;
+
+            try
+            {
+                string translated = TextUtil.Clean(LocalizeText.TranslateText(raw, raw));
+                if (!string.IsNullOrWhiteSpace(translated)) return translated;
+            }
+            catch { }
+
+            return raw;
         }
 
         private static bool _loggedProfessions;
