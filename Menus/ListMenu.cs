@@ -76,14 +76,19 @@ namespace SunHavenAccess.Menus
             AnnounceCurrent();
         }
 
-        public static void Close()
+        /// <summary>
+        /// Ferme la liste. <paramref name="announce"/> à false quand une AUTRE liste suit
+        /// immédiatement — un sous-menu de compétences ou de sauvegarde : annoncer « fermé » juste
+        /// avant d'ouvrir la suivante ferait entendre une fermeture qui n'a pas lieu d'être.
+        /// </summary>
+        public static void Close(bool announce = true)
         {
             if (!IsOpen) return;
             IsOpen = false;
             _entries = new List<string>();
             _onActivate = null;
             _onAdjust = null;
-            TolkSpeech.Speak($"{_title} fermé.", true);
+            if (announce) TolkSpeech.Speak($"{_title} fermé.", true);
         }
 
         /// <summary>
@@ -147,8 +152,9 @@ namespace SunHavenAccess.Menus
             Action<int> callback = _onActivate;
             int chosen = _index;
             // La liste se ferme AVANT l'action : celle-ci peut ouvrir un autre menu, et deux listes
-            // ouvertes en même temps se disputeraient les flèches.
-            Close();
+            // ouvertes en même temps se disputeraient les flèches. Sans annonce : ce qui suit
+            // parle immédiatement.
+            Close(announce: false);
             callback?.Invoke(chosen);
         }
 

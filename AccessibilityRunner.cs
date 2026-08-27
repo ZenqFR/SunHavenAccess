@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using SunHavenAccess.Cursor;
 using SunHavenAccess.Menus;
@@ -54,6 +55,15 @@ namespace SunHavenAccess
             SafeTick("MainMenuFocus", Menus.MainMenuFocus.Tick);
         }
 
+        /// <summary>
+        /// Modules dont l'erreur a déjà été journalisée. Ces Tick tournent SOIXANTE FOIS PAR
+        /// SECONDE : un module qui échoue durablement — un champ du jeu renommé par une mise à
+        /// jour — écrivait sa trace d'appel complète à chaque image. En une session, le journal
+        /// atteint plusieurs gigaoctets et l'écriture disque finit par faire ramer le jeu lui-même,
+        /// pour une erreur déjà entièrement décrite dès la première ligne.
+        /// </summary>
+        private static readonly HashSet<string> _reported = new HashSet<string>();
+
         private static void SafeTick(string name, Action tick)
         {
             try
@@ -62,7 +72,14 @@ namespace SunHavenAccess
             }
             catch (Exception e)
             {
-                Plugin.Log.LogWarning($"Erreur dans {name} : {e}");
+                // Une seule fois par module et par session : la première trace dit tout, les
+                // suivantes ne font que remplir le disque.
+                if (_reported.Add(name))
+                {
+                    Plugin.Log.LogWarning(
+                        $"Erreur dans {name} : {e}\n" +
+                        $"Ce module est désormais silencieux pour le reste de la session ; il continue d'être appelé.");
+                }
             }
         }
     }

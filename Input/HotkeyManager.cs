@@ -23,6 +23,15 @@ namespace SunHavenAccess.Input
     {
         public static void Tick()
         {
+            // UN SEUL menu vocal à la fois. Ouvrir l'aide ou les raccourcis par-dessus une liste
+            // en laissait deux « ouverts » : en refermant celui du dessus on retombait dans l'autre
+            // sans l'avoir demandé, et chacun se croyait maître des flèches. On ferme donc la liste
+            // avant d'ouvrir autre chose.
+            if (Pressed(ModConfig.ShortcutsMenuToggle.Value) || Pressed(ModConfig.Help.Value))
+            {
+                ListMenu.Close();
+            }
+
             // Le menu des raccourcis a la main exclusive tant qu'il est ouvert, pour que les
             // touches de navigation/validation ne déclenchent pas aussi les actions normales.
             if (Pressed(ModConfig.ShortcutsMenuToggle.Value))

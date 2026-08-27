@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 113 au point** (6 %).
+Mis à jour le 2026-08-26 — **7 sur 114 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 97 |
+| `[ ]` | À tester | jamais essayé en jeu | 98 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -298,6 +298,10 @@ Parler, acheter, recevoir du courrier, suivre ses quêtes.
 - [ ] **village-panneau-baraquements** — touche : Pavé Entrée
   - Faire : Essayer au panneau des baraquements.
   - Attendu : Une seule commission est annoncée, pas deux tâches.
+- [ ] **village-menus-un-seul** — touche : F1, Suppr
+  - Faire : Ouvrir une liste (quêtes, relations, compétences), puis appuyer sur F1 ou Suppr par-dessus.
+  - Attendu : La liste se ferme et l'autre menu s'ouvre. En le refermant on revient au jeu, pas dans la liste précédente.
+  - Retour de jeu : Deux menus vocaux se croyaient chacun maître des flèches. Un seul à la fois désormais. Les sous-menus — un métier dans les compétences, une action sur une sauvegarde — ne disent plus « fermé » juste avant d'ouvrir la suite.
 - [!] **village-listes-exclusives** ⚠️ — touche : G, V, Z
   - Faire : Ouvrir le menu Tab, puis ouvrir une liste par-dessus (quêtes, relations, compétences) et la parcourir aux flèches.
   - Attendu : SEULE la liste parle. Le menu du jeu dessous ne doit rien annoncer, même s'il continue de bouger.
