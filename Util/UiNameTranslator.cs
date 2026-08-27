@@ -327,6 +327,7 @@ namespace SunHavenAccess.Util
         public static string Date(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return text;
+            if (Localization.Language.IsEnglish) return text; // déjà en anglais, rien à faire
 
             string s = text;
             foreach (var pair in SeasonNames)

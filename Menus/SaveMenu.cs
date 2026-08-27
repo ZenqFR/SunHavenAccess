@@ -32,6 +32,8 @@ namespace SunHavenAccess.Menus
         /// </summary>
         private static bool _onScreen;
 
+        private static float _nextCheck;
+
         /// <summary>
         /// Ouvre la liste dès que l'écran de choix apparaît, sans qu'aucune touche soit à connaître.
         ///
@@ -40,8 +42,6 @@ namespace SunHavenAccess.Menus
         /// touche dédiée reste néanmoins active, pour rouvrir la liste après l'avoir fermée avec
         /// Échap.
         /// </summary>
-        private static float _nextCheck;
-
         public static void Tick()
         {
             // Repérer l'écran demande un balayage complet de la scène (FindObjectsOfType), bien
@@ -103,26 +103,26 @@ namespace SunHavenAccess.Menus
             void Add(string label, TMPro.TextMeshProUGUI text)
             {
                 string value = TextUtil.Clean(text?.text);
-                if (!string.IsNullOrWhiteSpace(value)) lines.Add($"{label} : {value}");
+                if (!string.IsNullOrWhiteSpace(value)) lines.Add(Localization.Language.Pair(label, value));
             }
 
             // La date passe par la traduction, les autres champs sont des nombres.
             string date = UiNameTranslator.Date(TextUtil.Clean(panel.dayYearText?.text));
-            if (!string.IsNullOrWhiteSpace(date)) lines.Add($"Date : {date}");
+            if (!string.IsNullOrWhiteSpace(date)) lines.Add(Localization.Language.Pair("Date", date));
 
-            Add("Heure", panel.timeTMP);
-            Add("Emplacement", panel.slotTMP);
-            Add("Pièces", panel.coinText);
-            Add("Orbes", panel.orbText);
+            Add(Localization.Language.T("Heure", "Time"), panel.timeTMP);
+            Add(Localization.Language.T("Emplacement", "Slot"), panel.slotTMP);
+            Add(Localization.Language.T("Pièces", "Coins"), panel.coinText);
+            Add(Localization.Language.T("Orbes", "Orbs"), panel.orbText);
             Add("Tickets", panel.ticketText);
-            Add("Agriculture", panel.farmingLevelText);
-            Add("Minage", panel.miningLevelText);
+            Add(Localization.Language.T("Agriculture", "Farming"), panel.farmingLevelText);
+            Add(Localization.Language.T("Minage", "Mining"), panel.miningLevelText);
             Add("Combat", panel.combatLevelText);
-            Add("Pêche", panel.fishingLevelText);
+            Add(Localization.Language.T("Pêche", "Fishing"), panel.fishingLevelText);
             Add("Exploration", panel.explorationLevelText);
-            Add("Quête en cours", panel.questTMP);
+            Add(Localization.Language.T("Quête en cours", "Current quest"), panel.questTMP);
 
-            if (lines.Count == 0) lines.Add("Aucun détail disponible pour cette partie.");
+            if (lines.Count == 0) lines.Add(Localization.Language.T("Aucun détail disponible pour cette partie.", "No details available for this save."));
 
             ListMenu.Open($"Détails de {name}", lines);
         }

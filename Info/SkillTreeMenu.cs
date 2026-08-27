@@ -56,7 +56,8 @@ namespace SunHavenAccess.Info
             }
 
             var labels = professions
-                .Select(p => $"{ProfessionName(p)}, {AvailablePoints(p)} point{(AvailablePoints(p) > 1 ? "s" : "")} à dépenser")
+                .Select(p => $"{ProfessionName(p)}, {AvailablePoints(p)} point{(AvailablePoints(p) > 1 ? "s" : "")} " +
+                             Localization.Language.T("à dépenser", "to spend"))
                 .ToList();
 
             ListMenu.Open("Métiers", labels, chosen => OpenProfession(professions[chosen]));
@@ -93,17 +94,24 @@ namespace SunHavenAccess.Info
             var parts = new List<string>();
 
             string title = Safe(() => node.nodeTitle, null) ?? Safe(() => node.nodeName, null);
-            parts.Add(string.IsNullOrWhiteSpace(title) ? "Compétence" : title);
+            parts.Add(string.IsNullOrWhiteSpace(title)
+                ? Localization.Language.T("Compétence", "Skill")
+                : title);
 
             int tier = Safe(() => node.tier, 0);
-            if (tier > 0) parts.Add($"palier {tier}");
+            if (tier > 0) parts.Add(Localization.Language.T($"palier {tier}", $"tier {tier}"));
 
             int amount = Safe(() => node.NodeAmount, 0);
             int max = Safe(() => node.nodePoints, 1);
-            parts.Add(max > 1 ? $"rang {amount} sur {max}" : (amount > 0 ? "prise" : "non prise"));
+            parts.Add(max > 1
+                ? Localization.Language.T($"rang {amount} sur {max}", $"rank {amount} of {max}")
+                : Localization.Language.T(amount > 0 ? "prise" : "non prise",
+                                          amount > 0 ? "taken" : "not taken"));
 
-            if (amount >= max && max > 0) parts.Add("terminée");
-            else if (tier > 1) parts.Add($"demande {5 * (tier - 1)} points dépensés dans ce métier");
+            if (amount >= max && max > 0) parts.Add(Localization.Language.T("terminée", "complete"));
+            else if (tier > 1) parts.Add(Localization.Language.T(
+                $"demande {5 * (tier - 1)} points dépensés dans ce métier",
+                $"requires {5 * (tier - 1)} points spent in this profession"));
 
             string description = TextUtil.Clean(Safe(() => node.description, null));
             if (!string.IsNullOrWhiteSpace(description)) parts.Add(description);
@@ -148,10 +156,10 @@ namespace SunHavenAccess.Info
         {
             switch (profession)
             {
-                case ProfessionType.Farming:     return "Agriculture";
-                case ProfessionType.Mining:      return "Minage";
+                case ProfessionType.Farming:     return Localization.Language.T("Agriculture", "Farming");
+                case ProfessionType.Mining:      return Localization.Language.T("Minage", "Mining");
                 case ProfessionType.Combat:      return "Combat";
-                case ProfessionType.Fishing:     return "Pêche";
+                case ProfessionType.Fishing:     return Localization.Language.T("Pêche", "Fishing");
                 case ProfessionType.Exploration: return "Exploration";
                 default:                         return profession.ToString();
             }

@@ -72,7 +72,7 @@ namespace SunHavenAccess.Info
         }
 
         private static string Join(List<TMPro.TextMeshProUGUI> row) =>
-            string.Join(" : ", row
+            string.Join(Localization.Language.T(" : ", ": "), row
                 .OrderBy(t => t.transform.position.x)
                 .Select(t => TextUtil.Clean(t.text))
                 .Where(s => !string.IsNullOrWhiteSpace(s)));

@@ -32,6 +32,28 @@ namespace SunHavenAccess.Localization
         /// <summary>Vrai si les annonces du mod doivent être en anglais.</summary>
         public static bool IsEnglish => Code() != "fr";
 
+        /// <summary>
+        /// Choisit entre deux formulations.
+        ///
+        /// Pour les MORCEAUX de phrase assemblés sur place — un intitulé suivi d'une valeur, un
+        /// mot de liaison entre deux données — que la traduction par phrase entière ne peut pas
+        /// atteindre : elle ne voit que le résultat final, où l'intitulé français est noyé au
+        /// milieu de valeurs qui, elles, viennent du jeu. Les écrire côte à côte ici garde la
+        /// version française sous les yeux au moment d'écrire l'anglaise, et rend visible l'oubli
+        /// de l'une des deux.
+        /// </summary>
+        public static string T(string fr, string en) => IsEnglish ? en : fr;
+
+        /// <summary>
+        /// « Intitulé : valeur », avec l'espacement de la langue.
+        ///
+        /// Le français fait précéder le deux-points d'une espace, l'anglais non. La plupart des
+        /// lecteurs d'écran ne prononcent pas le signe, mais certains marquent une pause à
+        /// l'espace : « Pièces , 1 240 » s'entend, et sonne faux.
+        /// </summary>
+        public static string Pair(string label, string value) =>
+            IsEnglish ? $"{label}: {value}" : $"{label} : {value}";
+
         public static string Code()
         {
             if (!string.IsNullOrWhiteSpace(Override)) return Normalize(Override);

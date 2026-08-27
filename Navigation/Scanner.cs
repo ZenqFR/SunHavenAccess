@@ -56,8 +56,19 @@ namespace SunHavenAccess.Navigation
             // Pas de préfixe « Catégorie : » : on en change plusieurs fois de suite pour trouver
             // la bonne, et le mot se répétait à chaque fois sans jamais rien apprendre — le nom de
             // la catégorie dit déjà de quoi il s'agit.
-            TolkSpeech.Speak($"{CategoryNames[_categoryIndex]}, {_items.Count} élément trouvé{(_items.Count > 1 ? "s" : "")}.", true);
+            TolkSpeech.Speak(Localization.Language.T(
+                $"{CategoryName()}, {_items.Count} élément trouvé{(_items.Count > 1 ? "s" : "")}.",
+                $"{CategoryName()}, {_items.Count} found."), true);
         }
+
+        /// <summary>
+        /// Le nom de la catégorie courante, dans la langue des annonces. Les noms sont écrits en
+        /// français dans <see cref="CategoryNames"/> et traduits ici plutôt que dupliqués : c'est
+        /// la même liste qui sert à parcourir les catégories, et deux listes en parallèle
+        /// finiraient par diverger.
+        /// </summary>
+        private static string CategoryName() =>
+            Localization.Translator.Translate(CategoryNames[_categoryIndex]);
 
         public static void NextItem()
         {
@@ -81,7 +92,7 @@ namespace SunHavenAccess.Navigation
             Rescan();
             if (_items.Count == 0)
             {
-                TolkSpeech.Speak($"Rien trouvé en {CategoryNames[_categoryIndex]}.", true);
+                TolkSpeech.Speak(Localization.Language.T($"Rien trouvé en {CategoryName()}.", $"Nothing found in {CategoryName()}."), true);
                 return;
             }
             if (_itemIndex < 0 || _itemIndex >= _items.Count) _itemIndex = 0;
@@ -112,16 +123,17 @@ namespace SunHavenAccess.Navigation
         public static void AnnounceCount()
         {
             Rescan();
-            TolkSpeech.Speak(
+            TolkSpeech.Speak(Localization.Language.T(
                 $"{_items.Count} élément{(_items.Count > 1 ? "s" : "")} trouvé{(_items.Count > 1 ? "s" : "")} " +
-                $"en {CategoryNames[_categoryIndex]}.", true);
+                $"en {CategoryName()}.",
+                $"{_items.Count} found in {CategoryName()}."), true);
         }
 
         private static void Move(int direction)
         {
             if (_items.Count == 0)
             {
-                TolkSpeech.Speak($"Rien trouvé en {CategoryNames[_categoryIndex]}.", true);
+                TolkSpeech.Speak(Localization.Language.T($"Rien trouvé en {CategoryName()}.", $"Nothing found in {CategoryName()}."), true);
                 return;
             }
             _itemIndex = ((_itemIndex + direction) % _items.Count + _items.Count) % _items.Count;
@@ -131,9 +143,11 @@ namespace SunHavenAccess.Navigation
         private static void AnnounceCurrent()
         {
             var item = _items[_itemIndex];
-            TolkSpeech.Speak(
+            TolkSpeech.Speak(Localization.Language.T(
                 $"{item.Label}, {item.Bearing}, {Mathf.Round(item.Distance)} case{(item.Distance > 1 ? "s" : "")}. " +
-                $"Élément {_itemIndex + 1} sur {_items.Count}.", true);
+                $"Élément {_itemIndex + 1} sur {_items.Count}.",
+                $"{item.Label}, {item.Bearing}, {Mathf.Round(item.Distance)} tile{(item.Distance > 1 ? "s" : "")}. " +
+                $"Item {_itemIndex + 1} of {_items.Count}."), true);
         }
 
         private static void Rescan()

@@ -46,9 +46,12 @@ namespace SunHavenAccess.Menus
 
             var entries = new List<string>();
 
-            AddModSetting(entries, ModConfig.EdgeSound, "Bip de bord");
-            AddModSetting(entries, ModConfig.TakeOverMenuArrows, "Navigation directionnelle du mod");
-            AddModSetting(entries, ModConfig.BriefMode, "Mode bref dans l'inventaire");
+            AddModSetting(entries, ModConfig.EdgeSound,
+                Localization.Language.T("Bip de bord", "Edge beep"));
+            AddModSetting(entries, ModConfig.TakeOverMenuArrows,
+                Localization.Language.T("Navigation directionnelle du mod", "Mod directional navigation"));
+            AddModSetting(entries, ModConfig.BriefMode,
+                Localization.Language.T("Mode bref dans l'inventaire", "Brief mode in the inventory"));
 
             foreach (Selectable control in GameControls())
             {
@@ -73,7 +76,8 @@ namespace SunHavenAccess.Menus
             entries.Add($"{label} : {OnOff(setting.Value)}");
         }
 
-        private static string OnOff(bool value) => value ? "activé" : "désactivé";
+        private static string OnOff(bool value) =>
+            Localization.Language.T(value ? "activé" : "désactivé", value ? "on" : "off");
 
         // ------------------------------------------------------------------ Réglages du jeu
 
@@ -166,7 +170,7 @@ namespace SunHavenAccess.Menus
             Selectable control = _controls[controlIndex];
             if (control == null || !control.gameObject.activeInHierarchy) return null;
 
-            string label = LabelOf(control) ?? "Réglage";
+            string label = LabelOf(control) ?? Localization.Language.T("Réglage", "Setting");
 
             try
             {
