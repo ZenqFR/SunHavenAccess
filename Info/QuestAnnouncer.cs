@@ -81,7 +81,7 @@ namespace SunHavenAccess.Info
                     string complete = TextUtil.Clean(bundle.questPanel.questCompleteTMP?.text);
 
                     if (!string.IsNullOrWhiteSpace(description)) sentence += $" {description}.";
-                    if (!string.IsNullOrWhiteSpace(complete)) sentence += $" Progression : {complete}.";
+                    if (!string.IsNullOrWhiteSpace(complete)) sentence += " " + Localization.Language.Pair(Localization.Language.T("Progression", "Progress"), complete) + ".";
                     if (!string.IsNullOrWhiteSpace(progress)) sentence += $" {progress}.";
                 }
 

@@ -53,9 +53,10 @@ namespace SunHavenAccess
             }
 
             Log.LogInfo($"{PluginName} {PluginVersion} chargé.");
-            TolkSpeech.Speak(
-                "Mod d'accessibilité Sun Haven chargé. " +
-                $"Touche {Strings.KeyName(ModConfig.Help.Value)} pour l'aide.", true);
+            string helpKey = Strings.KeyName(ModConfig.Help.Value);
+            TolkSpeech.Speak(SunHavenAccess.Localization.Language.T(
+                $"Mod d'accessibilité Sun Haven chargé. Touche {helpKey} pour l'aide.",
+                $"Sun Haven Access loaded. Press {helpKey} for help."), true);
         }
 
         private void OnDestroy()

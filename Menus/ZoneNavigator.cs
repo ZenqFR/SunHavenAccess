@@ -451,8 +451,8 @@ namespace SunHavenAccess.Menus
 
         public static string TabLabel(int panelIndex) =>
             Util.UiNameTranslator.MajorTabLabelsByIndex.TryGetValue(panelIndex, out string label)
-                ? label
-                : $"Onglet {panelIndex + 1}";
+                ? Localization.Translator.Translate(label)
+                : Localization.Language.T($"Onglet {panelIndex + 1}", $"Tab {panelIndex + 1}");
 
         // ------------------------------------------------------- Déplacements
 
@@ -616,7 +616,7 @@ namespace SunHavenAccess.Menus
             {
                 PlayerInventory inv = Player.Instance != null ? Player.Instance.PlayerInventory : null;
                 if (inv == null) { UiSound.EdgeBump(); return; }
-                FocusReader.SetPendingPrefix(ZoneNames[Zone.Tabs]);
+                FocusReader.SetPendingPrefix(Localization.Translator.Translate(ZoneNames[Zone.Tabs]));
                 inv.OpenMajorPanel(inv.majorTabIndex); // re-sélectionne l'onglet courant
                 return;
             }
@@ -642,7 +642,7 @@ namespace SunHavenAccess.Menus
             }
 
             GameObject entry = targetRows[newRow][Mathf.Clamp(newCol, 0, targetRows[newRow].Count - 1)];
-            FocusReader.SetPendingPrefix(ZoneNames.TryGetValue(target, out string n) ? n : null);
+            FocusReader.SetPendingPrefix(ZoneNames.TryGetValue(target, out string n) ? Localization.Translator.Translate(n) : null);
             Select(entry);
         }
 
@@ -661,7 +661,7 @@ namespace SunHavenAccess.Menus
             {
                 List<List<GameObject>> rows = BuildRows(ZoneMembers(z));
                 if (rows.Count == 0 || rows[0].Count == 0) continue;
-                FocusReader.SetPendingPrefix(ZoneNames.TryGetValue(z, out string n) ? n : null);
+                FocusReader.SetPendingPrefix(ZoneNames.TryGetValue(z, out string n) ? Localization.Translator.Translate(n) : null);
                 Select(rows[0][0]);
                 return;
             }

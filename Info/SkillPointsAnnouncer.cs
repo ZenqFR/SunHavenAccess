@@ -47,7 +47,10 @@ namespace SunHavenAccess.Info
                 int total = Skills.NumberOfSkillPoints(entry.Key);
                 int spent = Skills.NumberOfSkillPointsSpent(entry.Key);
                 int available = total - spent;
-                parts.Add($"{entry.Value} : {available} point{(available > 1 ? "s" : "")} disponible{(available > 1 ? "s" : "")} sur {total}.");
+                string name = Localization.Translator.Translate(entry.Value);
+                parts.Add(Localization.Language.T(
+                    $"{name} : {available} point{(available > 1 ? "s" : "")} disponible{(available > 1 ? "s" : "")} sur {total}.",
+                    $"{name}: {available} point{(available > 1 ? "s" : "")} available of {total}."));
             }
 
             TolkSpeech.Speak(string.Join(" ", parts), true);

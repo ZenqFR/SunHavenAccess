@@ -54,7 +54,7 @@ namespace SunHavenAccess.Cursor
             // où l'on se tient réellement.
             _active = true;
             _tile = player.Position;
-            TolkSpeech.Speak($"Curseur libre activé. {Describe(includeBearing: false)}", true);
+            TolkSpeech.Speak(Localization.Language.T($"Curseur libre activé. {Describe(includeBearing: false)}", $"Free cursor on. {Describe(includeBearing: false)}"), true);
         }
 
         public static void Deactivate() => _active = false;
@@ -65,7 +65,7 @@ namespace SunHavenAccess.Cursor
             Player player = Player.Instance;
             if (!_active || player == null) return;
             _tile = player.Position;
-            TolkSpeech.Speak($"Recentré. {Describe(includeBearing: false)}", true);
+            TolkSpeech.Speak(Localization.Language.T($"Recentré. {Describe(includeBearing: false)}", $"Recentred. {Describe(includeBearing: false)}"), true);
         }
 
         public static void Move(int dx, int dy)
@@ -95,7 +95,7 @@ namespace SunHavenAccess.Cursor
         {
             if (!_active) return;
             // PathingController annonce lui-même tous les cas : succès, trop loin, chemin bloqué.
-            PathingController.TravelTo(TileGeometry.TileToWorld(_tile), "la case visée");
+            PathingController.TravelTo(TileGeometry.TileToWorld(_tile), Localization.Language.T("la case visée", "the targeted tile"));
         }
 
         /// <summary>

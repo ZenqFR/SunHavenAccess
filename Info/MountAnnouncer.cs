@@ -50,7 +50,7 @@ namespace SunHavenAccess.Info
             if (mounted == _mounted) return;
 
             _mounted = mounted;
-            TolkSpeech.Speak(mounted ? "En selle." : "À pied.", interrupt: false);
+            TolkSpeech.Speak(Localization.Language.T(mounted ? "En selle." : "À pied.", mounted ? "Mounted." : "On foot."), interrupt: false);
         }
     }
 }

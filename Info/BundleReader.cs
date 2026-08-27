@@ -53,16 +53,21 @@ namespace SunHavenAccess.Info
                 int have = data.amount;
 
                 if (have >= needed) { filled++; continue; }
-                missing.Add($"{NameOf(slot)}, {have} sur {needed}");
+                missing.Add(Localization.Language.T($"{NameOf(slot)}, {have} sur {needed}",
+                                                    $"{NameOf(slot)}, {have} of {needed}"));
             }
 
             if (missing.Count == 0)
             {
-                TolkSpeech.Speak($"Paquet complet : {slots.Count} emplacement{Plural(slots.Count)} rempli{Plural(slots.Count)}.", true);
+                TolkSpeech.Speak(Localization.Language.T(
+                    $"Paquet complet : {slots.Count} emplacement{Plural(slots.Count)} rempli{Plural(slots.Count)}.",
+                    $"Bundle complete: {slots.Count} slot{Plural(slots.Count)} filled."), true);
                 return;
             }
 
-            string head = $"Paquet, {filled} emplacement{Plural(filled)} rempli{Plural(filled)} sur {slots.Count}. Il manque : ";
+            string head = Localization.Language.T(
+                $"Paquet, {filled} emplacement{Plural(filled)} rempli{Plural(filled)} sur {slots.Count}. Il manque : ",
+                $"Bundle, {filled} slot{Plural(filled)} filled of {slots.Count}. Still missing: ");
             TolkSpeech.Speak(head + string.Join(" ; ", missing) + ".", true);
         }
 
@@ -81,8 +86,13 @@ namespace SunHavenAccess.Info
             int needed = slot.numberOfItemToAccept;
             int have = AmountIn(slot);
 
-            if (have >= needed) return $"{NameOf(slot)}, complet, {needed} sur {needed}.";
-            return $"{NameOf(slot)}, {have} sur {needed} déposé{Plural(have)}.";
+            if (have >= needed)
+                return Localization.Language.T($"{NameOf(slot)}, complet, {needed} sur {needed}.",
+                                               $"{NameOf(slot)}, complete, {needed} of {needed}.");
+
+            return Localization.Language.T(
+                $"{NameOf(slot)}, {have} sur {needed} déposé{Plural(have)}.",
+                $"{NameOf(slot)}, {have} of {needed} handed in.");
         }
 
         // ------------------------------------------------------------------ Interne
@@ -146,8 +156,8 @@ namespace SunHavenAccess.Info
             }
             catch { }
 
-            try { return $"objet numéro {slot.serializedItemToAccept.id}"; }
-            catch { return "objet inconnu"; }
+            try { return Localization.Language.T($"objet numéro {slot.serializedItemToAccept.id}", $"item number {slot.serializedItemToAccept.id}"); }
+            catch { return Localization.Language.T("objet inconnu", "unknown item"); }
         }
     }
 }

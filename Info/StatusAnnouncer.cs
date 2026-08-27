@@ -33,8 +33,9 @@ namespace SunHavenAccess.Info
             int mana = Mathf.CeilToInt(Mathf.Max(0f, player.Mana));
             int maxMana = Mathf.CeilToInt(player.MaxMana);
 
-            string message = $"Santé : {health} sur {maxHealth}. Mana : {mana} sur {maxMana}. {Purse()}";
-            TolkSpeech.Speak(message, true);
+            TolkSpeech.Speak(Localization.Language.T(
+                $"Santé : {health} sur {maxHealth}. Mana : {mana} sur {maxMana}. {Purse()}",
+                $"Health: {health} of {maxHealth}. Mana: {mana} of {maxMana}. {Purse()}"), true);
         }
 
         /// <summary>
@@ -54,8 +55,12 @@ namespace SunHavenAccess.Info
                 // Les pièces sont toujours dites, même à zéro : « je n'ai plus rien » est
                 // précisément l'information qu'on vient chercher. Orbes et tickets, eux, restent
                 // à zéro pendant toute la première partie du jeu.
-                parts.Add($"{coins} pièce{(coins > 1 ? "s" : "")}");
-                if (orbs > 0) parts.Add($"{orbs} orbe{(orbs > 1 ? "s" : "")}");
+                parts.Add(Localization.Language.T(
+                    $"{coins} pièce{(coins > 1 ? "s" : "")}",
+                    $"{coins} coin{(coins > 1 ? "s" : "")}"));
+                if (orbs > 0) parts.Add(Localization.Language.T(
+                    $"{orbs} orbe{(orbs > 1 ? "s" : "")}",
+                    $"{orbs} orb{(orbs > 1 ? "s" : "")}"));
                 if (tickets > 0) parts.Add($"{tickets} ticket{(tickets > 1 ? "s" : "")}");
 
                 return string.Join(", ", parts) + ".";

@@ -41,7 +41,9 @@ namespace SunHavenAccess.Patches
             _descriptionField ??= typeof(NewCharacterCreator).GetField("raceDescriptionText", BindingFlags.NonPublic | BindingFlags.Instance);
             _abilityField ??= typeof(NewCharacterCreator).GetField("raceAbilityText", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            string raceName = RaceNames.TryGetValue(race, out string name) ? name : race.ToString();
+            string raceName = SunHavenAccess.Localization.Language.IsEnglish
+                ? race.ToString() // les noms de races sont déjà des mots anglais
+                : (RaceNames.TryGetValue(race, out string name) ? name : race.ToString());
             string description = TextUtil.Clean((_descriptionField?.GetValue(__instance) as TextMeshProUGUI)?.text);
             string ability = TextUtil.Clean((_abilityField?.GetValue(__instance) as TextMeshProUGUI)?.text);
 

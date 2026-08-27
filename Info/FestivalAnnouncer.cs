@@ -64,9 +64,15 @@ namespace SunHavenAccess.Info
             {
                 string name = TextUtil.Clean(LocalizeText.TranslateText(evt.keyName, evt.name));
                 string description = TextUtil.Clean(LocalizeText.TranslateText(evt.keyDescription, evt.description));
-                string when = evt.day == currentMonthDay ? "aujourd'hui" : (evt.day > currentMonthDay ? $"jour {evt.day}" : $"jour {evt.day} (déjà passé)");
+                string when = evt.day == currentMonthDay
+                    ? Localization.Language.T("aujourd'hui", "today")
+                    : evt.day > currentMonthDay
+                        ? Localization.Language.T($"jour {evt.day}", $"day {evt.day}")
+                        : Localization.Language.T($"jour {evt.day} (déjà passé)", $"day {evt.day} (already past)");
+
                 string sentence = $"{name}, {when}";
-                if (!string.IsNullOrWhiteSpace(description)) sentence += $" : {description}";
+                if (!string.IsNullOrWhiteSpace(description))
+                    sentence += Localization.Language.T($" : {description}", $": {description}");
                 parts.Add(sentence + ".");
             }
 

@@ -42,7 +42,12 @@ namespace SunHavenAccess.Info
                 if (!professions.TryGetValue(entry.Key, out Profession profession)) continue;
 
                 Profession.GetLevelPercentFromExp(profession.experience, out string expString);
-                parts.Add($"{entry.Value}, niveau {profession.level} ({expString}).");
+                // Le nom du métier passe par la table de traduction, qui les porte déjà pour
+                // l'arbre de compétences : une seule liste de noms pour tout le mod.
+                string name = Localization.Translator.Translate(entry.Value);
+                parts.Add(Localization.Language.T(
+                    $"{name}, niveau {profession.level} ({expString}).",
+                    $"{name}, level {profession.level} ({expString})."));
             }
 
             if (parts.Count == 0)

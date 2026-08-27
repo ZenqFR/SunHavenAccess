@@ -97,11 +97,11 @@ namespace SunHavenAccess.Util
 
             int rank = majorSiblings.IndexOf(go.transform); // 0-based, aligné sur majorTabIndex
             if (rank < 0) return null;
-            if (UiNameTranslator.MajorTabLabelsByIndex.TryGetValue(rank, out string label)) return label;
+            if (UiNameTranslator.MajorTabLabelsByIndex.TryGetValue(rank, out string label)) return Localization.Translator.Translate(label);
 
             // Filet de sécurité : si le rang tombe hors de la table (nombre d'onglets inattendu),
             // annoncer un numéro générique plutôt que de retomber sur le nom technique brut.
-            return $"Onglet {rank + 1}";
+            return Localization.Language.T($"Onglet {rank + 1}", $"Tab {rank + 1}");
         }
 
         /// <summary>
@@ -122,14 +122,14 @@ namespace SunHavenAccess.Util
             var parts = new List<string>();
 
             string title = SafeText(() => node.nodeTitle) ?? SafeText(() => node.nodeName);
-            parts.Add(string.IsNullOrWhiteSpace(title) ? "Compétence" : title);
+            parts.Add(string.IsNullOrWhiteSpace(title) ? Localization.Language.T("Compétence", "Skill") : title);
 
             // Progression. Un nœud à rangs multiples n'a de sens qu'avec les deux nombres ; un
             // nœud simple se dit « pris » ou « non pris », un « 0 sur 1 » n'apprend rien.
             int amount = node.NodeAmount;
             int max = SafeInt(() => node.nodePoints, 1);
-            if (max > 1) parts.Add($"rang {amount} sur {max}");
-            else parts.Add(amount > 0 ? "prise" : "non prise");
+            if (max > 1) parts.Add(Localization.Language.T($"rang {amount} sur {max}", $"rank {amount} of {max}"));
+            else parts.Add(Localization.Language.T(amount > 0 ? "prise" : "non prise", amount > 0 ? "taken" : "not taken"));
 
             // Disponibilité : `Available` est privée. On la LIT plutôt que de recalculer le seuil
             // de points par palier — dupliquer une règle du jeu, c'est accepter qu'elle diverge le
@@ -139,12 +139,14 @@ namespace SunHavenAccess.Util
             {
                 int tier = SafeInt(() => node.tier, 0);
                 parts.Add(tier > 1
-                    ? $"verrouillée, demande {5 * (tier - 1)} points dépensés dans cet arbre"
-                    : "verrouillée");
+                    ? Localization.Language.T(
+                        $"verrouillée, demande {5 * (tier - 1)} points dépensés dans cet arbre",
+                        $"locked, requires {5 * (tier - 1)} points spent in this tree")
+                    : Localization.Language.T("verrouillée", "locked"));
             }
             else if (amount >= max)
             {
-                parts.Add("terminée");
+                parts.Add(Localization.Language.T("terminée", "complete"));
             }
 
             string description = SafeText(() => node.description);
@@ -292,7 +294,7 @@ namespace SunHavenAccess.Util
             if (levels.Count > 0) full.Add(string.Join(", ", levels));
 
             string coins = TextUtil.Clean(panel.coinText?.text);
-            if (!string.IsNullOrWhiteSpace(coins)) full.Add($"{coins} pièces d'or");
+            if (!string.IsNullOrWhiteSpace(coins)) full.Add(Localization.Language.T($"{coins} pièces d'or", $"{coins} gold coins"));
 
             string longText = string.Join(". ", full) + ".";
 

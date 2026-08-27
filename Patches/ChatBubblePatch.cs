@@ -94,7 +94,7 @@ namespace SunHavenAccess.Patches
             // Sans interruption : un message qui arrive pendant qu'on écoute autre chose ne doit
             // pas couper la parole, contrairement à une alerte de combat.
             TolkSpeech.Speak(
-                string.IsNullOrWhiteSpace(cleanName) ? cleanMessage : $"{cleanName} écrit : {cleanMessage}",
+                string.IsNullOrWhiteSpace(cleanName) ? cleanMessage : SunHavenAccess.Localization.Language.T($"{cleanName} écrit : {cleanMessage}", $"{cleanName} writes: {cleanMessage}"),
                 interrupt: false);
         }
     }

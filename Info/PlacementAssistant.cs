@@ -196,16 +196,20 @@ namespace SunHavenAccess.Info
 
             try
             {
-                state = CanBePlacedRef(_current) ? "emplacement valide" : "emplacement invalide";
+                state = Localization.Language.T(
+                    CanBePlacedRef(_current) ? "emplacement valide" : "emplacement invalide",
+                    CanBePlacedRef(_current) ? "valid spot" : "invalid spot");
             }
             catch
             {
-                state = "état inconnu";
+                state = Localization.Language.T("état inconnu", "state unknown");
             }
 
             string aiming = FreeTileCursor.Active
-                ? "Visée pilotée par le curseur libre."
-                : "Curseur libre inactif : la visée suit la souris.";
+                ? Localization.Language.T("Visée pilotée par le curseur libre.",
+                                          "Aiming driven by the free cursor.")
+                : Localization.Language.T("Curseur libre inactif : la visée suit la souris.",
+                                          "Free cursor off: aiming follows the mouse.");
 
             TolkSpeech.Speak($"{name}{footprint}, {state}. {aiming}", true);
         }

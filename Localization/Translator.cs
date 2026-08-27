@@ -339,6 +339,41 @@ namespace SunHavenAccess.Localization
             { "Sur l'écran de choix de personnage : ouvre les sauvegardes en liste, puis Charger ou Supprimer.",
               "On the character select screen: opens the saves as a list, then Load or Delete." },
 
+            // Mana, souris et pêche : des phrases entières, donc traduites ici plutôt qu'à la
+            // source, où elles sont rangées dans des tables ou des ternaires.
+            { "Mana à la moitié.", "Mana at half." },
+            { "Mana à un quart.", "Mana at a quarter." },
+            { "Mana presque épuisé.", "Mana nearly out." },
+            { "Souris directionnelle activée : elle pointe désormais vers la case devant vous.",
+              "Directional mouse on: it now points at the tile in front of you." },
+            { "Souris directionnelle désactivée, vous pouvez la déplacer librement.",
+              "Directional mouse off, you can move it freely." },
+            { "Bip de visée en pêche activé.", "Fishing aim beep on." },
+            { "Bip de visée en pêche désactivé.", "Fishing aim beep off." },
+            { "Manqué.", "Missed." },
+            { "Touché !", "Hooked!" },
+            { "Entrée.", "Entrance." },
+            { "Entrée, votre maison.", "Entrance, your house." },
+            { "En selle.", "Mounted." },
+            { "À pied.", "On foot." },
+
+            // Les zones du menu principal, annoncées au saut d'une zone à l'autre.
+            { "Onglets", "Tabs" },
+            { "Équipement", "Equipment" },
+            { "Barre d'action", "Action bar" },
+            { "Coffre", "Chest" },
+
+            // Les catégories d'apparence en création de personnage. Elles sont annoncées seules
+            // au changement de catégorie, donc la table suffit.
+            { "Corps", "Body" },
+            { "Cheveux", "Hair" },
+            { "Yeux", "Eyes" },
+            { "Visage", "Face" },
+            { "Torse", "Chest" },
+            { "Jambes", "Legs" },
+            { "Tête", "Head" },
+            { "Queue", "Tail" },
+
             // Calendrier
             { "Le calendrier n'est pas disponible pour le moment.", "The calendar is not available right now." },
             { "Aucun festival prévu cette saison.", "No festival scheduled this season." },
@@ -377,6 +412,7 @@ namespace SunHavenAccess.Localization
             P(@"^Que faire pour (.+)$",                          "What to do for $1"),
             P(@"^Détails de (.+)$",                              "Details for $1"),
             P(@"^Emplacement vide$",                             "Empty slot"),
+            P(@"^Entrée, (.+)\.$",                               "Entrance, $1."),
             P(@"^Nouvelle partie$",                              "New game"),
 
             // Cheminement automatique

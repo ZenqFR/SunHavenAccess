@@ -84,7 +84,7 @@ namespace SunHavenAccess.Menus
             if (IsHidden(field))
             {
                 // Champ masqué (mot de passe) : ne jamais prononcer le contenu à voix haute.
-                TolkSpeech.Speak(after.Length > before.Length ? "étoile" : "supprimé", interrupt: true);
+                TolkSpeech.Speak(Localization.Language.T(after.Length > before.Length ? "étoile" : "supprimé", after.Length > before.Length ? "star" : "deleted"), interrupt: true);
                 return;
             }
 
@@ -97,7 +97,7 @@ namespace SunHavenAccess.Menus
             if (after.Length < before.Length && before.StartsWith(after))
             {
                 string removed = before.Substring(after.Length);
-                TolkSpeech.Speak($"supprimé {removed}", interrupt: true);
+                TolkSpeech.Speak(Localization.Language.T($"supprimé {removed}", $"deleted {removed}"), interrupt: true);
                 return;
             }
 
@@ -144,11 +144,11 @@ namespace SunHavenAccess.Menus
             }
             catch { /* structure inattendue : on retombe sur le libellé générique */ }
 
-            return "Champ de saisie";
+            return Localization.Language.T("Champ de saisie", "Text field");
         }
 
         private static string Spoken(SunHavenInputField field, string text) =>
-            IsHidden(field) ? "masqué" : text;
+            IsHidden(field) ? Localization.Language.T("masqué", "hidden") : text;
 
         private static bool IsHidden(SunHavenInputField field)
         {

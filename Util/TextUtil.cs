@@ -30,9 +30,9 @@ namespace SunHavenAccess.Util
         {
             if (string.IsNullOrEmpty(raw)) return raw;
             string s = TailArtifact.Replace(raw, "");
-            s = GoldSprite.Replace(s, " pièces d'or");
+            s = GoldSprite.Replace(s, Localization.Language.T(" pièces d'or", " gold coins"));
             s = TicketSprite.Replace(s, " tickets");
-            s = OrbSprite.Replace(s, " orbes");
+            s = OrbSprite.Replace(s, Localization.Language.T(" orbes", " orbs"));
             s = TagRegex.Replace(s, "");
             s = MultiSpace.Replace(s, " ");
             return s.Trim();

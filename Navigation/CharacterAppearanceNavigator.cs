@@ -91,7 +91,8 @@ namespace SunHavenAccess.Navigation
                 if (!string.IsNullOrWhiteSpace(translated)) name = translated;
             }
 
-            TolkSpeech.Speak($"{label} : {name}.", true);
+            TolkSpeech.Speak(
+                Localization.Language.Pair(Localization.Translator.Translate(label), name) + ".", true);
         }
     }
 }

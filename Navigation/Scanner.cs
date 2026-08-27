@@ -329,7 +329,7 @@ namespace SunHavenAccess.Navigation
             if (isBuildingPortal)
             {
                 object portalType = PortalTypeField?.GetValue(portal);
-                string label = portalType != null ? UiNameTranslator.Translate(portalType.ToString()) : "bâtiment";
+                string label = portalType != null ? UiNameTranslator.Translate(portalType.ToString()) : Localization.Language.T("bâtiment", "building");
                 return $"Entrée, {label}.";
             }
 
