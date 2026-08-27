@@ -53,6 +53,9 @@ namespace SunHavenAccess
             SafeTick("MountAnnouncer", MountAnnouncer.Tick);
             SafeTick("CharacterCreationGuide", CharacterCreationGuide.Tick);
             SafeTick("MainMenuFocus", Menus.MainMenuFocus.Tick);
+            SafeTick("TabListDriver", Menus.TabListDriver.Tick);
+            SafeTick("SaveMenu", Menus.SaveMenu.Tick);
+            SafeTick("PartyAnnouncer", PartyAnnouncer.Tick);
         }
 
         /// <summary>

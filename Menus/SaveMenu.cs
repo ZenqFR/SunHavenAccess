@@ -26,6 +26,39 @@ namespace SunHavenAccess.Menus
     /// </summary>
     public static class SaveMenu
     {
+        /// <summary>
+        /// Vrai tant que l'écran de choix affiche des fiches. Sert à n'ouvrir la liste qu'À
+        /// L'ARRIVÉE sur l'écran, et à la refermer au départ.
+        /// </summary>
+        private static bool _onScreen;
+
+        /// <summary>
+        /// Ouvre la liste dès que l'écran de choix apparaît, sans qu'aucune touche soit à connaître.
+        ///
+        /// C'est le premier écran du jeu après le menu principal : y arriver et devoir se souvenir
+        /// d'un raccourci pour pouvoir choisir sa partie, c'est buter dès la première minute. La
+        /// touche dédiée reste néanmoins active, pour rouvrir la liste après l'avoir fermée avec
+        /// Échap.
+        /// </summary>
+        private static float _nextCheck;
+
+        public static void Tick()
+        {
+            // Repérer l'écran demande un balayage complet de la scène (FindObjectsOfType), bien
+            // trop coûteux soixante fois par seconde pour une question dont la réponse ne change
+            // qu'au changement d'écran. Un quart de seconde reste imperceptible à l'arrivée.
+            if (Time.unscaledTime < _nextCheck) return;
+            _nextCheck = Time.unscaledTime + 0.25f;
+
+            bool present = Panels().Count > 0;
+
+            if (present == _onScreen) return;
+            _onScreen = present;
+
+            if (present) Open();
+            else ListMenu.Close(false); // on quitte l'écran : rien à annoncer, le jeu parle déjà
+        }
+
         public static void Open()
         {
             List<SavePanel> panels = Panels();
@@ -51,8 +84,47 @@ namespace SunHavenAccess.Menus
             string name = TextUtil.Clean(panel.playerNameText?.text);
             if (string.IsNullOrWhiteSpace(name)) return "Emplacement vide";
 
-            string day = TextUtil.Clean(panel.dayYearText?.text);
+            string day = UiNameTranslator.Date(TextUtil.Clean(panel.dayYearText?.text));
             return string.IsNullOrWhiteSpace(day) ? name : $"{name}, {day}";
+        }
+
+        /// <summary>
+        /// Tout ce que la fiche affiche, en une liste que l'on parcourt à son rythme : les cinq
+        /// niveaux de métier, l'or, les orbes, les tickets, l'emplacement et l'heure.
+        ///
+        /// Ces informations existent bien à l'écran, mais les entendre récitées d'un bloc à chaque
+        /// déplacement dans la liste des parties serait insupportable. Les mettre à part, sous une
+        /// action explicite, laisse le choix : reconnaître une partie d'un mot, ou l'examiner.
+        /// </summary>
+        private static void OpenDetails(SavePanel panel, string name)
+        {
+            var lines = new List<string>();
+
+            void Add(string label, TMPro.TextMeshProUGUI text)
+            {
+                string value = TextUtil.Clean(text?.text);
+                if (!string.IsNullOrWhiteSpace(value)) lines.Add($"{label} : {value}");
+            }
+
+            // La date passe par la traduction, les autres champs sont des nombres.
+            string date = UiNameTranslator.Date(TextUtil.Clean(panel.dayYearText?.text));
+            if (!string.IsNullOrWhiteSpace(date)) lines.Add($"Date : {date}");
+
+            Add("Heure", panel.timeTMP);
+            Add("Emplacement", panel.slotTMP);
+            Add("Pièces", panel.coinText);
+            Add("Orbes", panel.orbText);
+            Add("Tickets", panel.ticketText);
+            Add("Agriculture", panel.farmingLevelText);
+            Add("Minage", panel.miningLevelText);
+            Add("Combat", panel.combatLevelText);
+            Add("Pêche", panel.fishingLevelText);
+            Add("Exploration", panel.explorationLevelText);
+            Add("Quête en cours", panel.questTMP);
+
+            if (lines.Count == 0) lines.Add("Aucun détail disponible pour cette partie.");
+
+            ListMenu.Open($"Détails de {name}", lines);
         }
 
         /// <summary>
@@ -77,15 +149,19 @@ namespace SunHavenAccess.Menus
                 return;
             }
 
+            // « Supprimer » vient en dernier, derrière une action inoffensive : la validation d'une
+            // liste est un geste réflexe, et la première entrée est celle qu'on active par erreur.
             var actions = new List<string>
             {
                 $"Charger la partie de {name}",
+                $"Détails complets de {name}",
                 $"Supprimer la partie de {name}",
             };
 
             ListMenu.Open($"Que faire pour {name}", actions, chosen =>
             {
                 if (chosen == 0) Press(panel.selectButton, $"Chargement de {name}");
+                else if (chosen == 1) OpenDetails(panel, name);
                 else Press(panel.deleteButton, $"Suppression de {name}");
             });
         }

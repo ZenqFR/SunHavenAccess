@@ -284,6 +284,38 @@ namespace SunHavenAccess.Util
             return string.Join(" ", result);
         }
 
+        /// <summary>
+        /// Les dates du jeu restent en anglais même en interface française — « Summer 11, Year 1 ».
+        /// C'est le jeu qui les construit ainsi, pas un défaut de sa traduction : on les remet donc
+        /// en français à l'annonce, faute de quoi le lecteur d'écran prononce des mots anglais avec
+        /// une voix française, ce qui les rend à peu près incompréhensibles.
+        ///
+        /// La réécriture est volontairement tolérante : si la chaîne ne ressemble pas à une date
+        /// connue, elle ressort telle quelle plutôt que déformée.
+        /// </summary>
+        public static string Date(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return text;
+
+            string s = text;
+            foreach (var pair in SeasonNames)
+            {
+                s = Regex.Replace(s, @"\b" + pair.Key + @"\b", pair.Value, RegexOptions.IgnoreCase);
+            }
+            s = Regex.Replace(s, @"\bYear\b", "an", RegexOptions.IgnoreCase);
+            s = Regex.Replace(s, @"\bDay\b", "jour", RegexOptions.IgnoreCase);
+            return s;
+        }
+
+        private static readonly Dictionary<string, string> SeasonNames = new Dictionary<string, string>
+        {
+            { "Spring", "printemps" },
+            { "Summer", "été" },
+            { "Fall", "automne" },
+            { "Autumn", "automne" },
+            { "Winter", "hiver" },
+        };
+
         /// <summary>CamelCase/PascalCase/snake_case/chiffres collés -> mots séparés par des espaces.</summary>
         private static string SplitIntoWords(string name)
         {
