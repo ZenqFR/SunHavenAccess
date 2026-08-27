@@ -106,6 +106,13 @@ namespace SunHavenAccess.Speech
         public static void Speak(string text, bool interrupt = true)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
+
+            // La traduction se fait ici, au dernier moment, plutôt qu'aux cent soixante-quinze
+            // endroits d'où l'on parle : le français écrit dans le code reste la seule version
+            // vérifiée à l'oreille, et l'anglais ne peut donc rien casser de ce qui marche.
+            // En français, Translate rend la chaîne inchangée sans rien parcourir.
+            text = SunHavenAccess.Localization.Translator.Translate(text);
+
             _lastMessage = text;
             bool spoken = false;
 

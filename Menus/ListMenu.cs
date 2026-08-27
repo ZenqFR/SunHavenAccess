@@ -56,7 +56,7 @@ namespace SunHavenAccess.Menus
         {
             if (entries == null || entries.Count == 0)
             {
-                TolkSpeech.Speak($"{title} : rien à afficher.", true);
+                TolkSpeech.Speak($"{SunHavenAccess.Localization.Translator.Translate(title)} : rien à afficher.", true);
                 return;
             }
 
@@ -67,12 +67,23 @@ namespace SunHavenAccess.Menus
             _index = 0;
             IsOpen = true;
 
-            string how = onAdjust != null ? ", gauche et droite pour changer la valeur" : string.Empty;
-            if (onActivate != null) how += ", Entrée pour choisir";
+            // Le mode d'emploi s'adapte à ce que la liste sait faire : annoncer « Entrée pour
+            // choisir » sur une liste purement consultative ferait chercher une action qui
+            // n'existe pas. Cette phrase est composée de trop de morceaux variables pour passer
+            // par la traduction par motif : elle est donc écrite dans les deux langues ici.
+            bool en = SunHavenAccess.Localization.Language.IsEnglish;
+            string spokenTitle = SunHavenAccess.Localization.Translator.Translate(title);
 
-            TolkSpeech.Speak(
-                $"{title}, {entries.Count} entrée{(entries.Count > 1 ? "s" : "")}. " +
-                $"Flèches haut et bas pour parcourir{how}, Échap pour fermer.", true);
+            string how = onAdjust != null
+                ? (en ? ", left and right to change the value" : ", gauche et droite pour changer la valeur")
+                : string.Empty;
+            if (onActivate != null) how += en ? ", Enter to choose" : ", Entrée pour choisir";
+
+            TolkSpeech.Speak(en
+                ? $"{spokenTitle}, {entries.Count} entr{(entries.Count > 1 ? "ies" : "y")}. " +
+                  $"Up and down arrows to browse{how}, Escape to close."
+                : $"{spokenTitle}, {entries.Count} entrée{(entries.Count > 1 ? "s" : "")}. " +
+                  $"Flèches haut et bas pour parcourir{how}, Échap pour fermer.", true);
             AnnounceCurrent();
         }
 
@@ -88,7 +99,7 @@ namespace SunHavenAccess.Menus
             _entries = new List<string>();
             _onActivate = null;
             _onAdjust = null;
-            if (announce) TolkSpeech.Speak($"{_title} fermé.", true);
+            if (announce) TolkSpeech.Speak($"{SunHavenAccess.Localization.Translator.Translate(_title)} fermé.", true);
         }
 
         /// <summary>

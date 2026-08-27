@@ -45,9 +45,13 @@ namespace SunHavenAccess.Menus
             _index = 0;
             _open = true;
 
+            string closeKey = Strings.KeyName(ModConfig.Help.Value);
             TolkSpeech.Speak(
-                $"Aide, {_entries.Count} rubriques. Flèches haut et bas pour parcourir, " +
-                $"Origine pour la première, Fin pour la dernière, Échap ou {Strings.KeyName(ModConfig.Help.Value)} pour fermer.",
+                SunHavenAccess.Localization.Language.IsEnglish
+                    ? $"Help, {_entries.Count} topics. Up and down arrows to browse, " +
+                      $"Home for the first, End for the last, Escape or {closeKey} to close."
+                    : $"Aide, {_entries.Count} rubriques. Flèches haut et bas pour parcourir, " +
+                      $"Origine pour la première, Fin pour la dernière, Échap ou {closeKey} pour fermer.",
                 true);
             AnnounceCurrent();
         }
@@ -135,7 +139,37 @@ namespace SunHavenAccess.Menus
         /// jouant. Chaque rubrique doit se suffire à elle-même : on peut arriver dessus
         /// directement, sans avoir entendu les précédentes.
         /// </summary>
-        private static List<string> BuildEntries() => new List<string>
+        private static List<string> BuildEntries()
+        {
+            if (!SunHavenAccess.Localization.Language.IsEnglish) return FrenchEntries();
+
+            List<string> english = EnglishEntries();
+
+            // Une rubrique ajoutée d'un seul côté disparaît en silence pour l'autre langue, et
+            // rien en jeu ne le signale : on ne s'aperçoit jamais d'une aide qu'on n'entend pas.
+            // Le journal, lui, le dira dès le premier lancement.
+            int french = FrenchEntries().Count;
+            if (english.Count != french)
+            {
+                Plugin.Log?.LogWarning(
+                    $"L'aide compte {french} rubriques en français et {english.Count} en anglais : " +
+                    "des rubriques manquent d'un côté ou de l'autre.");
+            }
+
+            return english;
+        }
+
+        /// <summary>
+        /// L'aide est le seul texte du mod trop long et trop tourné pour passer par la traduction
+        /// phrase à phrase de Translator : ce sont des paragraphes, pas des annonces. Ils sont donc
+        /// écrits deux fois, en regard l'un de l'autre — la seule façon que chaque version se lise
+        /// naturellement plutôt que comme une traduction mot à mot.
+        ///
+        /// Les deux listes doivent rester dans le MÊME ORDRE et de la même longueur : une rubrique
+        /// ajoutée d'un côté doit l'être de l'autre, sans quoi un utilisateur anglophone perd
+        /// silencieusement une fonctionnalité entière — la plus sûre façon qu'elle n'existe pas.
+        /// </summary>
+        private static List<string> FrenchEntries() => new List<string>
         {
             "Savoir ce qu'il y a devant vous. La case que vous regardez est décrite automatiquement à chaque pas. " +
             $"{K(ModConfig.ToggleVerbosity)} coupe ou rétablit cette annonce, et {K(ModConfig.Repeat)} redit la dernière à l'arrêt." +
@@ -269,6 +303,142 @@ namespace SunHavenAccess.Menus
             $"Changer une touche. {K(ModConfig.ShortcutsMenuToggle)} ouvre le menu des raccourcis, qui liste chaque action avec sa touche " +
             "et permet de la réassigner sans quitter le jeu. Sur l'écran de saisie, Retour arrière ou Suppression retire l'assignation : " +
             "l'action reste dans la liste, disponible si vous en voulez plus tard, mais n'occupe plus aucune touche.",
+        };
+
+        private static List<string> EnglishEntries() => new List<string>
+        {
+            "Knowing what is in front of you. The tile you are facing is described automatically at every step. " +
+            $"{K(ModConfig.ToggleVerbosity)} turns that announcement off and back on, and {K(ModConfig.Repeat)} repeats the last one while standing still." +
+            Optional(ModConfig.DescribeFront, " A dedicated key can also ask for it again: "),
+
+            $"Knowing where you are. {K(ModConfig.Position)} gives your coordinates and the direction you are facing. " +
+            $"{K(ModConfig.TurnLeft)} and {K(ModConfig.TurnRight)} turn you on the spot without moving you.",
+
+            $"Repeating. {K(ModConfig.Repeat)} says the last announcement again. " +
+            $"{K(ModConfig.ReadFullDescription)} reads out the full detail of whatever was just announced in short form — " +
+            "an item's description, or a save's levels and gold.",
+
+            $"The time and your condition. {K(ModConfig.Clock)} gives the time, the day, the season and the weather. " +
+            $"{K(ModConfig.Status)} gives your health, your mana and your purse — coins, plus orbs or tickets if you have any.",
+
+            "Mounts. The whistle both mounts and dismounts: the mod announces \"mounted\" or \"on foot\" at each change. " +
+            "On a mount you move considerably faster, but tools no longer work. Mounting is refused indoors, and the game says so itself.",
+
+            "Mana. It is not a spell reserve: it is the gauge your tools drain, and at zero the pickaxe, " +
+            "the hoe and the watering can simply stop working. The mod warns you at half, at a quarter, nearly dry, then empty — " +
+            "without which the tool would stop dead with nothing to explain why. A night's sleep restores it.",
+
+            $"Exploring without moving: the free tile cursor. {K(ModConfig.FreeCursorToggle)} turns it on. " +
+            "The arrows then move it tile by tile anywhere on the map, and each tile is described with its direction and distance. " +
+            $"{K(ModConfig.FreeCursorRecenter)} brings it back to you.",
+
+            $"Acting at a distance with the free cursor. With the cursor active: Home describes the targeted tile again, " +
+            $"Control plus Home walks you there, and {K(ModConfig.SimulateLeftClick)} acts on it without moving you.",
+
+            "Finding what is around you: the scanner. Control plus Page Up or Page Down changes category, " +
+            "among characters, crops, resources, buildings and portals, animals and pets, enemies, furniture and storage. " +
+            "Page Up and Page Down move through what was found.",
+
+            "Going somewhere. Once a scanner result has been announced, Control plus Home walks you there automatically. " +
+            "Escape cancels the walk in progress. How many things were found is announced at every change of category.",
+
+            $"Nearby characters. {K(ModConfig.NextNpc)} moves to the next character around you, with their name, direction and distance.",
+
+            $"The mouse. {K(ModConfig.MouseFollowToggle)} makes the mouse always point at the tile in front of you. " +
+            $"{K(ModConfig.SimulateLeftClick)} left-clicks, Control plus {K(ModConfig.SimulateRightClick)} right-clicks.",
+
+            "Large screens, such as the skill tree. Plain arrows are enough: they move across the grid row by row " +
+            "and column by column, with a beep at each of the four edges, and announce each row's label — Mobility, Woodcutting, " +
+            "Gathering, Social. Control plus left or right only ever changes PANEL, on screens that hold several " +
+            "side by side, like the three columns of character creation.",
+
+            "Moving around menus. The arrows follow the real visual layout: left and right stay on the row and stop at its end with a beep, " +
+            "up and down change row. Enter confirms, Control plus Enter right-clicks.",
+
+            "Jumping between areas of a menu. Control plus an arrow jumps straight from one panel to another: " +
+            "tabs at the top, equipment on the left, bag on the right, action bar at the bottom. Control plus up always returns to the tabs.",
+
+            "Changing tab in the main menu. Control plus Tab moves to the next tab, Control plus Shift plus Tab to the previous one, " +
+            "among backpack, skill tree, relationships, quests, map, statistics and settings.",
+
+            "Every tab opens as a list. Except the backpack, which stays a grid, every menu tab presents its contents " +
+            "as a list as soon as you open it: skills, relationships, quests, locations, statistics, settings. " +
+            "Nothing more to remember than Tab to open, left and right to change tab, up and down to browse, " +
+            "Enter to confirm and Escape to close. The keys dedicated to each of these lists still work, " +
+            "to consult them without opening the menu.",
+
+            $"Tidying your bag. {K(ModConfig.SortBackpack)} sorts the bag. {K(ModConfig.AnnounceContents)} gives a summary of it. " +
+            $"{K(ModConfig.StoreInChests)} puts things away in nearby chests. The 1 to 0 keys send the selected item to the action bar, or take it off.",
+
+            $"Placing furniture or a building. Keep the item in hand and turn on the free cursor to aim: " +
+            $"the mod announces the moment the targeted spot becomes valid or invalid. {K(ModConfig.PlacementStatus)} repeats the state of the placement in progress.",
+
+            $"Farm animals. {K(ModConfig.HerdStatus)} gives the state of the herd present: " +
+            "how many need feeding, how many need petting, and how many have left a product on the ground.",
+
+            $"Bundles to complete: museum, altar, aquarium. In front of an open bundle, {K(ModConfig.BundleStatus)} says what is still missing, " +
+            "item by item, with the quantities already handed in. Browsing the slots with the arrows, each one announces the item it expects " +
+            "and how far along the deposit is.",
+
+            $"Changing an equipped spell. {K(ModConfig.EquipSpell)} opens the spell picker for one slot: each press moves to the next " +
+            "slot, then closes. The arrows browse the available spells, Enter equips the announced one. " +
+            "It is the game's own menu that opens, so the list matches exactly what you have unlocked.",
+
+            $"Spells. {K(ModConfig.AnnounceSpells)} announces the four equipped spells, slot by slot, and flags the one being cast. " +
+            "When a spell is on cooldown or mana is short, the game says so itself and the mod reads it.",
+
+            $"Fishing. {K(ModConfig.FishingToneToggle)} turns the continuous aiming beep during the mini-game on or off.",
+
+            $"Town bulletin boards. Near a board, {K(ModConfig.BulletinBoardTasks)} announces the day's tasks, " +
+            "whether you have already accepted them, and what they pay — without having to open the board.",
+
+            $"Your quests and your relationships. {K(ModConfig.AnnounceQuests)} lists your active quests. " +
+            $"{K(ModConfig.AnnounceRelationships)} gives your relationships with the characters.",
+
+            $"Your progress. {K(ModConfig.AnnounceProfessions)} gives your skill levels. " +
+            $"{K(ModConfig.AnnounceSkillPoints)} opens skills as a LIST: first the professions with their points to spend, " +
+            "then, once a profession is chosen, its skills one by one — name, tier, rank, condition and effect. " +
+            "Nothing about the displayed grid to picture. " +
+            $"{K(ModConfig.AnnounceFestivals)} lists the current season's festivals.",
+
+            $"The world map. With the map open, {K(ModConfig.MapPreviousLocation)} opens the LIST of every location: browse it with the arrows " +
+            "and Enter opens the one you chose, with its description. " +
+            $"{K(ModConfig.MapNextLocation)} keeps the old one-at-a-time browsing. " +
+            "The map cannot start a walk: its locations are interface icons, with no position in the world. " +
+            "To travel, use the scanner, which targets real objects.",
+
+            "Column screens, such as character creation: categories on the left, customisation in the centre, information on the right. " +
+            "Control plus left or right jumps from one column to the next, and says which. Plain arrows browse the screen as usual.",
+
+            "Choosing a save. The list of games opens BY ITSELF when you arrive on the screen — name and date, enough to recognise them. " +
+            "Confirming a game offers Load, Full details — profession levels, gold, orbs, tickets — then Delete, " +
+            "placed last and named with the save so you cannot erase the wrong one by reflex. " +
+            "An empty slot starts a new game directly. " +
+            $"Escape closes the list, and {K(ModConfig.SaveList)} reopens it.",
+
+            "Other players. In co-op, the mod announces who joins the game and who leaves. " +
+            "Other players also appear in the scanner's Characters category, kept distinct from the game's own characters. " +
+            "The mod announces only YOUR actions: hits taken, catches and harvests by your partners stay silent. " +
+            "Your partners have nothing to install to play with you.",
+
+            "Character creation. The screen has three columns: categories on the left, the current category's choices in the centre, " +
+            "your character, the name field and the Confirm button on the right. Control plus left or right changes column. " +
+            "A name and a birthday are required: the mod announces what is still missing, and says so when everything is ready. " +
+            $"{K(ModConfig.AppearancePrevious)} and {K(ModConfig.AppearanceNext)} also browse the appearance options, Control plus either one changes category.",
+
+            $"Talking in chat. {K(ModConfig.ChatOpenKey)} opens the game's chat or console — Enter does not, it confirms in menus.",
+
+            $"Checking that sound works. {K(ModConfig.TestTone)} plays a Windows sound independent of speech: " +
+            "if you hear it but hear no speech, the problem is the screen reader and not the mod.",
+
+            $"Settings. {K(ModConfig.SettingsList)} opens them as a list: first the mod's own — edge beep, directional navigation, brief mode — " +
+            "then the game's, as shown on screen. Up and down browse the options, LEFT and RIGHT change the value of the one you are on: " +
+            "a box ticks, a slider moves, a dropdown changes option. Until now the mod's settings asked for nothing less " +
+            "than editing a configuration file by hand.",
+
+            $"Changing a key. {K(ModConfig.ShortcutsMenuToggle)} opens the shortcuts menu, which lists every action with its key " +
+            "and lets you reassign it without leaving the game. On the entry screen, Backspace or Delete clears the binding: " +
+            "the action stays in the list, available if you want it later, but no longer occupies any key.",
         };
     }
 }

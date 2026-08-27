@@ -236,6 +236,11 @@ namespace SunHavenAccess.Util
         {
             if (string.IsNullOrWhiteSpace(rawName)) return null;
 
+            // En anglais on garde le filtre — il écarte les noms illisibles comme
+            // « GrassRuleTileVariantB » — mais sans traduire : c'est la reconnaissance du mot qui
+            // compte ici, pas sa mise en français. Un mot du dictionnaire ressort donc tel quel.
+            if (Localization.Language.IsEnglish) return TerrainWordsAsIs(rawName);
+
             string cleaned = CloneSuffix.Replace(rawName, "").Replace("(Clone)", "").Trim();
             if (ExactPhrases.TryGetValue(cleaned, out string exact)) return exact;
 
@@ -256,9 +261,35 @@ namespace SunHavenAccess.Util
             return string.Join(" ", kept);
         }
 
+        /// <summary>
+        /// Même tri que TranslateTerrain, mais les mots reconnus ressortent dans leur forme
+        /// d'origine. Le dictionnaire sert alors de simple liste de mots valables : il sépare le
+        /// vocabulaire du jeu des suffixes techniques, sans rien mettre en français.
+        /// </summary>
+        private static string TerrainWordsAsIs(string rawName)
+        {
+            var kept = new List<string>();
+
+            foreach (string token in SplitIntoWords(rawName)
+                         .Split(new[] { ' ' }, System.StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (!Dictionary.TryGetValue(token.ToLowerInvariant(), out string translated)) continue;
+
+                // Une entrée vide reste un suffixe technique à supprimer, dans les deux langues.
+                if (!string.IsNullOrEmpty(translated)) kept.Add(token);
+            }
+
+            return kept.Count == 0 ? null : string.Join(" ", kept);
+        }
+
         public static string Translate(string rawName)
         {
             if (string.IsNullOrWhiteSpace(rawName)) return rawName;
+
+            // En anglais, ce dictionnaire n'a plus lieu d'être : il existe pour rendre en français
+            // les noms techniques que le jeu laisse en anglais quand aucun texte n'est affiché.
+            // La source étant déjà dans la bonne langue, il suffit de la découper en mots lisibles.
+            if (Localization.Language.IsEnglish) return SplitIntoWords(rawName).Trim();
 
             string cleaned = CloneSuffix.Replace(rawName, "").Replace("(Clone)", "").Trim();
             if (ExactPhrases.TryGetValue(cleaned, out string exact)) return exact;

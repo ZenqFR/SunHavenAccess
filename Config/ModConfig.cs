@@ -51,6 +51,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> AnnounceFestivals;
 
         /// <summary>Réglages hors touches (cases à cocher), voir Init.</summary>
+        public static ConfigEntry<string> SpeechLanguage;
         public static ConfigEntry<bool> EdgeSound;
         public static ConfigEntry<bool> TakeOverMenuArrows;
         public static ConfigEntry<bool> BriefMode;
@@ -232,6 +233,14 @@ namespace SunHavenAccess.Config
             // absents du menu vocal des raccourcis, qui ne sait réassigner que des touches).
             const string navSection = "Navigation";
 
+            SpeechLanguage = config.Bind(navSection, "LangueDesAnnonces", "",
+                "Langue des annonces du mod : \"fr\", \"en\", ou vide pour suivre la langue du " +
+                "jeu. Suivre le jeu est le bon choix dans presque tous les cas : les noms " +
+                "d'objets, de personnages et de lieux que le mod prononce viennent du jeu et " +
+                "sont donc déjà dans SA langue, et les faire diverger donnerait des annonces à " +
+                "moitié dans chaque langue. Le forçage existe pour qui préfère malgré tout un " +
+                "lecteur d'écran dans une langue et un jeu dans une autre.");
+
             EdgeSound = config.Bind(navSection, "SonDeBord", true,
                 "Joue un bip court et grave quand on bute sur le bord d'une zone (fin de ligne " +
                 "d'inventaire, dernier onglet...). Mettre à false pour naviguer en silence.");
@@ -248,6 +257,13 @@ namespace SunHavenAccess.Config
                 "ce qui rend le parcours très long). La description reste disponible à la " +
                 "demande avec la touche dédiée. Sans effet en boutique et en artisanat, où le " +
                 "prix et les ingrédients sont indispensables.");
+
+            // La couche de traduction lit un simple champ plutôt que la configuration, pour ne pas
+            // dépendre de BepInEx : elle est appelée à chaque annonce, y compris depuis des
+            // chemins où la configuration peut ne pas être encore prête.
+            SunHavenAccess.Localization.Language.Override = SpeechLanguage.Value;
+            SpeechLanguage.SettingChanged += (s, e) =>
+                SunHavenAccess.Localization.Language.Override = SpeechLanguage.Value;
 
             // ---- Confort d'inventaire ----
             // Les 26 lettres étant prises (par le jeu ou par le mod), on passe par de la
