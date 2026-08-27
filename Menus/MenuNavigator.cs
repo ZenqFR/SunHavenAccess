@@ -256,9 +256,50 @@ namespace SunHavenAccess.Menus
             List<Selectable> onScreen = all.Where(IsOnScreen).ToList();
             List<Selectable> chosen = onScreen.Count > 0 ? onScreen : all;
 
+            // Sur le menu principal, on se limite au panneau que le JEU considère ouvert.
+            //
+            // Rapporté en jeu : la première flèche annonçait « Pixelsprout Studios », et il fallait
+            // remonter plusieurs fois pour trouver « Jouer ». Le logo du studio est un élément
+            // cliquable posé PLUS HAUT que les boutons du menu, mais hors de celui-ci : trié par
+            // position, il passait donc devant. Aucune règle géométrique ne pouvait le distinguer
+            // des vrais boutons — c'est l'appartenance au panneau qui le fait, et le jeu la connaît.
+            List<Selectable> inPanel = WithinActiveMainMenuPanel(chosen);
+            if (inPanel.Count > 0) chosen = inPanel;
+
             return chosen
                 .OrderByDescending(s => s.transform.position.y)
                 .ThenBy(s => s.transform.position.x);
+        }
+
+        /// <summary>
+        /// Les éléments appartenant au panneau de menu principal actuellement ouvert, ou une liste
+        /// vide hors du menu principal — auquel cas l'appelant garde sa sélection d'origine.
+        ///
+        /// `MainMenuController.EnableMenu` n'active qu'un seul de ces objets à la fois : celui qui
+        /// est actif EST l'écran courant. On lit donc l'état du jeu plutôt que de deviner d'après
+        /// des positions à l'écran, où rien ne sépare un bouton de menu d'un logo cliquable.
+        /// </summary>
+        private static List<Selectable> WithinActiveMainMenuPanel(List<Selectable> candidates)
+        {
+            try
+            {
+                Wish.MainMenuController menu = Wish.MainMenuController.Instance;
+                if (menu == null) return new List<Selectable>();
+
+                GameObject[] panels =
+                {
+                    menu.homeMenu, menu.singlePlayerMenu, menu.newCharacterMenu, menu.loadCharacterMenu,
+                    menu.multiplayerMenu, menu.connectMenu, menu.modeMenu, menu.optionsMenu,
+                    menu.creditsMenu, menu.patchNotes, menu.lobbySettingsMenu, menu.lobbyMenu, menu.dlcShop,
+                };
+
+                GameObject active = panels.FirstOrDefault(p => p != null && p.activeInHierarchy);
+                if (active == null) return new List<Selectable>();
+
+                Transform root = active.transform;
+                return candidates.Where(s => s.transform.IsChildOf(root)).ToList();
+            }
+            catch { return new List<Selectable>(); }
         }
 
         private static void Rescan()
