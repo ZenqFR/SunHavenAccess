@@ -191,6 +191,12 @@ namespace SunHavenAccess.Menus
             "Changer d'onglet du menu principal. Contrôle plus Tabulation passe à l'onglet suivant, Contrôle plus Majuscule plus Tabulation au précédent, " +
             "parmi sac à dos, arbre de compétences, relations, quêtes, carte, statistiques et paramètres.",
 
+            "Chaque onglet s'ouvre en liste. Sauf le sac à dos, qui reste une grille, tout onglet du menu présente son contenu " +
+            "sous forme de liste dès qu'on l'ouvre : compétences, relations, quêtes, lieux, statistiques, réglages. " +
+            "Rien à retenir de plus que Tabulation pour ouvrir, gauche et droite pour changer d'onglet, haut et bas pour parcourir, " +
+            "Entrée pour valider et Échap pour refermer. Les touches dédiées à chacune de ces listes restent utilisables " +
+            "pour les consulter sans ouvrir le menu.",
+
             $"Ranger son sac. {K(ModConfig.SortBackpack)} trie le sac. {K(ModConfig.AnnounceContents)} en donne un résumé. " +
             $"{K(ModConfig.StoreInChests)} range dans les coffres proches. Les touches 1 à 0 envoient l'objet sélectionné vers la barre d'action, ou l'en retirent.",
 
@@ -234,9 +240,16 @@ namespace SunHavenAccess.Menus
             "Les écrans en colonnes, comme la création de personnage : catégories à gauche, personnalisation au centre, informations à droite. " +
             "Contrôle plus gauche ou droite saute d'une colonne à l'autre, et annonce laquelle. Les flèches seules parcourent l'écran comme d'habitude.",
 
-            $"Choisir une sauvegarde. {K(ModConfig.SaveList)} ouvre les parties en liste — nom et date, de quoi les reconnaître. " +
-            "Valider une partie propose Charger ou Supprimer, chaque action nommée avec elle pour qu'on ne puisse pas effacer la mauvaise. " +
-            "Un emplacement libre lance directement une nouvelle partie.",
+            "Choisir une sauvegarde. La liste des parties s'ouvre TOUTE SEULE à l'arrivée sur l'écran — nom et date, de quoi les reconnaître. " +
+            "Valider une partie propose Charger, Détails complets — niveaux de métier, or, orbes, tickets — puis Supprimer, " +
+            "placée en dernier et nommée avec la partie pour qu'on ne puisse pas effacer la mauvaise par réflexe. " +
+            "Un emplacement libre lance directement une nouvelle partie. " +
+            $"Échap referme la liste, et {K(ModConfig.SaveList)} la rouvre.",
+
+            "Les autres joueurs. En coopération, le mod annonce qui rejoint la partie et qui la quitte. " +
+            "Les autres joueurs apparaissent aussi dans la catégorie Personnages du scanner, distingués des personnages du jeu. " +
+            "Le mod n'annonce que VOS actions : les coups reçus, les prises à la pêche et les récoltes de vos partenaires restent silencieux. " +
+            "Vos partenaires n'ont rien à installer pour jouer avec vous.",
 
             "La création de personnage. L'écran a trois colonnes : les catégories à gauche, les choix de la catégorie courante au centre, " +
             "votre personnage, le champ du nom et le bouton Valider à droite. Contrôle plus gauche ou droite change de colonne. " +

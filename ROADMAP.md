@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-26 — **7 sur 114 au point** (6 %).
+Mis à jour le 2026-08-27 — **7 sur 125 au point** (6 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 98 |
+| `[ ]` | À tester | jamais essayé en jeu | 109 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -66,6 +66,14 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Sur l'écran de choix de personnage, ouvrir les sauvegardes en liste, choisir une partie, puis Charger. Réessayer sur un emplacement vide.
   - Attendu : Une ligne par partie : nom et date. Valider propose « Charger la partie de X » ou « Supprimer la partie de X », l'action nommée avec la partie. Un emplacement vide lance directement une nouvelle partie.
   - Retour de jeu : L'écran affiche chaque sauvegarde comme une fiche avec deux boutons quelque part dedans ; en suivant la mise en page, rien ne dit à quelle partie appartient le bouton où l'on se trouve. Les deux boutons déclenchés sont ceux du jeu, donc c'est lui qui charge, supprime, et impose sa confirmation.
+- [ ] **personnage-sauvegardes-auto** ⚠️ — touche : —
+  - Faire : Arriver sur l'écran de choix de personnage sans appuyer sur aucune touche. Puis fermer la liste avec Échap, et la rouvrir avec Pavé 3.
+  - Attendu : La liste des parties s'ouvre toute seule, sans raccourci à connaître. Échap la referme et rend l'écran normal ; Pavé 3 la rouvre.
+  - Retour de jeu : C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute.
+- [ ] **personnage-sauvegardes-details** — touche : Entrée
+  - Faire : Valider une partie dans la liste, puis choisir « Détails complets ».
+  - Attendu : Une liste donne la date, l'heure, l'emplacement, les pièces, orbes et tickets, les cinq niveaux de métier et la quête en cours — une entrée à la fois. La date est en FRANÇAIS, pas « Summer 11, Year 1 ».
+  - Retour de jeu : « Supprimer » est passée en dernière position, derrière une action inoffensive : valider la première entrée d'une liste est un geste réflexe.
 - [ ] **personnage-chargement-personnage** — touche : Flèches
   - Faire : Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.
   - Attendu : Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom et date. Un emplacement libre annonce qu'il est vide. La touche de description complète ajoute les niveaux et l'or.
@@ -130,6 +138,18 @@ La navigation dans les menus a été entièrement refaite et n'a jamais été co
 - [ ] **sac-onglets** — touche : Tab, puis Ctrl+Tab
   - Faire : Ouvrir le menu principal et passer d'un onglet à l'autre.
   - Attendu : Les 7 onglets sont nommés dans l'ordre : Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.
+- [ ] **sac-onglets-liste-auto** ⚠️ — touche : Tab, puis gauche et droite
+  - Faire : Ouvrir le menu avec Tab, puis passer sur Compétences, Relations, Quêtes, Carte, Statistiques et Paramètres, sans appuyer sur aucune autre touche.
+  - Attendu : Chaque onglet ouvre SA liste tout seul, dès qu'on arrive dessus. Haut et bas la parcourent une entrée à la fois, Entrée valide, Échap referme. Le sac à dos ne change pas : il garde sa grille.
+  - Retour de jeu : Les listes existaient déjà, mais derrière des touches séparées — G, V, Z, X, Pavé 8. Une fonctionnalité qu'il faut deviner n'existe pas vraiment. Ces touches restent utilisables pour consulter les mêmes listes SANS ouvrir le menu.
+- [ ] **sac-onglets-liste-silence** ⚠️ — touche : Tab puis flèches
+  - Faire : Une liste d'onglet ouverte, parcourir aux flèches et écouter attentivement.
+  - Attendu : SEULE la liste parle. Le panneau du jeu, dessous, reste muet — pas de double annonce, pas de nom de bouton qui se superpose.
+  - Retour de jeu : C'est le point le plus fragile de tout l'aiguillage : le jeu lit les touches par Rewired, donc sa sélection continue de bouger sous la liste. Les lecteurs concurrents sont mis en sourdine quand une liste est ouverte, mais ce correctif n'a jamais été vérifié en jeu.
+- [ ] **sac-statistiques-liste** — touche : Tab jusqu'à Statistiques
+  - Faire : Ouvrir l'onglet Statistiques et parcourir la liste.
+  - Attendu : Chaque entrée réunit un intitulé et sa valeur — « Récoltes : 142 » — et non deux entrées séparées dont la seconde ne voudrait rien dire.
+  - Retour de jeu : C'est le seul onglet sans aucune donnée derrière lui : le panneau ne contient que du texte mis en page. Les lignes sont donc reconstituées en groupant les textes par hauteur. Si des valeurs se retrouvent mal appariées, c'est ici.
 - [!] **sac-retour-onglets** ⚠️ — touche : Ctrl + haut
   - Faire : Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.
   - Attendu : Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.
@@ -422,7 +442,33 @@ Les compétences, qu'on dépense au fil des niveaux.
   - Faire : Prendre une compétence disponible.
   - Attendu : Le nœud est débloqué et le point décompté.
 
-## 14. Réglages et confort
+## 14. Jouer à plusieurs
+
+Le mod est entièrement local : il n'envoie ni ne reçoit rien sur le réseau, et vos partenaires n'ont rien à installer pour jouer avec vous. Reste à vérifier qu'il ne vous annonce que VOS actions — un partenaire qui pêche à côté ne doit pas déclencher vos annonces. Ces points demandent une seconde personne, et n'ont donc jamais pu être essayés.
+
+- [ ] **cooperation-coop-sans-mod** ⚠️ — touche : —
+  - Faire : Jouer avec quelqu'un qui n'a PAS installé le mod, une bonne session.
+  - Attendu : La partie se déroule normalement pour tous les deux. Votre partenaire ne constate aucune différence, aucun blocage, aucun décalage.
+  - Retour de jeu : Vérifié dans le code : sur 26 correctifs appliqués au jeu, un seul annule un appel, et uniquement pour l'objet du mod lui-même, comparé par référence. Tout le reste laisse le jeu faire. Reste à le confirmer en conditions réelles.
+- [ ] **cooperation-coop-arrivee-depart** — touche : —
+  - Faire : Faire rejoindre puis quitter la partie à quelqu'un. Puis lui faire traverser plusieurs bâtiments.
+  - Attendu : « Untel a rejoint la partie » et « Untel a quitté la partie ». Traverser une porte ne déclenche RIEN : changer de carte détruit et recrée le joueur, et un départ n'est annoncé qu'après plusieurs secondes d'absence.
+- [ ] **cooperation-coop-silence** ⚠️ — touche : —
+  - Faire : Rester à côté de votre partenaire pendant qu'il prend des coups, pêche, coupe un arbre et tue des ennemis. Ne rien faire vous-même.
+  - Attendu : AUCUNE annonce. Ni « Touché », ni « Ça mord », ni bip de visée, ni ennemi vaincu.
+  - Retour de jeu : Défaut réel trouvé et corrigé : les annonces de dégâts, de mort et les cinq annonces de pêche ne vérifiaient pas de QUI il s'agissait. En coopération, les coups reçus par votre partenaire étaient annoncés comme les vôtres, avec sa santé.
+- [ ] **cooperation-coop-mes-actions** ⚠️ — touche : —
+  - Faire : Faire vous-même les mêmes gestes : prendre un coup, pêcher, récolter, tuer un ennemi.
+  - Attendu : Tout est annoncé comme d'habitude. Le filtre ne doit pas vous rendre muet à vous aussi.
+- [ ] **cooperation-coop-qui-parle** — touche : —
+  - Faire : Faire écrire votre partenaire dans le tchat, et faire parler un personnage du jeu.
+  - Attendu : Chaque message est précédé du nom de celui qui parle, pour qu'un partenaire ne se confonde pas avec un personnage du jeu.
+- [ ] **cooperation-coop-scanner** — touche : Ctrl + Page, puis Page
+  - Faire : Ouvrir la catégorie Personnages du scanner pendant qu'un partenaire est à proximité.
+  - Attendu : Il y figure, annoncé « son nom, joueur », distinct des personnages du jeu, avec sa direction et sa distance. Se rendre jusqu'à lui fonctionne.
+  - Retour de jeu : Les joueurs ne vivent pas dans la scène de la carte mais dans une scène persistante : le filtre de scène du scanner les écartait tous. Corrigé.
+
+## 15. Réglages et confort
 
 Ce qui s'ajuste plutôt que ce qui s'utilise. Ces réglages vivent dans le fichier de configuration du mod, et servent surtout de soupape : si un écran se comporte mal, ils permettent de rendre la main au jeu sans désinstaller quoi que ce soit.
 

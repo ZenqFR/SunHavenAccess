@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-26",
+  "updated": "2026-08-27",
   "legend": {
     "todo":     { "fr": "À tester",    "en": "To test",     "hint": { "fr": "jamais essayé en jeu", "en": "never tried in game" } },
     "fix":      { "fr": "À corriger",  "en": "Broken",      "hint": { "fr": "essayé, ne marche pas", "en": "tried, doesn't work" } },
@@ -70,6 +70,14 @@
           "action":   { "fr": "Sur l'écran de choix de personnage, ouvrir les sauvegardes en liste, choisir une partie, puis Charger. Réessayer sur un emplacement vide.", "en": "On the character select screen, open the saves as a list, pick a game, then Load. Try again on an empty slot." },
           "expected": { "fr": "Une ligne par partie : nom et date. Valider propose « Charger la partie de X » ou « Supprimer la partie de X », l'action nommée avec la partie. Un emplacement vide lance directement une nouvelle partie.", "en": "One line per game: name and date. Confirming offers \"Load X's game\" or \"Delete X's game\", the action named with the game. An empty slot starts a new game directly." },
           "note": { "fr": "L'écran affiche chaque sauvegarde comme une fiche avec deux boutons quelque part dedans ; en suivant la mise en page, rien ne dit à quelle partie appartient le bouton où l'on se trouve. Les deux boutons déclenchés sont ceux du jeu, donc c'est lui qui charge, supprime, et impose sa confirmation.", "en": "The screen shows each save as a card with two buttons somewhere inside it; following the layout, nothing tells you which save the button you are on belongs to. The two buttons triggered are the game's own, so it loads, deletes, and imposes its own confirmation." } },
+        { "id": "sauvegardes-auto", "key": "—", "status": "todo", "critical": true,
+          "action":   { "fr": "Arriver sur l'écran de choix de personnage sans appuyer sur aucune touche. Puis fermer la liste avec Échap, et la rouvrir avec Pavé 3.", "en": "Arrive on the character select screen without pressing anything. Then close the list with Escape, and reopen it with Numpad 3." },
+          "expected": { "fr": "La liste des parties s'ouvre toute seule, sans raccourci à connaître. Échap la referme et rend l'écran normal ; Pavé 3 la rouvre.", "en": "The list of games opens by itself, with no shortcut to know. Escape closes it and gives back the normal screen; Numpad 3 reopens it." },
+          "note": { "fr": "C'est le premier écran après le menu principal : devoir s'y souvenir d'un raccourci pour choisir sa partie, c'est buter dès la première minute.", "en": "This is the first screen after the main menu: having to remember a shortcut there just to pick your game means stumbling in the first minute." } },
+        { "id": "sauvegardes-details", "key": "Entrée", "status": "todo",
+          "action":   { "fr": "Valider une partie dans la liste, puis choisir « Détails complets ».", "en": "Confirm a game in the list, then choose \"Full details\"." },
+          "expected": { "fr": "Une liste donne la date, l'heure, l'emplacement, les pièces, orbes et tickets, les cinq niveaux de métier et la quête en cours — une entrée à la fois. La date est en FRANÇAIS, pas « Summer 11, Year 1 ».", "en": "A list gives the date, time, slot, coins, orbs and tickets, the five profession levels and the current quest — one entry at a time. The date is in FRENCH, not \"Summer 11, Year 1\"." },
+          "note": { "fr": "« Supprimer » est passée en dernière position, derrière une action inoffensive : valider la première entrée d'une liste est un geste réflexe.", "en": "\"Delete\" moved to last place, behind a harmless action: confirming a list's first entry is a reflex." } },
         { "id": "chargement-personnage", "key": "Flèches", "status": "todo",
           "action":   { "fr": "Ouvrir le menu de chargement d'un personnage et parcourir les sauvegardes.", "en": "Open the character load menu and browse the saves." },
           "expected": { "fr": "Chaque sauvegarde est atteignable et annonce de quoi la reconnaître : nom et date. Un emplacement libre annonce qu'il est vide. La touche de description complète ajoute les niveaux et l'or.", "en": "Each save is reachable and announces enough to recognise it: name, farm, day and season." },
@@ -146,6 +154,18 @@
         { "id": "onglets", "key": "Tab, puis Ctrl+Tab", "status": "todo",
           "action":   { "fr": "Ouvrir le menu principal et passer d'un onglet à l'autre.", "en": "Open the main menu and cycle the tabs." },
           "expected": { "fr": "Les 7 onglets sont nommés dans l'ordre : Sac à dos, Arbre de compétences, Relations, Quêtes, Carte, Statistiques, Paramètres.", "en": "The 7 tabs are named in order: Backpack, Skill Tree, Relationships, Quests, Map, Statistics, Settings." } },
+        { "id": "onglets-liste-auto", "key": "Tab, puis gauche et droite", "status": "todo", "critical": true,
+          "action":   { "fr": "Ouvrir le menu avec Tab, puis passer sur Compétences, Relations, Quêtes, Carte, Statistiques et Paramètres, sans appuyer sur aucune autre touche.", "en": "Open the menu with Tab, then move onto Skills, Relationships, Quests, Map, Statistics and Settings, without pressing anything else." },
+          "expected": { "fr": "Chaque onglet ouvre SA liste tout seul, dès qu'on arrive dessus. Haut et bas la parcourent une entrée à la fois, Entrée valide, Échap referme. Le sac à dos ne change pas : il garde sa grille.", "en": "Each tab opens ITS list by itself, as soon as you land on it. Up and down browse it one entry at a time, Enter confirms, Escape closes. The backpack is unchanged: it keeps its grid." },
+          "note": { "fr": "Les listes existaient déjà, mais derrière des touches séparées — G, V, Z, X, Pavé 8. Une fonctionnalité qu'il faut deviner n'existe pas vraiment. Ces touches restent utilisables pour consulter les mêmes listes SANS ouvrir le menu.", "en": "The lists already existed, but behind separate keys — G, V, Z, X, Numpad 8. A feature you have to guess at doesn't really exist. Those keys still work, to consult the same lists WITHOUT opening the menu." } },
+        { "id": "onglets-liste-silence", "key": "Tab puis flèches", "status": "todo", "critical": true,
+          "action":   { "fr": "Une liste d'onglet ouverte, parcourir aux flèches et écouter attentivement.", "en": "With a tab list open, browse with the arrows and listen carefully." },
+          "expected": { "fr": "SEULE la liste parle. Le panneau du jeu, dessous, reste muet — pas de double annonce, pas de nom de bouton qui se superpose.", "en": "ONLY the list speaks. The game panel underneath stays silent — no double announcement, no button name talking over it." },
+          "note": { "fr": "C'est le point le plus fragile de tout l'aiguillage : le jeu lit les touches par Rewired, donc sa sélection continue de bouger sous la liste. Les lecteurs concurrents sont mis en sourdine quand une liste est ouverte, mais ce correctif n'a jamais été vérifié en jeu.", "en": "This is the most fragile point of the whole routing: the game reads keys through Rewired, so its selection keeps moving underneath the list. The competing readers are muted while a list is open, but that fix has never been verified in game." } },
+        { "id": "statistiques-liste", "key": "Tab jusqu'à Statistiques", "status": "todo",
+          "action":   { "fr": "Ouvrir l'onglet Statistiques et parcourir la liste.", "en": "Open the Statistics tab and browse the list." },
+          "expected": { "fr": "Chaque entrée réunit un intitulé et sa valeur — « Récoltes : 142 » — et non deux entrées séparées dont la seconde ne voudrait rien dire.", "en": "Each entry pairs a label with its value — \"Harvests: 142\" — rather than two separate entries whose second would mean nothing." },
+          "note": { "fr": "C'est le seul onglet sans aucune donnée derrière lui : le panneau ne contient que du texte mis en page. Les lignes sont donc reconstituées en groupant les textes par hauteur. Si des valeurs se retrouvent mal appariées, c'est ici.", "en": "This is the only tab with no data behind it: the panel is nothing but laid-out text. Rows are therefore rebuilt by grouping texts by height. If values come out mismatched, this is where." } },
         { "id": "retour-onglets", "key": "Ctrl + haut", "status": "fix", "critical": true,
           "action":   { "fr": "Ouvrir l'onglet Compétences (ou n'importe quel autre), descendre dans le contenu, puis remonter à la barre d'onglets.", "en": "Open the Skills tab (or any other), go down into the content, then come back up to the tab bar." },
           "expected": { "fr": "Ctrl+haut ramène TOUJOURS à la barre d'onglets, depuis n'importe quel panneau et quelle que soit la profondeur.", "en": "Ctrl+up ALWAYS returns to the tab bar, from any panel and at any depth." },
@@ -491,6 +511,38 @@
         { "id": "arbre-validation", "key": "Entrée", "status": "todo",
           "action":   { "fr": "Prendre une compétence disponible.", "en": "Take an available skill." },
           "expected": { "fr": "Le nœud est débloqué et le point décompté.", "en": "The node unlocks and the point is spent." } }
+      ]
+    },
+
+    {
+      "id": "cooperation",
+      "title": { "fr": "Jouer à plusieurs", "en": "Playing together" },
+      "intro": {
+        "fr": "Le mod est entièrement local : il n'envoie ni ne reçoit rien sur le réseau, et vos partenaires n'ont rien à installer pour jouer avec vous. Reste à vérifier qu'il ne vous annonce que VOS actions — un partenaire qui pêche à côté ne doit pas déclencher vos annonces. Ces points demandent une seconde personne, et n'ont donc jamais pu être essayés.",
+        "en": "The mod is entirely local: it sends and receives nothing over the network, and your partners need install nothing to play with you. What remains is checking it announces only YOUR actions — a partner fishing next to you must not trigger your announcements. These points need a second person, so none has ever been tried."
+      },
+      "items": [
+        { "id": "coop-sans-mod", "key": "—", "status": "todo", "critical": true,
+          "action":   { "fr": "Jouer avec quelqu'un qui n'a PAS installé le mod, une bonne session.", "en": "Play with someone who has NOT installed the mod, for a good session." },
+          "expected": { "fr": "La partie se déroule normalement pour tous les deux. Votre partenaire ne constate aucune différence, aucun blocage, aucun décalage.", "en": "The game runs normally for both. Your partner notices no difference, no freeze, no desync." },
+          "note": { "fr": "Vérifié dans le code : sur 26 correctifs appliqués au jeu, un seul annule un appel, et uniquement pour l'objet du mod lui-même, comparé par référence. Tout le reste laisse le jeu faire. Reste à le confirmer en conditions réelles.", "en": "Verified in code: of 26 patches applied to the game, exactly one cancels a call, and only for the mod's own object, compared by reference. Everything else lets the game proceed. Confirming it in real conditions is what's left." } },
+        { "id": "coop-arrivee-depart", "key": "—", "status": "todo",
+          "action":   { "fr": "Faire rejoindre puis quitter la partie à quelqu'un. Puis lui faire traverser plusieurs bâtiments.", "en": "Have someone join, then leave. Then have them walk through several buildings." },
+          "expected": { "fr": "« Untel a rejoint la partie » et « Untel a quitté la partie ». Traverser une porte ne déclenche RIEN : changer de carte détruit et recrée le joueur, et un départ n'est annoncé qu'après plusieurs secondes d'absence.", "en": "\"So-and-so joined the game\" and \"So-and-so left the game\". Walking through a door triggers NOTHING: changing map destroys and recreates the player, and a departure is only announced after several seconds of absence." } },
+        { "id": "coop-silence", "key": "—", "status": "todo", "critical": true,
+          "action":   { "fr": "Rester à côté de votre partenaire pendant qu'il prend des coups, pêche, coupe un arbre et tue des ennemis. Ne rien faire vous-même.", "en": "Stand next to your partner while they take hits, fish, chop a tree and kill enemies. Do nothing yourself." },
+          "expected": { "fr": "AUCUNE annonce. Ni « Touché », ni « Ça mord », ni bip de visée, ni ennemi vaincu.", "en": "NO announcement. No \"Hit\", no \"It's biting\", no aiming beep, no enemy defeated." },
+          "note": { "fr": "Défaut réel trouvé et corrigé : les annonces de dégâts, de mort et les cinq annonces de pêche ne vérifiaient pas de QUI il s'agissait. En coopération, les coups reçus par votre partenaire étaient annoncés comme les vôtres, avec sa santé.", "en": "A real defect found and fixed: the damage and death announcements, and the five fishing ones, never checked WHOSE they were. In co-op, hits taken by your partner were announced as yours, with their health." } },
+        { "id": "coop-mes-actions", "key": "—", "status": "todo", "critical": true,
+          "action":   { "fr": "Faire vous-même les mêmes gestes : prendre un coup, pêcher, récolter, tuer un ennemi.", "en": "Do the same things yourself: take a hit, fish, harvest, kill an enemy." },
+          "expected": { "fr": "Tout est annoncé comme d'habitude. Le filtre ne doit pas vous rendre muet à vous aussi.", "en": "Everything is announced as usual. The filter must not silence you too." } },
+        { "id": "coop-qui-parle", "key": "—", "status": "todo",
+          "action":   { "fr": "Faire écrire votre partenaire dans le tchat, et faire parler un personnage du jeu.", "en": "Have your partner type in chat, and have a game character speak." },
+          "expected": { "fr": "Chaque message est précédé du nom de celui qui parle, pour qu'un partenaire ne se confonde pas avec un personnage du jeu.", "en": "Each message is preceded by the speaker's name, so a partner isn't mistaken for a game character." } },
+        { "id": "coop-scanner", "key": "Ctrl + Page, puis Page", "status": "todo",
+          "action":   { "fr": "Ouvrir la catégorie Personnages du scanner pendant qu'un partenaire est à proximité.", "en": "Open the scanner's Characters category while a partner is nearby." },
+          "expected": { "fr": "Il y figure, annoncé « son nom, joueur », distinct des personnages du jeu, avec sa direction et sa distance. Se rendre jusqu'à lui fonctionne.", "en": "They appear, announced as \"their name, player\", distinct from game characters, with direction and distance. Travelling to them works." },
+          "note": { "fr": "Les joueurs ne vivent pas dans la scène de la carte mais dans une scène persistante : le filtre de scène du scanner les écartait tous. Corrigé.", "en": "Players don't live in the map scene but in a persistent one: the scanner's scene filter was discarding them all. Fixed." } }
       ]
     },
 
