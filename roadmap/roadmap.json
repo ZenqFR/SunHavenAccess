@@ -515,6 +515,41 @@
     },
 
     {
+      "id": "langue",
+      "title": { "fr": "Jouer en anglais", "en": "Playing in English" },
+      "intro": {
+        "fr": "Le mod parle désormais anglais, en suivant la langue du jeu. Le français reste la seule langue vérifiée à l'oreille : l'anglais n'a encore été essayé par personne, et c'est tout l'objet de cette étape.",
+        "en": "The mod now speaks English, following the game's language. French remains the only version verified by ear: nobody has tried the English one yet, and that is what this stage is for."
+      },
+      "items": [
+        { "id": "langue-auto", "key": "—", "status": "todo", "critical": true,
+          "action":   { "fr": "Passer Sun Haven en anglais dans ses options, puis relancer et écouter les annonces du mod.", "en": "Switch Sun Haven to English in its options, then relaunch and listen to the mod's announcements." },
+          "expected": { "fr": "Le mod parle anglais sans qu'on ait rien réglé. Repasser le jeu en français le fait reparler français.", "en": "The mod speaks English with nothing configured. Switching the game back to French makes it speak French again." },
+          "note": { "fr": "La langue est lue sur le gestionnaire de traduction du jeu, par réflexion plutôt que par une référence à sa bibliothèque : si une mise à jour la renommait, le mod retomberait sur le français au lieu de refuser de se charger.", "en": "The language is read from the game's own translation manager, by reflection rather than a reference to its library: if an update renamed it, the mod would fall back to French instead of refusing to load." } },
+        { "id": "langue-reglage", "key": "Pavé 8", "status": "todo",
+          "action":   { "fr": "Ouvrir les réglages : la langue des annonces est la première entrée. La faire défiler aux flèches gauche et droite.", "en": "Open the settings: the announcement language is the first entry. Cycle it with left and right." },
+          "expected": { "fr": "Trois valeurs — comme le jeu, Français, English — et le changement prend effet aussitôt.", "en": "Three values — same as the game, Français, English — and the change takes effect immediately." },
+          "note": { "fr": "C'est le seul réglage dont on peut avoir besoin sans comprendre un mot de ce que le mod dit : le laisser dans le fichier de configuration reviendrait à demander d'éditer un fichier à l'aveugle, dans une langue qu'on ne lit pas.", "en": "It's the one setting you might need without understanding a word the mod says: leaving it in the config file would mean asking someone to edit a file blind, in a language they can't read." } },
+        { "id": "langue-aide", "key": "F1", "status": "todo", "critical": true,
+          "action":   { "fr": "En anglais, ouvrir l'aide et parcourir toutes les rubriques.", "en": "In English, open the help and browse every topic." },
+          "expected": { "fr": "Toutes les rubriques sont en anglais, aucune ne manque. Les noms de touches aussi.", "en": "Every topic is in English, none missing. Key names too." },
+          "note": { "fr": "L'aide est écrite deux fois, en regard : c'est la seule façon que chaque version se lise naturellement. Un garde-fou journalise l'écart si une rubrique n'est ajoutée que d'un côté — une aide qu'on n'entend pas ne se remarque jamais en jeu.", "en": "The help is written twice, side by side: the only way each version reads naturally. A guard logs the difference if a topic is added on one side only — help you never hear is help you never miss." } },
+        { "id": "langue-raccourcis", "key": "Suppr", "status": "todo",
+          "action":   { "fr": "En anglais, ouvrir le menu des raccourcis et parcourir toutes les actions.", "en": "In English, open the shortcuts menu and browse every action." },
+          "expected": { "fr": "Le nom ET l'explication de chaque touche sont en anglais.", "en": "Both the name AND the explanation of every key are in English." },
+          "note": { "fr": "Les 47 actions et leurs descriptions restent écrites en français dans le code — elles servent aussi de commentaires dans le fichier de configuration. Vérifié qu'aucune n'a de trou dans la table de traduction.", "en": "The 47 actions and their descriptions stay written in French in the code — they double as comments in the config file. Verified that none is missing from the translation table." } },
+        { "id": "langue-melange", "key": "—", "status": "todo", "critical": true,
+          "action":   { "fr": "En anglais, jouer normalement une bonne session et guetter tout mot français au milieu d'une phrase anglaise.", "en": "In English, play normally for a good session and listen for any French word inside an English sentence." },
+          "expected": { "fr": "Aucun mélange. Une phrase non traduite doit ressortir ENTIÈREMENT en français, pas à moitié : c'est la règle posée dans le code, et c'est ce qu'il faut vérifier.", "en": "No mixing. An untranslated sentence must come out ENTIRELY in French, never half: that's the rule set in the code, and what needs checking." },
+          "note": { "fr": "Une phrase à moitié traduite est pire que la version française — elle donne à un anglophone un mot sur deux, et à un francophone une phrase cassée. Signalez toute phrase mélangée : c'est le défaut le plus probable ici.", "en": "A half-translated sentence is worse than the French one — it gives an English speaker every other word, and a French speaker a broken sentence. Report any mixed sentence: it's the likeliest defect here." } },
+        { "id": "langue-noms-du-jeu", "key": "—", "status": "todo",
+          "action":   { "fr": "En anglais, examiner des objets, des personnages, des lieux et des terrains.", "en": "In English, examine items, characters, locations and terrain." },
+          "expected": { "fr": "Leurs noms sont en anglais, tels que le jeu les donne — pas traduits en français par le mod.", "en": "Their names are in English, as the game gives them — not translated into French by the mod." },
+          "note": { "fr": "Le mod porte un dictionnaire qui met en français les noms techniques anglais quand le jeu n'affiche aucun texte. En anglais ce dictionnaire s'efface : la source est déjà dans la bonne langue, il ne reste qu'à découper les mots.", "en": "The mod carries a dictionary that puts the game's English technical names into French when no text is displayed. In English that dictionary steps aside: the source is already in the right language, only the word splitting remains." } }
+      ]
+    },
+
+    {
       "id": "cooperation",
       "title": { "fr": "Jouer à plusieurs", "en": "Playing together" },
       "intro": {

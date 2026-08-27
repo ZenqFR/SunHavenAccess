@@ -2,11 +2,11 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **7 sur 125 au point** (6 %).
+Mis à jour le 2026-08-27 — **7 sur 131 au point** (5 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 109 |
+| `[ ]` | À tester | jamais essayé en jeu | 115 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
 | `[x]` | Au point | essayé, rien à redire | 7 |
@@ -442,7 +442,36 @@ Les compétences, qu'on dépense au fil des niveaux.
   - Faire : Prendre une compétence disponible.
   - Attendu : Le nœud est débloqué et le point décompté.
 
-## 14. Jouer à plusieurs
+## 14. Jouer en anglais
+
+Le mod parle désormais anglais, en suivant la langue du jeu. Le français reste la seule langue vérifiée à l'oreille : l'anglais n'a encore été essayé par personne, et c'est tout l'objet de cette étape.
+
+- [ ] **langue-langue-auto** ⚠️ — touche : —
+  - Faire : Passer Sun Haven en anglais dans ses options, puis relancer et écouter les annonces du mod.
+  - Attendu : Le mod parle anglais sans qu'on ait rien réglé. Repasser le jeu en français le fait reparler français.
+  - Retour de jeu : La langue est lue sur le gestionnaire de traduction du jeu, par réflexion plutôt que par une référence à sa bibliothèque : si une mise à jour la renommait, le mod retomberait sur le français au lieu de refuser de se charger.
+- [ ] **langue-langue-reglage** — touche : Pavé 8
+  - Faire : Ouvrir les réglages : la langue des annonces est la première entrée. La faire défiler aux flèches gauche et droite.
+  - Attendu : Trois valeurs — comme le jeu, Français, English — et le changement prend effet aussitôt.
+  - Retour de jeu : C'est le seul réglage dont on peut avoir besoin sans comprendre un mot de ce que le mod dit : le laisser dans le fichier de configuration reviendrait à demander d'éditer un fichier à l'aveugle, dans une langue qu'on ne lit pas.
+- [ ] **langue-langue-aide** ⚠️ — touche : F1
+  - Faire : En anglais, ouvrir l'aide et parcourir toutes les rubriques.
+  - Attendu : Toutes les rubriques sont en anglais, aucune ne manque. Les noms de touches aussi.
+  - Retour de jeu : L'aide est écrite deux fois, en regard : c'est la seule façon que chaque version se lise naturellement. Un garde-fou journalise l'écart si une rubrique n'est ajoutée que d'un côté — une aide qu'on n'entend pas ne se remarque jamais en jeu.
+- [ ] **langue-langue-raccourcis** — touche : Suppr
+  - Faire : En anglais, ouvrir le menu des raccourcis et parcourir toutes les actions.
+  - Attendu : Le nom ET l'explication de chaque touche sont en anglais.
+  - Retour de jeu : Les 47 actions et leurs descriptions restent écrites en français dans le code — elles servent aussi de commentaires dans le fichier de configuration. Vérifié qu'aucune n'a de trou dans la table de traduction.
+- [ ] **langue-langue-melange** ⚠️ — touche : —
+  - Faire : En anglais, jouer normalement une bonne session et guetter tout mot français au milieu d'une phrase anglaise.
+  - Attendu : Aucun mélange. Une phrase non traduite doit ressortir ENTIÈREMENT en français, pas à moitié : c'est la règle posée dans le code, et c'est ce qu'il faut vérifier.
+  - Retour de jeu : Une phrase à moitié traduite est pire que la version française — elle donne à un anglophone un mot sur deux, et à un francophone une phrase cassée. Signalez toute phrase mélangée : c'est le défaut le plus probable ici.
+- [ ] **langue-langue-noms-du-jeu** — touche : —
+  - Faire : En anglais, examiner des objets, des personnages, des lieux et des terrains.
+  - Attendu : Leurs noms sont en anglais, tels que le jeu les donne — pas traduits en français par le mod.
+  - Retour de jeu : Le mod porte un dictionnaire qui met en français les noms techniques anglais quand le jeu n'affiche aucun texte. En anglais ce dictionnaire s'efface : la source est déjà dans la bonne langue, il ne reste qu'à découper les mots.
+
+## 15. Jouer à plusieurs
 
 Le mod est entièrement local : il n'envoie ni ne reçoit rien sur le réseau, et vos partenaires n'ont rien à installer pour jouer avec vous. Reste à vérifier qu'il ne vous annonce que VOS actions — un partenaire qui pêche à côté ne doit pas déclencher vos annonces. Ces points demandent une seconde personne, et n'ont donc jamais pu être essayés.
 
@@ -468,7 +497,7 @@ Le mod est entièrement local : il n'envoie ni ne reçoit rien sur le réseau, e
   - Attendu : Il y figure, annoncé « son nom, joueur », distinct des personnages du jeu, avec sa direction et sa distance. Se rendre jusqu'à lui fonctionne.
   - Retour de jeu : Les joueurs ne vivent pas dans la scène de la carte mais dans une scène persistante : le filtre de scène du scanner les écartait tous. Corrigé.
 
-## 15. Réglages et confort
+## 16. Réglages et confort
 
 Ce qui s'ajuste plutôt que ce qui s'utilise. Ces réglages vivent dans le fichier de configuration du mod, et servent surtout de soupape : si un écran se comporte mal, ils permettent de rendre la main au jeu sans désinstaller quoi que ce soit.
 
