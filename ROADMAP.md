@@ -2,14 +2,14 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **9 sur 133 au point** (7 %).
+Mis à jour le 2026-08-27 — **11 sur 133 au point** (8 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 115 |
-| `[!]` | À corriger | essayé, ne marche pas | 9 |
+| `[ ]` | À tester | jamais essayé en jeu | 114 |
+| `[!]` | À corriger | essayé, ne marche pas | 8 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
-| `[x]` | Au point | essayé, rien à redire | 9 |
+| `[x]` | Au point | essayé, rien à redire | 11 |
 
 ⚠️ = à vérifier en priorité.
 
@@ -54,11 +54,11 @@ Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le
   - Faire : Ouvrir les réglages en liste, parcourir les options aux flèches haut et bas, en changer une avec gauche et droite. Essayer une case à cocher, un curseur et une liste déroulante.
   - Attendu : Chaque option est annoncée avec son nom ET sa valeur. Gauche et droite changent la valeur sur place, sans quitter la ligne. Les curseurs s'annoncent en pour cent. Les réglages du mod figurent en tête de liste.
   - Retour de jeu : Les réglages du mod — bip de bord, navigation directionnelle, mode bref — ne se changeaient jusqu'ici qu'en éditant le fichier de configuration à la main. Les contrôles du jeu sont pilotés directement, donc c'est lui qui applique et enregistre.
-- [ ] **personnage-menu-principal-focus** ⚠️ — touche : —
+- [x] **personnage-menu-principal-focus** ⚠️ — touche : —
   - Faire : Lancer le jeu et écouter sans rien presser, puis appuyer une fois sur la flèche du bas.
   - Attendu : Le premier bouton du menu — Jouer, ou Continuer si une partie existe — est annoncé d'emblée. La première flèche déplace ensuite d'UN cran, pas depuis le bas de la liste.
   - Retour de jeu : Rapporté en jeu : on arrivait tout en bas. Le jeu ne sélectionne rien de lui-même sur cet écran, il attend la souris ; le mod ne prenait donc la main qu'à la première flèche, qui déplaçait déjà la sélection depuis nulle part. Le bouton est choisi par sa POSITION — le plus haut — et non par son texte : « Jouer » devient « Continuer » quand une partie existe, et se traduit. DEUXIÈME DÉFAUT, signalé depuis : la flèche du bas annonçait « Pixelsprout Studios », et il fallait remonter plusieurs fois pour trouver « Jouer ». Le logo du studio est un élément cliquable posé PLUS HAUT que les boutons du menu, mais hors de celui-ci : trié par position, il passait donc devant. Aucune règle géométrique ne pouvait le distinguer d'un vrai bouton — c'est l'appartenance au panneau qui le fait, et le jeu la connaît. La navigation se limite désormais au panneau que MainMenuController tient pour ouvert.
-- [!] **personnage-menu-principal-regression** ⚠️ — touche : Flèches
+- [x] **personnage-menu-principal-regression** ⚠️ — touche : Flèches
   - Faire : Parcourir le menu principal du jeu aux flèches.
   - Attendu : Tous les boutons sont atteignables et nommés, au moins aussi bien qu'avant.
   - Retour de jeu : RÉGRESSION que j'ai introduite : le test « élément réellement à l'écran », ajouté pour écarter les panneaux des autres onglets, écartait aussi des boutons parfaitement visibles quand la conversion de coordonnées ne convenait pas à ce canevas. Corrigé — le test ne peut plus vider un écran : s'il ne laisse rien, on garde tout. Un écran inatteignable est bien pire que quelques éléments de trop.
