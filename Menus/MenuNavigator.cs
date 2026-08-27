@@ -360,7 +360,7 @@ namespace SunHavenAccess.Menus
         private static List<Selectable> FollowNavigationChain(List<Selectable> items)
         {
             if (items.Count < 2) return null;
-            if (items.Any(s => s.navigation.mode != Navigation.Mode.Explicit)) return null;
+            if (items.Any(s => s.navigation.mode != UnityEngine.UI.Navigation.Mode.Explicit)) return null;
 
             var pointedTo = new HashSet<Selectable>(
                 items.Select(s => s.navigation.selectOnDown).Where(s => s != null));
