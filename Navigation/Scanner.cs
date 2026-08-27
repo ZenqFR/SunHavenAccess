@@ -23,7 +23,7 @@ namespace SunHavenAccess.Navigation
         private static readonly string[] CategoryNames =
         {
             "Personnages", "Plantations", "Ressources", "Bâtiments et portails",
-            "Animaux et compagnons", "Ennemis", "Mobilier et rangement"
+            "Animaux et compagnons", "Ennemis", "Mobilier et rangement", "Services et repères"
         };
 
         private const float Radius = 55f; // agrandi (était 40) : plusieurs objets légitimes tombaient hors champ
@@ -177,6 +177,7 @@ namespace SunHavenAccess.Navigation
                 4 => FindAnimalsAndPets(),
                 5 => FindEnemies(),
                 6 => FindFurniture(),
+                7 => FindServices(),
                 _ => System.Array.Empty<Component>()
             };
 
@@ -296,9 +297,28 @@ namespace SunHavenAccess.Navigation
             return Object.FindObjectsOfType<Chest>()
                 .Cast<Component>()
                 .Concat(Object.FindObjectsOfType<OneTimeChest>())
-                .Concat(Object.FindObjectsOfType<ForageableChest>())
+                .Concat(Object.FindObjectsOfType<ForageableChest>());
+        }
+
+        /// <summary>
+        /// Les points de service de la journée : lit, boîte aux lettres, puits, panneau
+        /// d'affichage, établi.
+        ///
+        /// Ce sont les endroits où l'on RETOURNE — dormir pour finir la journée, relever le
+        /// courrier, remplir l'arrosoir, prendre les tâches du jour, fabriquer. Le lit et la boîte
+        /// aux lettres étaient rangés avec le mobilier : les y chercher obligeait à parcourir tous
+        /// les coffres de la maison, alors que ce sont justement les repères qu'on veut atteindre
+        /// le plus vite. Ils sortent donc du mobilier plutôt que d'y être dupliqués — une même
+        /// chose dans deux catégories ne fait que rallonger les deux.
+        /// </summary>
+        private static IEnumerable<Component> FindServices()
+        {
+            return Object.FindObjectsOfType<Bed>()
+                .Cast<Component>()
                 .Concat(Object.FindObjectsOfType<Mailbox>())
-                .Concat(Object.FindObjectsOfType<Bed>());
+                .Concat(Object.FindObjectsOfType<Well>())
+                .Concat(Object.FindObjectsOfType<BulletinBoard>())
+                .Concat(Object.FindObjectsOfType<CraftingTable>());
         }
 
         private static IEnumerable<Component> FindPortalsAndDoors()

@@ -162,20 +162,68 @@ namespace SunHavenAccess.Cursor
             TolkSpeech.Speak(desc, interrupt: true);
         }
 
+        /// <summary>
+        /// Tout ce qu'il y a à dire de la case en face, CUMULÉ.
+        ///
+        /// La version précédente choisissait une seule information et abandonnait les autres :
+        /// devant un rocher, on n'apprenait jamais sur quoi il reposait ; devant une culture, ni
+        /// le sol ni l'état de la terre. Signalé en jeu — « faut aucun loupé, faut que ça me dise
+        /// tout ». Une case porte plusieurs faits à la fois, et les faire concourir pour un seul
+        /// créneau de parole en perdait à chaque pas.
+        ///
+        /// L'ordre suit ce qu'on veut savoir en premier : ce qui OCCUPE la case, puis l'état de la
+        /// terre, puis la nature du sol, puis la direction. Le sol est passé sous silence quand
+        /// l'état de la terre le dit déjà — « terre labourée, terre » ne serait qu'un bégaiement.
+        /// </summary>
         private static string BuildFrontDescription(Player player)
         {
             string facing = Strings.DirectionName(player.facingDirection);
+            Vector2Int front = GetFrontTileCoord(player);
+            var parts = new System.Collections.Generic.List<string>();
 
+            string occupant = DescribeOccupant(player, facing);
+            if (!string.IsNullOrWhiteSpace(occupant)) parts.Add(occupant);
+
+            string farmland = DescribeFarmland(front);
+            if (!string.IsNullOrWhiteSpace(farmland)) parts.Add(farmland);
+
+            // La terre labourée dit déjà de quoi le sol est fait.
+            if (string.IsNullOrWhiteSpace(farmland))
+            {
+                string ground = DescribeGroundTile(front);
+                if (!string.IsNullOrWhiteSpace(ground)) parts.Add(ground);
+            }
+
+            if (parts.Count == 0)
+            {
+                // Aucune donnée sur la case visée : on dit au moins sur quoi l'on se tient, seul
+                // repère qui reste quand la case suivante n'en donne aucun.
+                string underfoot = DescribeGroundTile(player.Position);
+                return string.IsNullOrWhiteSpace(underfoot)
+                    ? Localization.Language.T($"Rien devant vous, côté {facing}.",
+                                              $"Nothing in front of you, {facing} side.")
+                    : Localization.Language.T(
+                        $"Rien devant vous, côté {facing}. Sol sous vos pieds : {underfoot}.",
+                        $"Nothing in front of you, {facing} side. Ground underfoot: {underfoot}.");
+            }
+
+            return string.Join(", ", parts).TrimEnd('.', ' ')
+                   + Localization.Language.T($", côté {facing}.", $", {facing} side.");
+        }
+
+        /// <summary>
+        /// Ce qui occupe la case : un objet avec lequel on peut interagir, une culture, ou un
+        /// obstacle muet. Null si la case est libre.
+        /// </summary>
+        private static string DescribeOccupant(Player player, string facing)
+        {
             PlayerInteractions interactions = player.GetComponent<PlayerInteractions>();
             if (interactions != null && interactions.Interactables.Count > 0)
             {
                 Interaction first = interactions.Interactables[0];
                 IInteractable target = first.interactable;
 
-                if (target is Crop crop)
-                {
-                    return DescribeCrop(crop);
-                }
+                if (target is Crop crop) return DescribeCrop(crop);
 
                 InteractionInfo info = target?.InteractionPoint;
                 if (info?.interactionText != null && info.interactionText.Count > 0)
@@ -190,33 +238,7 @@ namespace SunHavenAccess.Cursor
                 }
             }
 
-            string farmland = DescribeFarmland(GetFrontTileCoord(player));
-            if (farmland != null) return farmland;
-
-            string obstacle = DescribeObstacle(player, facing);
-            if (obstacle != null) return obstacle;
-
-            // Repli sur le TYPE de terrain (herbe, chemin, sable, pierre...) lu directement dans
-            // la tuilemap du sol, pour ne dire "rien devant vous" que quand vraiment aucune
-            // donnée de case n'est trouvée nulle part (demandé : chaque case a un contenu réel,
-            // même en dehors des zones cultivables).
-            string ground = DescribeGroundTile(GetFrontTileCoord(player));
-            if (ground != null)
-                return Localization.Language.T($"{ground}, côté {facing}.", $"{ground}, {facing} side.");
-
-            // Quand il n'y a rien devant, on dit au moins SUR QUOI l'on se tient.
-            //
-            // Signalé en jeu : « rien devant vous, d'accord, mais c'est quoi la case sous mes
-            // pieds ? ». La question est juste — « rien devant vous » ne situe nulle part, alors
-            // que le sol sous soi est le seul repère qui reste quand la case suivante est vide.
-            string underfoot = DescribeGroundTile(player.Position);
-            if (!string.IsNullOrWhiteSpace(underfoot))
-                return Localization.Language.T(
-                    $"Rien devant vous, côté {facing}. Sol sous vos pieds : {underfoot}.",
-                    $"Nothing in front of you, {facing} side. Ground underfoot: {underfoot}.");
-
-            return Localization.Language.T($"Rien devant vous, côté {facing}.",
-                                           $"Nothing in front of you, {facing} side.");
+            return DescribeObstacle(player, facing);
         }
 
         /// <summary>
@@ -412,14 +434,16 @@ namespace SunHavenAccess.Cursor
                     // quoi ». Un obstacle sans nom n'apprend rien — on sait déjà qu'on est bloqué,
                     // puisqu'on n'avance pas. Ce qu'on veut savoir, c'est si c'est un arbre à
                     // abattre, un rocher à miner, un meuble à déplacer ou un mur à contourner.
+                    // On ne rend que le NOM, sans direction ni ponctuation : l'appelant assemble
+                    // la phrase avec le reste de ce que porte la case, et y ajoute la direction
+                    // une seule fois.
                     string name = NameOfObstacle(hit);
                     if (!string.IsNullOrWhiteSpace(name))
-                        return Localization.Language.T($"{name} bloque le passage, côté {facing}.",
-                                                       $"{name} is blocking the way, {facing} side.");
+                        return Localization.Language.T($"{name}, bloque le passage",
+                                                       $"{name}, blocking the way");
 
-                    return Localization.Language.T(
-                        $"Quelque chose bloque le passage devant vous, côté {facing}.",
-                        $"Something is blocking the way in front of you, {facing} side.");
+                    return Localization.Language.T("quelque chose bloque le passage",
+                                                   "something is blocking the way");
                 }
             }
             catch

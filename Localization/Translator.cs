@@ -187,6 +187,7 @@ namespace SunHavenAccess.Localization
             { "Animaux et compagnons", "Animals and pets" },
             { "Ennemis", "Enemies" },
             { "Mobilier et rangement", "Furniture and storage" },
+            { "Services et repères", "Services and landmarks" },
 
             // Les libellés d'actions du menu des raccourcis. Ils sont lus tels quels dans la liste,
             // et arrivent aussi comme groupe capturé de « Touche pour X changée en Y » — que
