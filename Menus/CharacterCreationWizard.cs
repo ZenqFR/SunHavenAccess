@@ -339,9 +339,31 @@ namespace SunHavenAccess.Menus
         {
             try
             {
-                string wanted = englishText.Trim();
+                LocalizationManager.InitializeIfNeeded();
 
-                foreach (string term in LocalizationManager.GetTermsList())
+                List<string> terms = LocalizationManager.GetTermsList();
+                if (terms == null || terms.Count == 0)
+                {
+                    Plugin.Log?.LogInfo("Table de traduction du jeu vide ou illisible : recherche de terme impossible.");
+                    return null;
+                }
+
+                string wanted = englishText.Trim();
+                string flattened = Flatten(englishText);
+
+                // Deux passes, de la plus sûre à la plus tolérante.
+                //
+                // D'abord le NOM du terme, comparé sans espaces ni ponctuation ni casse :
+                // « Orchard Farmer » retrouve « OrchardFarmer », « orchard_farmer » ou
+                // « ORCHARDFARMER ». C'est indépendant des langues chargées, donc fiable même si
+                // la colonne anglaise ne l'est pas.
+                foreach (string term in terms)
+                    if (!string.IsNullOrEmpty(term) && Flatten(term) == flattened) return term;
+
+                // Puis la VALEUR anglaise : le libellé interne est ce texte anglais, donc le terme
+                // qui le produit est celui qu'on cherche. Ne fonctionne que si l'anglais est
+                // chargé, d'où sa place en second.
+                foreach (string term in terms)
                 {
                     if (string.IsNullOrEmpty(term)) continue;
 
@@ -349,11 +371,21 @@ namespace SunHavenAccess.Menus
                     if (string.Equals(english?.Trim(), wanted, StringComparison.CurrentCultureIgnoreCase))
                         return term;
                 }
+
+                Plugin.Log?.LogInfo($"Aucun terme ne correspond à « {englishText} » parmi {terms.Count} termes lus.");
             }
-            catch { }
+            catch (Exception e)
+            {
+                Plugin.Log?.LogInfo("Recherche de terme impossible : " + e.Message);
+            }
 
             return null;
         }
+
+        /// <summary>Réduit un libellé à ses lettres et chiffres, en minuscules, pour comparer des
+        /// variantes d'écriture sans se soucier des espaces, tirets ou majuscules.</summary>
+        private static string Flatten(string s) =>
+            new string((s ?? string.Empty).Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
 
         private static bool _loggedProfessions;
 
