@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -32,20 +33,24 @@ namespace SunHavenAccess.Menus
         /// <summary>Contrôles du jeu retenus, dans l'ordre de la liste affichée.</summary>
         private static readonly List<Selectable> _controls = new List<Selectable>();
 
-        /// <summary>Réglages du mod, dans l'ordre de la liste affichée.</summary>
-        private static readonly List<BepInEx.Configuration.ConfigEntry<bool>> _modSettings =
-            new List<BepInEx.Configuration.ConfigEntry<bool>>();
-
-        private static readonly List<string> _modLabels = new List<string>();
+        /// <summary>
+        /// Réglages du mod, dans l'ordre de la liste affichée.
+        ///
+        /// Chacun se réduit à deux choses : produire son libellé complet, et passer à la valeur
+        /// suivante. Les réglages ne sont donc pas tous des cases à cocher — la langue des
+        /// annonces en est un à trois valeurs — sans que la liste ait à connaître leur nature.
+        /// </summary>
+        private static readonly List<(Func<string> Label, Action<int> Cycle)> _modSettings =
+            new List<(Func<string>, Action<int>)>();
 
         public static void Open()
         {
             _controls.Clear();
             _modSettings.Clear();
-            _modLabels.Clear();
 
             var entries = new List<string>();
 
+            AddLanguageSetting(entries);
             AddModSetting(entries, ModConfig.EdgeSound,
                 Localization.Language.T("Bip de bord", "Edge beep"));
             AddModSetting(entries, ModConfig.TakeOverMenuArrows,
@@ -71,13 +76,55 @@ namespace SunHavenAccess.Menus
                                           string label)
         {
             if (setting == null) return;
-            _modSettings.Add(setting);
-            _modLabels.Add(label);
-            entries.Add($"{label} : {OnOff(setting.Value)}");
+
+            string Describe() => Localization.Language.Pair(label, OnOff(setting.Value));
+
+            // Une case n'a que deux états : les deux directions la basculent, plutôt que la
+            // laisser immobile dans un sens.
+            _modSettings.Add((Describe, _ => setting.Value = !setting.Value));
+            entries.Add(Describe());
         }
 
         private static string OnOff(bool value) =>
             Localization.Language.T(value ? "activé" : "désactivé", value ? "on" : "off");
+
+        /// <summary>
+        /// La langue des annonces, en tête de liste.
+        ///
+        /// Elle y a sa place plus que tout autre réglage : c'est le seul dont un joueur peut avoir
+        /// besoin sans comprendre un mot de ce que le mod lui dit. La laisser dans le fichier de
+        /// configuration reviendrait à demander d'éditer un fichier à l'aveugle, dans une langue
+        /// qu'on ne lit pas, pour pouvoir enfin comprendre le mod.
+        ///
+        /// Trois valeurs : suivre le jeu, forcer le français, forcer l'anglais.
+        /// </summary>
+        private static void AddLanguageSetting(List<string> entries)
+        {
+            var setting = ModConfig.SpeechLanguage;
+            if (setting == null) return;
+
+            string[] values = { "", "fr", "en" };
+
+            string ValueName(string code) =>
+                code == "fr" ? "Français"
+                : code == "en" ? "English"
+                : Localization.Language.T("comme le jeu", "same as the game");
+
+            string Describe() => Localization.Language.Pair(
+                Localization.Language.T("Langue des annonces", "Announcement language"),
+                ValueName(setting.Value ?? ""));
+
+            void Cycle(int direction)
+            {
+                int index = System.Array.IndexOf(values, setting.Value ?? "");
+                if (index < 0) index = 0;
+                index = ((index + direction) % values.Length + values.Length) % values.Length;
+                setting.Value = values[index]; // met aussi Language.Override à jour, voir ModConfig
+            }
+
+            _modSettings.Add((Describe, Cycle));
+            entries.Add(Describe());
+        }
 
         // ------------------------------------------------------------------ Réglages du jeu
 
@@ -120,13 +167,15 @@ namespace SunHavenAccess.Menus
             switch (control)
             {
                 case Toggle toggle:
-                    return $"{label} : {(toggle.isOn ? "coché" : "décoché")}";
+                    return Localization.Language.Pair(label, Localization.Language.T(
+                        toggle.isOn ? "coché" : "décoché", toggle.isOn ? "ticked" : "unticked"));
                 case Slider slider:
-                    return $"{label} : {Percent(slider)} pour cent";
+                    return Localization.Language.Pair(label, Localization.Language.T(
+                        $"{Percent(slider)} pour cent", $"{Percent(slider)} per cent"));
                 case TMP_Dropdown dropdown:
-                    return $"{label} : {OptionText(dropdown)}";
+                    return Localization.Language.Pair(label, OptionText(dropdown));
                 case Dropdown legacy:
-                    return $"{label} : {LegacyOptionText(legacy)}";
+                    return Localization.Language.Pair(label, LegacyOptionText(legacy));
                 default:
                     return label;
             }
@@ -146,12 +195,12 @@ namespace SunHavenAccess.Menus
         private static string OptionText(TMP_Dropdown dropdown) =>
             dropdown.value >= 0 && dropdown.value < dropdown.options.Count
                 ? TextUtil.Clean(dropdown.options[dropdown.value].text)
-                : "inconnu";
+                : Localization.Language.T("inconnu", "unknown");
 
         private static string LegacyOptionText(Dropdown dropdown) =>
             dropdown.value >= 0 && dropdown.value < dropdown.options.Count
                 ? TextUtil.Clean(dropdown.options[dropdown.value].text)
-                : "inconnu";
+                : Localization.Language.T("inconnu", "unknown");
 
         // ------------------------------------------------------------------ Modification
 
@@ -219,8 +268,8 @@ namespace SunHavenAccess.Menus
         private static string AdjustModSetting(int index, int direction)
         {
             var setting = _modSettings[index];
-            setting.Value = !setting.Value; // BepInEx enregistre le fichier de config tout seul
-            return $"{_modLabels[index]} : {OnOff(setting.Value)}";
+            setting.Cycle(direction); // BepInEx enregistre le fichier de config tout seul
+            return setting.Label();
         }
     }
 }
