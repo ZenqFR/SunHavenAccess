@@ -231,13 +231,13 @@ namespace SunHavenAccess.Menus
         }
 
         /// <summary>
-        /// Les fiches de sauvegarde affichées, de haut en bas — l'ordre à l'écran, donc celui des
-        /// emplacements. Les gabarits désactivés que le jeu garde dans la hiérarchie sont écartés.
+        /// Les fiches de la liste de sauvegardes affichée, dans l'ordre des emplacements.
         ///
-        /// On cherche À L'INTÉRIEUR de l'écran de chargement plutôt que dans toute la scène : le
-        /// menu principal garde d'autres écrans en mémoire, et un balayage global ramasserait
-        /// leurs fiches en plus des nôtres. Le balayage global ne sert plus que de repli, si le
-        /// jeu venait à renommer cet objet.
+        /// Le menu principal garde en mémoire les écrans où l'on n'est pas, fiches comprises : un
+        /// balayage global ramasserait les leurs en plus des nôtres. On ne peut pas non plus se
+        /// fier à l'objet d'écran, le jeu menant au même endroit par deux routes. La seule chose
+        /// vraie dans tous les cas : une fiche VISIBLE appartient à la liste qu'on regarde. On
+        /// remonte donc à son conteneur et on prend toutes ses sœurs, défilées ou non.
         /// </summary>
         /// <param name="onScreenOnly">
         /// Vrai pour DÉTECTER l'écran, faux quand le joueur a explicitement demandé la liste.
@@ -257,12 +257,28 @@ namespace SunHavenAccess.Menus
                     .Where(p => p != null && p.gameObject.activeInHierarchy)
                     .ToList();
 
-                List<SavePanel> onScreen = active.Where(p => MenuNavigator.IsOnScreen(p)).ToList();
-                List<SavePanel> kept = (onScreen.Count > 0 || onScreenOnly) ? onScreen : active;
+                // Une fiche visible sert à identifier la LISTE, pas à en dresser le contenu.
+                //
+                // Signalé en jeu : avec plus de deux personnages, seuls deux apparaissaient. La
+                // liste défile, et je ne gardais que les fiches tenant dans le cadre — les autres,
+                // parfaitement réelles, étaient simplement plus bas. Une sauvegarde qu'on ne peut
+                // pas atteindre est aussi perdue qu'une sauvegarde absente.
+                //
+                // On remonte donc de la fiche visible à son conteneur, puis on prend TOUTES ses
+                // sœurs. Le défilement ne change rien à l'appartenance : on obtient la liste
+                // entière, dans son ordre réel, sans dépendre de ce qui se trouve dans le cadre.
+                var containers = new HashSet<Transform>(
+                    active.Where(p => MenuNavigator.IsOnScreen(p)).Select(p => p.transform.parent));
 
+                List<SavePanel> kept = containers.Count > 0
+                    ? active.Where(p => containers.Contains(p.transform.parent)).ToList()
+                    : (onScreenOnly ? new List<SavePanel>() : active);
+
+                // L'ordre des frères est celui de la liste, y compris pour les fiches sorties du
+                // cadre — leur position à l'écran, elle, ne veut plus rien dire une fois défilées.
                 return kept
-                    .OrderByDescending(p => p.transform.position.y)
-                    .ThenBy(p => p.transform.position.x)
+                    .OrderBy(p => p.transform.parent == null ? 0 : p.transform.parent.GetSiblingIndex())
+                    .ThenBy(p => p.transform.GetSiblingIndex())
                     .ToList();
             }
             catch { return new List<SavePanel>(); }
