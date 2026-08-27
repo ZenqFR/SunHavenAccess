@@ -31,6 +31,11 @@ namespace SunHavenAccess.Menus
     public static class SaveMenu
     {
         /// <summary>
+        /// Signe ce module sur la liste qu'il ouvre, pour ne refermer que la sienne.
+        /// </summary>
+        private const string OwnerTag = "sauvegardes";
+
+        /// <summary>
         /// Vrai tant que l'écran de choix est affiché. Sert à n'ouvrir la liste qu'À L'ARRIVÉE sur
         /// l'écran, et à la refermer au départ.
         /// </summary>
@@ -60,7 +65,7 @@ namespace SunHavenAccess.Menus
             _onScreen = present;
 
             if (present) Open();
-            else ListMenu.Close(false); // on quitte l'écran : rien à annoncer, le jeu parle déjà
+            else ListMenu.CloseIfOwner(OwnerTag, false); // on quitte l'écran : le jeu parle déjà
         }
 
         /// <summary>
@@ -91,7 +96,7 @@ namespace SunHavenAccess.Menus
             }
 
             var labels = saves.Select(Describe).ToList();
-            ListMenu.Open("Sauvegardes", labels, chosen => OpenActions(chosen));
+            ListMenu.Open("Sauvegardes", labels, chosen => OpenActions(chosen), owner: OwnerTag);
         }
 
         /// <summary>

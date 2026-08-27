@@ -34,6 +34,13 @@ namespace SunHavenAccess.Menus
         /// <summary>Une saison compte 28 jours — `DayCycle.MonthDay` en fait foi.</summary>
         private const int DaysPerSeason = 28;
 
+        /// <summary>Signe ce module sur les listes qu'il ouvre, pour ne refermer que les siennes.</summary>
+        private const string OwnerTag = "création de personnage";
+
+        /// <summary>Ouvre une liste au nom de l'assistant, pour qu'aucun autre module ne la ferme.</summary>
+        private static void OpenOwned(string title, List<string> entries, Action<int> onActivate = null) =>
+            ListMenu.Open(title, entries, onActivate, owner: OwnerTag);
+
         private enum Step { Idle, Race, Profession, BirthSeason, BirthDay, Name, SkipIntro, Confirm }
 
         private static Step _step = Step.Idle;
@@ -113,7 +120,7 @@ namespace SunHavenAccess.Menus
         private static void Cancel()
         {
             _step = Step.Idle;
-            ListMenu.Close(false);
+            ListMenu.CloseIfOwner(OwnerTag, false);
         }
 
         // ------------------------------------------------------------------ 1. La race
@@ -125,7 +132,7 @@ namespace SunHavenAccess.Menus
             List<Race> races = Enum.GetValues(typeof(Race)).Cast<Race>().ToList();
             var labels = races.Select(DescribeRace).ToList();
 
-            ListMenu.Open(Localization.Language.T("Choisir une race", "Choose a race"), labels, chosen =>
+            OpenOwned(Localization.Language.T("Choisir une race", "Choose a race"), labels, chosen =>
             {
                 Race race = races[chosen];
                 _raceLabel = RaceName(race);
@@ -194,7 +201,7 @@ namespace SunHavenAccess.Menus
 
             var labels = professions.Select(DescribeProfession).ToList();
 
-            ListMenu.Open(Localization.Language.T("Choisir un métier de départ", "Choose a starting profession"),
+            OpenOwned(Localization.Language.T("Choisir un métier de départ", "Choose a starting profession"),
                 labels, chosen =>
                 {
                     _professionLabel = TextUtil.Clean(professions[chosen].name);
@@ -419,7 +426,7 @@ namespace SunHavenAccess.Menus
             var seasons = new[] { Season.Spring, Season.Summer, Season.Fall, Season.Winter };
             var labels = seasons.Select(SeasonName).ToList();
 
-            ListMenu.Open(Localization.Language.T("Saison de votre anniversaire", "Season of your birthday"),
+            OpenOwned(Localization.Language.T("Saison de votre anniversaire", "Season of your birthday"),
                 labels, chosen =>
                 {
                     _season = seasons[chosen];
@@ -435,7 +442,7 @@ namespace SunHavenAccess.Menus
                 .Select(d => Localization.Language.T($"Jour {d}", $"Day {d}"))
                 .ToList();
 
-            ListMenu.Open(Localization.Language.T($"Jour de votre anniversaire, {SeasonName(_season)}",
+            OpenOwned(Localization.Language.T($"Jour de votre anniversaire, {SeasonName(_season)}",
                                                   $"Day of your birthday, {SeasonName(_season)}"),
                 labels, chosen =>
                 {
@@ -472,7 +479,7 @@ namespace SunHavenAccess.Menus
         private static void AskName()
         {
             _step = Step.Name;
-            ListMenu.Close(false);
+            ListMenu.CloseIfOwner(OwnerTag, false);
 
             TMPro.SunHavenInputField field = NameField();
             if (field == null) { AskSkipIntro(); return; }
@@ -556,7 +563,7 @@ namespace SunHavenAccess.Menus
                 Localization.Language.T("Passer l'introduction", "Skip the introduction"),
             };
 
-            ListMenu.Open(Localization.Language.T("L'introduction du jeu", "The game's introduction"),
+            OpenOwned(Localization.Language.T("L'introduction du jeu", "The game's introduction"),
                 labels, chosen =>
                 {
                     Apply(() => toggle.isOn = chosen == 1);
@@ -596,12 +603,12 @@ namespace SunHavenAccess.Menus
                 Localization.Language.T("Recommencer les questions", "Start the questions again"),
             };
 
-            ListMenu.Open(Localization.Language.T("Prêt à commencer", "Ready to start"), labels, chosen =>
+            OpenOwned(Localization.Language.T("Prêt à commencer", "Ready to start"), labels, chosen =>
             {
                 if (chosen == 0)
                 {
                     _step = Step.Idle;
-                    ListMenu.Close(false);
+                    ListMenu.CloseIfOwner(OwnerTag, false);
                     TolkSpeech.Speak(Localization.Language.T("La partie commence.", "The game is starting."), true);
                     Apply(() => Creator().AddNewCharacter());
                 }

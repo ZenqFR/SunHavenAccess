@@ -32,6 +32,9 @@ namespace SunHavenAccess.Menus
     {
         private const int BackpackTab = 0;
 
+        /// <summary>Signe ce module sur la liste qu'il ouvre, pour ne refermer que la sienne.</summary>
+        private const string OwnerTag = "onglets";
+
         /// <summary>
         /// Dernier onglet pour lequel une liste a été ouverte ; -1 quand le menu est fermé.
         /// Sert à n'agir qu'au CHANGEMENT : le jeu expose l'onglet courant à chaque image, et
@@ -59,7 +62,7 @@ namespace SunHavenAccess.Menus
                 {
                     _lastTab = -1;
                     _stayOnTabs = false; // la prochaine ouverture du menu repart sur l'automatisme
-                    ListMenu.Close();
+                    ListMenu.CloseIfOwner(OwnerTag);
                 }
                 return;
             }
@@ -72,7 +75,7 @@ namespace SunHavenAccess.Menus
             // Le sac à dos garde sa grille.
             if (tab == BackpackTab)
             {
-                ListMenu.Close();
+                ListMenu.CloseIfOwner(OwnerTag);
                 return;
             }
 
@@ -141,14 +144,16 @@ namespace SunHavenAccess.Menus
                 case 4: MapNavigator.OpenList(); break;           // Carte
                 case 5: StatisticsMenu.Open(); break;             // Statistiques
                 case 6: SettingsMenu.Open(); break;               // Paramètres
-                default: ListMenu.Close(); break;
+                default: ListMenu.CloseIfOwner(OwnerTag); break;
             }
 
             // Toute liste ouverte depuis un onglet se quitte par le haut vers la barre d'onglets.
             // On le pose après coup : les modules qui construisent ces listes n'ont pas à savoir
             // d'où on les a ouvertes, et ils servent aussi aux touches directes (G, V, Z…), où il
             // n'y a pas d'onglet au-dessus.
-            if (ListMenu.IsOpen) ListMenu.SetExitUp(ExitToTabs);
+            if (!ListMenu.IsOpen) return;
+            ListMenu.Claim(OwnerTag);
+            ListMenu.SetExitUp(ExitToTabs);
         }
     }
 }

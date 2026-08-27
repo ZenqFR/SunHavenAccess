@@ -55,6 +55,19 @@ namespace SunHavenAccess.Menus
             if (IsOpen) _onExitUp = onExitUp;
         }
 
+        /// <summary>
+        /// Revendique la liste ouverte, quand c'est un AUTRE module qui l'a remplie.
+        ///
+        /// L'aiguillage des onglets ne construit pas les listes lui-même : il appelle les modules
+        /// qui savent le faire — compétences, relations, quêtes. Ceux-ci servent aussi aux touches
+        /// directes et n'ont pas à savoir d'où on les appelle, donc c'est à l'aiguillage de se
+        /// déclarer propriétaire une fois la liste ouverte.
+        /// </summary>
+        public static void Claim(string owner)
+        {
+            if (IsOpen) Owner = owner;
+        }
+
         public static bool IsOpen { get; private set; }
 
         /// <summary>
@@ -68,10 +81,26 @@ namespace SunHavenAccess.Menus
         /// réglages se parcourt ainsi comme n'importe quelle autre, la valeur se changeant sur
         /// place sans quitter la ligne — c'est ce qu'on attend d'un panneau d'options.
         /// </summary>
+        /// <summary>
+        /// Qui a ouvert la liste actuellement affichée. Null si personne ne s'en est déclaré.
+        ///
+        /// Trois modules pilotent cette même liste — le choix de sauvegarde, l'assistant de
+        /// création et l'aiguillage des onglets — et chacun la refermait quand SON écran
+        /// disparaissait, sans vérifier qu'elle était bien la sienne. Pendant une transition
+        /// d'écran, où deux d'entre eux se croisent, l'un fermait donc la liste de l'autre.
+        /// </summary>
+        public static string Owner { get; private set; }
+
+        /// <param name="owner">
+        /// Étiquette du module qui ouvre. Laissée à null pour une SOUS-liste — le détail d'une
+        /// sauvegarde, les compétences d'un métier — qui appartient alors au même module que
+        /// celle dont elle découle.
+        /// </param>
         public static void Open(string title, List<string> entries,
                                 Action<int> onActivate = null,
                                 Func<int, int, string> onAdjust = null,
-                                Action onExitUp = null)
+                                Action onExitUp = null,
+                                string owner = null)
         {
             if (entries == null || entries.Count == 0)
             {
@@ -84,6 +113,7 @@ namespace SunHavenAccess.Menus
             _onActivate = onActivate;
             _onAdjust = onAdjust;
             _onExitUp = onExitUp;
+            if (owner != null) Owner = owner;
             _index = 0;
             IsOpen = true;
 
@@ -120,7 +150,21 @@ namespace SunHavenAccess.Menus
             _onActivate = null;
             _onAdjust = null;
             _onExitUp = null;
+            Owner = null;
             if (announce) TolkSpeech.Speak($"{SunHavenAccess.Localization.Translator.Translate(_title)} fermé.", true);
+        }
+
+        /// <summary>
+        /// Ferme la liste UNIQUEMENT si elle appartient à ce module.
+        ///
+        /// C'est ce qu'un module doit appeler quand son écran disparaît : sans ce test, il fermait
+        /// aussi la liste que voisin venait d'ouvrir, les écrans se croisant le temps d'une
+        /// transition.
+        /// </summary>
+        public static void CloseIfOwner(string owner, bool announce = true)
+        {
+            if (!IsOpen || Owner != owner) return;
+            Close(announce);
         }
 
         /// <summary>
