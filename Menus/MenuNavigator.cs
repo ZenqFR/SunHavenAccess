@@ -321,11 +321,18 @@ namespace SunHavenAccess.Menus
                 if (active == null) return new List<Selectable>();
 
                 // Parcours en profondeur : on ressort les éléments dans l'ordre où le jeu les a
-                // posés dans sa hiérarchie, qui est celui de son affichage.
+                // posés dans sa hiérarchie.
                 var wanted = new HashSet<Selectable>(candidates);
                 var ordered = new List<Selectable>();
                 Collect(active.transform, wanted, ordered);
-                return ordered;
+
+                // Mieux, quand le jeu l'a renseigné : son PROPRE enchaînement de navigation. Ni la
+                // position ni la hiérarchie ne donnent l'action principale — la hiérarchie place le
+                // bouton Quitter en tête sur l'écran de chargement, et la position plaçait Magasin
+                // avant Jouer sur l'accueil. Un enchaînement explicite, lui, dit exactement dans
+                // quel ordre le jeu veut qu'on parcoure ses boutons.
+                List<Selectable> chained = FollowNavigationChain(ordered);
+                return chained ?? ordered;
             }
             catch { return new List<Selectable>(); }
         }
@@ -336,6 +343,38 @@ namespace SunHavenAccess.Menus
                 if (wanted.Contains(s)) into.Add(s);
 
             for (int i = 0; i < node.childCount; i++) Collect(node.GetChild(i), wanted, into);
+        }
+
+        /// <summary>
+        /// L'ordre de parcours voulu par le jeu, quand il a câblé sa navigation explicitement.
+        ///
+        /// On cherche la TÊTE de l'enchaînement — l'élément vers lequel aucun autre ne descend —
+        /// puis on suit les maillons. C'est la seule source qui dise vraiment « d'abord Jouer,
+        /// ensuite Continuer », par opposition à la position à l'écran ou à l'ordre de la
+        /// hiérarchie, qui ne sont que des conséquences de la mise en page.
+        ///
+        /// Renvoie null si la navigation n'est pas explicite, ou si l'enchaînement ne couvre pas
+        /// tout le monde : dans ce cas l'appelant garde l'ordre de la hiérarchie, plutôt qu'un
+        /// classement à moitié juste.
+        /// </summary>
+        private static List<Selectable> FollowNavigationChain(List<Selectable> items)
+        {
+            if (items.Count < 2) return null;
+            if (items.Any(s => s.navigation.mode != Navigation.Mode.Explicit)) return null;
+
+            var pointedTo = new HashSet<Selectable>(
+                items.Select(s => s.navigation.selectOnDown).Where(s => s != null));
+
+            Selectable head = items.FirstOrDefault(s => !pointedTo.Contains(s));
+            if (head == null) return null;
+
+            var chain = new List<Selectable>();
+            var seen = new HashSet<Selectable>();
+            for (Selectable s = head; s != null && seen.Add(s); s = s.navigation.selectOnDown)
+                chain.Add(s);
+
+            // L'enchaînement doit couvrir exactement les mêmes éléments, sinon il en manquerait.
+            return chain.Count == items.Count ? chain : null;
         }
 
         private static void Rescan()

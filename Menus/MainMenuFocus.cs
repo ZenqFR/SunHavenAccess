@@ -91,7 +91,9 @@ namespace SunHavenAccess.Menus
                         .Where(c => c != null)
                         .Select(c => c.GetType().Name));
 
-                    return $"  {path}  [{components}]";
+                    // Le mode de navigation dit si le jeu a câblé lui-même l'ordre de parcours :
+                    // c'est ce qui décide si l'on peut suivre son enchaînement ou non.
+                    return $"  {path}  [{components}]  nav={s.navigation.mode}";
                 });
 
                 Plugin.Log?.LogInfo($"Menu principal ({screen}), premiers candidats à la sélection :\n"
