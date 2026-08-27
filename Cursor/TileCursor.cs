@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Wish;
@@ -465,11 +466,18 @@ namespace SunHavenAccess.Cursor
         {
             try
             {
-                // Deux passes. La première n'accepte QUE les composants que le descripteur sait
-                // vraiment nommer — un ennemi, un personnage, une culture, un coffre. Sans cette
-                // restriction, son repli générique répondait pour le premier composant venu, et un
-                // ennemi s'annonçait « Enemy » plutôt que par son nom.
-                Component[] components = hit.GetComponentsInParent<Component>(true);
+                // On reste SUR l'objet touché, et au plus sur son parent direct.
+                //
+                // Remonter toute la hiérarchie, comme je le faisais, laissait n'importe quel
+                // ancêtre lointain donner son identité à l'obstacle : une clôture rangée sous le
+                // conteneur d'une créature s'annonçait « Enemy », alors qu'aucun ennemi ne barrait
+                // le passage. Un obstacle est ce qu'on heurte, pas ce sous quoi il est rangé. Le
+                // parent direct reste admis parce que le collisionneur est souvent porté par un
+                // enfant technique de l'objet réel.
+                var components = new List<Component>();
+                components.AddRange(hit.GetComponents<Component>());
+                if (hit.transform.parent != null)
+                    components.AddRange(hit.transform.parent.GetComponents<Component>());
 
                 foreach (Component c in components)
                 {
