@@ -51,7 +51,7 @@
         "en": "The very first screen of a new game. It was completely silent before the mod: you simply couldn't start playing."
       },
       "items": [
-        { "id": "menu-principal", "key": "Flèches, Entrée", "status": "todo",
+        { "id": "menu-principal", "key": "Flèches, Entrée", "status": "ok",
           "action":   { "fr": "Naviguer dans le menu principal et l'écran de sauvegarde.", "en": "Navigate the main menu and the save screen." },
           "expected": { "fr": "Les boutons sont nommés, et chaque sauvegarde annonce son résumé.", "en": "Buttons are named, and each save announces its summary." } },
         { "id": "reglages-liste", "key": "Pavé 8", "status": "todo", "critical": true,

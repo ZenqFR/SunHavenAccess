@@ -2,14 +2,14 @@
 
 Généré depuis `roadmap/roadmap.json` par `roadmap/build-roadmap.ps1`. **Ne pas éditer à la main.**
 
-Mis à jour le 2026-08-27 — **8 sur 133 au point** (6 %).
+Mis à jour le 2026-08-27 — **9 sur 133 au point** (7 %).
 
 | Marque | État | Sens | Nombre |
 |---|---|---|---|
-| `[ ]` | À tester | jamais essayé en jeu | 116 |
+| `[ ]` | À tester | jamais essayé en jeu | 115 |
 | `[!]` | À corriger | essayé, ne marche pas | 9 |
 | `[~]` | À optimiser | marche, mais perfectible | 0 |
-| `[x]` | Au point | essayé, rien à redire | 8 |
+| `[x]` | Au point | essayé, rien à redire | 9 |
 
 ⚠️ = à vérifier en priorité.
 
@@ -47,7 +47,7 @@ Installer, et vérifier que le mod se charge. Si ça échoue ici, rien d'autre n
 
 Le tout premier écran d'une nouvelle partie. Il était totalement muet avant le mod : impossible de commencer à jouer.
 
-- [ ] **personnage-menu-principal** — touche : Flèches, Entrée
+- [x] **personnage-menu-principal** — touche : Flèches, Entrée
   - Faire : Naviguer dans le menu principal et l'écran de sauvegarde.
   - Attendu : Les boutons sont nommés, et chaque sauvegarde annonce son résumé.
 - [ ] **personnage-reglages-liste** ⚠️ — touche : Pavé 8
