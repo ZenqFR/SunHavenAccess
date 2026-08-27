@@ -465,7 +465,23 @@ namespace SunHavenAccess.Cursor
         {
             try
             {
-                foreach (Component c in hit.GetComponentsInParent<Component>(true))
+                // Deux passes. La première n'accepte QUE les composants que le descripteur sait
+                // vraiment nommer — un ennemi, un personnage, une culture, un coffre. Sans cette
+                // restriction, son repli générique répondait pour le premier composant venu, et un
+                // ennemi s'annonçait « Enemy » plutôt que par son nom.
+                Component[] components = hit.GetComponentsInParent<Component>(true);
+
+                foreach (Component c in components)
+                {
+                    if (c == null || c is Transform || c is Collider2D) continue;
+
+                    string named = Navigation.Scanner.Describe(c, allowGenericName: false);
+                    if (!string.IsNullOrWhiteSpace(named)) return named;
+                }
+
+                // Aucun composant connu : on accepte alors le nom technique mis en mots, qui vaut
+                // toujours mieux que « quelque chose ».
+                foreach (Component c in components)
                 {
                     if (c == null || c is Transform || c is Collider2D) continue;
 

@@ -371,7 +371,15 @@ namespace SunHavenAccess.Navigation
             return "Entrée.";
         }
 
-        internal static string Describe(Component c)
+        /// <param name="allowGenericName">
+        /// Autorise le dernier repli — le nom technique de l'objet, mis en mots.
+        ///
+        /// À passer FAUX quand on interroge plusieurs composants d'un même objet pour trouver le
+        /// plus parlant : ce repli répond pour n'importe quel composant, donc le premier venu
+        /// gagnerait avant qu'on atteigne celui qui sait vraiment nommer la chose. C'est ce qui
+        /// faisait annoncer « Enemy bloque le passage » au lieu du nom de la créature.
+        /// </param>
+        internal static string Describe(Component c, bool allowGenericName = true)
         {
             // Un autre joueur AVANT le test NPCAI : c'est la distinction qui compte en
             // coopération, et on ne veut surtout pas qu'un partenaire soit annoncé comme un
@@ -398,7 +406,7 @@ namespace SunHavenAccess.Navigation
                 }
             }
 
-            return UiNameTranslator.Translate(c.gameObject.name);
+            return allowGenericName ? UiNameTranslator.Translate(c.gameObject.name) : null;
         }
     }
 }
