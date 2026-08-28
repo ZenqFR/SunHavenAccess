@@ -227,6 +227,18 @@ namespace SunHavenAccess.Cursor
 
                 if (target is Crop crop) return DescribeCrop(crop);
 
+                // Ce QUE c'est passe avant ce qu'on peut en faire.
+                //
+                // Le texte d'interaction du jeu ne nomme que le geste — « Miner », « Ouvrir ». Sans
+                // la vue, cela ne dit pas si l'on est devant de la pierre, du cuivre ou du fer, ni
+                // devant quel meuble. Le descripteur du scanner, lui, sait nommer la chose ; on lui
+                // demande d'abord, et le verbe ne sert plus que de repli.
+                if (target is Component component)
+                {
+                    string named = Navigation.Scanner.Describe(component, allowGenericName: false);
+                    if (!string.IsNullOrWhiteSpace(named)) return named;
+                }
+
                 InteractionInfo info = target?.InteractionPoint;
                 if (info?.interactionText != null && info.interactionText.Count > 0)
                 {
@@ -365,9 +377,20 @@ namespace SunHavenAccess.Cursor
         /// </summary>
         public static string DescribeCrop(Crop crop)
         {
-            if (crop.data == null) return Localization.Language.T("Culture.", "Crop.");
+            // QUELLE culture, et pas seulement « une culture ».
+            //
+            // Sans la vue, « Culture, arrosée, prête à récolter » ne dit pas si l'on est devant du
+            // blé ou une citrouille — donc ni ce qu'on va récolter, ni si l'on est au bon endroit.
+            // `Crop._cropItem` porte l'objet récolté, dont le nom est déjà traduit par le jeu.
+            string kind = CropName(crop);
 
-            if (crop.data.dead) return Localization.Language.T("Culture morte.", "Dead crop.");
+            if (crop.data == null)
+                return kind ?? Localization.Language.T("Culture.", "Crop.");
+
+            if (crop.data.dead)
+                return kind != null
+                    ? Localization.Language.T($"{kind}, morte.", $"{kind}, dead.")
+                    : Localization.Language.T("Culture morte.", "Dead crop.");
 
             string watered = Localization.Language.T(
                 crop.data.watered ? "arrosée" : "non arrosée",
@@ -380,7 +403,22 @@ namespace SunHavenAccess.Cursor
                     $"encore {days} jour{(days > 1 ? "s" : "")} avant maturité",
                     $"{days} more day{(days > 1 ? "s" : "")} to ripen");
 
-            return Localization.Language.T($"Culture, {watered}, {growth}.", $"Crop, {watered}, {growth}.");
+            string head = kind ?? Localization.Language.T("Culture", "Crop");
+            return $"{head}, {watered}, {growth}.";
+        }
+
+        /// <summary>
+        /// Le nom de la culture, tel que le jeu l'appelle. Null si on ne peut pas le lire, auquel
+        /// cas l'appelant retombe sur le mot générique plutôt que sur une invention.
+        /// </summary>
+        private static string CropName(Crop crop)
+        {
+            try
+            {
+                string name = TextUtil.Clean(crop._cropItem?.UnformattedDisplayName);
+                return string.IsNullOrWhiteSpace(name) ? null : name;
+            }
+            catch { return null; }
         }
 
         /// <summary>

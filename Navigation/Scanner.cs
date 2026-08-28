@@ -396,6 +396,18 @@ namespace SunHavenAccess.Navigation
             if (c is Animal animal) return Info.AnimalAnnouncer.Describe(animal);
             if (c is EnemyAI enemy && !string.IsNullOrWhiteSpace(enemy.enemyName)) return UiNameTranslator.Translate(enemy.enemyName);
 
+            // Le nom de la chose AVANT ce qu'on peut en faire.
+            //
+            // Une décoration — rocher, arbre, filon, meuble — porte son propre nom, et c'est
+            // l'information qu'on cherche : sans la vue, savoir qu'on peut « Miner » ne dit pas
+            // s'il s'agit de pierre, de cuivre ou de fer. Le texte d'interaction ne nomme que le
+            // geste ; il vient donc après, en repli.
+            if (c is Decoration decoration)
+            {
+                string decorationName = UiNameTranslator.Translate(TextUtil.Clean(decoration.decorationName));
+                if (!string.IsNullOrWhiteSpace(decorationName)) return decorationName;
+            }
+
             if (c is IInteractable interactable)
             {
                 InteractionInfo info = interactable.InteractionPoint;
