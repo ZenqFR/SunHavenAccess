@@ -112,7 +112,8 @@ namespace SunHavenAccess.Cursor
 
         private static string Describe(bool includeBearing)
         {
-            string content = DescribeTileContent(_tile) ?? "Rien";
+            string content = DescribeTileContent(_tile)
+                             ?? Localization.Language.T("Rien", "Nothing");
 
             if (!includeBearing) return $"{content}.";
 
@@ -120,14 +121,17 @@ namespace SunHavenAccess.Cursor
             if (player == null) return $"{content}.";
 
             Vector2Int delta = _tile - player.Position;
-            if (delta == Vector2Int.zero) return $"{content}, sous vos pieds.";
+            if (delta == Vector2Int.zero)
+                return Localization.Language.T($"{content}, sous vos pieds.", $"{content}, underfoot.");
 
             // En coordonnées de CASES, les deux axes sont déjà homogènes (1 case = 1 unité) : la
             // distance se calcule directement, sans la correction isométrique qu'exigerait
             // l'espace monde.
             int distance = Mathf.RoundToInt(new Vector2(delta.x, delta.y).magnitude);
             string bearing = Strings.BearingName(new Vector2(delta.x, delta.y));
-            return $"{content}, {bearing}, {distance} case{(distance > 1 ? "s" : "")}.";
+            return Localization.Language.T(
+                $"{content}, {bearing}, {distance} case{(distance > 1 ? "s" : "")}.",
+                $"{content}, {bearing}, {distance} tile{(distance > 1 ? "s" : "")}.");
         }
 
         /// <summary>
@@ -140,13 +144,27 @@ namespace SunHavenAccess.Cursor
         /// </summary>
         private static string DescribeTileContent(Vector2Int tile)
         {
+            // Tout ce que porte la case, CUMULÉ — comme la case devant soi.
+            //
+            // La version précédente choisissait une seule information : sur une case occupée, on
+            // n'apprenait jamais sur quel sol elle reposait. Or c'est précisément le curseur libre
+            // qui sert à comprendre un terrain qu'on n'a pas encore parcouru, et une réponse
+            // partielle y coûte plus cher qu'ailleurs. Le sol se tait quand la terre labourée le
+            // dit déjà, pour ne pas bégayer.
+            var parts = new System.Collections.Generic.List<string>();
+
             string interactable = DescribeInteractableAt(tile);
-            if (interactable != null) return interactable;
+            if (!string.IsNullOrWhiteSpace(interactable)) parts.Add(interactable);
 
             string farmland = TileCursor.DescribeFarmland(tile);
-            if (farmland != null) return farmland;
+            if (!string.IsNullOrWhiteSpace(farmland)) parts.Add(farmland);
+            else
+            {
+                string ground = TileCursor.DescribeGroundTile(tile);
+                if (!string.IsNullOrWhiteSpace(ground)) parts.Add(ground);
+            }
 
-            return TileCursor.DescribeGroundTile(tile);
+            return parts.Count == 0 ? null : string.Join(", ", parts).TrimEnd('.', ' ');
         }
 
         private static string DescribeInteractableAt(Vector2Int tile)
