@@ -206,7 +206,25 @@ namespace SunHavenAccess.Menus
 
             if (professions.Length == 0) { AskBirthSeason(); return; } // rien à choisir : on passe
 
-            var labels = professions.Select(DescribeProfession).ToList();
+            // Les noms traduits sont SUR LES BOUTONS de l'écran, et nulle part ailleurs.
+            //
+            // Longue erreur de ma part : j'ai cherché ces noms dans la table de traduction du jeu,
+            // par nom de terme puis par valeur anglaise. Sept métiers sur dix répondaient, trois
+            // non, et j'en ai conclu qu'ils n'étaient pas traduits. C'était faux — une capture
+            // d'écran montre « Arboriculteur », « Duelliste » et « Royauté ». La recherche par
+            // valeur anglaise ne pouvait d'ailleurs rien donner : le jeu tournant en français,
+            // c'est la valeur française que la table renvoie.
+            //
+            // Ce que le joueur voit fait autorité. On lit donc les boutons, et la table ne sert
+            // plus que de repli si l'écran ne se laisse pas lire.
+            List<string> shown = OnScreenProfessionLabels(professions.Length);
+            Plugin.Log?.LogInfo(shown != null
+                ? "Métiers lus sur les boutons de l'écran : " + string.Join(", ", shown)
+                : "Boutons de métier introuvables : les libellés internes seront lus.");
+
+            var labels = professions
+                .Select((p, i) => shown != null ? DescribeProfession(p, shown[i]) : DescribeProfession(p))
+                .ToList();
 
             OpenOwned(Localization.Language.T("Choisir un métier de départ", "Choose a starting profession"),
                 labels, chosen =>
@@ -223,9 +241,11 @@ namespace SunHavenAccess.Menus
         /// aucun n'est verrouillé, aucun ne ferme de voie. Les citer est donc la seule façon
         /// honnête d'expliquer la différence.
         /// </summary>
-        private static string DescribeProfession(StartingProfessionInfo profession)
+        private static string DescribeProfession(StartingProfessionInfo profession, string shownLabel = null)
         {
-            string name = ProfessionName(TextUtil.Clean(profession.name));
+            string name = !string.IsNullOrWhiteSpace(shownLabel)
+                ? shownLabel
+                : ProfessionName(TextUtil.Clean(profession.name));
 
             try
             {
@@ -259,6 +279,41 @@ namespace SunHavenAccess.Menus
         /// ma table ne faisait que les remplacer par de l'anglais. Une traduction qui existe déjà
         /// se demande, elle ne se réécrit pas.
         /// </summary>
+        /// <summary>
+        /// Les libellés des boutons de métier, dans l'ordre de l'écran, ou null si on ne les
+        /// trouve pas avec certitude.
+        ///
+        /// Les boutons de métier forment un groupe de frères, en nombre exactement égal à celui des
+        /// métiers du jeu. C'est ce qui les distingue de la colonne des catégories, qui en compte
+        /// un autre nombre. On ne retient un groupe que s'il a la bonne taille ET que chacun de ses
+        /// membres porte un texte : à la moindre ambiguïté, on renonce et on garde le libellé
+        /// interne, plutôt que d'annoncer des noms pris ailleurs sur l'écran.
+        /// </summary>
+        private static List<string> OnScreenProfessionLabels(int expected)
+        {
+            try
+            {
+                var groups = MenuNavigator.VisibleSelectables()
+                    .Where(s => s != null && s.transform.parent != null)
+                    .GroupBy(s => s.transform.parent)
+                    .Where(g => g.Count() == expected);
+
+                foreach (var group in groups)
+                {
+                    var labels = group
+                        .OrderBy(s => s.transform.GetSiblingIndex())
+                        .Select(s => TextUtil.Clean(
+                            s.GetComponentInChildren<TMPro.TextMeshProUGUI>(true)?.text))
+                        .ToList();
+
+                    if (labels.All(l => !string.IsNullOrWhiteSpace(l))) return labels;
+                }
+            }
+            catch { }
+
+            return null;
+        }
+
         private static string ProfessionName(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return raw;
@@ -374,18 +429,11 @@ namespace SunHavenAccess.Menus
                 foreach (string term in terms)
                     if (!string.IsNullOrEmpty(term) && Flatten(term) == flattened) return term;
 
-                // Puis la VALEUR anglaise : le libellé interne est ce texte anglais, donc le terme
-                // qui le produit est celui qu'on cherche. Ne fonctionne que si l'anglais est
-                // chargé, d'où sa place en second.
-                foreach (string term in terms)
-                {
-                    if (string.IsNullOrEmpty(term)) continue;
-
-                    string english = LocalizationManager.GetTranslation(term, overrideLanguage: "English");
-                    if (string.Equals(english?.Trim(), wanted, StringComparison.CurrentCultureIgnoreCase))
-                        return term;
-                }
-
+                // La recherche par VALEUR anglaise a été retirée : elle demandait au jeu la version
+                // anglaise de chacun des quarante-huit mille termes, alors qu'en partie française
+                // c'est la valeur française qui revient. Elle ne pouvait donc jamais correspondre —
+                // elle coûtait cher et m'a fait conclure à tort que trois métiers n'étaient pas
+                // traduits, alors qu'ils le sont bel et bien à l'écran.
                 Plugin.Log?.LogInfo($"Aucun terme ne correspond à « {englishText} » parmi {terms.Count} termes lus.");
             }
             catch (Exception e)
