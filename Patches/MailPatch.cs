@@ -22,7 +22,10 @@ namespace SunHavenAccess.Patches
     {
         private static FieldInfo _mailUIField;
 
-        private static void Postfix(Mailbox __instance)
+        private static void Postfix(Mailbox __instance) =>
+            PatchGuard.Run("MailReader", () => Announce(__instance));
+
+        private static void Announce(Mailbox __instance)
         {
             _mailUIField ??= typeof(Mailbox).GetField("mailUI", BindingFlags.NonPublic | BindingFlags.Instance);
             var mailUI = _mailUIField?.GetValue(__instance) as MailUI;

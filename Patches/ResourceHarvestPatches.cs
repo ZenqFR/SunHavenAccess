@@ -47,7 +47,10 @@ namespace SunHavenAccess.Patches
             _wasAlreadyDying = __instance.Dying;
         }
 
-        private static void Postfix(bool hitFromLocalPlayer)
+        private static void Postfix(bool hitFromLocalPlayer) =>
+            PatchGuard.Run("RockDie", () => Announce(hitFromLocalPlayer));
+
+        private static void Announce(bool hitFromLocalPlayer)
         {
             if (_wasAlreadyDying || !hitFromLocalPlayer) return;
             TolkSpeech.Speak("Rocher brisé.", interrupt: false);
@@ -81,7 +84,10 @@ namespace SunHavenAccess.Patches
             _wasAlreadyDying = __instance.Dying;
         }
 
-        private static void Postfix(bool hitFromLocalPlayer)
+        private static void Postfix(bool hitFromLocalPlayer) =>
+            PatchGuard.Run("WoodDie", () => Announce(hitFromLocalPlayer));
+
+        private static void Announce(bool hitFromLocalPlayer)
         {
             if (_wasAlreadyDying || !hitFromLocalPlayer) return;
             TolkSpeech.Speak("Arbre abattu.", interrupt: false);

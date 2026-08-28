@@ -27,7 +27,10 @@ namespace SunHavenAccess.Patches
         private static string _lastText = "";
         private static float _lastTime = -10f;
 
-        private static void Postfix(string text, bool error)
+        private static void Postfix(string text, bool error) =>
+            PatchGuard.Run("Notification", () => Announce(text, error));
+
+        private static void Announce(string text, bool error)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
 

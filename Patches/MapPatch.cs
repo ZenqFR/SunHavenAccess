@@ -16,7 +16,10 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Map), nameof(Map.OpenLocation), new[] { typeof(string), typeof(LocationName) })]
     public static class MapPatch
     {
-        private static void Postfix(string text, LocationName location)
+        private static void Postfix(string text, LocationName location) =>
+            PatchGuard.Run("MapLocation", () => Announce(text, location));
+
+        private static void Announce(string text, LocationName location)
         {
             if (location?.mapImage == null) return;
 

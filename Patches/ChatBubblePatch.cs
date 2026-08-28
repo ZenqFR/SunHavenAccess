@@ -84,7 +84,10 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Player), nameof(Player.SendChatMessage), new System.Type[] { typeof(string), typeof(string) })]
     public static class ChatLogPatch
     {
-        private static void Postfix(string characterName, string message)
+        private static void Postfix(string characterName, string message) =>
+            PatchGuard.Run("ChatLog", () => Announce(characterName, message));
+
+        private static void Announce(string characterName, string message)
         {
             string cleanMessage = TextUtil.Clean(message);
             if (string.IsNullOrWhiteSpace(cleanMessage)) return;

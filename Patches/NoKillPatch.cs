@@ -65,7 +65,16 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Scene), nameof(Scene.GetRootGameObjects), new System.Type[] { })]
     public static class NoKillScanPatch
     {
+        // Un paramètre `ref` interdit la garde partagée : on protège donc à la main. Cette méthode
+        // est greffée sur un appel que le moteur fait très souvent — la laisser lever une exception
+        // casserait le ménage de scène du jeu lui-même.
         private static void Postfix(ref GameObject[] __result)
+        {
+            try { Filter(ref __result); }
+            catch (System.Exception e) { Plugin.Log?.LogWarning("NoKillScanPatch : " + e.Message); }
+        }
+
+        private static void Filter(ref GameObject[] __result)
         {
             if (__result == null || NoKillPatch.ProtectedRoot == null) return;
 

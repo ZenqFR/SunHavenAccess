@@ -14,7 +14,10 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Player), nameof(Player.ReceiveDamage))]
     public static class PlayerDamagePatch
     {
-        private static void Postfix(Player __instance, DamageHit __result)
+        private static void Postfix(Player __instance, DamageHit __result) =>
+            PatchGuard.Run("PlayerDamage", () => Announce(__instance, __result));
+
+        private static void Announce(Player __instance, DamageHit __result)
         {
             // Ce patch se déclenche pour TOUS les joueurs, pas seulement le vôtre : en
             // coopération, un coup encaissé par votre partenaire annonçait SA santé comme si
@@ -46,7 +49,10 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(EnemyAI), nameof(EnemyAI.Die))]
     public static class EnemyDeathPatch
     {
-        private static void Postfix(EnemyAI __instance, bool fromLocalPlayer)
+        private static void Postfix(EnemyAI __instance, bool fromLocalPlayer) =>
+            PatchGuard.Run("EnemyDeath", () => Announce(__instance, fromLocalPlayer));
+
+        private static void Announce(EnemyAI __instance, bool fromLocalPlayer)
         {
             // Le jeu indique lui-même qui a porté le coup fatal — même paramètre que celui déjà
             // utilisé par les patches de récolte. En coopération, sans ce test, un partenaire qui
@@ -75,7 +81,10 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Player), nameof(Player.Die))]
     public static class PlayerDeathPatch
     {
-        private static void Postfix(Player __instance)
+        private static void Postfix(Player __instance) =>
+            PatchGuard.Run("PlayerDeath", () => Announce(__instance));
+
+        private static void Announce(Player __instance)
         {
             // Même piège qu'au-dessus : sans ce test, la mort du partenaire s'annonçait
             // « Vous êtes tombé au combat ».

@@ -16,7 +16,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(CombatDungeon), "Awake")]
     public static class CombatDungeonAwakePatch
     {
-        private static void Postfix()
+        private static void Postfix() => PatchGuard.Run("CombatDungeonAwake", Announce);
+
+        private static void Announce()
         {
             // CurrentFloor n'est mis à jour que si `setFloor` (privé) est vrai pour CETTE salle
             // — pas moyen de le vérifier depuis ici sans réflexion, mais annoncer le numéro
@@ -29,7 +31,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(CombatDungeon), nameof(CombatDungeon.OpenGate))]
     public static class CombatDungeonGateOpenPatch
     {
-        private static void Postfix()
+        private static void Postfix() => PatchGuard.Run("CombatDungeonGate", Announce);
+
+        private static void Announce()
         {
             TolkSpeech.Speak("Salle nettoyée, porte ouverte.", interrupt: false);
         }

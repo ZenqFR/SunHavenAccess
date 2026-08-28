@@ -36,7 +36,10 @@ namespace SunHavenAccess.Patches
         private static FieldInfo _descriptionField;
         private static FieldInfo _abilityField;
 
-        private static void Postfix(NewCharacterCreator __instance, Race race)
+        private static void Postfix(NewCharacterCreator __instance, Race race) =>
+            PatchGuard.Run("CharacterCreationRace", () => Announce(__instance, race));
+
+        private static void Announce(NewCharacterCreator __instance, Race race)
         {
             _descriptionField ??= typeof(NewCharacterCreator).GetField("raceDescriptionText", BindingFlags.NonPublic | BindingFlags.Instance);
             _abilityField ??= typeof(NewCharacterCreator).GetField("raceAbilityText", BindingFlags.NonPublic | BindingFlags.Instance);

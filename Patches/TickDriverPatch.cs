@@ -18,7 +18,7 @@ namespace SunHavenAccess.Patches
     {
         private static void Postfix()
         {
-            AccessibilityRunner.Tick();
+            PatchGuard.Run("TickDriver", AccessibilityRunner.Tick);
         }
     }
 
@@ -27,7 +27,7 @@ namespace SunHavenAccess.Patches
     {
         private static void Postfix()
         {
-            AccessibilityRunner.Tick();
+            PatchGuard.Run("TickDriver", AccessibilityRunner.Tick);
         }
     }
 }

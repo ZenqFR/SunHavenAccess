@@ -43,7 +43,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.Bite))]
     public static class FishBitePatch
     {
-        private static void Postfix(Bobber __instance)
+        private static void Postfix(Bobber __instance) => PatchGuard.Run("FishBite", () => Announce(__instance));
+
+        private static void Announce(Bobber __instance)
         {
             if (!BobberOwner.IsLocal(__instance)) return;
             TolkSpeech.Speak("Ça mord !", interrupt: true);
@@ -59,7 +61,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.StartMiniGame), new System.Type[] { typeof(FishingMiniGame) })]
     public static class FishMinigameStartPatch
     {
-        private static void Postfix(Bobber __instance)
+        private static void Postfix(Bobber __instance) => PatchGuard.Run("FishMinigameStart", () => Announce(__instance));
+
+        private static void Announce(Bobber __instance)
         {
             // Sans ce test, le mini-jeu du partenaire prenait la main sur VOTRE bip de visée : il
             // se mettait à suivre sa jauge à lui, rendant votre propre pêche impossible.
@@ -80,8 +84,17 @@ namespace SunHavenAccess.Patches
     {
         private static void Postfix(Bobber __instance, bool __result, ref bool miniGameComplete)
         {
+            // Un paramètre `ref` ne peut pas être capturé par la fonction anonyme que prend la
+            // garde. Il n'est ici que LU, donc une copie suffit — et permet de protéger ce corps
+            // comme les autres.
+            bool complete = miniGameComplete;
+            PatchGuard.Run("FishMinigameResult", () => Announce(__instance, __result, complete));
+        }
+
+        private static void Announce(Bobber __instance, bool caught, bool miniGameComplete)
+        {
             if (!BobberOwner.IsLocal(__instance)) return;
-            TolkSpeech.Speak(__result ? "Touché !" : "Manqué.", interrupt: true);
+            TolkSpeech.Speak(caught ? "Touché !" : "Manqué.", interrupt: true);
             if (miniGameComplete) FishingToneDriver.SetActiveBobber(null);
         }
     }
@@ -89,7 +102,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.FailMiniGame))]
     public static class FishMinigameFailPatch
     {
-        private static void Postfix(Bobber __instance)
+        private static void Postfix(Bobber __instance) => PatchGuard.Run("FishFail", () => Announce(__instance));
+
+        private static void Announce(Bobber __instance)
         {
             if (!BobberOwner.IsLocal(__instance)) return;
             TolkSpeech.Speak("Le poisson s'est échappé.", interrupt: true);
@@ -100,7 +115,9 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Bobber), nameof(Bobber.ResetMiniGame))]
     public static class FishMinigameResetPatch
     {
-        private static void Postfix(Bobber __instance)
+        private static void Postfix(Bobber __instance) => PatchGuard.Run("FishReset", () => Announce(__instance));
+
+        private static void Announce(Bobber __instance)
         {
             // Le filtre compte ici aussi : le bouchon du partenaire qui se réinitialise coupait
             // VOTRE bip de visée en pleine pêche.

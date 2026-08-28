@@ -15,7 +15,10 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Quest), "TurnInQuest")]
     public static class QuestCompletePatch
     {
-        private static void Postfix(Quest __instance)
+        private static void Postfix(Quest __instance) =>
+            PatchGuard.Run("QuestComplete", () => Announce(__instance));
+
+        private static void Announce(Quest __instance)
         {
             if (__instance?.questAsset == null) return;
             string name = TextUtil.Clean(__instance.questAsset.LocalizedQuestName);
