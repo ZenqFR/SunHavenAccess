@@ -293,6 +293,15 @@ namespace SunHavenAccess.Input
             {
                 if (selected == null) TolkSpeech.Speak("Aucun élément sélectionné.", true);
                 else if (ctrl) MenuNavigator.SecondaryActivateObject(selected);
+                // Sur la barre d'onglets, valider OUVRE LA LISTE de l'onglet.
+                //
+                // Elle s'ouvrait auparavant d'elle-même au simple passage sur l'onglet, et
+                // captait aussitôt les flèches : arriver sur l'arbre de compétences empêchait
+                // d'atteindre Relations ou les suivants — signalé en jeu. Parcourir n'est pas
+                // choisir. On passe donc devant les onglets librement, et l'on entre dans celui
+                // qu'on veut.
+                else if (ZoneNavigator.ClassifyZone(selected) == ZoneNavigator.Zone.Tabs
+                         && TabListDriver.OpenForCurrentTab()) { }
                 else MenuNavigator.ActivateObject(selected);
             }
 

@@ -12,15 +12,16 @@ namespace SunHavenAccess.Menus
     /// n'existait que pour qui savait qu'une touche la cachait. Une fonctionnalité qu'il faut
     /// deviner n'existe pas vraiment.
     ///
-    /// Désormais le geste tient en trois choses, et rien d'autre n'est à retenir :
-    /// Tab ouvre le menu, gauche et droite changent d'onglet, et l'onglet choisi ouvre sa liste.
+    /// Le geste tient en quatre choses, et rien d'autre n'est à retenir : Tab ouvre le menu,
+    /// gauche et droite passent d'un onglet à l'autre, **Entrée ouvre la liste de l'onglet où l'on
+    /// est**, et Ctrl+haut en ressort vers les onglets.
     ///
-    /// La liste n'est pas une impasse. Signalé en jeu : arriver sur l'arbre de compétences y
-    /// enfermait, puisqu'une liste ouverte capte tout le clavier — la barre d'onglets devenait
-    /// inatteignable. **Ctrl+haut en ressort vers les onglets, Ctrl+bas y entre à nouveau**, le
-    /// geste que le mod emploie déjà partout ailleurs pour changer de zone. Et tant qu'on est
-    /// ressorti, changer d'onglet ne rouvre plus rien : on parcourt les onglets tranquillement,
-    /// puis on entre dans celui qu'on veut.
+    /// PARCOURIR N'EST PAS CHOISIR. La liste s'ouvrait autrefois d'elle-même au simple passage sur
+    /// un onglet, et captait aussitôt les flèches : arriver sur l'arbre de compétences interdisait
+    /// d'atteindre Relations ou la suite, puisque la flèche suivante parcourait la liste au lieu
+    /// de changer d'onglet. Signalé deux fois en jeu — d'abord comme une impasse, puis comme un
+    /// obstacle à la simple lecture des onglets. Une ouverture ne se déclenche donc plus que sur
+    /// demande explicite.
     ///
     /// Le sac à dos fait exception : c'est une vraie grille, sa navigation en grille lui convient,
     /// et elle a été confirmée fluide en jeu. La remplacer par une liste serait un recul.
@@ -42,16 +43,6 @@ namespace SunHavenAccess.Menus
         /// </summary>
         private static int _lastTab = -1;
 
-        /// <summary>
-        /// L'utilisateur a demandé à rester sur la barre d'onglets (Ctrl+haut depuis une liste).
-        ///
-        /// Tant que ce drapeau tient, changer d'onglet n'ouvre plus la liste automatiquement. Sans
-        /// lui, quitter une liste par le haut ne servait à rien : la flèche suivante changeait
-        /// d'onglet, la liste se rouvrait aussitôt et reprenait le clavier — impossible de
-        /// parcourir les onglets pour voir ce qu'ils contiennent. Ctrl+bas lève le drapeau.
-        /// </summary>
-        private static bool _stayOnTabs;
-
         public static void Tick()
         {
             if (!MenuOpen())
@@ -61,7 +52,6 @@ namespace SunHavenAccess.Menus
                 if (_lastTab >= 0)
                 {
                     _lastTab = -1;
-                    _stayOnTabs = false; // la prochaine ouverture du menu repart sur l'automatisme
                     ListMenu.CloseIfOwner(OwnerTag);
                 }
                 return;
@@ -72,22 +62,19 @@ namespace SunHavenAccess.Menus
 
             _lastTab = tab;
 
-            // Le sac à dos garde sa grille.
-            if (tab == BackpackTab)
-            {
-                ListMenu.CloseIfOwner(OwnerTag);
-                return;
-            }
-
-            if (_stayOnTabs) return; // on parcourt les onglets : Ctrl+bas pour entrer dans celui-ci
-
-            OpenListFor(tab);
+            // On CHANGE d'onglet : on referme la liste du précédent, sans en ouvrir de nouvelle.
+            //
+            // Elle s'ouvrait autrefois d'elle-même à l'arrivée sur chaque onglet, et captait
+            // aussitôt les flèches. Signalé en jeu : arriver sur l'arbre de compétences
+            // interdisait d'atteindre Relations ou la suite, puisque la flèche suivante parcourait
+            // la liste au lieu de changer d'onglet. Parcourir n'est pas choisir — on passe devant
+            // les onglets librement, et Entrée ouvre celui qu'on veut.
+            ListMenu.CloseIfOwner(OwnerTag, false);
         }
 
         /// <summary>Appelée quand on quitte une liste d'onglet par le haut.</summary>
         private static void ExitToTabs()
         {
-            _stayOnTabs = true;
             ZoneNavigator.FocusTabs();
         }
 
@@ -122,7 +109,6 @@ namespace SunHavenAccess.Menus
             int tab = CurrentTab();
             if (tab <= BackpackTab) return false;
 
-            _stayOnTabs = false; // demande explicite d'entrer : l'automatisme reprend
             _lastTab = tab;
             OpenListFor(tab);
             return ListMenu.IsOpen; // une liste vide ne s'ouvre pas : ne pas prétendre le contraire

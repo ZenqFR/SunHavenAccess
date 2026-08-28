@@ -225,11 +225,12 @@ namespace SunHavenAccess.Menus
             "Changer d'onglet du menu principal. Contrôle plus Tabulation passe à l'onglet suivant, Contrôle plus Majuscule plus Tabulation au précédent, " +
             "parmi sac à dos, arbre de compétences, relations, quêtes, carte, statistiques et paramètres.",
 
-            "Chaque onglet s'ouvre en liste. Sauf le sac à dos, qui reste une grille, tout onglet du menu présente son contenu " +
-            "sous forme de liste dès qu'on l'ouvre : compétences, relations, quêtes, lieux, statistiques, réglages. " +
-            "Rien à retenir de plus que Tabulation pour ouvrir, gauche et droite pour changer d'onglet, haut et bas pour parcourir, " +
-            "Entrée pour valider et Échap pour refermer. Les touches dédiées à chacune de ces listes restent utilisables " +
-            "pour les consulter sans ouvrir le menu.",
+            "Chaque onglet s'ouvre en liste, À LA DEMANDE. Sauf le sac à dos, qui reste une grille, tout onglet du menu " +
+            "présente son contenu en liste : compétences, relations, quêtes, lieux, statistiques, réglages. " +
+            "Tabulation ouvre le menu, gauche et droite passent d'un onglet à l'autre, ENTRÉE ouvre la liste de l'onglet où " +
+            "vous êtes, haut et bas la parcourent, Contrôle plus haut en ressort, Échap referme. Parcourir n'est pas choisir : " +
+            "arriver sur un onglet n'ouvre plus rien tout seul, vous passez donc devant librement. Les touches dédiées à " +
+            "chacune de ces listes restent utilisables pour les consulter sans ouvrir le menu.",
 
             "Sortir d'une liste d'onglet, et y revenir. Une liste ouverte capte tout le clavier : " +
             "CONTRÔLE PLUS HAUT en ressort et ramène à la barre d'onglets, CONTRÔLE PLUS BAS y entre à nouveau. " +
@@ -367,11 +368,12 @@ namespace SunHavenAccess.Menus
             "Changing tab in the main menu. Control plus Tab moves to the next tab, Control plus Shift plus Tab to the previous one, " +
             "among backpack, skill tree, relationships, quests, map, statistics and settings.",
 
-            "Every tab opens as a list. Except the backpack, which stays a grid, every menu tab presents its contents " +
-            "as a list as soon as you open it: skills, relationships, quests, locations, statistics, settings. " +
-            "Nothing more to remember than Tab to open, left and right to change tab, up and down to browse, " +
-            "Enter to confirm and Escape to close. The keys dedicated to each of these lists still work, " +
-            "to consult them without opening the menu.",
+            "Each tab opens as a list, ON DEMAND. Except the backpack, which stays a grid, every menu tab presents its " +
+            "contents as a list: skills, relationships, quests, locations, statistics, settings. " +
+            "Tab opens the menu, left and right move between tabs, ENTER opens the list of the tab you are on, " +
+            "up and down browse it, Control plus up leaves it, and Escape closes. Browsing is not choosing: moving onto a " +
+            "tab no longer opens anything by itself, so you can pass over them freely. The keys dedicated to each of these " +
+            "lists still work, to consult them without opening the menu.",
 
             "Leaving a tab's list, and coming back. An open list captures the whole keyboard: " +
             "CONTROL PLUS UP leaves it and returns to the tab bar, CONTROL PLUS DOWN enters it again. " +
