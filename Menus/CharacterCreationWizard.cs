@@ -217,7 +217,7 @@ namespace SunHavenAccess.Menus
             //
             // Ce que le joueur voit fait autorité. On lit donc les boutons, et la table ne sert
             // plus que de repli si l'écran ne se laisse pas lire.
-            List<string> shown = OnScreenProfessionLabels(professions.Length);
+            List<string> shown = OnScreenProfessionLabels(professions);
             Plugin.Log?.LogInfo(shown != null
                 ? "Métiers lus sur les boutons de l'écran : " + string.Join(", ", shown)
                 : "Boutons de métier introuvables : les libellés internes seront lus.");
@@ -289,14 +289,35 @@ namespace SunHavenAccess.Menus
         /// membres porte un texte : à la moindre ambiguïté, on renonce et on garde le libellé
         /// interne, plutôt que d'annoncer des noms pris ailleurs sur l'écran.
         /// </summary>
-        private static List<string> OnScreenProfessionLabels(int expected)
+        private static List<string> OnScreenProfessionLabels(StartingProfessionInfo[] professions)
         {
             try
             {
+                // Ce que le groupe DOIT contenir, aux bonnes places.
+                //
+                // Sept métiers sur dix se traduisent déjà par la table du jeu : « Farmer » donne
+                // « Fermier », « Rancher » donne « Éleveur ». Ces noms-là servent de repères. Un
+                // groupe qui ne les porte pas aux mêmes positions n'est pas celui des métiers.
+                //
+                // Le compte seul ne suffisait pas, et c'est ce qui a cassé : la colonne des
+                // catégories comptait elle aussi dix éléments visibles, et l'assistant annonçait
+                // « Corps, Yeux, Visage, Torse » à la place des métiers. Compter, c'est deviner ;
+                // reconnaître, c'est vérifier.
+                var expected = new Dictionary<int, string>();
+                for (int i = 0; i < professions.Length; i++)
+                {
+                    string known = ProfessionName(TextUtil.Clean(professions[i]?.name));
+                    if (!string.IsNullOrWhiteSpace(known) &&
+                        !string.Equals(known, TextUtil.Clean(professions[i]?.name), StringComparison.Ordinal))
+                        expected[i] = known; // traduit : donc utilisable comme repère
+                }
+
+                if (expected.Count < 2) return null; // trop peu de repères pour trancher
+
                 var groups = MenuNavigator.VisibleSelectables()
                     .Where(s => s != null && s.transform.parent != null)
                     .GroupBy(s => s.transform.parent)
-                    .Where(g => g.Count() == expected);
+                    .Where(g => g.Count() == professions.Length);
 
                 foreach (var group in groups)
                 {
@@ -306,7 +327,12 @@ namespace SunHavenAccess.Menus
                             s.GetComponentInChildren<TMPro.TextMeshProUGUI>(true)?.text))
                         .ToList();
 
-                    if (labels.All(l => !string.IsNullOrWhiteSpace(l))) return labels;
+                    if (labels.Any(string.IsNullOrWhiteSpace)) continue;
+
+                    bool matches = expected.All(pair =>
+                        string.Equals(labels[pair.Key], pair.Value, StringComparison.CurrentCultureIgnoreCase));
+
+                    if (matches) return labels;
                 }
             }
             catch { }
