@@ -138,19 +138,15 @@ namespace SunHavenAccess.Menus
 
             List<Race> races = Enum.GetValues(typeof(Race)).Cast<Race>().ToList();
 
-            List<string> shown = OnScreenRaceLabels(races);
-            Plugin.Log?.LogInfo(shown != null
-                ? "Races lues sur les boutons de l'écran : " + string.Join(", ", shown)
-                : "Boutons de race introuvables : les noms internes seront lus.");
 
             var labels = races
-                .Select((r, i) => DescribeRace(r, shown != null ? shown[i] : null))
+                .Select(r => DescribeRace(r))
                 .ToList();
 
             OpenOwned(Localization.Language.T("Choisir une race", "Choose a race"), labels, chosen =>
             {
                 Race race = races[chosen];
-                _raceLabel = shown != null ? shown[chosen] : RaceName(race);
+                _raceLabel = RaceName(race);
                 Apply(() => Creator().SetRace(race));
                 AskProfession();
             });
@@ -163,11 +159,11 @@ namespace SunHavenAccess.Menus
         /// le dit donc systématiquement, même quand la description est longue : c'est précisément
         /// l'information qu'on vient chercher.
         /// </summary>
-        private static string DescribeRace(Race race, string shownLabel = null)
+        private static string DescribeRace(Race race)
         {
             var parts = new List<string>
             {
-                string.IsNullOrWhiteSpace(shownLabel) ? RaceName(race) : shownLabel
+                RaceName(race)
             };
 
             try
@@ -217,32 +213,18 @@ namespace SunHavenAccess.Menus
 
             if (professions.Length == 0) { AskBirthSeason(); return; } // rien à choisir : on passe
 
-            // Les noms traduits sont SUR LES BOUTONS de l'écran, et nulle part ailleurs.
-            //
-            // Longue erreur de ma part : j'ai cherché ces noms dans la table de traduction du jeu,
-            // par nom de terme puis par valeur anglaise. Sept métiers sur dix répondaient, trois
-            // non, et j'en ai conclu qu'ils n'étaient pas traduits. C'était faux — une capture
-            // d'écran montre « Arboriculteur », « Duelliste » et « Royauté ». La recherche par
-            // valeur anglaise ne pouvait d'ailleurs rien donner : le jeu tournant en français,
-            // c'est la valeur française que la table renvoie.
-            //
-            // Ce que le joueur voit fait autorité. On lit donc les boutons, et la table ne sert
-            // plus que de repli si l'écran ne se laisse pas lire.
-            List<string> shown = OnScreenProfessionLabels(professions);
-            Plugin.Log?.LogInfo(shown != null
-                ? "Métiers lus sur les boutons de l'écran : " + string.Join(", ", shown)
-                : "Boutons de métier introuvables : les libellés internes seront lus.");
-
+            // Sept métiers se traduisent par la table du jeu ; les trois autres sont relevés sur son
+            // écran (voir MissingFrenchNames). Lire les boutons directement s'est révélé impossible :
+            // le panneau central n'affiche que la catégorie sélectionnée, donc les boutons de métier
+            // ne sont pas présents au moment où l'assistant pose la question.
             var labels = professions
-                .Select((p, i) => shown != null ? DescribeProfession(p, shown[i]) : DescribeProfession(p))
+                .Select(p => DescribeProfession(p))
                 .ToList();
 
             OpenOwned(Localization.Language.T("Choisir un métier de départ", "Choose a starting profession"),
                 labels, chosen =>
                 {
-                    _professionLabel = shown != null
-                        ? shown[chosen]
-                        : ProfessionName(TextUtil.Clean(professions[chosen].name));
+                    _professionLabel = ProfessionName(TextUtil.Clean(professions[chosen].name));
                     int index = chosen;
                     Apply(() => Creator().UpdateProfession(index));
                     AskBirthSeason();
@@ -254,11 +236,9 @@ namespace SunHavenAccess.Menus
         /// aucun n'est verrouillé, aucun ne ferme de voie. Les citer est donc la seule façon
         /// honnête d'expliquer la différence.
         /// </summary>
-        private static string DescribeProfession(StartingProfessionInfo profession, string shownLabel = null)
+        private static string DescribeProfession(StartingProfessionInfo profession)
         {
-            string name = !string.IsNullOrWhiteSpace(shownLabel)
-                ? shownLabel
-                : ProfessionName(TextUtil.Clean(profession.name));
+            string name = ProfessionName(TextUtil.Clean(profession.name));
 
             try
             {
@@ -287,122 +267,32 @@ namespace SunHavenAccess.Menus
         /// donc sa traduction au jeu, en passant le libellé interne comme clé — c'est ainsi que
         /// ses propres boutons la retrouvent.
         ///
-        /// Le mod ne traduit RIEN ici de son côté. J'avais d'abord écrit une table de noms
-        /// français maison : c'était l'erreur, puisque le jeu affichait déjà les bons noms et que
-        /// ma table ne faisait que les remplacer par de l'anglais. Une traduction qui existe déjà
-        /// se demande, elle ne se réécrit pas.
-        /// </summary>
-        /// <summary>
-        /// Les libellés des boutons de métier, dans l'ordre de l'écran, ou null si on ne les
-        /// trouve pas avec certitude.
+        /// Sept métiers sur dix se retrouvent ainsi. Les trois autres portent une clé que rien ne
+        /// permet de deviner, et lire leur libellé sur les boutons de l'écran s'est révélé
+        /// impossible : le panneau central n'affiche que la catégorie sélectionnée, donc les
+        /// boutons de métier ne sont pas là au moment où l'assistant pose la question.
         ///
-        /// Les boutons de métier forment un groupe de frères, en nombre exactement égal à celui des
-        /// métiers du jeu. C'est ce qui les distingue de la colonne des catégories, qui en compte
-        /// un autre nombre. On ne retient un groupe que s'il a la bonne taille ET que chacun de ses
-        /// membres porte un texte : à la moindre ambiguïté, on renonce et on garde le libellé
-        /// interne, plutôt que d'annoncer des noms pris ailleurs sur l'écran.
+        /// Ils sont donc écrits ci-dessous, RELEVÉS SUR L'ÉCRAN DU JEU et non traduits par moi.
+        /// C'est un pis-aller assumé : si une mise à jour renomme ces métiers, ces trois lignes
+        /// deviendront fausses là où les sept autres suivront toutes seules.
         /// </summary>
-        private static List<string> OnScreenProfessionLabels(StartingProfessionInfo[] professions)
-        {
-            try
+        private static readonly Dictionary<string, string> MissingFrenchNames =
+            new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase)
             {
-                // Ce que le groupe DOIT contenir, aux bonnes places.
-                //
-                // Sept métiers sur dix se traduisent déjà par la table du jeu : « Farmer » donne
-                // « Fermier », « Rancher » donne « Éleveur ». Ces noms-là servent de repères. Un
-                // groupe qui ne les porte pas aux mêmes positions n'est pas celui des métiers.
-                //
-                // Le compte seul ne suffisait pas, et c'est ce qui a cassé : la colonne des
-                // catégories comptait elle aussi dix éléments visibles, et l'assistant annonçait
-                // « Corps, Yeux, Visage, Torse » à la place des métiers. Compter, c'est deviner ;
-                // reconnaître, c'est vérifier.
-                var expected = new Dictionary<int, string>();
-                for (int i = 0; i < professions.Length; i++)
-                {
-                    string known = ProfessionName(TextUtil.Clean(professions[i]?.name));
-                    if (!string.IsNullOrWhiteSpace(known) &&
-                        !string.Equals(known, TextUtil.Clean(professions[i]?.name), StringComparison.Ordinal))
-                        expected[i] = known; // traduit : donc utilisable comme repère
-                }
-
-                // Ces repères viennent de la table du jeu : ils font autorité, on les exige tous.
-                return LabelsOfGroup(professions.Length, expected, expected.Count);
-            }
-            catch { }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Les libellés affichés d'un groupe de boutons, identifié par des repères plutôt que par
-        /// son seul nombre d'éléments.
-        /// </summary>
-        /// <param name="expectedCount">Nombre d'éléments que le groupe doit avoir.</param>
-        /// <param name="markers">Libellés attendus à des positions précises.</param>
-        /// <param name="minMatches">
-        /// Combien de repères doivent correspondre. On l'exige entier quand les repères viennent du
-        /// jeu, et seulement majoritaire quand ils viennent d'une table écrite ici — une de mes
-        /// traductions un peu différente de la sienne ne doit pas faire rejeter le bon groupe.
-        /// </param>
-        private static List<string> LabelsOfGroup(int expectedCount, Dictionary<int, string> markers, int minMatches)
-        {
-            if (markers == null || markers.Count < 2) return null; // trop peu de repères pour trancher
-
-            var groups = MenuNavigator.VisibleSelectables()
-                .Where(s => s != null && s.transform.parent != null)
-                .GroupBy(s => s.transform.parent)
-                .Where(g => g.Count() == expectedCount);
-
-            foreach (var group in groups)
-            {
-                var labels = group
-                    .OrderBy(s => s.transform.GetSiblingIndex())
-                    .Select(s => TextUtil.Clean(
-                        s.GetComponentInChildren<TMPro.TextMeshProUGUI>(true)?.text))
-                    .ToList();
-
-                if (labels.Any(string.IsNullOrWhiteSpace)) continue;
-
-                int matches = markers.Count(pair =>
-                    pair.Key < labels.Count &&
-                    string.Equals(labels[pair.Key], pair.Value, StringComparison.CurrentCultureIgnoreCase));
-
-                if (matches >= minMatches) return labels;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Les noms de races affichés par le jeu.
-        ///
-        /// Même erreur que pour les métiers, et même correction : j'imposais ma propre table
-        /// française — « Élémentaire », « Démon » — alors que le jeu affiche déjà ces noms sur ses
-        /// boutons, éventuellement autrement. Une traduction qui existe se lit, elle ne se réécrit
-        /// pas.
-        ///
-        /// Différence avec les métiers : ici mes repères sortent de ma table, pas de celle du jeu.
-        /// Ils peuvent donc différer légèrement du libellé affiché, et l'on n'en exige que la
-        /// majorité. « Amari » et « Naga » sont identiques dans les deux langues, ce qui donne déjà
-        /// deux repères sûrs.
-        /// </summary>
-        private static List<string> OnScreenRaceLabels(List<Race> races)
-        {
-            try
-            {
-                var markers = new Dictionary<int, string>();
-                for (int i = 0; i < races.Count; i++) markers[i] = RaceName(races[i]);
-
-                return LabelsOfGroup(races.Count, markers, (markers.Count / 2) + 1);
-            }
-            catch { return null; }
-        }
+                { "Orchard Farmer", "Arboriculteur" },
+                { "Duelist", "Duelliste" },
+                { "Royalty in Your Last Life", "Royauté" },
+            };
 
         private static string ProfessionName(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return raw;
 
             LogProfessionNames();
+
+            // Les trois que la table du jeu ne rend pas, relevés sur son propre écran.
+            if (!Localization.Language.IsEnglish
+                && MissingFrenchNames.TryGetValue(raw.Trim(), out string known)) return known;
 
             string key = TranslationKeyFor(raw);
             if (key != null)
