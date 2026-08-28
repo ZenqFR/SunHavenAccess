@@ -194,13 +194,35 @@ namespace SunHavenAccess.Input
                 else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.AdjustSlider(1);
                 else if (Pressed(ModConfig.MenuPrevious.Value) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.Previous();
                 else if (Pressed(ModConfig.MenuNext.Value) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.Next();
+                // EN PARTIE ET HORS MENU, ENTRÉE AGIT SUR LE MONDE.
+                //
+                // On arrive ici quand aucun menu n'a la main. Entrée y appelait pourtant
+                // « valider l'élément de menu », qui n'avait rien à valider et répondait
+                // « sélectionnez d'abord un élément avec les flèches » — une réponse absurde à
+                // quelqu'un qui est simplement debout dans son champ. Le geste utile, à cet
+                // instant, c'est de frapper la case devant soi.
+                //
+                // Le garde-fou est `Player.Instance` : hors partie (menu principal, choix et
+                // création de personnage) il n'y a pas de joueur, et Entrée doit continuer à
+                // valider les boutons — c'est ainsi qu'on charge un personnage. Les deux cas ne se
+                // croisent jamais.
+                bool inWorld = Wish.Player.Instance != null;
+
                 if (ctrl && UnityEngine.Input.GetKeyDown(ModConfig.MenuActivate.Value))
                 {
-                    MenuNavigator.SecondaryActivate();
+                    if (inWorld) MouseCursor.SimulateRightClick();
+                    else MenuNavigator.SecondaryActivate();
                 }
                 else if (Pressed(ModConfig.MenuActivate.Value))
                 {
-                    MenuNavigator.Activate();
+                    if (inWorld)
+                    {
+                        // Même chemin que le clic gauche du pavé numérique : si le curseur libre
+                        // est actif, on pointe d'abord la case visée, pour agir à distance.
+                        FreeTileCursor.PointMouseAtCursor();
+                        MouseCursor.SimulateLeftClick();
+                    }
+                    else MenuNavigator.Activate();
                 }
             }
 
