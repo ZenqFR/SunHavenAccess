@@ -28,6 +28,15 @@ namespace SunHavenAccess.Patches
             return false;
         }
 
+        // Ces deux Prefix sont les SEULS du mod à ne pas passer par PatchGuard, et c'est délibéré.
+        //
+        // Ils sont greffés sur `Object.Destroy`, l'appel le plus fréquent du moteur : y ajouter une
+        // fonction anonyme et un bloc de capture coûterait à chaque destruction d'objet du jeu.
+        // Leur corps ne peut pas lever : `IsProtected` n'est qu'une comparaison de références avec
+        // gardes de nullité, et le journal est appelé sur une référence conditionnelle. Un Prefix
+        // qui renvoie un booléen demanderait de surcroît de décider quoi retourner en cas
+        // d'erreur — et se tromper ici, c'est soit tuer le mod, soit empêcher le jeu de faire son
+        // ménage.
         [HarmonyPatch(typeof(Object), nameof(Object.Destroy), new System.Type[] { typeof(Object) })]
         public static class DestroyPatch
         {
@@ -97,7 +106,10 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Scene), nameof(Scene.GetRootGameObjects), new System.Type[] { typeof(List<GameObject>) })]
     public static class NoKillScanPatchList
     {
-        private static void Postfix(List<GameObject> rootGameObjects)
+        private static void Postfix(List<GameObject> rootGameObjects) =>
+            PatchGuard.Run("NoKillScanList", () => Filter(rootGameObjects));
+
+        private static void Filter(List<GameObject> rootGameObjects)
         {
             if (rootGameObjects == null || NoKillPatch.ProtectedRoot == null) return;
             rootGameObjects.RemoveAll(go => go == NoKillPatch.ProtectedRoot);

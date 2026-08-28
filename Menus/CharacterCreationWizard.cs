@@ -64,6 +64,15 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static void Tick()
         {
+            // La saisie du nom est lue à CHAQUE IMAGE, jamais au rythme espacé du reste.
+            //
+            // `GetKeyDown` n'est vrai qu'une seule image. En le consultant quatre fois par
+            // seconde, on avait environ une chance sur quinze de tomber sur la bonne : l'Entrée
+            // qui valide le nom, et l'Échap qui referme l'assistant, étaient ignorées presque à
+            // chaque fois. Espacer une détection d'écran est sans conséquence ; espacer une
+            // lecture de touche, c'est perdre la touche.
+            if (_step == Step.Name) { TickNameEntry(); return; }
+
             if (Time.unscaledTime < _nextCheck) return;
             _nextCheck = Time.unscaledTime + 0.25f;
 
@@ -74,8 +83,6 @@ namespace SunHavenAccess.Menus
                 if (present) Start();
                 else Cancel();
             }
-
-            if (_step == Step.Name) { TickNameEntry(); return; }
 
             // Échap ferme la liste : l'assistant s'arrête avec elle. Sans cela il resterait en
             // attente d'une réponse à une question qui n'est plus posée, et il faudrait quitter
@@ -493,6 +500,11 @@ namespace SunHavenAccess.Menus
 
         private static void TickNameEntry()
         {
+            // La détection d'écran est court-circuitée pendant cette étape : on la refait ici, sans
+            // quoi quitter l'écran en pleine saisie laisserait l'assistant à attendre une touche
+            // pour un écran qui n'existe plus.
+            if (Creator() == null) { Cancel(); _onScreen = false; return; }
+
             // Pendant la saisie, la liste est fermée : la sortie par Échap doit donc être gérée
             // ici, sinon l'assistant n'aurait plus aucune porte de sortie à cette étape — la
             // seule où il ne tient pas le clavier.

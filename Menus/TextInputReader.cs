@@ -64,8 +64,10 @@ namespace SunHavenAccess.Menus
                 _lastText = current;
                 FocusReader.SuppressNextAnnouncement();
                 string label = DescribeField(field);
-                string content = string.IsNullOrEmpty(current) ? "vide" : Spoken(field, current);
-                TolkSpeech.Speak($"{label} : {content}.", interrupt: true);
+                string content = string.IsNullOrEmpty(current)
+                    ? Localization.Language.T("vide", "empty")
+                    : Spoken(field, current);
+                TolkSpeech.Speak(Localization.Language.Pair(label, content) + ".", interrupt: true);
                 return;
             }
 

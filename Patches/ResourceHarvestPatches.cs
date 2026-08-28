@@ -23,7 +23,10 @@ namespace SunHavenAccess.Patches
         private static readonly FieldInfo RequiredPowerField =
             typeof(Rock).GetField("_requiredPower", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        private static void Prefix(Rock __instance, float power, bool hitFromLocalPlayer)
+        private static void Prefix(Rock __instance, float power, bool hitFromLocalPlayer) =>
+            PatchGuard.Run("RockHit", () => Check(__instance, power, hitFromLocalPlayer));
+
+        private static void Check(Rock __instance, float power, bool hitFromLocalPlayer)
         {
             if (!hitFromLocalPlayer || RequiredPowerField == null) return;
             float required = (float)RequiredPowerField.GetValue(__instance);
@@ -42,7 +45,10 @@ namespace SunHavenAccess.Patches
         // via son propre garde `if (!Dying)`, mais un Postfix Harmony s'exécute quand même).
         private static bool _wasAlreadyDying;
 
-        private static void Prefix(Rock __instance)
+        private static void Prefix(Rock __instance) =>
+            PatchGuard.Run("RockDiePrefix", () => Note(__instance));
+
+        private static void Note(Rock __instance)
         {
             _wasAlreadyDying = __instance.Dying;
         }
@@ -63,7 +69,10 @@ namespace SunHavenAccess.Patches
         private static readonly FieldInfo RequiredPowerField =
             typeof(Wood).GetField("_requiredPower", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        private static void Prefix(Wood __instance, float power, bool hitFromLocalPlayer)
+        private static void Prefix(Wood __instance, float power, bool hitFromLocalPlayer) =>
+            PatchGuard.Run("WoodHit", () => Check(__instance, power, hitFromLocalPlayer));
+
+        private static void Check(Wood __instance, float power, bool hitFromLocalPlayer)
         {
             if (!hitFromLocalPlayer || RequiredPowerField == null) return;
             float required = (float)RequiredPowerField.GetValue(__instance);
@@ -79,7 +88,10 @@ namespace SunHavenAccess.Patches
     {
         private static bool _wasAlreadyDying;
 
-        private static void Prefix(Wood __instance)
+        private static void Prefix(Wood __instance) =>
+            PatchGuard.Run("WoodDiePrefix", () => Note(__instance));
+
+        private static void Note(Wood __instance)
         {
             _wasAlreadyDying = __instance.Dying;
         }

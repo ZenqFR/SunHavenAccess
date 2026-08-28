@@ -21,14 +21,19 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(ChatBubble), "SetupNotification")]
     public static class ChatBubblePatch
     {
-        private static void Postfix(Transform parent, string text)
+        private static void Postfix(Transform parent, string text) =>
+            PatchGuard.Run("ChatBubble", () => Announce(parent, text));
+
+        private static void Announce(Transform parent, string text)
         {
             string clean = TextUtil.Clean(text);
             if (string.IsNullOrWhiteSpace(clean)) return;
 
             string speaker = SpeakerName(parent);
             TolkSpeech.Speak(
-                string.IsNullOrWhiteSpace(speaker) ? clean : $"{speaker} : {clean}",
+                string.IsNullOrWhiteSpace(speaker)
+                    ? clean
+                    : SunHavenAccess.Localization.Language.Pair(speaker, clean),
                 interrupt: false);
         }
 
@@ -52,9 +57,11 @@ namespace SunHavenAccess.Patches
                 Player player = parent.GetComponentInParent<Player>();
                 if (player != null)
                 {
-                    if (player == Player.Instance) return "Vous";
+                    if (player == Player.Instance) return SunHavenAccess.Localization.Language.T("Vous", "You");
                     string playerName = TextUtil.Clean(player.name);
-                    return string.IsNullOrWhiteSpace(playerName) ? "Un autre joueur" : playerName;
+                    return string.IsNullOrWhiteSpace(playerName)
+                        ? SunHavenAccess.Localization.Language.T("Un autre joueur", "Another player")
+                        : playerName;
                 }
 
                 NPCAI npc = parent.GetComponentInParent<NPCAI>();

@@ -403,6 +403,10 @@ namespace SunHavenAccess.Menus
         /// La marge tolère les éléments à cheval sur un bord plutôt que de les écarter : mieux
         /// vaut un élément de trop qu'un élément atteignable rendu inatteignable.
         /// </summary>
+        private static bool InScreen(Vector2 point, float margin) =>
+            point.x >= -margin && point.x <= Screen.width + margin
+            && point.y >= -margin && point.y <= Screen.height + margin;
+
         internal static bool IsOnScreen(Component s)
         {
             try
@@ -418,11 +422,31 @@ namespace SunHavenAccess.Menus
                     if (camera == null) return true;
                 }
 
-                Vector2 screen = RectTransformUtility.WorldToScreenPoint(camera, s.transform.position);
-                const float margin = 64f;
+                // On teste les QUATRE COINS, pas le seul pivot.
+                //
+                // Un élément large dont le pivot sort du cadre — une barre, une ligne de tableau —
+                // était déclaré hors champ alors qu'on le voit parfaitement. Le pivot n'est qu'un
+                // point de référence arbitraire, choisi au montage de l'interface ; l'emprise, elle,
+                // dit vraiment si l'élément est là.
+                //
+                // La marge suit la taille de l'écran plutôt qu'un nombre fixe de pixels : 64 pixels
+                // sur un écran haute définition ne représentent pas la même tolérance que sur un
+                // petit écran.
+                float margin = Mathf.Max(Screen.width, Screen.height) * 0.05f;
 
-                return screen.x >= -margin && screen.x <= Screen.width + margin
-                    && screen.y >= -margin && screen.y <= Screen.height + margin;
+                var rect = s.transform as RectTransform;
+                if (rect == null)
+                {
+                    Vector2 point = RectTransformUtility.WorldToScreenPoint(camera, s.transform.position);
+                    return InScreen(point, margin);
+                }
+
+                var corners = new Vector3[4];
+                rect.GetWorldCorners(corners);
+                foreach (Vector3 corner in corners)
+                    if (InScreen(RectTransformUtility.WorldToScreenPoint(camera, corner), margin)) return true;
+
+                return false;
             }
             catch
             {

@@ -24,7 +24,10 @@ namespace SunHavenAccess.Patches
         private static string _lastSpoken = "";
         private static FieldInfo _nameTMPField;
 
-        private static void Prefix(DialogueController __instance, string text, Dictionary<int, Response> options)
+        private static void Prefix(DialogueController __instance, string text, Dictionary<int, Response> options) =>
+            PatchGuard.Run("DialogueLine", () => Announce(__instance, text, options));
+
+        private static void Announce(DialogueController __instance, string text, Dictionary<int, Response> options)
         {
             string resolved = DialogueHelper.Replace(text);
             resolved = DialogueHelper.ReplaceParent(resolved);
