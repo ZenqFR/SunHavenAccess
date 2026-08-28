@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using UnityEngine;
 using Wish;
 using SunHavenAccess.Speech;
 
@@ -48,14 +49,17 @@ namespace SunHavenAccess.Navigation
         /// Valider un lieu l'ouvre exactement comme un clic : la carte se centre dessus et le jeu
         /// annonce sa description.
         ///
-        /// PAS de cheminement automatique depuis la carte, malgré la demande. Un lieu de la carte
-        /// n'est qu'une icône d'interface : sa position à l'écran n'a aucun rapport avec un
-        /// endroit du monde, et s'en servir enverrait marcher vers une coordonnée arbitraire. Le
-        /// jeu ne rattache à ces icônes qu'un nom de scène, pas un point où aller — et aucun
-        /// trajet à pied ne relie deux cartes de toute façon.
+        /// Valider un lieu lance aussi le trajet à pied vers lui — quand il y mène quelque part.
         ///
-        /// Pour se rendre quelque part sur la carte où l'on se trouve, c'est le scanner qui le
-        /// fait : il vise de vrais objets du monde, avec leur position réelle.
+        /// Attention au piège : `MapImage.GoToLocation()` porte un nom qui ment. Elle ne fait que
+        /// recentrer la VUE de la carte sur l'icône, elle ne déplace jamais le personnage. Et la
+        /// position de l'icône est une position d'écran : marcher vers elle enverrait vers une
+        /// coordonnée arbitraire du monde.
+        ///
+        /// Ce qui existe vraiment, c'est l'ENTRÉE du bâtiment, un objet du monde avec une vraie
+        /// position, que le scanner sait déjà trouver. On rapproche le lieu de son entrée par le
+        /// nom de scène, et c'est vers elle qu'on marche. Un lieu situé dans une autre zone n'a
+        /// pas d'entrée ici : on le dit, plutôt que de faire semblant.
         /// </summary>
         public static void OpenList()
         {
@@ -95,8 +99,60 @@ namespace SunHavenAccess.Navigation
         private static void Choose(List<MapImage> visible, int index)
         {
             if (index < 0 || index >= visible.Count) return;
-            visible[index]?.OpenLocation();
+
+            MapImage location = visible[index];
+            if (location == null) return;
+
+            // La carte décrit le lieu ; le monde permet d'y aller.
+            //
+            // `MapImage.GoToLocation` porte un nom trompeur : elle ne déplace que la VUE de la
+            // carte, jamais le personnage. Un lieu de carte est une icône d'interface, sans
+            // position dans le monde — s'y « rendre » depuis la carte n'a donc aucun sens.
+            //
+            // Ce qui en a un : retrouver l'entrée réelle de ce bâtiment dans la zone où l'on se
+            // trouve, et marcher jusqu'à elle. Les entrées, elles, sont de vrais objets, que le
+            // scanner sait déjà repérer.
+            location.OpenLocation();
+
+            Component entrance = EntranceFor(location);
+            if (entrance != null)
+            {
+                PathingController.TravelTo(entrance.transform.position, NameOf(location));
+                return;
+            }
+
+            TolkSpeech.Speak(Localization.Language.T(
+                "Ce lieu n'a pas d'entrée dans la zone où vous êtes : il faut d'abord vous y rendre.",
+                "This place has no entrance in the area you are in: you must travel there first."), false);
         }
+
+        /// <summary>
+        /// L'entrée de ce lieu dans la zone courante, ou null s'il n'y en a pas.
+        ///
+        /// Un portail sait vers quelle scène il mène ; un lieu de carte porte son nom. On les
+        /// rapproche en ignorant espaces, ponctuation et casse, parce que rien ne garantit qu'ils
+        /// s'écrivent pareil. Une correspondance AMBIGUË — deux portails possibles — est traitée
+        /// comme une absence : mieux vaut ne pas partir que partir au mauvais endroit.
+        /// </summary>
+        private static Component EntranceFor(MapImage location)
+        {
+            try
+            {
+                string wanted = Flatten(location.location);
+                if (string.IsNullOrEmpty(wanted)) return null;
+
+                var matches = Scanner.PortalsInScene()
+                    .Where(p => p != null)
+                    .Where(p => Flatten(Scanner.PortalDestination(p)) == wanted)
+                    .ToList();
+
+                return matches.Count == 1 ? matches[0] : null;
+            }
+            catch { return null; }
+        }
+
+        private static string Flatten(string s) =>
+            new string((s ?? string.Empty).Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
 
         private static void Cycle(int direction)
         {

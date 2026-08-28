@@ -96,6 +96,10 @@
       <HintPath>$(ManagedDir)\SunHaven.Core.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="PSS.Database">
+      <HintPath>$(ManagedDir)\PSS.Database.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="SunHaven.External">
       <HintPath>$(ManagedDir)\SunHaven.External.dll</HintPath>
       <Private>false</Private>

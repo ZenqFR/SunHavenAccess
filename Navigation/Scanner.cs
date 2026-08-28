@@ -321,6 +321,28 @@ namespace SunHavenAccess.Navigation
                 .Concat(Object.FindObjectsOfType<CraftingTable>());
         }
 
+        /// <summary>
+        /// Les entrées de bâtiment présentes dans la zone courante.
+        ///
+        /// Exposée pour la carte : un lieu de carte est une icône sans position dans le monde, et
+        /// la seule façon d'y « aller » est de marcher jusqu'à son entrée réelle, qui est ici.
+        /// </summary>
+        internal static IEnumerable<ScenePortalSpot> PortalsInScene()
+        {
+            try
+            {
+                return Object.FindObjectsOfType<ScenePortalSpot>().Where(BelongsToActiveScene);
+            }
+            catch { return System.Array.Empty<ScenePortalSpot>(); }
+        }
+
+        /// <summary>La scène vers laquelle mène ce portail, telle que le jeu la nomme.</summary>
+        internal static string PortalDestination(ScenePortalSpot portal)
+        {
+            try { return SceneToLoadField?.GetValue(portal) as string; }
+            catch { return null; }
+        }
+
         private static IEnumerable<Component> FindPortalsAndDoors()
         {
             // Wish.ScenePortalSpot est la VRAIE classe des entrées de bâtiment (maison, grange,
@@ -404,6 +426,16 @@ namespace SunHavenAccess.Navigation
             // geste ; il vient donc après, en repli.
             if (c is Decoration decoration)
             {
+                // L'identifiant d'abord, le nom affiché ensuite.
+                //
+                // Une décoration porte un identifiant, et le jeu sait déjà traduire chaque
+                // identifiant en un nom, dans la langue où l'on joue. C'est la seule source qui ne
+                // laisse jamais de trou : elle couvre tout ce qui existe, y compris ce que le jeu
+                // ajoutera. `decorationName`, lui, est un texte d'auteur souvent vide ou resté en
+                // anglais — bon en repli, mauvais en premier choix.
+                string byId = Info.ItemNames.Get(decoration.id);
+                if (!string.IsNullOrWhiteSpace(byId)) return UiNameTranslator.Translate(byId);
+
                 string decorationName = UiNameTranslator.Translate(TextUtil.Clean(decoration.decorationName));
                 if (!string.IsNullOrWhiteSpace(decorationName)) return decorationName;
             }
