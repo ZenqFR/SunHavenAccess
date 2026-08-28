@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -422,10 +423,28 @@ namespace SunHavenAccess.Cursor
             try
             {
                 Vector3 frontPos = player.transform.position + Utilities.OffsetFromDirection(player.facingDirection);
-                Collider2D[] hits = Physics2D.OverlapCircleAll(frontPos, 0.35f);
+                Vector2Int frontTile = TileGeometry.WorldToTile(frontPos);
+
+                // On ne garde que ce qui est RÉELLEMENT sur la case visée, et on nomme le plus
+                // proche.
+                //
+                // Signalé en jeu : une pierre à gauche, une pierre à droite, et l'annonce disait
+                // « Ennemi, bloque le passage ». Deux causes se cumulaient. Le cercle de détection
+                // déborde sur les cases voisines — le monde est isométrique, donc un rayon en
+                // unités de monde ne correspond pas à une case — et `OverlapCircleAll` rend ses
+                // résultats dans un ordre ARBITRAIRE : on nommait donc le premier venu du
+                // voisinage, pas ce qui barre le passage.
+                //
+                // Filtrer par case supprime les voisins ; trier par distance rend l'annonce
+                // déterministe, au lieu de dépendre de l'ordre où le moteur a rangé ses objets.
+                var hits = Physics2D.OverlapCircleAll(frontPos, 0.45f)
+                    .Where(h => h != null && !h.isTrigger)
+                    .Where(h => TileGeometry.WorldToTile(h.ClosestPoint(frontPos)) == frontTile)
+                    .OrderBy(h => Vector2.Distance(h.ClosestPoint(frontPos), frontPos))
+                    .ToArray();
+
                 foreach (Collider2D hit in hits)
                 {
-                    if (hit == null || hit.isTrigger) continue;
                     if (hit.attachedRigidbody != null && hit.attachedRigidbody.gameObject == player.gameObject) continue;
                     if (hit.transform.IsChildOf(player.transform)) continue;
 
