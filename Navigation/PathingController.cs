@@ -128,6 +128,13 @@ namespace SunHavenAccess.Navigation
             public float HCost;
             public float FCost => GCost + HCost;
             public PathNode Parent;
+
+            /// <summary>
+            /// Position dans le tas des cases à explorer, ou -1 une fois dépilé. Le nœud la porte
+            /// lui-même pour qu'on puisse le faire remonter quand son coût baisse, sans avoir à le
+            /// rechercher — ce qui redonnerait le parcours linéaire qu'on cherche à supprimer.
+            /// </summary>
+            public int HeapIndex = -1;
         }
 
         private readonly struct PathResult
@@ -207,12 +214,12 @@ namespace SunHavenAccess.Navigation
 
         private static PathResult RunAStar(TileCoord start, TileCoord end, int maxIterations, System.Func<TileCoord, bool> isWalkable)
         {
-            var openSet = new List<PathNode>();
+            var openSet = new NodeHeap();
             var openLookup = new Dictionary<TileCoord, PathNode>();
             var closedSet = new HashSet<TileCoord>();
 
             var startNode = new PathNode { Coord = start, GCost = 0f, HCost = Heuristic(start, end) };
-            openSet.Add(startNode);
+            openSet.Push(startNode);
             openLookup[start] = startNode;
 
             // Demandé explicitement : si la destination exacte est inatteignable, avancer quand
@@ -229,18 +236,7 @@ namespace SunHavenAccess.Navigation
             {
                 if (++iterations > maxIterations) break; // garde-fou anti-boucle infinie
 
-                int bestIndex = 0;
-                for (int i = 1; i < openSet.Count; i++)
-                {
-                    if (openSet[i].FCost < openSet[bestIndex].FCost ||
-                        (openSet[i].FCost == openSet[bestIndex].FCost && openSet[i].HCost < openSet[bestIndex].HCost))
-                    {
-                        bestIndex = i;
-                    }
-                }
-
-                PathNode current = openSet[bestIndex];
-                openSet.RemoveAt(bestIndex);
+                PathNode current = openSet.Pop();
                 openLookup.Remove(current.Coord);
                 closedSet.Add(current.Coord);
 
@@ -271,7 +267,7 @@ namespace SunHavenAccess.Navigation
                                 HCost = Heuristic(neighbourCoord, end),
                                 Parent = current
                             };
-                            openSet.Add(neighbourNode);
+                            openSet.Push(neighbourNode);
                             openLookup[neighbourCoord] = neighbourNode;
                             if (neighbourNode.HCost < bestReachable.HCost) bestReachable = neighbourNode;
                         }
@@ -279,6 +275,10 @@ namespace SunHavenAccess.Navigation
                         {
                             neighbourNode.GCost = tentativeG;
                             neighbourNode.Parent = current;
+                            // Le coût a baissé : le nœud doit remonter dans le tas, sans quoi il
+                            // serait dépilé trop tard et le chemin trouvé ne serait plus le plus
+                            // court.
+                            openSet.Reprioritise(neighbourNode);
                         }
                     }
                 }
@@ -287,6 +287,98 @@ namespace SunHavenAccess.Navigation
             if (endNode != null) return PathResult.Full(BuildWaypoints(endNode));
             if (bestReachable == startNode) return PathResult.Partial(Array.Empty<Vector2>());
             return PathResult.Partial(BuildWaypoints(bestReachable));
+        }
+
+        /// <summary>
+        /// File de priorité des cases restant à explorer, en tas binaire.
+        ///
+        /// La version précédente gardait une simple liste et la parcourait ENTIÈREMENT à chaque
+        /// itération pour y trouver la case la moins coûteuse, puis retirait au milieu — deux
+        /// opérations en temps linéaire, répétées autant de fois qu'il y a de cases. Sur la grille
+        /// maximale admise (100 sur 100), cela représentait des dizaines de millions de
+        /// comparaisons, sur le fil principal, pendant que le joueur attend : de quoi figer le jeu
+        /// une seconde ou plus au moment précis où l'on demande à s'y déplacer.
+        ///
+        /// Un tas ramène ces deux opérations au logarithme du nombre de cases. Le chemin trouvé est
+        /// exactement le même : seul l'ordre dans lequel on pioche change de coût, pas de résultat.
+        /// </summary>
+        private sealed class NodeHeap
+        {
+            private readonly List<PathNode> _items = new List<PathNode>();
+
+            public int Count => _items.Count;
+
+            public void Push(PathNode node)
+            {
+                _items.Add(node);
+                node.HeapIndex = _items.Count - 1;
+                SiftUp(node.HeapIndex);
+            }
+
+            public PathNode Pop()
+            {
+                PathNode top = _items[0];
+                PathNode last = _items[_items.Count - 1];
+                _items.RemoveAt(_items.Count - 1);
+
+                if (_items.Count > 0)
+                {
+                    _items[0] = last;
+                    last.HeapIndex = 0;
+                    SiftDown(0);
+                }
+
+                top.HeapIndex = -1;
+                return top;
+            }
+
+            /// <summary>Un nœud déjà présent vient de devenir moins coûteux : il doit remonter.</summary>
+            public void Reprioritise(PathNode node)
+            {
+                if (node.HeapIndex >= 0 && node.HeapIndex < _items.Count) SiftUp(node.HeapIndex);
+            }
+
+            /// <summary>
+            /// Départage d'abord sur le coût total, puis sur la distance restante — exactement le
+            /// même critère que le parcours linéaire d'avant, pour que le chemin ne change pas.
+            /// </summary>
+            private static bool IsBetter(PathNode a, PathNode b) =>
+                a.FCost < b.FCost || (a.FCost == b.FCost && a.HCost < b.HCost);
+
+            private void SiftUp(int index)
+            {
+                while (index > 0)
+                {
+                    int parent = (index - 1) / 2;
+                    if (!IsBetter(_items[index], _items[parent])) break;
+                    Swap(index, parent);
+                    index = parent;
+                }
+            }
+
+            private void SiftDown(int index)
+            {
+                while (true)
+                {
+                    int left = index * 2 + 1;
+                    int right = left + 1;
+                    int best = index;
+
+                    if (left < _items.Count && IsBetter(_items[left], _items[best])) best = left;
+                    if (right < _items.Count && IsBetter(_items[right], _items[best])) best = right;
+                    if (best == index) break;
+
+                    Swap(index, best);
+                    index = best;
+                }
+            }
+
+            private void Swap(int a, int b)
+            {
+                (_items[a], _items[b]) = (_items[b], _items[a]);
+                _items[a].HeapIndex = a;
+                _items[b].HeapIndex = b;
+            }
         }
 
         private static Vector2[] BuildWaypoints(PathNode target)
