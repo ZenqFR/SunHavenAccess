@@ -137,12 +137,20 @@ namespace SunHavenAccess.Menus
             _step = Step.Race;
 
             List<Race> races = Enum.GetValues(typeof(Race)).Cast<Race>().ToList();
-            var labels = races.Select(DescribeRace).ToList();
+
+            List<string> shown = OnScreenRaceLabels(races);
+            Plugin.Log?.LogInfo(shown != null
+                ? "Races lues sur les boutons de l'écran : " + string.Join(", ", shown)
+                : "Boutons de race introuvables : les noms internes seront lus.");
+
+            var labels = races
+                .Select((r, i) => DescribeRace(r, shown != null ? shown[i] : null))
+                .ToList();
 
             OpenOwned(Localization.Language.T("Choisir une race", "Choose a race"), labels, chosen =>
             {
                 Race race = races[chosen];
-                _raceLabel = RaceName(race);
+                _raceLabel = shown != null ? shown[chosen] : RaceName(race);
                 Apply(() => Creator().SetRace(race));
                 AskProfession();
             });
@@ -155,9 +163,12 @@ namespace SunHavenAccess.Menus
         /// le dit donc systématiquement, même quand la description est longue : c'est précisément
         /// l'information qu'on vient chercher.
         /// </summary>
-        private static string DescribeRace(Race race)
+        private static string DescribeRace(Race race, string shownLabel = null)
         {
-            var parts = new List<string> { RaceName(race) };
+            var parts = new List<string>
+            {
+                string.IsNullOrWhiteSpace(shownLabel) ? RaceName(race) : shownLabel
+            };
 
             try
             {
@@ -229,7 +240,9 @@ namespace SunHavenAccess.Menus
             OpenOwned(Localization.Language.T("Choisir un métier de départ", "Choose a starting profession"),
                 labels, chosen =>
                 {
-                    _professionLabel = TextUtil.Clean(professions[chosen].name);
+                    _professionLabel = shown != null
+                        ? shown[chosen]
+                        : ProfessionName(TextUtil.Clean(professions[chosen].name));
                     int index = chosen;
                     Apply(() => Creator().UpdateProfession(index));
                     AskBirthSeason();
@@ -312,32 +325,77 @@ namespace SunHavenAccess.Menus
                         expected[i] = known; // traduit : donc utilisable comme repère
                 }
 
-                if (expected.Count < 2) return null; // trop peu de repères pour trancher
-
-                var groups = MenuNavigator.VisibleSelectables()
-                    .Where(s => s != null && s.transform.parent != null)
-                    .GroupBy(s => s.transform.parent)
-                    .Where(g => g.Count() == professions.Length);
-
-                foreach (var group in groups)
-                {
-                    var labels = group
-                        .OrderBy(s => s.transform.GetSiblingIndex())
-                        .Select(s => TextUtil.Clean(
-                            s.GetComponentInChildren<TMPro.TextMeshProUGUI>(true)?.text))
-                        .ToList();
-
-                    if (labels.Any(string.IsNullOrWhiteSpace)) continue;
-
-                    bool matches = expected.All(pair =>
-                        string.Equals(labels[pair.Key], pair.Value, StringComparison.CurrentCultureIgnoreCase));
-
-                    if (matches) return labels;
-                }
+                // Ces repères viennent de la table du jeu : ils font autorité, on les exige tous.
+                return LabelsOfGroup(professions.Length, expected, expected.Count);
             }
             catch { }
 
             return null;
+        }
+
+        /// <summary>
+        /// Les libellés affichés d'un groupe de boutons, identifié par des repères plutôt que par
+        /// son seul nombre d'éléments.
+        /// </summary>
+        /// <param name="expectedCount">Nombre d'éléments que le groupe doit avoir.</param>
+        /// <param name="markers">Libellés attendus à des positions précises.</param>
+        /// <param name="minMatches">
+        /// Combien de repères doivent correspondre. On l'exige entier quand les repères viennent du
+        /// jeu, et seulement majoritaire quand ils viennent d'une table écrite ici — une de mes
+        /// traductions un peu différente de la sienne ne doit pas faire rejeter le bon groupe.
+        /// </param>
+        private static List<string> LabelsOfGroup(int expectedCount, Dictionary<int, string> markers, int minMatches)
+        {
+            if (markers == null || markers.Count < 2) return null; // trop peu de repères pour trancher
+
+            var groups = MenuNavigator.VisibleSelectables()
+                .Where(s => s != null && s.transform.parent != null)
+                .GroupBy(s => s.transform.parent)
+                .Where(g => g.Count() == expectedCount);
+
+            foreach (var group in groups)
+            {
+                var labels = group
+                    .OrderBy(s => s.transform.GetSiblingIndex())
+                    .Select(s => TextUtil.Clean(
+                        s.GetComponentInChildren<TMPro.TextMeshProUGUI>(true)?.text))
+                    .ToList();
+
+                if (labels.Any(string.IsNullOrWhiteSpace)) continue;
+
+                int matches = markers.Count(pair =>
+                    pair.Key < labels.Count &&
+                    string.Equals(labels[pair.Key], pair.Value, StringComparison.CurrentCultureIgnoreCase));
+
+                if (matches >= minMatches) return labels;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Les noms de races affichés par le jeu.
+        ///
+        /// Même erreur que pour les métiers, et même correction : j'imposais ma propre table
+        /// française — « Élémentaire », « Démon » — alors que le jeu affiche déjà ces noms sur ses
+        /// boutons, éventuellement autrement. Une traduction qui existe se lit, elle ne se réécrit
+        /// pas.
+        ///
+        /// Différence avec les métiers : ici mes repères sortent de ma table, pas de celle du jeu.
+        /// Ils peuvent donc différer légèrement du libellé affiché, et l'on n'en exige que la
+        /// majorité. « Amari » et « Naga » sont identiques dans les deux langues, ce qui donne déjà
+        /// deux repères sûrs.
+        /// </summary>
+        private static List<string> OnScreenRaceLabels(List<Race> races)
+        {
+            try
+            {
+                var markers = new Dictionary<int, string>();
+                for (int i = 0; i < races.Count; i++) markers[i] = RaceName(races[i]);
+
+                return LabelsOfGroup(races.Count, markers, (markers.Count / 2) + 1);
+            }
+            catch { return null; }
         }
 
         private static string ProfessionName(string raw)
