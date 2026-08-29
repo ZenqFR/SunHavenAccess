@@ -177,6 +177,19 @@ namespace SunHavenAccess.Navigation
                 return;
             }
 
+            // ARRIVÉ DEVANT LA PORTE, IL FAUT PARFOIS L'OUVRIR.
+            //
+            // Le jeu a deux sortes de portes. Celles dont le collisionneur est un déclencheur
+            // s'ouvrent au contact — y marcher suffit, et le trajet s'en occupait très bien. Les
+            // autres, boutiques et maisons, attendent la touche d'interaction : le personnage
+            // arrivait donc au pied de la porte et s'y arrêtait, jusqu'à l'abandon au bout de
+            // quarante-cinq secondes. Vu de l'extérieur, le trajet « ne marchait pas ».
+            //
+            // `InteractWithPortal` est publique et fait exactement ce que ferait la touche. On
+            // l'appelle donc quand on est assez près, plutôt que d'attendre un geste que le mod
+            // avait promis de ne pas demander.
+            if (TryOpenDoorHere()) return;
+
             // Il s'est arrêté sans avoir changé de zone : soit il est encore loin de la porte et le
             // chemin s'est interrompu, soit la porte refuse. On relance une fois, puis on renonce.
             if (Time.unscaledTime < _stepDeadline)
@@ -217,6 +230,39 @@ namespace SunHavenAccess.Navigation
             }
 
             PathingController.TravelTo(door.transform.position, Util.SceneNames.Translate(next));
+        }
+
+        /// <summary>
+        /// Ouvre la porte de l'étape en cours si l'on est à portée. Renvoie true si l'on a agi —
+        /// l'appelant laisse alors sa chance au changement de zone plutôt que de conclure à l'échec.
+        ///
+        /// Deux mètres de tolérance : le cheminement s'arrête sur une case, la porte est sur la
+        /// suivante, et exiger d'être dessus ferait échouer un trajet parfaitement abouti.
+        /// </summary>
+        private static bool TryOpenDoorHere()
+        {
+            if (_remaining == null || _remaining.Count == 0) return false;
+
+            try
+            {
+                Player player = Player.Instance;
+                if (player == null) return false;
+
+                string next = _remaining[0];
+
+                foreach (ScenePortalSpot portal in Scanner.PortalsInScene())
+                {
+                    if (portal == null) continue;
+                    if (!string.Equals(Scanner.PortalDestination(portal), next, StringComparison.OrdinalIgnoreCase)) continue;
+                    if (Vector3.Distance(portal.transform.position, player.transform.position) > 2f) continue;
+
+                    portal.InteractWithPortal();
+                    return true;
+                }
+            }
+            catch { }
+
+            return false;
         }
 
         private static void Fail(string message)

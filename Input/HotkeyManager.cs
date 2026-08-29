@@ -453,10 +453,52 @@ namespace SunHavenAccess.Input
             return _anyKeyDown;
         }
 
+        /// <summary>
+        /// Une touche a-t-elle été enfoncée cette image, DES DEUX CÔTÉS ?
+        ///
+        /// Le mod surveille quarante-huit touches et interrogeait les deux systèmes d'entrée sur
+        /// chacune, à chaque image — alors que la réponse est non pour la quasi-totalité des images
+        /// d'une partie. Unity répond pour toutes d'un coup avec `anyKeyDown` ; Rewired le fait
+        /// aussi, avec `GetAnyButtonDown` sur le clavier, qu'il a simplement fallu chercher sur la
+        /// classe de base plutôt que sur `Keyboard`.
+        ///
+        /// L'équivalence est exacte : ces deux réponses sont vraies dès qu'une touche quelconque
+        /// l'est, donc elles ne peuvent pas masquer une touche que l'on guettait. Le chronomètre
+        /// donnait presque une milliseconde par image pour ce seul module ; il ne reste plus qu'une
+        /// question par image quand rien n'est pressé, c'est-à-dire presque toujours.
+        /// </summary>
+        private static int _anyKeyAtAllFrame = -1;
+        private static bool _anyKeyAtAll;
+
+        private static bool AnyKeyDownAtAll()
+        {
+            // Réponse retenue POUR L'IMAGE. `GetAnyButtonDown` parcourt tout le clavier de
+            // Rewired : la poser quarante-huit fois par image aurait coûté plus cher que les
+            // quarante-huit questions qu'elle remplace. Une question, une fois, par image.
+            if (_anyKeyAtAllFrame == Time.frameCount) return _anyKeyAtAll;
+            _anyKeyAtAllFrame = Time.frameCount;
+
+            if (AnyUnityKeyDown())
+            {
+                _anyKeyAtAll = true;
+                return true;
+            }
+
+            try
+            {
+                Rewired.Keyboard kb = Keyboard();
+                _anyKeyAtAll = kb != null && kb.GetAnyButtonDown();
+            }
+            catch { _anyKeyAtAll = false; }
+
+            return _anyKeyAtAll;
+        }
+
         private static bool Pressed(KeyCode key)
         {
             if (key == KeyCode.None) return false;
-            return (AnyUnityKeyDown() && UnityEngine.Input.GetKeyDown(key)) || RewiredKeyDown(key);
+            if (!AnyKeyDownAtAll()) return false;
+            return UnityEngine.Input.GetKeyDown(key) || RewiredKeyDown(key);
         }
 
         /// <summary>

@@ -543,17 +543,40 @@ namespace SunHavenAccess.Navigation
             }
             catch { villagers = System.Array.Empty<Component>(); }
 
-            IEnumerable<Component> others;
+            return villagers.Concat(NonVillagers().Where(Near));
+        }
+
+        /// <summary>
+        /// Bêtes, ennemis, compagnons et autres joueurs — la liste RETENUE une demi-seconde.
+        ///
+        /// Les habitants viennent d'un registre déjà tenu par le jeu, donc gratuits. Les autres
+        /// demandent un balayage de scène, et la description de la case devant soi le relançait à
+        /// chaque pas. Le chronomètre a chiffré la note : jusqu'à deux millisecondes par image pour
+        /// TileCursor, en marchant en ville — davantage que tout le reste du mod réuni.
+        ///
+        /// Une demi-seconde de mémoire ne change rien à ce qu'on entend : une bête met bien plus
+        /// longtemps que cela à traverser une case, et leurs POSITIONS sont relues à chaque appel,
+        /// jamais mises en cache. Seule la liste de qui existe est retenue.
+        /// </summary>
+        private static Component[] _creatures = System.Array.Empty<Component>();
+        private static float _creaturesUntil;
+
+        private static Component[] NonVillagers()
+        {
+            if (Time.unscaledTime < _creaturesUntil) return _creatures;
+            _creaturesUntil = Time.unscaledTime + 0.5f;
+
             try
             {
-                others = Object.FindObjectsOfType<EnemyAI>().Where(e => e is not NPCAI && Near(e)).Cast<Component>()
-                    .Concat(Object.FindObjectsOfType<Animal>().Where(a => Near(a)))
-                    .Concat(Object.FindObjectsOfType<Pet>().Where(p => Near(p)))
-                    .Concat(Object.FindObjectsOfType<Player>().Where(p => p != Player.Instance && Near(p)));
+                _creatures = Object.FindObjectsOfType<EnemyAI>().Where(e => e is not NPCAI).Cast<Component>()
+                    .Concat(Object.FindObjectsOfType<Animal>())
+                    .Concat(Object.FindObjectsOfType<Pet>())
+                    .Concat(Object.FindObjectsOfType<Player>().Where(p => p != Player.Instance))
+                    .ToArray();
             }
-            catch { others = System.Array.Empty<Component>(); }
+            catch { _creatures = System.Array.Empty<Component>(); }
 
-            return villagers.Concat(others);
+            return _creatures;
         }
 
         /// <summary>
@@ -647,26 +670,56 @@ namespace SunHavenAccess.Navigation
         /// destination (nom de maison/grange/boutique...) sont privés : lus par réflexion, comme
         /// pour la quantité d'objets dans TooltipReader.cs.
         /// </summary>
+        /// <summary>
+        /// COMMENT ENTRER, PAS SEULEMENT CE QU'IL Y A.
+        ///
+        /// Le jeu a deux sortes de portes, et rien ne les distingue à l'oreille. Celles dont le
+        /// collisionneur est un déclencheur s'ouvrent au simple contact : on marche dedans. Les
+        /// autres — boutiques, maisons — demandent la touche d'interaction du jeu, et affichent
+        /// « Entrer » dans une infobulle que personne ne voit ici. Signalé en jeu : debout devant
+        /// l'entrée, impossible d'entrer, et rien qui explique pourquoi.
+        ///
+        /// On dit donc le geste, avec la vraie touche du joueur.
+        /// </summary>
+        private static string EntryHint(ScenePortalSpot portal)
+        {
+            try
+            {
+                InteractionInfo info = portal.InteractionPoint;
+                if (info == null || !info.canInteract)
+                    return Localization.Language.T(" Marchez dedans pour entrer.", " Walk into it to enter.");
+
+                string key = Input.GameKeys.NameFor(Button.Interact);
+                return string.IsNullOrEmpty(key)
+                    ? Localization.Language.T(" Utilisez la touche d'interaction pour entrer.",
+                                              " Use the interact key to enter.")
+                    : Localization.Language.T($" {key} pour entrer.", $" {key} to enter.");
+            }
+            catch { return string.Empty; }
+        }
+
         private static string DescribeBuildingEntrance(ScenePortalSpot portal)
         {
+            string how = EntryHint(portal);
+
             bool isPlayerHouse = (bool)(PlayerHousePortalField?.GetValue(portal) ?? false);
-            if (isPlayerHouse) return "Entrée, votre maison.";
+            if (isPlayerHouse) return "Entrée, votre maison." + how;
 
             bool isBuildingPortal = (bool)(BuildingPortalField?.GetValue(portal) ?? false);
             if (isBuildingPortal)
             {
                 object portalType = PortalTypeField?.GetValue(portal);
                 string label = portalType != null ? UiNameTranslator.Translate(portalType.ToString()) : Localization.Language.T("bâtiment", "building");
-                return $"Entrée, {label}.";
+                return $"Entrée, {label}." + how;
             }
 
             string sceneToLoad = SceneToLoadField?.GetValue(portal) as string;
             if (!string.IsNullOrWhiteSpace(sceneToLoad))
             {
-                return $"Entrée, {Util.SceneNames.Translate(sceneToLoad)}.";
+                return $"Entrée, {Util.SceneNames.Translate(sceneToLoad)}." + how;
             }
 
-            return "Entrée.";
+            return "Entrée." + how;
         }
 
         /// <param name="allowGenericName">
