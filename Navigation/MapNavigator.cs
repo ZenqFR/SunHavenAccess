@@ -77,6 +77,10 @@ namespace SunHavenAccess.Navigation
                 return;
             }
 
+            // Toute ouverture de la carte enrichit le plan des liaisons : on est forcément dans une
+            // zone, ses sorties sont lisibles maintenant, et jamais gratuitement plus tard.
+            WorldLinks.Learn();
+
             var labels = visible.Select(NameOf).ToList();
             Menus.ListMenu.Open("Lieux de la carte", labels, chosen => Choose(visible, chosen));
         }
@@ -126,12 +130,20 @@ namespace SunHavenAccess.Navigation
             string label = NameOf(location);
             Component entrance = EntranceFor(location);
 
+            // La zone du lieu, si on y est déjà allé une fois. C'est ce qui permet un trajet
+            // complet depuis n'importe où plutôt qu'un simple « pas d'entrée ici ».
+            string targetScene = entrance != null
+                ? Scanner.PortalDestination(entrance as ScenePortalSpot)
+                : WorldLinks.FindScene(location.location) ?? WorldLinks.FindScene(label);
+
+            bool reachable = entrance != null || targetScene != null;
+
             var actions = new List<string>
             {
-                entrance != null
-                    ? Localization.Language.T("S'y rendre à pied", "Walk there")
-                    : Localization.Language.T("S'y rendre à pied : pas d'entrée dans cette zone",
-                                              "Walk there: no entrance in this area"),
+                reachable
+                    ? Localization.Language.T("S'y rendre", "Go there")
+                    : Localization.Language.T("S'y rendre : lieu jamais visité",
+                                              "Go there: never visited"),
                 Localization.Language.T("Lire la description", "Read the description"),
                 Localization.Language.T("Sortir vers une autre zone", "Leave for another area"),
             };
@@ -139,14 +151,7 @@ namespace SunHavenAccess.Navigation
             Menus.ListMenu.Open(label, actions,
                 chosen =>
                 {
-                    if (chosen == 0)
-                    {
-                        if (entrance != null) PathingController.TravelTo(entrance.transform.position, label);
-                        else TolkSpeech.Speak(Localization.Language.T(
-                            "Pas d'entrée ici. Choisissez « Sortir vers une autre zone » pour vous rapprocher.",
-                            "No entrance here. Choose \"Leave for another area\" to get closer."), true);
-                        return;
-                    }
+                    if (chosen == 0) { GoTo(entrance, targetScene, label); return; }
 
                     if (chosen == 2) { OpenExits(); return; }
 
@@ -155,6 +160,30 @@ namespace SunHavenAccess.Navigation
                     location.OpenLocation();
                 },
                 onExitUp: OpenList);
+        }
+
+        /// <summary>
+        /// Se rendre au lieu, d'où que l'on parte.
+        ///
+        /// Trois cas, du plus simple au plus ambitieux. L'entrée est ici : on marche, c'est fini.
+        /// L'entrée est ailleurs mais on connaît le chemin : le trajet traverse les zones tout
+        /// seul, et l'on n'a plus rien à faire. On n'y est jamais allé : on le dit, franchement —
+        /// le mod ne connaît que ce qui a été exploré, et prétendre le contraire enverrait marcher
+        /// au hasard.
+        /// </summary>
+        private static void GoTo(Component entrance, string targetScene, string label)
+        {
+            if (entrance != null)
+            {
+                PathingController.TravelTo(entrance.transform.position, label);
+                return;
+            }
+
+            if (targetScene != null && Journey.Start(targetScene, label)) return;
+
+            TolkSpeech.Speak(Localization.Language.T(
+                $"{label} n'a pas encore été visité : je ne connais pas le chemin. Approchez-vous une première fois, et il sera retenu.",
+                $"{label} has not been visited yet: I don't know the way. Get there once, and it will be remembered."), true);
         }
 
         /// <summary>

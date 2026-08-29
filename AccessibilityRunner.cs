@@ -80,6 +80,7 @@ namespace SunHavenAccess
             ("TabListDriver", Menus.TabListDriver.Tick),
             ("SaveMenu", Menus.SaveMenu.Tick),
             ("PartyAnnouncer", PartyAnnouncer.Tick),
+            ("Journey", Navigation.Journey.Tick),
         };
 
         /// <summary>
