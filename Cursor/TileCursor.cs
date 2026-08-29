@@ -208,15 +208,18 @@ namespace SunHavenAccess.Cursor
 
             if (parts.Count == 0)
             {
-                // Aucune donnée sur la case visée : on dit au moins sur quoi l'on se tient, seul
-                // repère qui reste quand la case suivante n'en donne aucun.
-                string underfoot = DescribeGroundTile(player.Position);
-                return string.IsNullOrWhiteSpace(underfoot)
-                    ? Localization.Language.T($"Rien devant vous{side}.",
-                                              $"Nothing in front of you{side}.")
-                    : Localization.Language.T(
-                        $"Rien devant vous{side}. Sol sous vos pieds : {underfoot}.",
-                        $"Nothing in front of you{side}. Ground underfoot: {underfoot}.");
+                // ON PARLE DE LA CASE DEVANT, ET D'ELLE SEULE.
+                //
+                // Quand la case visée ne portait rien, on ajoutait le sol sous les pieds — mieux
+                // que le silence, pensait-on. En pratique, cette phrase arrive à chaque pas dans un
+                // champ vide et parle d'un endroit qu'on vient de quitter : c'est une information
+                // de plus à écarter mentalement, à chaque fois, pour entendre celle qu'on
+                // demandait. Signalé en jeu : « dis juste la case devant moi ».
+                //
+                // La touche de position, elle, dit toujours où l'on est. Chaque question a sa
+                // réponse, et aucune ne répond à la place d'une autre.
+                return Localization.Language.T($"Rien devant vous{side}.",
+                                               $"Nothing in front of you{side}.");
             }
 
             return string.Join(", ", parts).TrimEnd('.', ' ') + side + ".";

@@ -187,6 +187,7 @@ namespace SunHavenAccess.Localization
             { "Changements de zone", "Area exits" },
             { "Favoris", "Favourites" },
             { "Objets au sol", "Items on the ground" },
+            { "Points d'eau", "Water" },
             { "Points favoris", "Favourite points" },
             { "Animaux et compagnons", "Animals and pets" },
             { "Ennemis", "Enemies" },

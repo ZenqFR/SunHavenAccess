@@ -24,7 +24,7 @@ namespace SunHavenAccess.Navigation
         {
             "Personnages", "Plantations", "Ressources", "Entrées de bâtiment",
             "Animaux et compagnons", "Ennemis", "Mobilier et rangement", "Services et repères",
-            "Changements de zone", "Favoris", "Objets au sol"
+            "Changements de zone", "Favoris", "Objets au sol", "Points d'eau"
         };
 
         private const float Radius = 55f; // agrandi (était 40) : plusieurs objets légitimes tombaient hors champ
@@ -231,6 +231,7 @@ namespace SunHavenAccess.Navigation
                 8 => FindPortalsAndDoors(interiors: false),
                 9 => Favorites.MarkersHere(),
                 10 => Object.FindObjectsOfType<Pickup>(),
+                11 => WaterFinder.MarkersHere(),
                 4 => FindAnimalsAndPets(),
                 5 => FindEnemies(),
                 6 => FindFurniture(),
@@ -358,7 +359,24 @@ namespace SunHavenAccess.Navigation
         /// </summary>
         private static bool BelongsToActiveScene(Component c)
         {
-            if (c is Decoration deco) return deco.sceneID == ScenePortalManager.ActiveSceneIndex;
+            // UN ARBRE PRÉ-PLACÉ N'A PAS DE NUMÉRO DE ZONE.
+            //
+            // On exigeait `sceneID == ActiveSceneIndex`. Or ce numéro n'est attribué qu'aux objets
+            // POSÉS pendant la partie : le jeu s'en sert pour les retrouver dans la sauvegarde, et
+            // `sceneID != 0` est d'ailleurs sa propre façon de dire « celui-là a été posé ». Tout
+            // ce que la carte contient d'origine — les arbres, justement — porte donc zéro, et
+            // était écarté en bloc. Signalé deux fois en jeu : « je ne vois toujours pas les
+            // arbres ».
+            //
+            // C'est la MÊME erreur que pour les habitants la semaine dernière : une vérification
+            // plus stricte que la réalité, qui fait disparaître ce qu'on a sous les yeux. On
+            // accepte donc trois preuves, et le filtre de distance reste le vrai garde-fou.
+            if (c is Decoration deco)
+            {
+                if (deco.sceneID == 0) return true; // pré-placé : il appartient à la carte elle-même
+                if (deco.sceneID == ScenePortalManager.ActiveSceneIndex) return true;
+                return c.gameObject.scene.name == ScenePortalManager.ActiveSceneName;
+            }
             // UN HABITANT SOUS LES YEUX N'A PAS À PROUVER SON APPARTENANCE.
             //
             // On comparait `AI.Scene` au nom de la zone courante, caractère pour caractère. Signalé
@@ -391,7 +409,7 @@ namespace SunHavenAccess.Navigation
             // Un repère de favori est CRÉÉ par le mod : il n'appartient à aucune scène du jeu, et
             // le repli par nom l'écarterait systématiquement. Il n'est de toute façon construit
             // que pour la zone courante.
-            if (c is FavoriteMarker) return true;
+            if (c is FavoriteMarker || c is WaterMarker) return true;
 
             return c.gameObject.scene.name == ScenePortalManager.ActiveSceneName;
         }
@@ -742,6 +760,7 @@ namespace SunHavenAccess.Navigation
             }
 
             if (c is FavoriteMarker favorite) return favorite.FavoriteName;
+            if (c is WaterMarker water) return water.WaterName;
 
             // UN OBJET AU SOL SE DIT AVEC SA QUANTITÉ.
             //
