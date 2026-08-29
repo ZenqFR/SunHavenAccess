@@ -200,6 +200,53 @@ namespace SunHavenAccess.Navigation
 
             _items.Sort((a, b) => a.Distance.CompareTo(b.Distance));
             KeepNearestOfEachKind();
+
+            LogEmptyCategory(candidates, ppos);
+        }
+
+        /// <summary>
+        /// Quand une catégorie ne rend rien alors que des objets existaient, écrire POURQUOI.
+        ///
+        /// Une catégorie vide n'apprend rien : on ne sait pas si le monde est vide, si le filtre de
+        /// zone a tout écarté, ou si le rayon était trop court. Deux fois de suite, il a fallu une
+        /// relance et un rapport pour découvrir laquelle des trois — dont « je suis devant Anne et
+        /// le scanner ne la trouve pas ». Une ligne de journal répond en une lecture.
+        ///
+        /// Une seule fois par catégorie et par session : ces relevés se font à chaque pression de
+        /// touche, et le journal ne doit pas devenir le prochain problème.
+        /// </summary>
+        private static readonly HashSet<int> _loggedEmpty = new HashSet<int>();
+
+        private static void LogEmptyCategory(IEnumerable<Component> candidates, Vector3 ppos)
+        {
+            if (_items.Count > 0 || !_loggedEmpty.Add(_categoryIndex)) return;
+
+            try
+            {
+                var rejected = candidates
+                    .Where(c => c != null && c.gameObject != null)
+                    .Take(6)
+                    .Select(c =>
+                    {
+                        Vector3 delta = c.transform.position - ppos;
+                        float tiles = new Vector2(delta.x, delta.y / 1.4142135f).magnitude;
+                        string scene = c is AI ai ? ai.Scene : c.gameObject.scene.name;
+                        return $"    {c.GetType().Name} « {c.gameObject.name} » zone={scene} distance={tiles:F0}";
+                    })
+                    .ToArray();
+
+                if (rejected.Length == 0)
+                {
+                    Plugin.Log?.LogInfo($"Scanner, {CategoryNames[_categoryIndex]} : le jeu ne contient aucun objet de ce type ici.");
+                    return;
+                }
+
+                Plugin.Log?.LogInfo(
+                    $"Scanner, {CategoryNames[_categoryIndex]} : rien retenu alors que des objets existent. " +
+                    $"Zone active = « {ScenePortalManager.ActiveSceneName} », rayon = {Radius} cases.\n" +
+                    string.Join("\n", rejected));
+            }
+            catch { }
         }
 
         /// <summary>
@@ -248,7 +295,25 @@ namespace SunHavenAccess.Navigation
         private static bool BelongsToActiveScene(Component c)
         {
             if (c is Decoration deco) return deco.sceneID == ScenePortalManager.ActiveSceneIndex;
-            if (c is AI ai) return ai.Scene == ScenePortalManager.ActiveSceneName;
+            // UN HABITANT SOUS LES YEUX N'A PAS À PROUVER SON APPARTENANCE.
+            //
+            // On comparait `AI.Scene` au nom de la zone courante, caractère pour caractère. Signalé
+            // en jeu : debout devant Anne, le scanner ne la trouvait pas. Une égalité stricte de
+            // chaînes échoue pour trois fois rien — une casse, un espace, un champ que le jeu n'a
+            // pas encore mis à jour après un changement de zone — et l'habitant disparaît alors
+            // complètement, alors qu'il est là, à trois pas.
+            //
+            // On accepte donc trois preuves plutôt qu'une : le nom de zone du personnage, la scène
+            // Unity de son objet, ou simplement un champ vide. Le vrai garde-fou reste le filtre de
+            // distance, qui écarte de toute façon ce qui est à cinquante-cinq cases. Rater
+            // quelqu'un qu'on a devant soi est bien plus grave que d'en annoncer un de trop.
+            if (c is AI ai)
+            {
+                string active = ScenePortalManager.ActiveSceneName;
+                if (string.IsNullOrWhiteSpace(ai.Scene)) return true;
+                if (string.Equals(ai.Scene.Trim(), active?.Trim(), System.StringComparison.OrdinalIgnoreCase)) return true;
+                return string.Equals(c.gameObject.scene.name?.Trim(), active?.Trim(), System.StringComparison.OrdinalIgnoreCase);
+            }
 
             // Les joueurs ne vivent PAS dans la scène de la carte : Sun Haven charge chaque carte
             // en scène additive, alors que les joueurs sont dans une scène persistante. Le repli
@@ -275,10 +340,26 @@ namespace SunHavenAccess.Navigation
         /// </summary>
         private static IEnumerable<Component> FindNpcs()
         {
+            // ON REGARDE LA SCÈNE, PAS SEULEMENT LE REGISTRE.
+            //
+            // On se fiait au seul `NPCManager._npcsList`. C'est un registre : il contient qui le
+            // jeu a bien voulu y inscrire, pas forcément qui se tient devant vous. Un personnage
+            // absent de cette liste — arrivé par une scène, lié à une quête, pas encore enregistré
+            // — n'existait tout simplement pas pour le scanner.
+            //
+            // Balayer la scène en plus du registre garantit que ce qui est là est trouvé. Les
+            // doublons entre les deux sources ne coûtent rien : ils portent le même nom, et le
+            // regroupement par nom n'en garde qu'un.
             NPCManager mgr = NPCManager.Instance;
-            IEnumerable<Component> npcs = mgr != null
-                ? mgr._npcsList.Cast<Component>()
+            IEnumerable<Component> registered = mgr?._npcsList != null
+                ? mgr._npcsList.Where(n => n != null).Cast<Component>()
                 : System.Array.Empty<Component>();
+
+            IEnumerable<Component> present;
+            try { present = Object.FindObjectsOfType<NPCAI>().Cast<Component>(); }
+            catch { present = System.Array.Empty<Component>(); }
+
+            IEnumerable<Component> npcs = registered.Concat(present).Distinct();
 
             IEnumerable<Component> others;
             try
