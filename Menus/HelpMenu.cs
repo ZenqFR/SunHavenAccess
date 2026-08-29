@@ -204,9 +204,26 @@ namespace SunHavenAccess.Menus
             "Page précédente et Page suivante parcourent les éléments trouvés.",
 
             "Se rendre quelque part. Une fois un élément du scanner annoncé, Contrôle plus Origine vous y conduit automatiquement. " +
+            $"{K(ModConfig.ScannerCount)} donne la CASE de l'élément suivi, et Contrôle plus cette touche bascule entre " +
+            "tri par distance et tri par nom — le premier répond à « qu'y a-t-il autour de moi », le second à " +
+            "« où est la forge ». " +
             "Échap annule le trajet en cours. Le nombre d'éléments trouvés est annoncé à chaque changement de catégorie.",
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
+
+            $"Réentendre. {K(ModConfig.Repeat)} redit la dernière annonce ; appuyée PLUSIEURS FOIS de suite, " +
+            "elle remonte le fil d'un cran à chaque fois, jusqu'aux vingt dernières. " +
+            $"Contrôle plus {K(ModConfig.Repeat)} ouvre l'historique en liste, pour retrouver directement une " +
+            "notification ou un message passé au lieu de reculer vingt fois. " +
+            "Les notifications du jeu et le tchat y sont aussi : tout ce qui a été dit passe par là.",
+
+            "Les avertissements. Trois choses ne s'entendent pas alors qu'elles se voient d'un coup d'œil, " +
+            "et le mod les annonce désormais. Le SAC PLEIN, dès l'avant-dernier emplacement libre : " +
+            "sans lui, on récolte pendant dix minutes en croyant engranger, et tout ce qu'on ramasse est perdu. " +
+            "La VIE, à la moitié, au quart, puis critique. Et la NUIT, à minuit puis à une heure, " +
+            "parce qu'on s'évanouit à deux heures et qu'on y perd sa journée. " +
+            "Chaque seuil ne parle qu'une fois et ne se réarme qu'en repassant au-dessus : un avertissement " +
+            "répété devient un bruit de fond qu'on cesse d'écouter.",
 
             "Les objets tombés par terre. Le scanner a une catégorie « Objets au sol » : c'est ce qui tombe " +
             "d'un arbre abattu, d'un rocher brisé, d'une créature vaincue — et ce qui disparaît si personne " +

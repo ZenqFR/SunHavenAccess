@@ -95,7 +95,14 @@ namespace SunHavenAccess.Input
                 return;
             }
 
-            if (Pressed(ModConfig.Repeat.Value)) TolkSpeech.Repeat();
+            // Répéter, ou TOUT revoir. Des appuis rapprochés remontent le fil d'un cran à chaque
+            // fois ; Contrôle ouvre l'historique en liste, pour retrouver directement une
+            // notification ou un message passé plutôt que de reculer vingt fois.
+            if (Pressed(ModConfig.Repeat.Value))
+            {
+                if (CtrlHeld()) HistoryMenu.Open();
+                else TolkSpeech.Repeat();
+            }
             if (Pressed(ModConfig.DescribeFront.Value)) TileCursor.AnnounceFront();
             if (Pressed(ModConfig.Position.Value)) TileCursor.AnnouncePosition();
             if (Pressed(ModConfig.NextNpc.Value)) NPCFinder.AnnounceNext();
@@ -199,18 +206,10 @@ namespace SunHavenAccess.Input
             }
             else if (!nativeSelectionActive)
             {
-                // Le déplacement case par case prend les flèches, quand il est actif et qu'on est
-                // dans le monde. Sans cette sortie, une flèche ferait DEUX choses à la fois : un
-                // pas, et un déplacement dans une liste de menu qui n'est pas à l'écran — laquelle
-                // annoncerait un élément par-dessus la description de la case où l'on arrive.
-                //
-                // C'est la règle qui vaut partout ici : une touche, un maître. Le mode qu'on a
-                // allumé exprès l'emporte sur le repli générique.
-                if (StepMovement.Active && Wish.Player.Instance != null) { /* les flèches lui appartiennent */ }
                 // Ctrl+Gauche/Droite ajuste un curseur (Slider) sélectionné (ex. couleurs en
                 // création de personnage) — vérifié EN PREMIER pour que Ctrl+flèche n'avance/
                 // recule pas AUSSI dans la liste des éléments du menu.
-                else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.AdjustSlider(-1);
+                if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.AdjustSlider(-1);
                 else if (ctrl && UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.AdjustSlider(1);
                 else if (Pressed(ModConfig.MenuPrevious.Value) || UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) MenuNavigator.Previous();
                 else if (Pressed(ModConfig.MenuNext.Value) || UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) MenuNavigator.Next();
@@ -284,7 +283,12 @@ namespace SunHavenAccess.Input
                 else if (ctrl) Scanner.TravelToCurrent();
                 else Scanner.AnnounceInfo();
             }
-            if (Pressed(ModConfig.ScannerCount.Value)) Scanner.AnnounceCount();
+            // Fin seule : la case de l'élément suivi. Ctrl+Fin : bascule entre tri par distance
+            // et tri par nom — même convention que partout, la touche seule agit, Ctrl règle.
+            if (Pressed(ModConfig.ScannerCount.Value))
+            {
+                if (ctrl) Scanner.ToggleSort(); else Scanner.AnnounceCount();
+            }
 
             // Échap annule un cheminement automatique en cours, où qu'on soit (ne fait rien si
             // aucun cheminement n'est en cours, donc n'interfère pas avec les autres usages

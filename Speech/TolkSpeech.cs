@@ -130,6 +130,7 @@ namespace SunHavenAccess.Speech
             }
 
             _lastMessage = text;
+            RecordInHistory(text);
             bool spoken = false;
 
             if (_nvdaAvailable)
@@ -173,11 +174,94 @@ namespace SunHavenAccess.Speech
             }
         }
 
-        /// <summary>Répète la dernière phrase annoncée (touche dédiée).</summary>
+        /// <summary>
+        /// Les dernières annonces, la plus récente en tête. Vingt suffisent : au-delà, on ne
+        /// remonte plus, on cherche.
+        /// </summary>
+        private static readonly System.Collections.Generic.List<string> _history =
+            new System.Collections.Generic.List<string>();
+
+        private const int HistorySize = 20;
+
+        /// <summary>Où l'on en est dans la remontée ; -1 quand on n'a pas commencé.</summary>
+        private static int _historyIndex = -1;
+
+        /// <summary>Instant de la dernière répétition, pour distinguer une série d'un nouvel appui.</summary>
+        private static float _lastRepeat;
+
+        /// <summary>
+        /// Répète ce qui vient d'être dit, et REMONTE LE FIL si l'on insiste.
+        ///
+        /// Ne redire que la dernière phrase ne sert qu'à une chose : réentendre ce qu'on a mal
+        /// saisi. Or ce qu'on a manqué est souvent l'avant-dernière chose — une annonce en a
+        /// couvert une autre, on s'est absenté deux secondes, un avertissement est passé pendant
+        /// qu'on écoutait autre chose. Des appuis rapprochés remontent donc d'un cran à chaque
+        /// fois, comme le fait stardew-access ; un appui isolé repart de la plus récente.
+        ///
+        /// Trois secondes séparent les deux gestes : assez pour enchaîner sans se presser, assez
+        /// court pour qu'un appui plus tard soit compris comme une nouvelle demande.
+        /// </summary>
         public static void Repeat()
         {
-            if (!string.IsNullOrEmpty(_lastMessage)) Speak(_lastMessage, true);
+            if (_history.Count == 0)
+            {
+                if (!string.IsNullOrEmpty(_lastMessage)) Speak(_lastMessage, true);
+                return;
+            }
+
+            bool continuing = UnityEngine.Time.unscaledTime - _lastRepeat < 3f;
+            _lastRepeat = UnityEngine.Time.unscaledTime;
+
+            _historyIndex = continuing ? _historyIndex + 1 : 0;
+
+            if (_historyIndex >= _history.Count)
+            {
+                // Bout du fil : on le dit et l'on y reste, plutôt que de reboucler en silence sur
+                // la plus récente — on croirait que rien ne s'est passé.
+                _historyIndex = _history.Count - 1;
+                UiSound.EdgeBump();
+            }
+
+            string message = _history[_historyIndex];
+            SpeakWithoutRecording(_historyIndex == 0
+                ? message
+                : Localization.Language.T($"{_historyIndex + 1} en arrière : {message}",
+                                          $"{_historyIndex + 1} back: {message}"));
         }
+
+        /// <summary>
+        /// Annonce SANS entrer dans l'historique. Sans cela, remonter le fil y ajouterait ses
+        /// propres répétitions et l'on tournerait en rond au lieu de remonter.
+        /// </summary>
+        private static void SpeakWithoutRecording(string text)
+        {
+            _suspendHistory = true;
+            try { Speak(text, true); }
+            finally { _suspendHistory = false; }
+        }
+
+        private static bool _suspendHistory;
+
+        /// <summary>
+        /// Retient une annonce. Les répétitions immédiates ne sont pas gardées : la case devant soi
+        /// est décrite à chaque pas, et sans ce filtre l'historique se remplirait de vingt fois la
+        /// même herbe, ne remontant plus que trois secondes de jeu.
+        /// </summary>
+        private static void RecordInHistory(string text)
+        {
+            if (_suspendHistory || string.IsNullOrWhiteSpace(text)) return;
+            if (_history.Count > 0 && _history[0] == text) return;
+
+            _history.Insert(0, text);
+            if (_history.Count > HistorySize) _history.RemoveAt(_history.Count - 1);
+
+            // Une nouvelle annonce recommence le fil : remonter doit repartir d'ici, pas de l'endroit
+            // où l'on s'était arrêté il y a dix minutes.
+            _historyIndex = -1;
+        }
+
+        /// <summary>Toutes les annonces conservées, la plus récente en tête, pour une liste.</summary>
+        public static System.Collections.Generic.IReadOnlyList<string> History => _history;
 
         public static void Silence()
         {

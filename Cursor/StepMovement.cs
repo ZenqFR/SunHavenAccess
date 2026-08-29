@@ -44,13 +44,30 @@ namespace SunHavenAccess.Cursor
         internal static void Toggle()
         {
             _active = !_active;
+
+            // On rend la main au jeu DÈS l'extinction, pas à la prochaine image : si quoi que ce
+            // soit interrompait la boucle entre-temps, le personnage resterait immobile sans que
+            // rien n'explique pourquoi. C'est le pire défaut possible pour ce mode.
+            if (!_active) RestoreGameMovement();
+
             TolkSpeech.Speak(Localization.Language.T(
                 _active
-                    ? "Déplacement case par case activé. Une flèche, un pas."
+                    ? "Déplacement case par case activé. Vos touches de déplacement font un pas chacune."
                     : "Déplacement case par case désactivé.",
                 _active
-                    ? "Tile by tile movement on. One arrow, one step."
+                    ? "Tile by tile movement on. Your movement keys now take one step each."
                     : "Tile by tile movement off."), true);
+        }
+
+        /// <summary>
+        /// Rend au jeu son déplacement continu. Écrit une seule fois, et jamais quand le mode est
+        /// éteint : le jeu coupe LUI AUSSI ce drapeau — pendant une cinématique, un dialogue — et
+        /// le forcer à vrai en permanence casserait ces moments-là.
+        /// </summary>
+        private static void RestoreGameMovement()
+        {
+            try { if (!PlayerInput.AllowMovement) PlayerInput.AllowMovement = true; }
+            catch { }
         }
 
         internal static void Tick()
@@ -58,19 +75,46 @@ namespace SunHavenAccess.Cursor
             if (!_active) return;
 
             Player player = Player.Instance;
-            if (player == null) return;
+            if (player == null)
+            {
+                // Hors partie, ce mode n'a plus d'objet — et surtout, il ne doit pas laisser le
+                // déplacement du jeu coupé derrière lui.
+                _active = false;
+                RestoreGameMovement();
+                return;
+            }
 
-            // Un menu a la priorité absolue sur les flèches, et le curseur de case libre juste
-            // après : on ne prend jamais les flèches à qui s'en sert déjà.
+            // ON COUPE LE DÉPLACEMENT CONTINU DU JEU, ET ON MARCHE À SA PLACE.
+            //
+            // Le mode s'utilisait aux flèches, ce qui obligeait à lâcher les touches de
+            // déplacement pour en prendre d'autres — deux façons d'avancer selon le mode, et une
+            // gymnastique de plus à retenir. Signalé en jeu : ce doit être ZQSD, comme le reste du
+            // temps. Se déplacer se fait avec les touches de déplacement, point.
+            //
+            // `PlayerInput.AllowMovement` est exactement le drapeau qu'il faut, et
+            // `GetButtonDown(..., ignoreAllowInput: true)` lit les touches MÊME quand il est
+            // coupé : on garde donc les touches réelles du joueur, quelles qu'elles soient et
+            // quelle que soit sa disposition de clavier. Rien n'est supposé sur AZERTY ou QWERTY.
+            try { if (PlayerInput.AllowMovement) PlayerInput.AllowMovement = false; }
+            catch { }
+
+            // Un menu a la priorité absolue, et le curseur de case libre juste après : on ne prend
+            // jamais les touches à qui s'en sert déjà.
             if (Menus.VoiceMenus.AnyOpen || Menus.ZoneNavigator.IsActive()) return;
             if (FreeTileCursor.Active) return;
 
             if (Busy) return;
 
-            if (UnityEngine.Input.GetKeyDown(KeyCode.UpArrow)) Step(player, 0, 1);
-            else if (UnityEngine.Input.GetKeyDown(KeyCode.DownArrow)) Step(player, 0, -1);
-            else if (UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow)) Step(player, -1, 0);
-            else if (UnityEngine.Input.GetKeyDown(KeyCode.RightArrow)) Step(player, 1, 0);
+            if (Pressed(Button.Up)) Step(player, 0, 1);
+            else if (Pressed(Button.Down)) Step(player, 0, -1);
+            else if (Pressed(Button.Left)) Step(player, -1, 0);
+            else if (Pressed(Button.Right)) Step(player, 1, 0);
+        }
+
+        private static bool Pressed(Button button)
+        {
+            try { return PlayerInput.GetButtonDown(button, ignoreAllowInput: true); }
+            catch { return false; }
         }
 
         /// <summary>

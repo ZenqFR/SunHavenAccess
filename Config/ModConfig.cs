@@ -155,10 +155,14 @@ namespace SunHavenAccess.Config
                 "Élément suivant du scanner. Avec Ctrl : catégorie suivante.", "Scanner : élément suivant (Ctrl = catégorie suivante)");
             ScannerNearest = Bind(config, section, "ScannerOrigine", KeyCode.Home,
                 "Annonce l'élément actuellement sélectionné par le scanner (ou le plus proche si aucun). Avec Ctrl : lance un cheminement automatique vers lui (Échap pour annuler).", "Scanner : annoncer l'élément sélectionné (Ctrl = s'y rendre)");
-            // Non assignée par défaut : changer de catégorie annonce déjà le nombre trouvé, donc
-            // cette touche ne fait que le redemander. Conservée dans la liste des raccourcis.
-            ScannerCount = Bind(config, section, "ScannerFinV2", KeyCode.None,
-                "Annonce le nombre d'éléments trouvés dans la catégorie actuelle du scanner. Non assignée par défaut : ce nombre est déjà annoncé au changement de catégorie.", "Scanner : annoncer le nombre trouvé");
+            // Remise en service : elle ne redemandait qu'un nombre déjà annoncé au changement de
+            // catégorie, ce qui ne valait pas une touche. Elle donne désormais la CASE de
+            // l'élément suivi — une information qu'on n'avait nulle part — et, avec Ctrl, bascule
+            // entre tri par distance et tri par nom. Clé de config renommée pour imposer le
+            // nouveau défaut à qui avait déjà le fichier.
+            ScannerCount = Bind(config, section, "ScannerFinV3", KeyCode.End,
+                "Annonce la case de l'élément suivi par le scanner, et le nombre trouvé. Avec Ctrl : bascule entre tri par distance et tri par nom.",
+                "Scanner : case de l'élément (Ctrl = changer de tri)");
 
             // Le tchat/console de debug du jeu (Quantum Console) s'ouvrait par défaut sur Entrée,
             // en plein conflit avec la validation de menu/dialogue du mod — voir

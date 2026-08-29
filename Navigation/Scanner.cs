@@ -141,13 +141,62 @@ namespace SunHavenAccess.Navigation
             PathingController.TravelTo(item.Obj.transform.position, item.Label);
         }
 
+        /// <summary>
+        /// LA CASE DE L'ÉLÉMENT, PAS SEULEMENT SA DISTANCE.
+        ///
+        /// « Douze cases au nord-est » dit combien marcher ; cela ne dit pas OÙ c'est. Or on
+        /// raisonne en coordonnées dès qu'on veut poser un bâtiment, retrouver un endroit demain,
+        /// ou décrire à quelqu'un où l'on est. Le nombre d'éléments, lui, est déjà annoncé à chaque
+        /// changement de catégorie : le redire ici ne servait à rien.
+        ///
+        /// Le compte reste dit, en fin de phrase, pour ne rien perdre de l'ancien usage.
+        /// </summary>
         public static void AnnounceCount()
         {
             Rescan();
+
+            if (_items.Count == 0)
+            {
+                TolkSpeech.Speak(Localization.Language.T($"Rien trouvé en {CategoryName()}.",
+                                                          $"Nothing found in {CategoryName()}."), true);
+                return;
+            }
+
+            if (_itemIndex < 0 || _itemIndex >= _items.Count) _itemIndex = 0;
+
+            var item = _items[_itemIndex];
+            Vector2Int tile = Util.TileGeometry.WorldToTile(item.Obj != null ? item.Obj.transform.position : Vector3.zero);
+
             TolkSpeech.Speak(Localization.Language.T(
-                $"{_items.Count} élément{(_items.Count > 1 ? "s" : "")} trouvé{(_items.Count > 1 ? "s" : "")} " +
-                $"en {CategoryName()}.",
-                $"{_items.Count} found in {CategoryName()}."), true);
+                $"{item.Label}, case {tile.x}, {tile.y}. {_items.Count} élément{(_items.Count > 1 ? "s" : "")} en {CategoryName()}.",
+                $"{item.Label}, tile {tile.x}, {tile.y}. {_items.Count} in {CategoryName()}."), true);
+        }
+
+        /// <summary>
+        /// Trier par NOM plutôt que par distance.
+        ///
+        /// Le tri par distance répond à « qu'y a-t-il autour de moi ». Il ne répond pas à « où est
+        /// la forge », question qu'on se pose tout aussi souvent et pour laquelle il faut alors
+        /// parcourir toute la liste. Le tri alphabétique met chaque chose à une place prévisible,
+        /// ce qui compte d'autant plus qu'on ne voit pas la liste.
+        ///
+        /// La bascule est annoncée et vaut pour toutes les catégories : deux modes de tri selon la
+        /// catégorie seraient une règle de plus à retenir pour rien.
+        /// </summary>
+        private static bool _alphabetical;
+
+        public static void ToggleSort()
+        {
+            _alphabetical = !_alphabetical;
+            Rescan();
+
+            TolkSpeech.Speak(Localization.Language.T(
+                _alphabetical
+                    ? $"Tri par nom. {CategoryName()}, {_items.Count} élément{(_items.Count > 1 ? "s" : "")}."
+                    : $"Tri par distance. {CategoryName()}, {_items.Count} élément{(_items.Count > 1 ? "s" : "")}.",
+                _alphabetical
+                    ? $"Sorted by name. {CategoryName()}, {_items.Count}."
+                    : $"Sorted by distance. {CategoryName()}, {_items.Count}."), true);
         }
 
         private static void AnnounceCurrent()
@@ -204,8 +253,17 @@ namespace SunHavenAccess.Navigation
                 _items.Add((c, label, distanceTiles, Strings.BearingName(delta)));
             }
 
+            // TOUJOURS trier par distance d'abord, même quand on demandera l'ordre alphabétique :
+            // le regroupement qui suit ne garde qu'un exemplaire par nom, et il doit garder le PLUS
+            // PROCHE. Trier par nom avant lui retiendrait un exemplaire au hasard, et « s'y rendre »
+            // enverrait vers un chêne à quarante cases alors qu'un autre est à trois.
             _items.Sort((a, b) => a.Distance.CompareTo(b.Distance));
             KeepNearestOfEachKind();
+
+            if (_alphabetical)
+            {
+                _items.Sort((a, b) => string.Compare(a.Label, b.Label, System.StringComparison.CurrentCultureIgnoreCase));
+            }
 
             LogEmptyCategory(candidates, ppos);
         }

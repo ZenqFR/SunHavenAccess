@@ -85,6 +85,7 @@ namespace SunHavenAccess
             ("TextPrompt", Menus.TextPrompt.Tick),
             ("DialogueChoiceMenu", Dialogue.DialogueChoiceMenu.Tick),
             ("StepMovement", StepMovement.Tick),
+            ("SurvivalWarnings", SurvivalWarnings.Tick),
         };
 
         /// <summary>
