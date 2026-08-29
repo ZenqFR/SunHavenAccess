@@ -81,12 +81,23 @@ namespace SunHavenAccess.Navigation
             Menus.ListMenu.Open("Lieux de la carte", labels, chosen => Choose(visible, chosen));
         }
 
+        /// <summary>
+        /// Le nom du lieu, tel que le jeu l'écrit dans la langue où l'on joue.
+        ///
+        /// On lisait auparavant TOUS les textes de l'icône, ce qui donnait « carte popup café » :
+        /// le nom du lieu noyé dans les noms techniques des objets qui l'entourent. Or `MapImage`
+        /// porte sa propre clé de traduction, et `LocalizeText.TranslateText` rend le nom seul,
+        /// déjà traduit par le jeu. Même principe que pour les objets : la source du jeu plutôt
+        /// qu'un ramassage de texte à l'écran.
+        /// </summary>
         private static string NameOf(MapImage image)
         {
             try
             {
-                string text = Util.TextUtil.Clean(Util.UiTextExtractor.ExtractAll(image.gameObject));
-                if (!string.IsNullOrWhiteSpace(text)) return text;
+                string translated = LocalizeText.TranslateText(image.locationKey, image.location);
+                if (!string.IsNullOrWhiteSpace(translated)) return Util.TextUtil.Clean(translated);
+
+                if (!string.IsNullOrWhiteSpace(image.location)) return Util.TextUtil.Clean(image.location);
             }
             catch { }
             return "Lieu sans nom";
@@ -122,6 +133,7 @@ namespace SunHavenAccess.Navigation
                     : Localization.Language.T("S'y rendre à pied : pas d'entrée dans cette zone",
                                               "Walk there: no entrance in this area"),
                 Localization.Language.T("Lire la description", "Read the description"),
+                Localization.Language.T("Sortir vers une autre zone", "Leave for another area"),
             };
 
             Menus.ListMenu.Open(label, actions,
@@ -131,10 +143,12 @@ namespace SunHavenAccess.Navigation
                     {
                         if (entrance != null) PathingController.TravelTo(entrance.transform.position, label);
                         else TolkSpeech.Speak(Localization.Language.T(
-                            "Ce lieu n'a pas d'entrée dans la zone où vous êtes : il faut d'abord vous en approcher.",
-                            "This place has no entrance in the area you are in: you must get closer first."), true);
+                            "Pas d'entrée ici. Choisissez « Sortir vers une autre zone » pour vous rapprocher.",
+                            "No entrance here. Choose \"Leave for another area\" to get closer."), true);
                         return;
                     }
+
+                    if (chosen == 2) { OpenExits(); return; }
 
                     // `OpenLocation` centre la carte ET remplit le panneau de description ; le
                     // patch Harmony sur Map.OpenLocation se charge de l'annoncer.
@@ -188,6 +202,55 @@ namespace SunHavenAccess.Navigation
                     .First().Portal;
             }
             catch { return null; }
+        }
+
+        /// <summary>
+        /// Les sorties de la zone où l'on est, pour s'approcher d'un lieu qu'on ne peut pas
+        /// atteindre d'une traite.
+        ///
+        /// AUCUN TRAJET NE RELIE DEUX ZONES. Le jeu les charge séparément, et le chemin calculé
+        /// s'arrête au bord de celle où l'on se trouve : demander « emmène-moi au café » depuis la
+        /// ferme n'a pas de réponse en un seul geste, quoi qu'on fasse. Vérifié dans le journal —
+        /// depuis la ferme, les seules entrées existantes mènent au poulailler, à la grange, à la
+        /// maison, au champ, à la forêt, à la plage et à la ville. Le café n'est nulle part.
+        ///
+        /// Mais la ville, elle, est là. On mène donc à la SORTIE, et le reste se fait tout seul :
+        /// une fois arrivé, rouvrir la liste des lieux et « s'y rendre à pied » fonctionne, parce
+        /// que l'entrée du café existe désormais dans la zone. Deux gestes au lieu d'un impossible.
+        ///
+        /// Les sorties sont celles que le jeu déclare, pas une liste écrite d'avance : une zone
+        /// ajoutée par une mise à jour apparaîtra ici sans qu'on y touche.
+        /// </summary>
+        private static void OpenExits()
+        {
+            var exits = Scanner.PortalsInScene()
+                .Where(p => p != null && !string.IsNullOrWhiteSpace(Scanner.PortalDestination(p)))
+                .OrderBy(p => Wish.Player.Instance != null
+                    ? Vector3.Distance(p.transform.position, Wish.Player.Instance.transform.position)
+                    : 0f)
+                .ToList();
+
+            if (exits.Count == 0)
+            {
+                TolkSpeech.Speak(Localization.Language.T(
+                    "Aucune sortie trouvée dans cette zone.",
+                    "No exit found in this area."), true);
+                return;
+            }
+
+            var labels = exits
+                .Select(p => Util.UiNameTranslator.Translate(Scanner.PortalDestination(p)))
+                .ToList();
+
+            Menus.ListMenu.Open(
+                Localization.Language.T("Sorties de cette zone", "Exits from this area"),
+                labels,
+                chosen =>
+                {
+                    if (chosen < 0 || chosen >= exits.Count) return;
+                    PathingController.TravelTo(exits[chosen].transform.position, labels[chosen]);
+                },
+                onExitUp: OpenList);
         }
 
         private static string Flatten(string s) =>
