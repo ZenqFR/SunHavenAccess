@@ -60,7 +60,19 @@ namespace SunHavenAccess.Menus
 
             if (Time.unscaledTime > _waitUntil)
             {
+                // ON RENONCE EN LE DISANT.
+                //
+                // L'établi a montré ce que coûte un abandon silencieux : la liste ne s'ouvrait pas,
+                // et rien ne permettait de savoir si le mod n'avait pas vu l'écran ou s'il avait
+                // cherché en vain. Une phrase, et le journal, valent mieux qu'un écran muet.
+                //
+                // Si cela se produit ici, la cause sera probablement la même : une liste virtuelle,
+                // dont le jeu ne construit que les quelques articles réellement visibles. Il
+                // faudra alors lire la boutique elle-même plutôt que son affichage.
                 _waitUntil = 0f;
+                Plugin.Log?.LogInfo("Boutique : aucun article trouvé à l'écran.");
+                TolkSpeech.Speak(Localization.Language.T(
+                    "Aucun article lu dans cette boutique.", "No item read in this shop."), true);
                 return;
             }
 

@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using HarmonyLib;
 using UnityEngine;
 using Wish;
 using SunHavenAccess.Info;
 using SunHavenAccess.Patches;
 using SunHavenAccess.Speech;
-using SunHavenAccess.Util;
 
 namespace SunHavenAccess.Menus
 {
@@ -16,134 +16,181 @@ namespace SunHavenAccess.Menus
     /// CE QUE C'ÉTAIT. L'écran d'artisanat est une grille de vignettes. Chaque recette y montre son
     /// résultat, ses ingrédients en petites cases à côté, et trois boutons pour en fabriquer un,
     /// cinq ou vingt. Tout repose sur le regard : quelle vignette va avec quels ingrédients, et
-    /// lesquels on possède. Sans la vue, on ne savait ni ce qu'on pouvait faire, ni ce qu'il
-    /// manquait, ni combien on allait en produire.
+    /// lesquels on possède.
     ///
-    /// CE QUE C'EST. Une liste de recettes. Chacune dit son résultat et ses ingrédients dans la
-    /// même phrase — c'est ce qu'on veut savoir avant de choisir, pas après. Valider une recette
-    /// ouvre ce qu'on peut en faire : en fabriquer un, cinq, vingt, ou une quantité qu'on tape.
+    /// ON LIT LES RECETTES, PAS LES VIGNETTES. La première version cherchait les `CraftingPanel`
+    /// affichés — et n'en trouvait aucun : cette liste est VIRTUELLE, le jeu ne construit que les
+    /// quelques vignettes réellement visibles à l'écran et les recycle en défilant. Chercher des
+    /// vignettes, c'était chercher un affichage plutôt qu'un contenu. Les recettes, elles, sont
+    /// toutes là, dans l'établi, dès son ouverture.
     ///
-    /// LA QUANTITÉ LIBRE existe parce que un, cinq et vingt sont des raccourcis d'interface, pas
-    /// des besoins réels : on veut trois planches, ou douze. Le jeu n'offre pas ce champ ; on
-    /// enchaîne donc ses propres appels, ce qu'il accepte parfaitement puisque c'est ce que ferait
-    /// un joueur en cliquant plusieurs fois.
+    /// Cela vaut mieux à tous égards : la liste est complète même sans défiler, elle ne dépend
+    /// d'aucun détail de mise en page, et `CraftingTable.Craft` comme `CanCraft` sont publiques —
+    /// on fabrique donc par le même chemin que le jeu, et l'on sait dire ce qui est réalisable.
     ///
-    /// AUCUN SONDAGE. `CraftingTable.Interact` prévient à l'ouverture. Les vignettes, elles, sont
-    /// construites en différé : on attend qu'elles existent, pendant deux secondes au plus, puis on
-    /// renonce en silence plutôt que de guetter indéfiniment.
+    /// LA QUANTITÉ LIBRE existe parce qu'un, cinq et vingt sont des raccourcis d'interface, pas des
+    /// besoins réels : on veut trois planches, ou douze.
     /// </summary>
     internal static class CraftingMenu
     {
         private const string OwnerTag = "artisanat";
 
-        /// <summary>Instant limite d'attente des vignettes ; zéro quand on n'attend rien.</summary>
+        private static CraftingTable _table;
         private static float _waitUntil;
+        private static FieldInfo _recipesField;
 
         [HarmonyPatch(typeof(CraftingTable), nameof(CraftingTable.Interact))]
         public static class OpenPatch
         {
-            private static void Postfix() =>
-                PatchGuard.Run("ArtisanatOuvert", () => _waitUntil = Time.unscaledTime + 2f);
+            private static void Postfix(CraftingTable __instance) =>
+                PatchGuard.Run("ArtisanatOuvert", () =>
+                {
+                    _table = __instance;
+                    _waitUntil = Time.unscaledTime + 2f;
+                });
         }
 
         internal static void Tick()
         {
             if (_waitUntil == 0f) return; // rien en attente : coût nul
 
-            if (Time.unscaledTime > _waitUntil)
+            if (Time.unscaledTime > _waitUntil || _table == null)
             {
-                _waitUntil = 0f;
+                Give();
                 return;
             }
 
-            List<CraftingPanel> panels = Panels();
-            if (panels.Count == 0) return; // pas encore construites, on repasse
+            List<Recipe> recipes = Recipes(_table);
+            if (recipes.Count == 0) return; // pas encore chargées, on repasse
 
+            CraftingTable table = _table;
             _waitUntil = 0f;
-            Open(panels);
+            _table = null;
+
+            Open(table, recipes);
         }
 
-        private static List<CraftingPanel> Panels()
+        /// <summary>
+        /// On renonce en le DISANT. Un établi qui s'ouvre en silence laisse croire que le mod n'a
+        /// rien vu, et l'on reste devant un écran muet sans savoir s'il faut insister.
+        /// </summary>
+        private static void Give()
+        {
+            bool wasWaiting = _waitUntil != 0f;
+            _waitUntil = 0f;
+            _table = null;
+
+            if (!wasWaiting) return;
+
+            Plugin.Log?.LogInfo("Artisanat : aucune recette lue sur cet établi.");
+            TolkSpeech.Speak(Localization.Language.T(
+                "Aucune recette lue sur cet établi.", "No recipe read on this table."), true);
+        }
+
+        /// <summary>
+        /// Les recettes de l'établi. Le champ est privé mais c'est la source complète ; la méthode
+        /// publique de tri, elle, joue un son à chaque appel et rend une liste vide dans son cas
+        /// par défaut — inutilisable pour simplement lire.
+        /// </summary>
+        private static List<Recipe> Recipes(CraftingTable table)
         {
             try
             {
-                return Object.FindObjectsOfType<CraftingPanel>()
-                    .Where(p => p != null && p.gameObject.activeInHierarchy && p.outputImage != null)
-                    .OrderBy(p => Label(p))
-                    .ToList();
+                _recipesField ??= typeof(CraftingTable).GetField("_craftingRecipes",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+
+                return (_recipesField?.GetValue(table) as List<Recipe>)?
+                    .Where(r => r != null && r.output2 != null)
+                    .ToList() ?? new List<Recipe>();
             }
-            catch { return new List<CraftingPanel>(); }
+            catch { return new List<Recipe>(); }
         }
 
-        private static void Open(List<CraftingPanel> panels)
+        private static void Open(CraftingTable table, List<Recipe> recipes)
         {
-            var entries = panels.Select(Describe).ToList();
+            // Le réalisable d'abord : c'est ce qu'on cherche neuf fois sur dix, et le reste n'est
+            // qu'un pense-bête pour la prochaine fois.
+            var ordered = recipes
+                .OrderByDescending(r => CanMake(table, r))
+                .ThenBy(Output)
+                .ToList();
+
+            var entries = ordered.Select(r => Describe(table, r)).ToList();
 
             ListMenu.Open(Localization.Language.T("Fabrication", "Crafting"), entries,
                 chosen =>
                 {
-                    if (chosen >= 0 && chosen < panels.Count) OpenRecipe(panels, panels[chosen]);
+                    if (chosen >= 0 && chosen < ordered.Count) OpenRecipe(table, ordered, ordered[chosen]);
                 },
                 owner: OwnerTag);
         }
 
-        /// <summary>
-        /// Une recette en une phrase : ce qu'elle produit, puis ce qu'elle consomme. L'ordre compte
-        /// — on cherche d'abord ce qu'on veut obtenir, et seulement ensuite si l'on peut.
-        /// </summary>
-        private static string Describe(CraftingPanel panel)
+        private static bool CanMake(CraftingTable table, Recipe recipe)
         {
-            string output = Label(panel);
-            string inputs = Ingredients(panel);
+            try { return table.CanCraft(recipe, 1); }
+            catch { return false; }
+        }
+
+        /// <summary>
+        /// Une recette en une phrase : ce qu'elle produit, si on peut la faire, et avec quoi.
+        /// L'ordre suit la décision qu'on prend — quoi, puis est-ce possible, puis à quel prix.
+        /// </summary>
+        private static string Describe(CraftingTable table, Recipe recipe)
+        {
+            string output = Output(recipe);
+            string inputs = Ingredients(recipe);
+
+            string state = CanMake(table, recipe)
+                ? string.Empty
+                : Localization.Language.T(" — ingrédients manquants", " — missing ingredients");
 
             return string.IsNullOrEmpty(inputs)
-                ? output
-                : Localization.Language.T($"{output}, avec {inputs}", $"{output}, from {inputs}");
+                ? output + state
+                : Localization.Language.T($"{output}{state}, avec {inputs}", $"{output}{state}, from {inputs}");
         }
 
-        private static string Label(CraftingPanel panel)
-        {
-            string named = Name(panel.outputImage);
-            if (!string.IsNullOrWhiteSpace(named)) return named;
-
-            // Repli sur le texte affiché : certaines recettes n'ont pas encore chargé leur objet.
-            string text = TextUtil.Clean(panel.outputTMP?.text);
-            return string.IsNullOrWhiteSpace(text) ? Localization.Language.T("Recette", "Recipe") : text;
-        }
-
-        private static string Ingredients(CraftingPanel panel)
-        {
-            var parts = new[] { panel.input1Image, panel.input2Image, panel.input3Image }
-                .Select(Name)
-                .Where(s => !string.IsNullOrWhiteSpace(s))
-                .ToArray();
-
-            return parts.Length == 0 ? null : string.Join(", ", parts);
-        }
-
-        /// <summary>Quantité et nom d'une case, par l'identifiant — la source du jeu, donc en français.</summary>
-        private static string Name(ItemImage image)
+        private static string Output(Recipe recipe)
         {
             try
             {
-                if (image == null || !image.gameObject.activeInHierarchy) return null;
+                string name = ItemNames.Get(recipe.output2.id);
+                if (string.IsNullOrWhiteSpace(name)) return Localization.Language.T("Recette", "Recipe");
 
-                int id = image.Item?.ID() ?? 0;
-                if (id == 0) return null;
+                int amount = recipe.output2.amount;
+                return amount > 1 ? $"{amount} {name}" : name;
+            }
+            catch { return Localization.Language.T("Recette", "Recipe"); }
+        }
 
-                string name = ItemNames.Get(id);
-                if (string.IsNullOrWhiteSpace(name)) return null;
+        private static string Ingredients(Recipe recipe)
+        {
+            try
+            {
+                var parts = (recipe.Input ?? new List<SerializedItemDataNamedAmount>())
+                    .Where(i => i != null)
+                    .Select(i =>
+                    {
+                        string name = ItemNames.Get(i.id);
 
-                return image.Amount > 1 ? $"{image.Amount} {name}" : name;
+                        // Le mana et la vie sont des ingrédients comme les autres pour le jeu, mais
+                        // sans objet derrière : leur nom écrit est alors la seule source.
+                        if (string.IsNullOrWhiteSpace(name)) name = i.name;
+                        if (string.IsNullOrWhiteSpace(name)) return null;
+
+                        return i.amount > 1 ? $"{i.amount} {name}" : name;
+                    })
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .ToArray();
+
+                return parts.Length == 0 ? null : string.Join(", ", parts);
             }
             catch { return null; }
         }
 
-        private static void OpenRecipe(List<CraftingPanel> all, CraftingPanel panel)
+        private static void OpenRecipe(CraftingTable table, List<Recipe> all, Recipe recipe)
         {
-            string label = Label(panel);
-            string inputs = Ingredients(panel);
-            string time = TextUtil.Clean(panel.craftTimeTMP?.text);
+            string label = Output(recipe);
+            string inputs = Ingredients(recipe);
 
             var actions = new List<string>
             {
@@ -151,7 +198,7 @@ namespace SunHavenAccess.Menus
                 Localization.Language.T("Fabriquer 5", "Craft 5"),
                 Localization.Language.T("Fabriquer 20", "Craft 20"),
                 Localization.Language.T("Fabriquer une autre quantité", "Craft another amount"),
-                Localization.Language.T("Ingrédients et durée", "Ingredients and time"),
+                Localization.Language.T("Ingrédients", "Ingredients"),
             };
 
             ListMenu.Open(label, actions,
@@ -159,23 +206,21 @@ namespace SunHavenAccess.Menus
                 {
                     switch (chosen)
                     {
-                        case 0: Craft(panel, 1, label); break;
-                        case 1: Craft(panel, 5, label); break;
-                        case 2: Craft(panel, 20, label); break;
-                        case 3: AskAmount(panel, label); break;
+                        case 0: Craft(table, recipe, 1, label); break;
+                        case 1: Craft(table, recipe, 5, label); break;
+                        case 2: Craft(table, recipe, 20, label); break;
+                        case 3: AskAmount(table, recipe, label); break;
                         default:
-                            TolkSpeech.Speak(Localization.Language.T(
-                                $"{label}. {(inputs ?? "Aucun ingrédient")}. {time}",
-                                $"{label}. {(inputs ?? "No ingredients")}. {time}"), true);
-                            OpenRecipe(all, panel);
+                            TolkSpeech.Speak(inputs ?? Localization.Language.T("Aucun ingrédient.", "No ingredients."), true);
+                            OpenRecipe(table, all, recipe);
                             break;
                     }
                 },
-                onExitUp: () => Open(all),
+                onExitUp: () => Open(table, all),
                 owner: OwnerTag);
         }
 
-        private static void AskAmount(CraftingPanel panel, string label)
+        private static void AskAmount(CraftingTable table, Recipe recipe, string label)
         {
             TextPrompt.Ask(
                 Localization.Language.T($"Combien de {label} ?", $"How many {label}?"),
@@ -189,8 +234,8 @@ namespace SunHavenAccess.Menus
                         return;
                     }
 
-                    // Une borne haute, parce qu'une faute de frappe ne doit pas lancer mille
-                    // fabrications qu'on ne pourrait plus arrêter.
+                    // Une borne haute : une faute de frappe ne doit pas lancer mille fabrications
+                    // qu'on ne pourrait plus arrêter.
                     if (amount > 200)
                     {
                         TolkSpeech.Speak(Localization.Language.T(
@@ -198,27 +243,40 @@ namespace SunHavenAccess.Menus
                         return;
                     }
 
-                    Craft(panel, amount, label);
+                    Craft(table, recipe, amount, label);
                 });
         }
 
-        private static void Craft(CraftingPanel panel, int amount, string label)
+        private static void Craft(CraftingTable table, Recipe recipe, int amount, string label)
         {
+            // On DEMANDE d'abord, parce que le jeu refuse en silence : sans cela, on croirait avoir
+            // lancé une fabrication qui n'a jamais commencé.
+            if (!CanMake(table, recipe) || !CanMake(table, recipe, amount))
+            {
+                TolkSpeech.Speak(Localization.Language.T(
+                    $"Impossible de fabriquer {amount} {label} : ingrédients insuffisants.",
+                    $"Cannot craft {amount} {label}: not enough ingredients."), true);
+                return;
+            }
+
             try
             {
-                panel.Craft(amount);
+                table.Craft(recipe, amount);
                 TolkSpeech.Speak(Localization.Language.T(
                     $"{amount} {label} lancé{(amount > 1 ? "s" : "")}.",
                     $"{amount} {label} started."), true);
             }
             catch
             {
-                // Le jeu refuse quand les ingrédients manquent ou que la file est pleine. On le dit
-                // plutôt que de laisser croire que c'est parti.
                 TolkSpeech.Speak(Localization.Language.T(
-                    $"Impossible de fabriquer {label} : ingrédients manquants ou file pleine.",
-                    $"Cannot craft {label}: missing ingredients or the queue is full."), true);
+                    $"L'établi a refusé {label}.", $"The table refused {label}."), true);
             }
+        }
+
+        private static bool CanMake(CraftingTable table, Recipe recipe, int amount)
+        {
+            try { return table.CanCraft(recipe, amount); }
+            catch { return false; }
         }
     }
 }
