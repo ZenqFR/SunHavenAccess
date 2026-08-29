@@ -145,7 +145,12 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.FreeCursorToggle.Value)) FreeTileCursor.Toggle();
             if (Pressed(ModConfig.FreeCursorRecenter.Value)) FreeTileCursor.Recenter();
             if (Pressed(ModConfig.StepMovement.Value)) StepMovement.Toggle();
-            if (Pressed(ModConfig.Favorites.Value)) FavoritesMenu.Open();
+            // Les favoris, ou — avec Ctrl — le geste du soir : aller au lit. Terminer sa journée
+            // est l'action la plus répétée du jeu et l'une des plus pénibles à atteindre.
+            if (Pressed(ModConfig.Favorites.Value))
+            {
+                if (ctrl) SleepAction.GoToBed(); else FavoritesMenu.Open();
+            }
             if (Pressed(ModConfig.PlacementStatus.Value)) PlacementAssistant.AnnounceStatus();
             if (Pressed(ModConfig.HerdStatus.Value)) AnimalAnnouncer.AnnounceHerdStatus();
             if (Pressed(ModConfig.BundleStatus.Value)) BundleReader.AnnounceStatus();

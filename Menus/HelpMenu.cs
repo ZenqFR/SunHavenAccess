@@ -211,6 +211,17 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
+            $"Finir la journée. Contrôle plus {K(ModConfig.Favorites)} vous conduit au lit et vous rappelle la touche " +
+            "pour dormir. Si aucun lit n'est dans la zone, le trajet mène à l'entrée de votre maison — redemandez " +
+            "une fois à l'intérieur. Le bilan de la journée qui suit est lu à voix haute : pièces, billets, orbes " +
+            "et expérience gagnés. Les lignes à zéro sont tues ; une journée sans gain se dit en une phrase.",
+
+            "Les récompenses de quête. En rendant une quête, la fenêtre de récompenses s'ouvre en liste : " +
+            "d'abord ce que vous recevez dans tous les cas, ensuite les récompenses entre lesquelles il faut " +
+            "CHOISIR, enfin « Accepter les récompenses ». Valider une option la sélectionne. " +
+            "Le nombre de choix est annoncé d'emblée, parce qu'un choix de récompense ne se refait pas : " +
+            "accepter sans avoir choisi laisserait le jeu décider à votre place.",
+
             $"Réentendre. {K(ModConfig.Repeat)} redit la dernière annonce ; appuyée PLUSIEURS FOIS de suite, " +
             "elle remonte le fil d'un cran à chaque fois, jusqu'aux vingt dernières. " +
             $"Contrôle plus {K(ModConfig.Repeat)} ouvre l'historique en liste, pour retrouver directement une " +
