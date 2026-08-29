@@ -223,11 +223,64 @@ namespace SunHavenAccess.Cursor
         }
 
         /// <summary>
+        /// L'être vivant qui se tient devant, s'il y en a un.
+        ///
+        /// On regarde les créatures elles-mêmes, pas leurs collisionneurs : une position est un
+        /// fait, une collision est un montage. Le rayon est un peu plus large qu'une case, parce
+        /// qu'un personnage occupe de la place et ne se tient jamais pile sur un centre de case ;
+        /// mieux vaut nommer quelqu'un d'à peine décalé que d'affirmer qu'il n'y a personne.
+        ///
+        /// L'ordre suit ce qui compte : les habitants d'abord, puisqu'on leur parle ; les ennemis
+        /// ensuite, puisqu'ils frappent ; les bêtes enfin.
+        /// </summary>
+        private static string DescribeCreatureInFront(Player player)
+        {
+            try
+            {
+                Vector3 frontPos = player.transform.position + Utilities.OffsetFromDirection(player.facingDirection);
+
+                Component nearest = null;
+                float best = float.MaxValue;
+
+                foreach (Component c in Navigation.Scanner.CreaturesNear(frontPos, 0.9f))
+                {
+                    if (c == null || c.gameObject == player.gameObject) continue;
+
+                    float d = Vector2.Distance(c.transform.position, frontPos);
+                    if (d >= best) continue;
+
+                    best = d;
+                    nearest = c;
+                }
+
+                return nearest != null
+                    ? Navigation.Scanner.Describe(nearest, allowGenericName: false)
+                    : null;
+            }
+            catch { return null; }
+        }
+
+        /// <summary>
         /// Ce qui occupe la case : un objet avec lequel on peut interagir, une culture, ou un
         /// obstacle muet. Null si la case est libre.
         /// </summary>
         private static string DescribeOccupant(Player player, string facing)
         {
+            // QUELQU'UN PASSE AVANT TOUT LE RESTE.
+            //
+            // Signalé en jeu : en approchant d'Anne, « Ennemi, bloque le passage » ; une fois face
+            // à elle, « Rien devant vous ». Deux erreurs, une seule cause — on cherchait ce qu'il y
+            // a devant à travers les COLLISIONNEURS, et un personnage y échappe deux fois. Son
+            // collisionneur d'interaction est un déclencheur, que l'on écartait ; et le reste de
+            // son objet s'appelle « Enemy » dans les entrailles du jeu, d'où l'ennemi imaginaire.
+            //
+            // On cherche donc les créatures pour elles-mêmes, par leur position, avant de parler de
+            // collisions. Un habitant, une bête, un ennemi ou un autre joueur devant soi est
+            // l'information la plus importante qu'une case puisse porter : elle ne doit dépendre
+            // d'aucun détail de physique.
+            string creature = DescribeCreatureInFront(player);
+            if (!string.IsNullOrWhiteSpace(creature)) return creature;
+
             PlayerInteractions interactions = player.GetComponent<PlayerInteractions>();
             if (interactions != null && interactions.Interactables.Count > 0)
             {
@@ -484,10 +537,27 @@ namespace SunHavenAccess.Cursor
                 //
                 // Filtrer par case supprime les voisins ; trier par distance rend l'annonce
                 // déterministe, au lieu de dépendre de l'ordre où le moteur a rangé ses objets.
-                var nearby = Physics2D.OverlapCircleAll(frontPos, 0.45f)
+                Collider2D[] all = Physics2D.OverlapCircleAll(frontPos, 0.45f);
+
+                var nearby = all
                     .Where(h => h != null && !h.isTrigger)
                     .OrderBy(h => Vector2.Distance(h.ClosestPoint(frontPos), frontPos))
                     .ToArray();
+
+                // LES DÉCLENCHEURS EN DERNIER RECOURS.
+                //
+                // On les écarte d'abord, à raison : un déclencheur ne barre pas le passage, et les
+                // annoncer tous ferait parler de zones invisibles qui n'intéressent personne. Mais
+                // quand ils sont la SEULE chose présente, les taire revient à dire « rien devant
+                // vous » devant un panneau, un coffre ou une pancarte. Or ce que veut savoir qui
+                // n'y voit pas, c'est ce qui est là — pas ce qui résiste.
+                if (nearby.Length == 0)
+                {
+                    nearby = all
+                        .Where(h => h != null)
+                        .OrderBy(h => Vector2.Distance(h.ClosestPoint(frontPos), frontPos))
+                        .ToArray();
+                }
 
                 var onTile = nearby
                     .Where(h => TileGeometry.WorldToTile(h.ClosestPoint(frontPos)) == frontTile)
@@ -520,10 +590,18 @@ namespace SunHavenAccess.Cursor
                     // On ne rend que le NOM, sans direction ni ponctuation : l'appelant assemble
                     // la phrase avec le reste de ce que porte la case, et y ajoute la direction
                     // une seule fois.
+                    // « Bloque le passage » ne se dit que si c'est vrai. Un déclencheur laisse
+                    // passer : l'annoncer comme un obstacle ferait contourner ce qu'on pouvait
+                    // traverser, et douter du mod la fois suivante.
+                    bool blocks = !hit.isTrigger;
+
                     string name = NameOfObstacle(hit);
                     if (!string.IsNullOrWhiteSpace(name))
-                        return Localization.Language.T($"{name}, bloque le passage",
-                                                       $"{name}, blocking the way");
+                        return blocks
+                            ? Localization.Language.T($"{name}, bloque le passage", $"{name}, blocking the way")
+                            : name;
+
+                    if (!blocks) continue; // rien à dire d'un déclencheur anonyme
 
                     return Localization.Language.T("quelque chose bloque le passage",
                                                    "something is blocking the way");
@@ -560,6 +638,22 @@ namespace SunHavenAccess.Cursor
                 components.AddRange(hit.GetComponents<Component>());
                 if (hit.transform.parent != null)
                     components.AddRange(hit.transform.parent.GetComponents<Component>());
+
+                // Un être vivant se cherche PLUS HAUT, aussi loin qu'il le faut.
+                //
+                // La règle « l'objet et son parent direct » protège d'un ancêtre lointain qui
+                // donnerait son identité à une clôture. Mais un personnage est bâti sur plusieurs
+                // niveaux, et son collisionneur est souvent deux ou trois crans sous le composant
+                // qui le nomme : on le manquait, puis on retombait sur le nom technique de son
+                // objet — « Enemy » — d'où l'ennemi annoncé devant une villageoise. Signalé en jeu.
+                //
+                // Chercher un TYPE PRÉCIS jusqu'à la racine ne rouvre pas l'ancienne faille : une
+                // clôture n'a ni NPCAI ni Animal au-dessus d'elle, quoi qu'il arrive.
+                Component creature = hit.GetComponentInParent<NPCAI>() as Component
+                                     ?? hit.GetComponentInParent<Animal>() as Component
+                                     ?? hit.GetComponentInParent<Pet>() as Component
+                                     ?? hit.GetComponentInParent<EnemyAI>();
+                if (creature != null) components.Insert(0, creature);
 
                 foreach (Component c in components)
                 {

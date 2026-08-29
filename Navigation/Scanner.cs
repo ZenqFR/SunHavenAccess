@@ -457,6 +457,47 @@ namespace SunHavenAccess.Navigation
         }
 
         /// <summary>
+        /// Les êtres vivants proches d'un point : habitants, ennemis, bêtes, compagnons, autres
+        /// joueurs.
+        ///
+        /// Exposée pour la description de la case devant soi, qui les cherchait jusque-là à travers
+        /// les collisionneurs — et les manquait, un personnage ayant souvent un collisionneur
+        /// déclencheur qu'on écarte, et un objet racine nommé « Enemy » qui faisait annoncer un
+        /// ennemi là où se tenait une villageoise.
+        ///
+        /// On part des listes du jeu plutôt que de la physique : c'est plus juste, et cela coûte
+        /// moins. Les habitants viennent d'un registre déjà tenu à jour ; seuls les ennemis et les
+        /// bêtes demandent un balayage, et il n'a lieu qu'au changement de case.
+        /// </summary>
+        internal static IEnumerable<Component> CreaturesNear(Vector3 position, float radius)
+        {
+            float sqr = radius * radius;
+
+            bool Near(Component c) =>
+                c != null && (c.transform.position - position).sqrMagnitude <= sqr;
+
+            IEnumerable<Component> villagers;
+            try
+            {
+                villagers = NPCManager.Instance?._npcsList?.Where(n => Near(n)).Cast<Component>()
+                            ?? System.Array.Empty<Component>();
+            }
+            catch { villagers = System.Array.Empty<Component>(); }
+
+            IEnumerable<Component> others;
+            try
+            {
+                others = Object.FindObjectsOfType<EnemyAI>().Where(e => e is not NPCAI && Near(e)).Cast<Component>()
+                    .Concat(Object.FindObjectsOfType<Animal>().Where(a => Near(a)))
+                    .Concat(Object.FindObjectsOfType<Pet>().Where(p => Near(p)))
+                    .Concat(Object.FindObjectsOfType<Player>().Where(p => p != Player.Instance && Near(p)));
+            }
+            catch { others = System.Array.Empty<Component>(); }
+
+            return villagers.Concat(others);
+        }
+
+        /// <summary>
         /// Les entrées de bâtiment présentes dans la zone courante.
         ///
         /// Exposée pour la carte : un lieu de carte est une icône sans position dans le monde, et
