@@ -62,6 +62,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> ReadFullDescription;
         public static ConfigEntry<KeyCode> FreeCursorToggle;
         public static ConfigEntry<KeyCode> FreeCursorRecenter;
+        public static ConfigEntry<KeyCode> StepMovement;
         public static ConfigEntry<KeyCode> PlacementStatus;
         public static ConfigEntry<KeyCode> HerdStatus;
         public static ConfigEntry<KeyCode> BundleStatus;
@@ -286,6 +287,15 @@ namespace SunHavenAccess.Config
                 "Active ou désactive le curseur de case libre, déplaçable aux flèches partout sur la carte.", "Activer/désactiver le curseur libre");
             FreeCursorRecenter = Bind(config, section, "CurseurLibreRecentrer", KeyCode.KeypadMultiply,
                 "Ramène le curseur libre sur la case où vous vous tenez.", "Curseur libre : recentrer sur soi");
+
+            // Déplacement case par case. Sur le pavé numérique, à côté du curseur libre, parce que
+            // les deux font le même métier — se placer avec précision — et qu'on les cherche au
+            // même endroit. Une touche de LETTRE aurait été plus mnémonique, mais le jeu se
+            // déplace en ZQSD/WASD et lance ses sorts sur des lettres : le pavé numérique est la
+            // seule région du clavier dont on sait qu'elle ne heurte rien.
+            StepMovement = Bind(config, section, "DeplacementCaseParCase", KeyCode.Keypad1,
+                "Active ou désactive le déplacement case par case : une flèche, un pas.",
+                "Activer/désactiver le déplacement case par case");
 
             // ---- Placement de meubles et bâtiments (Info/PlacementAssistant.cs) ----
             // La validité de l'emplacement ne s'annonce automatiquement qu'à chaque bascule ;

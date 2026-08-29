@@ -208,6 +208,13 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
+            $"Se déplacer case par case. {K(ModConfig.StepMovement)} active ce mode : une flèche, un pas, " +
+            "et la case où vous arrivez est annoncée. Le jeu, lui, fait glisser le personnage tant qu'on tient " +
+            "la touche — on dépasse, on revient, on redépasse. Ce mode existe pour se placer exactement : " +
+            "labourer la bonne case, franchir une porte étroite, longer une clôture. " +
+            "Une case bloquée refuse le pas et le dit. La même touche revient au déplacement normal. " +
+            "Un menu ouvert, ou le curseur de case libre, gardent la priorité sur les flèches.",
+
             $"La souris. {K(ModConfig.MouseFollowToggle)} VERROUILLE la souris sur la case devant vous : elle y reste, " +
             "et la bouger à la main n'a plus aucun effet tant que vous ne la libérez pas avec la même touche. " +
             "C'est ce qui évite qu'une souris oubliée sur un bouton ne vole le curseur du clavier. " +

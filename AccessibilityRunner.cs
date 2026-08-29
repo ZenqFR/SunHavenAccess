@@ -83,6 +83,7 @@ namespace SunHavenAccess
             ("Journey", Navigation.Journey.Tick),
             ("KeyConflictCheck", KeyConflictCheck.RunOnce),
             ("DialogueChoiceMenu", Dialogue.DialogueChoiceMenu.Tick),
+            ("StepMovement", StepMovement.Tick),
         };
 
         /// <summary>
