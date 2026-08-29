@@ -186,7 +186,18 @@ namespace SunHavenAccess.Menus
         /// dit tout. Le calcul se fait avant le choix, jamais après — on ne découvre pas le prix
         /// d'un achat une fois qu'il est fait.
         /// </summary>
-        private static void OpenItem(List<BuyableItem> all, BuyableItem item)
+        /// <summary>
+        /// ACHETER N'EST PAS PARTIR. Même raison qu'à l'établi : on prend cinq graines, puis cinq
+        /// autres, puis on regarde ce que la bourse permet encore. Refermer la fiche à chaque achat
+        /// obligerait à rouvrir la boutique entre deux lots.
+        /// </summary>
+        private static void OpenItem(List<BuyableItem> all, BuyableItem item) =>
+            OpenItem(all, item, announce: true);
+
+        private static void Reopen(List<BuyableItem> all, BuyableItem item) =>
+            OpenItem(all, item, announce: false);
+
+        private static void OpenItem(List<BuyableItem> all, BuyableItem item, bool announce)
         {
             string name = Name(item);
             int unit = UnitCost(item);
@@ -214,15 +225,21 @@ namespace SunHavenAccess.Menus
                         case 0: Buy(item, 1, name); break;
                         case 1: Buy(item, 5, name); break;
                         case 2: Buy(item, 20, name); break;
-                        case 3: AskAmount(item, name); break;
+
+                        // La saisie remet la fiche elle-même : la rouvrir ici la refermerait
+                        // aussitôt sous la saisie.
+                        case 3: AskAmount(all, item, name); return;
+
                         default:
                             TolkSpeech.Speak(Affordable(item, name), true);
-                            OpenItem(all, item);
                             break;
                     }
+
+                    Reopen(all, item);
                 },
                 onExitUp: () => Open(all),
-                owner: OwnerTag);
+                owner: OwnerTag,
+                announce: announce);
         }
 
         private static string Affordable(BuyableItem item, string name)
@@ -249,17 +266,20 @@ namespace SunHavenAccess.Menus
             catch { return Localization.Language.T("Prix inconnu.", "Price unknown."); }
         }
 
-        private static void AskAmount(BuyableItem item, string name)
+        private static void AskAmount(List<BuyableItem> all, BuyableItem item, string name)
         {
             TextPrompt.Ask(
                 Localization.Language.T($"Combien de {name} ?", $"How many {name}?"),
                 null,
                 typed =>
                 {
+                    // Quoi qu'il advienne — nombre valide, faute de frappe, refus — on revient à la
+                    // fiche. Se retrouver hors de la boutique après une faute serait doublement puni.
                     if (!int.TryParse(typed.Trim(), out int amount) || amount <= 0)
                     {
                         TolkSpeech.Speak(Localization.Language.T(
                             "Ce n'est pas un nombre.", "That is not a number."), true);
+                        Reopen(all, item);
                         return;
                     }
 
@@ -267,10 +287,12 @@ namespace SunHavenAccess.Menus
                     {
                         TolkSpeech.Speak(Localization.Language.T(
                             "Deux cents au maximum.", "Two hundred at most."), true);
+                        Reopen(all, item);
                         return;
                     }
 
                     Buy(item, amount, name);
+                    Reopen(all, item);
                 });
         }
 

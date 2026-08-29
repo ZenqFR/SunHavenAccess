@@ -187,7 +187,24 @@ namespace SunHavenAccess.Menus
             catch { return null; }
         }
 
-        private static void OpenRecipe(CraftingTable table, List<Recipe> all, Recipe recipe)
+        /// <summary>
+        /// FABRIQUER N'EST PAS PARTIR.
+        ///
+        /// Une liste se referme quand on valide, ce qui est juste pour une action qui emmène
+        /// ailleurs. Fabriquer n'emmène nulle part : on enchaîne presque toujours — cinq planches,
+        /// puis cinq autres, puis on regarde ce qu'il reste. Le menu disparaissait à chaque lot et
+        /// il fallait rouvrir l'établi. Signalé en jeu.
+        ///
+        /// On remet donc la recette EN SILENCE après chaque fabrication : elle est de nouveau sous
+        /// les flèches, sans parler par-dessus l'annonce de ce qui vient d'être lancé.
+        /// </summary>
+        private static void OpenRecipe(CraftingTable table, List<Recipe> all, Recipe recipe) =>
+            OpenRecipe(table, all, recipe, announce: true);
+
+        private static void Reopen(CraftingTable table, List<Recipe> all, Recipe recipe) =>
+            OpenRecipe(table, all, recipe, announce: false);
+
+        private static void OpenRecipe(CraftingTable table, List<Recipe> all, Recipe recipe, bool announce)
         {
             string label = Output(recipe);
             string inputs = Ingredients(recipe);
@@ -209,28 +226,37 @@ namespace SunHavenAccess.Menus
                         case 0: Craft(table, recipe, 1, label); break;
                         case 1: Craft(table, recipe, 5, label); break;
                         case 2: Craft(table, recipe, 20, label); break;
-                        case 3: AskAmount(table, recipe, label); break;
+
+                        // La saisie de quantité remet la recette elle-même, une fois le nombre
+                        // connu : la rouvrir ici la refermerait aussitôt sous la saisie.
+                        case 3: AskAmount(table, all, recipe, label); return;
+
                         default:
                             TolkSpeech.Speak(inputs ?? Localization.Language.T("Aucun ingrédient.", "No ingredients."), true);
-                            OpenRecipe(table, all, recipe);
                             break;
                     }
+
+                    Reopen(table, all, recipe);
                 },
                 onExitUp: () => Open(table, all),
-                owner: OwnerTag);
+                owner: OwnerTag,
+                announce: announce);
         }
 
-        private static void AskAmount(CraftingTable table, Recipe recipe, string label)
+        private static void AskAmount(CraftingTable table, List<Recipe> all, Recipe recipe, string label)
         {
             TextPrompt.Ask(
                 Localization.Language.T($"Combien de {label} ?", $"How many {label}?"),
                 null,
                 typed =>
                 {
+                    // Quoi qu'il advienne — nombre valide, faute de frappe, refus — on revient à la
+                    // recette. Se retrouver hors de l'établi après une faute serait doublement puni.
                     if (!int.TryParse(typed.Trim(), out int amount) || amount <= 0)
                     {
                         TolkSpeech.Speak(Localization.Language.T(
                             "Ce n'est pas un nombre.", "That is not a number."), true);
+                        Reopen(table, all, recipe);
                         return;
                     }
 
@@ -240,10 +266,12 @@ namespace SunHavenAccess.Menus
                     {
                         TolkSpeech.Speak(Localization.Language.T(
                             "Deux cents au maximum.", "Two hundred at most."), true);
+                        Reopen(table, all, recipe);
                         return;
                     }
 
                     Craft(table, recipe, amount, label);
+                    Reopen(table, all, recipe);
                 });
         }
 
