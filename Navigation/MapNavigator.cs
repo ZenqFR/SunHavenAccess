@@ -58,8 +58,12 @@ namespace SunHavenAccess.Navigation
         ///
         /// Ce qui existe vraiment, c'est l'ENTRÉE du bâtiment, un objet du monde avec une vraie
         /// position, que le scanner sait déjà trouver. On rapproche le lieu de son entrée par le
-        /// nom de scène, et c'est vers elle qu'on marche. Un lieu situé dans une autre zone n'a
-        /// pas d'entrée ici : on le dit, plutôt que de faire semblant.
+        /// nom de scène, et c'est vers elle qu'on marche.
+        ///
+        /// Quand cette entrée est dans une AUTRE zone, [[Journey]] prend le relais et traverse ce
+        /// qu'il faut, en s'appuyant sur le plan appris par [[WorldLinks]]. Reste le seul cas
+        /// vraiment sans réponse : un lieu où l'on n'est jamais allé. Là, on le dit — le mod ne
+        /// connaît que ce qui a été exploré, et prétendre le contraire enverrait marcher au hasard.
         /// </summary>
         public static void OpenList()
         {
@@ -268,7 +272,7 @@ namespace SunHavenAccess.Navigation
             }
 
             var labels = exits
-                .Select(p => Util.UiNameTranslator.Translate(Scanner.PortalDestination(p)))
+                .Select(p => Util.SceneNames.Translate(Scanner.PortalDestination(p)))
                 .ToList();
 
             Menus.ListMenu.Open(

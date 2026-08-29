@@ -184,12 +184,12 @@ namespace SunHavenAccess.Navigation
             if (door == null)
             {
                 Fail(Localization.Language.T(
-                    $"Trajet interrompu : aucune sortie vers {Util.UiNameTranslator.Translate(next)} ici.",
-                    $"Journey stopped: no exit to {Util.UiNameTranslator.Translate(next)} here."));
+                    $"Trajet interrompu : aucune sortie vers {Util.SceneNames.Translate(next)} ici.",
+                    $"Journey stopped: no exit to {Util.SceneNames.Translate(next)} here."));
                 return;
             }
 
-            PathingController.TravelTo(door.transform.position, Util.UiNameTranslator.Translate(next));
+            PathingController.TravelTo(door.transform.position, Util.SceneNames.Translate(next));
         }
 
         private static void Fail(string message)

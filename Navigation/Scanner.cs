@@ -387,7 +387,7 @@ namespace SunHavenAccess.Navigation
             string sceneToLoad = SceneToLoadField?.GetValue(portal) as string;
             if (!string.IsNullOrWhiteSpace(sceneToLoad))
             {
-                return $"Entrée, {UiNameTranslator.Translate(sceneToLoad)}.";
+                return $"Entrée, {Util.SceneNames.Translate(sceneToLoad)}.";
             }
 
             return "Entrée.";
