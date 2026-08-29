@@ -67,13 +67,51 @@ namespace SunHavenAccess.Navigation
             Player player = Player.Instance;
             if (player == null) return;
 
+            // LA SOURIS EST VERROUILLÉE, PAS SEULEMENT REPLACÉE.
+            //
+            // On ne la remettait devant le personnage qu'au changement de case ou de direction.
+            // Entre-temps, le moindre frôlement du bureau — ou un tapis tactile qu'on effleure sans
+            // le vouloir — l'emmenait ailleurs et elle y restait. Elle survolait alors un élément
+            // d'interface, et Unity donne le focus clavier à ce qui est survolé : la navigation
+            // repartait de là où traînait la souris, pas de là où on en était. Signalé en jeu, au
+            // menu principal comme dans l'inventaire.
+            //
+            // Tant que J est actif, la position est donc MAINTENUE à chaque image. Bouger la souris
+            // physiquement n'a plus d'effet ; J reste la seule façon de la libérer.
+            Vector3 target = player.transform.position + Utilities.OffsetFromDirection(player.facingDirection);
+
             Vector2Int tile = player.Position;
             Direction dir = player.facingDirection;
-            if (_hasLast && tile == _lastTile && dir == _lastDir) return;
+            bool moved = !_hasLast || tile != _lastTile || dir != _lastDir;
             _lastTile = tile;
             _lastDir = dir;
             _hasLast = true;
-            UpdatePosition();
+
+            // On ne rappelle le système que si la souris a VRAIMENT dérivé : la repositionner
+            // soixante fois par seconde sans raison est un appel système gratuit, et cela
+            // empêcherait aussi tout déplacement légitime d'un frame à l'autre.
+            if (moved || HasDrifted(target)) PointAt(target);
+        }
+
+        /// <summary>
+        /// La souris s'est-elle éloignée de l'endroit où on la veut ?
+        ///
+        /// Quelques pixels de tolérance : la conversion monde → écran → pixels arrondit, et exiger
+        /// l'exactitude ferait replacer le curseur en boucle pour un écart qui n'existe pas.
+        /// </summary>
+        private static bool HasDrifted(Vector3 target)
+        {
+            try
+            {
+                Player player = Player.Instance;
+                Camera cam = player != null ? player.Camera : null;
+                if (cam == null) return false;
+
+                Vector3 wanted = cam.WorldToScreenPoint(target);
+                Vector3 actual = UnityEngine.Input.mousePosition;
+                return Mathf.Abs(wanted.x - actual.x) > 3f || Mathf.Abs(wanted.y - actual.y) > 3f;
+            }
+            catch { return false; }
         }
 
         private static void UpdatePosition()
@@ -90,6 +128,24 @@ namespace SunHavenAccess.Navigation
         /// à distance. Seule l'origine change — la chaîne monde → écran → coordonnées Windows est
         /// identique dans les deux cas.
         /// </summary>
+        /// <summary>
+        /// La fenêtre du jeu, demandée UNE fois.
+        ///
+        /// `Process.GetCurrentProcess()` alloue un objet et interroge le système à chaque appel.
+        /// C'était supportable tant qu'on ne replaçait la souris qu'au changement de case ; ça ne
+        /// l'est plus maintenant qu'on la maintient en place à chaque image. La fenêtre du jeu ne
+        /// change pas en cours de partie.
+        /// </summary>
+        private static IntPtr _hWnd = IntPtr.Zero;
+
+        private static IntPtr WindowHandle()
+        {
+            if (_hWnd != IntPtr.Zero) return _hWnd;
+            try { _hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle; }
+            catch { _hWnd = IntPtr.Zero; }
+            return _hWnd;
+        }
+
         public static bool PointAt(Vector3 world)
         {
             try
@@ -100,7 +156,7 @@ namespace SunHavenAccess.Navigation
 
                 Vector3 screen = cam.WorldToScreenPoint(world);
 
-                IntPtr hWnd = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
+                IntPtr hWnd = WindowHandle();
                 Point pt = new Point
                 {
                     X = Mathf.RoundToInt(screen.x),
