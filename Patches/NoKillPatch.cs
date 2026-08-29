@@ -106,13 +106,35 @@ namespace SunHavenAccess.Patches
     [HarmonyPatch(typeof(Scene), nameof(Scene.GetRootGameObjects), new System.Type[] { typeof(List<GameObject>) })]
     public static class NoKillScanPatchList
     {
-        private static void Postfix(List<GameObject> rootGameObjects) =>
-            PatchGuard.Run("NoKillScanList", () => Filter(rootGameObjects));
+        // Garde écrite à la main, pour la même raison que les deux Prefix sur `Object.Destroy`.
+        //
+        // `PatchGuard.Run(..., () => Filter(rootGameObjects))` semblait identique au reste du mod,
+        // mais la fonction anonyme CAPTURE un paramètre : le compilateur alloue donc un objet de
+        // capture et un délégué à CHAQUE appel. Or le moteur appelle `GetRootGameObjects` en
+        // permanence — c'était des milliers d'allocations par seconde, uniquement pour permettre
+        // au mod de vérifier qu'il n'y a rien à filtrer. Le ramasse-miettes finissait par se
+        // déclencher, et c'est exactement ce qui se sent comme une saccade.
+        //
+        // Le mod ne doit rien coûter à qui ne s'en sert pas à cet instant.
+        private static void Postfix(List<GameObject> rootGameObjects)
+        {
+            try { Filter(rootGameObjects); }
+            catch (System.Exception e) { Plugin.Log?.LogWarning("NoKillScanList : " + e.Message); }
+        }
 
         private static void Filter(List<GameObject> rootGameObjects)
         {
             if (rootGameObjects == null || NoKillPatch.ProtectedRoot == null) return;
-            rootGameObjects.RemoveAll(go => go == NoKillPatch.ProtectedRoot);
+
+            // Même prudence que pour l'autre surcharge : on ne remue la liste que si l'objet
+            // protégé s'y trouve vraiment. `RemoveAll` parcourt et recompacte à chaque appel ;
+            // une simple recherche coûte moins, et le cas « rien à retirer » est la règle.
+            for (int i = 0; i < rootGameObjects.Count; i++)
+            {
+                if (rootGameObjects[i] != NoKillPatch.ProtectedRoot) continue;
+                rootGameObjects.RemoveAt(i);
+                return; // un objet racine n'apparaît qu'une fois dans sa scène
+            }
         }
     }
 }
