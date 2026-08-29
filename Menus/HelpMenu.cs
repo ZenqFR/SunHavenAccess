@@ -211,6 +211,14 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
+            "L'établi. Ouvrir un établi ouvre la liste des recettes, chacune annoncée avec son résultat " +
+            "ET ses ingrédients dans la même phrase — c'est ce qu'on veut savoir avant de choisir, pas après. " +
+            "Valider une recette propose d'en fabriquer un, cinq, vingt, une quantité que vous tapez, " +
+            "ou de réécouter les ingrédients et la durée. " +
+            "Un, cinq et vingt sont les raccourcis du jeu ; la quantité libre existe parce qu'on veut souvent " +
+            "trois planches ou douze, pas un chiffre rond. Si les ingrédients manquent ou que la file est pleine, " +
+            "le mod le dit au lieu de laisser croire que c'est parti.",
+
             $"Finir la journée. Contrôle plus {K(ModConfig.Favorites)} vous conduit au lit et vous rappelle la touche " +
             "pour dormir. Si aucun lit n'est dans la zone, le trajet mène à l'entrée de votre maison — redemandez " +
             "une fois à l'intérieur. Le bilan de la journée qui suit est lu à voix haute : pièces, billets, orbes " +

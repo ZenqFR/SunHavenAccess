@@ -86,6 +86,7 @@ namespace SunHavenAccess
             ("DialogueChoiceMenu", Dialogue.DialogueChoiceMenu.Tick),
             ("StepMovement", StepMovement.Tick),
             ("SurvivalWarnings", SurvivalWarnings.Tick),
+            ("CraftingMenu", Menus.CraftingMenu.Tick),
         };
 
         /// <summary>
