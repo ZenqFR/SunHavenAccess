@@ -56,6 +56,9 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<bool> TakeOverMenuArrows;
         public static ConfigEntry<bool> BriefMode;
 
+        /// <summary>Où annoncer les orientations : « jamais », « scanner » ou « partout ».</summary>
+        public static ConfigEntry<string> Bearings;
+
         public static ConfigEntry<KeyCode> SortBackpack;
         public static ConfigEntry<KeyCode> AnnounceContents;
         public static ConfigEntry<KeyCode> StoreInChests;
@@ -258,6 +261,19 @@ namespace SunHavenAccess.Config
                 "ce qui rend le parcours très long). La description reste disponible à la " +
                 "demande avec la touche dédiée. Sans effet en boutique et en artisanat, où le " +
                 "prix et les ingrédients sont indispensables.");
+
+            // LES ORIENTATIONS POLLUENT PLUS QU'ELLES N'AIDENT, SELON L'ENDROIT.
+            //
+            // « Chêne, nord-est, douze cases » : la direction est indispensable quand on cherche
+            // où aller, et c'est du bruit pur quand on veut seulement savoir ce qu'il y a sous ses
+            // pieds. Signalé en jeu — « ça pollue le son je trouve ».
+            //
+            // Trois positions plutôt qu'un oui/non, pour ne pas avoir à choisir entre bruit
+            // permanent et désorientation : jamais, seulement dans le scanner — là où viser est
+            // précisément le but — ou partout, comme avant.
+            Bearings = config.Bind(navSection, "Orientations", "scanner",
+                "Où annoncer les directions (nord, sud-est...) : « jamais », « scanner » " +
+                "(seulement dans le scanner et la recherche de personnages), ou « partout ».");
 
             // La couche de traduction lit un simple champ plutôt que la configuration, pour ne pas
             // dépendre de BepInEx : elle est appelée à chaque annonce, y compris depuis des

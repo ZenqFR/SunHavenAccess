@@ -57,6 +57,7 @@ namespace SunHavenAccess.Menus
                 Localization.Language.T("Navigation directionnelle du mod", "Mod directional navigation"));
             AddModSetting(entries, ModConfig.BriefMode,
                 Localization.Language.T("Mode bref dans l'inventaire", "Brief mode in the inventory"));
+            AddBearingSetting(entries);
 
             foreach (Selectable control in GameControls())
             {
@@ -82,6 +83,46 @@ namespace SunHavenAccess.Menus
             // Une case n'a que deux états : les deux directions la basculent, plutôt que la
             // laisser immobile dans un sens.
             _modSettings.Add((Describe, _ => setting.Value = !setting.Value));
+            entries.Add(Describe());
+        }
+
+        /// <summary>
+        /// Où annoncer les orientations. Trois positions, pas deux.
+        ///
+        /// « Chêne, nord-est, douze cases » : la direction est indispensable quand on cherche où
+        /// aller, et c'est du bruit pur quand on veut seulement savoir ce qu'il y a sous ses pieds.
+        /// Un simple oui/non aurait obligé à choisir entre bruit permanent et désorientation ;
+        /// « scanner », le défaut, garde la direction là où viser est précisément le but.
+        /// </summary>
+        private static readonly string[] BearingModes = { "jamais", "scanner", "partout" };
+
+        private static void AddBearingSetting(List<string> entries)
+        {
+            if (ModConfig.Bearings == null) return;
+
+            string Value()
+            {
+                string mode = (ModConfig.Bearings.Value ?? "scanner").Trim().ToLowerInvariant();
+                switch (mode)
+                {
+                    case "jamais": return Localization.Language.T("jamais", "never");
+                    case "partout": return Localization.Language.T("partout", "everywhere");
+                    default: return Localization.Language.T("scanner seulement", "scanner only");
+                }
+            }
+
+            string Describe() => Localization.Language.Pair(
+                Localization.Language.T("Annoncer les orientations", "Announce directions"), Value());
+
+            void Cycle(int direction)
+            {
+                int index = Array.IndexOf(BearingModes, (ModConfig.Bearings.Value ?? "scanner").Trim().ToLowerInvariant());
+                if (index < 0) index = 1;
+                index = ((index + direction) % BearingModes.Length + BearingModes.Length) % BearingModes.Length;
+                ModConfig.Bearings.Value = BearingModes[index];
+            }
+
+            _modSettings.Add((Describe, Cycle));
             entries.Add(Describe());
         }
 

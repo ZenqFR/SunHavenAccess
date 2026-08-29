@@ -128,10 +128,16 @@ namespace SunHavenAccess.Cursor
             // distance se calcule directement, sans la correction isométrique qu'exigerait
             // l'espace monde.
             int distance = Mathf.RoundToInt(new Vector2(delta.x, delta.y).magnitude);
-            string bearing = Strings.BearingName(new Vector2(delta.x, delta.y));
+
+            // Le curseur libre EXPLORE : la direction y a autant de sens que dans le scanner, mais
+            // le réglage a le dernier mot — c'est aussi ce curseur qui parle le plus souvent.
+            string bearing = Strings.WantBearing(forTargeting: true)
+                ? Strings.BearingName(new Vector2(delta.x, delta.y)) + ", "
+                : string.Empty;
+
             return Localization.Language.T(
-                $"{content}, {bearing}, {distance} case{(distance > 1 ? "s" : "")}.",
-                $"{content}, {bearing}, {distance} tile{(distance > 1 ? "s" : "")}.");
+                $"{content}, {bearing}{distance} case{(distance > 1 ? "s" : "")}.",
+                $"{content}, {bearing}{distance} tile{(distance > 1 ? "s" : "")}.");
         }
 
         /// <summary>

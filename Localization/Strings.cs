@@ -41,6 +41,38 @@ namespace SunHavenAccess.Localization
         /// Direction approximative (8 secteurs) d'un delta de position monde vers une cible,
         /// en tenant compte de la déformation isométrique du monde (facteur racine de 2 en Y).
         /// </summary>
+        /// <summary>
+        /// Faut-il annoncer une orientation ICI ?
+        ///
+        /// « Chêne, nord-est, douze cases » : la direction est indispensable quand on cherche où
+        /// aller, et c'est du bruit pur quand on veut seulement savoir ce qu'il y a sous ses pieds.
+        /// Signalé en jeu — « ça pollue le son ».
+        ///
+        /// Trois positions plutôt qu'un oui/non, pour ne pas avoir à choisir entre bruit permanent
+        /// et désorientation. « scanner », le défaut, garde la direction là où viser est
+        /// précisément le but, et la retire du reste.
+        ///
+        /// La décision est prise ICI et nulle part ailleurs : quatre modules produisent des
+        /// orientations, et quatre copies de la même règle finiraient par se contredire.
+        /// </summary>
+        public static bool WantBearing(bool forTargeting)
+        {
+            string mode = Config.ModConfig.Bearings?.Value;
+            if (string.IsNullOrWhiteSpace(mode)) return forTargeting;
+
+            switch (mode.Trim().ToLowerInvariant())
+            {
+                case "jamais":
+                case "never":
+                    return false;
+                case "partout":
+                case "everywhere":
+                    return true;
+                default:
+                    return forTargeting;
+            }
+        }
+
         public static string BearingName(Vector3 delta)
         {
             Vector2 v = new Vector2(delta.x, delta.y / 1.4142135f);

@@ -196,21 +196,30 @@ namespace SunHavenAccess.Cursor
                 if (!string.IsNullOrWhiteSpace(ground)) parts.Add(ground);
             }
 
+            // LA DIRECTION, ICI, EST DU BRUIT — sauf si on la demande.
+            //
+            // Elle était rappelée à CHAQUE pas, alors qu'on vient soi-même de choisir où regarder.
+            // Sur une annonce répétée des centaines de fois par partie, c'est le mot de trop qui
+            // fatigue. Signalé en jeu — « ça pollue le son ». Le réglage des orientations décide,
+            // et la touche de position la redonne quand on l'a perdue.
+            string side = Strings.WantBearing(forTargeting: false)
+                ? Localization.Language.T($", côté {facing}", $", {facing} side")
+                : string.Empty;
+
             if (parts.Count == 0)
             {
                 // Aucune donnée sur la case visée : on dit au moins sur quoi l'on se tient, seul
                 // repère qui reste quand la case suivante n'en donne aucun.
                 string underfoot = DescribeGroundTile(player.Position);
                 return string.IsNullOrWhiteSpace(underfoot)
-                    ? Localization.Language.T($"Rien devant vous, côté {facing}.",
-                                              $"Nothing in front of you, {facing} side.")
+                    ? Localization.Language.T($"Rien devant vous{side}.",
+                                              $"Nothing in front of you{side}.")
                     : Localization.Language.T(
-                        $"Rien devant vous, côté {facing}. Sol sous vos pieds : {underfoot}.",
-                        $"Nothing in front of you, {facing} side. Ground underfoot: {underfoot}.");
+                        $"Rien devant vous{side}. Sol sous vos pieds : {underfoot}.",
+                        $"Nothing in front of you{side}. Ground underfoot: {underfoot}.");
             }
 
-            return string.Join(", ", parts).TrimEnd('.', ' ')
-                   + Localization.Language.T($", côté {facing}.", $", {facing} side.");
+            return string.Join(", ", parts).TrimEnd('.', ' ') + side + ".";
         }
 
         /// <summary>

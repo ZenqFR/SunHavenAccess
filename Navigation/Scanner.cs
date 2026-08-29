@@ -153,10 +153,14 @@ namespace SunHavenAccess.Navigation
         private static void AnnounceCurrent()
         {
             var item = _items[_itemIndex];
+
+            // Le scanner sert à VISER : c'est le seul endroit où la direction reste par défaut.
+            string bearing = Strings.WantBearing(forTargeting: true) ? $"{item.Bearing}, " : string.Empty;
+
             TolkSpeech.Speak(Localization.Language.T(
-                $"{item.Label}, {item.Bearing}, {Mathf.Round(item.Distance)} case{(item.Distance > 1 ? "s" : "")}. " +
+                $"{item.Label}, {bearing}{Mathf.Round(item.Distance)} case{(item.Distance > 1 ? "s" : "")}. " +
                 $"Élément {_itemIndex + 1} sur {_items.Count}.",
-                $"{item.Label}, {item.Bearing}, {Mathf.Round(item.Distance)} tile{(item.Distance > 1 ? "s" : "")}. " +
+                $"{item.Label}, {bearing}{Mathf.Round(item.Distance)} tile{(item.Distance > 1 ? "s" : "")}. " +
                 $"Item {_itemIndex + 1} of {_items.Count}."), true);
         }
 

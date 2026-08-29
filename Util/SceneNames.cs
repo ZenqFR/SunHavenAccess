@@ -62,11 +62,27 @@ namespace SunHavenAccess.Util
             if (_fromMap != null)
             {
                 // Le nom formel d'abord : c'est lui qui ressemble au nom de la carte.
-                if (formal != null && _fromMap.TryGetValue(Flatten(formal), out string french)) return french;
+                if (formal != null && _fromMap.TryGetValue(Flatten(formal), out string fromMapTable)) return fromMapTable;
                 if (_fromMap.TryGetValue(Flatten(sceneName), out string direct)) return direct;
             }
 
+            // Les zones de la ferme et des alentours n'ont de nom français NULLE PART dans le jeu :
+            // ni sur la carte, qui ne les montre pas, ni dans le nom formel, qui reste anglais.
+            // On les traduit donc à la main — ce sont les toutes premières qu'on rencontre, et
+            // « Wheat Field Revamp » lu par une synthèse vocale donne « the weak champ », signalé
+            // en jeu. Une poignée de lignes justes vaut mieux qu'un mécanisme élégant qui se
+            // trompe ; le reste continue de passer par les sources du jeu.
+            string bare = StripDigits(Flatten(sceneName));
+            if (Handwritten.TryGetValue(bare, out string french)) return french;
+            if (formal != null && Handwritten.TryGetValue(StripDigits(Flatten(formal)), out string byFormal))
+                return byFormal;
+
             if (!string.IsNullOrWhiteSpace(formal)) return UiNameTranslator.Translate(formal);
+
+            // Ce qui arrive ici n'a de français nulle part : on le note une fois, pour pouvoir
+            // compléter la table ci-dessus sur des noms réels plutôt que devinés.
+            if (_unknown.Add(sceneName))
+                Plugin.Log?.LogInfo($"Nom de zone sans traduction : « {sceneName} » (nom formel : « {formal} »).");
 
             return UiNameTranslator.Translate(Readable(sceneName));
         }
@@ -135,6 +151,36 @@ namespace SunHavenAccess.Util
                 Plugin.Log?.LogWarning("Noms de zones de la carte illisibles : " + e.Message);
             }
         }
+
+        /// <summary>
+        /// Les zones que le jeu ne traduit nulle part. Clés aplaties et sans chiffres — le jeu
+        /// numérote ses variantes (`Town10`, `Tier1Coop0`) sans que cela change le lieu.
+        /// </summary>
+        private static readonly Dictionary<string, string> Handwritten =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "town", "Ville" },
+                { "foresta", "Forêt" },
+                { "forestb", "Forêt" },
+                { "leftoffarm", "Ouest de la ferme" },
+                { "rightoffarm", "Est de la ferme" },
+                { "wheatfieldrevamp", "Champ de blé" },
+                { "wheatfield", "Champ de blé" },
+                { "beachhuntingground", "Plage" },
+                { "tiercoop", "Poulailler" },
+                { "tierbarn", "Grange" },
+                { "tierhouse", "Maison" },
+                { "playerhouse", "Maison" },
+                { "farm", "Ferme" },
+                { "mines", "Mine" },
+                { "mine", "Mine" },
+            };
+
+        private static readonly HashSet<string> _unknown =
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        private static string StripDigits(string s) =>
+            new string((s ?? string.Empty).Where(c => !char.IsDigit(c)).ToArray());
 
         private static readonly string[] RegionFieldNames =
         {
