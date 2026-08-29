@@ -123,12 +123,17 @@ namespace SunHavenAccess.Info
 
             try
             {
+                // L'espèce est en anglais dans le jeu — « Cow », « Chicken ». Or la base d'objets
+                // la connaît sous ce nom-là (ItemID.Cow, ItemID.Chicken…) et sait rendre sa
+                // version française. Une bête sans nom donné s'annonçait donc en anglais au milieu
+                // d'annonces françaises, pour rien.
                 string species = animal.AnimalName;
-                if (!string.IsNullOrWhiteSpace(species)) return species;
+                if (!string.IsNullOrWhiteSpace(species))
+                    return ItemNames.ByEnglishName(species) ?? Util.UiNameTranslator.Translate(species);
             }
             catch { }
 
-            return "Animal";
+            return Localization.Language.T("Animal", "Animal");
         }
 
         private static AnimalPositionData DataOf(Animal animal)

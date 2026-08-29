@@ -443,7 +443,7 @@ namespace SunHavenAccess.Navigation
         /// gagnerait avant qu'on atteigne celui qui sait vraiment nommer la chose. C'est ce qui
         /// faisait annoncer « Enemy bloque le passage » au lieu du nom de la créature.
         /// </param>
-        internal static string Describe(Component c, bool allowGenericName = true)
+        internal static string Describe(Component c, bool allowGenericName = true, bool followSiblings = true)
         {
             // Un autre joueur AVANT le test NPCAI : c'est la distinction qui compte en
             // coopération, et on ne veut surtout pas qu'un partenaire soit annoncé comme un
@@ -502,7 +502,41 @@ namespace SunHavenAccess.Navigation
                 }
             }
 
-            return allowGenericName ? UiNameTranslator.Translate(c.gameObject.name) : null;
+            // LE NOM EST PARFOIS SUR LE VOISIN, PAS SUR CE QU'ON REGARDE.
+            //
+            // `Wish.Ore` est une classe entièrement VIDE : un simple marqueur posé sur l'objet pour
+            // dire « ceci est un filon ». Elle ne porte ni nom, ni identifiant, ni texte. Le nom
+            // réel est sur la `Decoration` du même objet — mais comme le scanner collectait les
+            // deux composants séparément, le filon apparaissait deux fois : une fois nommé
+            // correctement, une fois en « Ore ». C'est exactement l'anglais qui restait dans les
+            // ressources.
+            //
+            // On regarde donc les autres composants du MÊME objet avant d'abandonner. Écrit une
+            // fois ici plutôt que classe par classe : tout marqueur vide que le jeu ajoutera un
+            // jour sera traité pareil, sans qu'on y revienne.
+            // `followSiblings` coupe la récursion : sans lui, deux composants sans nom se
+            // renverraient l'un à l'autre indéfiniment et gèleraient le jeu. Un seul saut suffit —
+            // le nom cherché est sur l'objet lui-même, pas deux niveaux plus loin.
+            if (followSiblings)
+            {
+                foreach (Component sibling in c.gameObject.GetComponents<Component>())
+                {
+                    if (sibling == null || sibling == c) continue;
+                    if (sibling is Transform || sibling is Collider2D || sibling is Renderer) continue;
+
+                    string named = Describe(sibling, allowGenericName: false, followSiblings: false);
+                    if (!string.IsNullOrWhiteSpace(named)) return named;
+                }
+            }
+
+            // Le nom technique de l'objet Unity, en dernier recours. Il est en anglais par nature ;
+            // on le repasse quand même à la base du jeu, qui reconnaît parfois le nom d'origine
+            // d'un objet et rend alors sa version française.
+            string objectName = TextUtil.Clean(c.gameObject.name);
+            string fromDatabase = Info.ItemNames.ByEnglishName(objectName);
+            if (!string.IsNullOrWhiteSpace(fromDatabase)) return fromDatabase;
+
+            return allowGenericName ? UiNameTranslator.Translate(objectName) : null;
         }
     }
 }
