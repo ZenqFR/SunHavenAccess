@@ -93,8 +93,17 @@ namespace SunHavenAccess.Navigation
         }
 
         /// <summary>
-        /// Ouvre le lieu choisi, comme le ferait un clic : centre la carte, remplit la
-        /// description, et déclenche l'annonce via le patch Harmony sur Map.OpenLocation.
+        /// Choisir un lieu ouvre ce qu'on peut EN FAIRE, plutôt que d'agir à sa place.
+        ///
+        /// Valider lançait directement le trajet, quand il y en avait un, en plus d'ouvrir la
+        /// description : deux choses d'un coup, dont une invisible et jamais demandée. Signalé en
+        /// jeu — « faudrait mettre une ligne supplémentaire pour faire y aller ». C'est juste : un
+        /// lieu qu'on consulte et un lieu où l'on se rend sont deux intentions différentes, et
+        /// c'est à celui qui écoute de trancher, pas au mod de deviner.
+        ///
+        /// « S'y rendre à pied » vient EN PREMIER : c'est le geste qu'on vient chercher. La
+        /// description reste à un cran, et Ctrl+haut ramène à la liste des lieux — on ressort donc
+        /// d'un lieu sans avoir à rouvrir la carte.
         /// </summary>
         private static void Choose(List<MapImage> visible, int index)
         {
@@ -103,27 +112,35 @@ namespace SunHavenAccess.Navigation
             MapImage location = visible[index];
             if (location == null) return;
 
-            // La carte décrit le lieu ; le monde permet d'y aller.
-            //
-            // `MapImage.GoToLocation` porte un nom trompeur : elle ne déplace que la VUE de la
-            // carte, jamais le personnage. Un lieu de carte est une icône d'interface, sans
-            // position dans le monde — s'y « rendre » depuis la carte n'a donc aucun sens.
-            //
-            // Ce qui en a un : retrouver l'entrée réelle de ce bâtiment dans la zone où l'on se
-            // trouve, et marcher jusqu'à elle. Les entrées, elles, sont de vrais objets, que le
-            // scanner sait déjà repérer.
-            location.OpenLocation();
-
+            string label = NameOf(location);
             Component entrance = EntranceFor(location);
-            if (entrance != null)
-            {
-                PathingController.TravelTo(entrance.transform.position, NameOf(location));
-                return;
-            }
 
-            TolkSpeech.Speak(Localization.Language.T(
-                "Ce lieu n'a pas d'entrée dans la zone où vous êtes : il faut d'abord vous y rendre.",
-                "This place has no entrance in the area you are in: you must travel there first."), false);
+            var actions = new List<string>
+            {
+                entrance != null
+                    ? Localization.Language.T("S'y rendre à pied", "Walk there")
+                    : Localization.Language.T("S'y rendre à pied : pas d'entrée dans cette zone",
+                                              "Walk there: no entrance in this area"),
+                Localization.Language.T("Lire la description", "Read the description"),
+            };
+
+            Menus.ListMenu.Open(label, actions,
+                chosen =>
+                {
+                    if (chosen == 0)
+                    {
+                        if (entrance != null) PathingController.TravelTo(entrance.transform.position, label);
+                        else TolkSpeech.Speak(Localization.Language.T(
+                            "Ce lieu n'a pas d'entrée dans la zone où vous êtes : il faut d'abord vous en approcher.",
+                            "This place has no entrance in the area you are in: you must get closer first."), true);
+                        return;
+                    }
+
+                    // `OpenLocation` centre la carte ET remplit le panneau de description ; le
+                    // patch Harmony sur Map.OpenLocation se charge de l'annoncer.
+                    location.OpenLocation();
+                },
+                onExitUp: OpenList);
         }
 
         /// <summary>
@@ -131,22 +148,44 @@ namespace SunHavenAccess.Navigation
         ///
         /// Un portail sait vers quelle scène il mène ; un lieu de carte porte son nom. On les
         /// rapproche en ignorant espaces, ponctuation et casse, parce que rien ne garantit qu'ils
-        /// s'écrivent pareil. Une correspondance AMBIGUË — deux portails possibles — est traitée
-        /// comme une absence : mieux vaut ne pas partir que partir au mauvais endroit.
+        /// s'écrivent pareil — et on accepte qu'un nom soit CONTENU dans l'autre, le jeu nommant
+        /// ses scènes plus longuement que ses lieux (« CafeInterior » pour « Café »).
+        ///
+        /// Une correspondance ambiguë — plusieurs entrées possibles — retient la plus proche du
+        /// joueur plutôt que d'abandonner : quand deux portes mènent au même endroit, celle d'à
+        /// côté est toujours le bon choix.
+        ///
+        /// L'échec est TRACÉ dans le journal avec le nom cherché et les entrées disponibles :
+        /// c'est la seule façon de corriger un rapprochement qu'on ne peut pas voir depuis ici.
         /// </summary>
         private static Component EntranceFor(MapImage location)
         {
             try
             {
                 string wanted = Flatten(location.location);
+                if (string.IsNullOrEmpty(wanted)) wanted = Flatten(NameOf(location));
                 if (string.IsNullOrEmpty(wanted)) return null;
 
-                var matches = Scanner.PortalsInScene()
-                    .Where(p => p != null)
-                    .Where(p => Flatten(Scanner.PortalDestination(p)) == wanted)
+                var portals = Scanner.PortalsInScene().Where(p => p != null).ToList();
+
+                var matches = portals
+                    .Select(p => new { Portal = p, Scene = Flatten(Scanner.PortalDestination(p)) })
+                    .Where(x => !string.IsNullOrEmpty(x.Scene)
+                                && (x.Scene == wanted || x.Scene.Contains(wanted) || wanted.Contains(x.Scene)))
                     .ToList();
 
-                return matches.Count == 1 ? matches[0] : null;
+                if (matches.Count == 0)
+                {
+                    Plugin.Log?.LogInfo(
+                        $"Carte : aucune entrée pour « {location.location} » (cherché « {wanted} »). " +
+                        $"Entrées présentes : {string.Join(", ", portals.Select(Scanner.PortalDestination).Where(s => !string.IsNullOrEmpty(s)).ToArray())}");
+                    return null;
+                }
+
+                Vector3 from = Wish.Player.Instance != null ? Wish.Player.Instance.transform.position : Vector3.zero;
+                return matches
+                    .OrderBy(x => Vector3.Distance(x.Portal.transform.position, from))
+                    .First().Portal;
             }
             catch { return null; }
         }
