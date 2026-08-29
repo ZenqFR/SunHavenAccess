@@ -22,8 +22,9 @@ namespace SunHavenAccess.Navigation
     {
         private static readonly string[] CategoryNames =
         {
-            "Personnages", "Plantations", "Ressources", "Bâtiments et portails",
-            "Animaux et compagnons", "Ennemis", "Mobilier et rangement", "Services et repères"
+            "Personnages", "Plantations", "Ressources", "Entrées de bâtiment",
+            "Animaux et compagnons", "Ennemis", "Mobilier et rangement", "Services et repères",
+            "Changements de zone"
         };
 
         private const float Radius = 55f; // agrandi (était 40) : plusieurs objets légitimes tombaient hors champ
@@ -173,7 +174,8 @@ namespace SunHavenAccess.Navigation
                 0 => FindNpcs(),
                 1 => Object.FindObjectsOfType<Crop>(),
                 2 => FindResources(),
-                3 => FindPortalsAndDoors(),
+                3 => FindPortalsAndDoors(interiors: true),
+                8 => FindPortalsAndDoors(interiors: false),
                 4 => FindAnimalsAndPets(),
                 5 => FindEnemies(),
                 6 => FindFurniture(),
@@ -385,17 +387,58 @@ namespace SunHavenAccess.Navigation
             catch { return null; }
         }
 
-        private static IEnumerable<Component> FindPortalsAndDoors()
+        /// <summary>
+        /// Les passages, séparés selon ce qu'ils font vraiment : entrer quelque part, ou changer
+        /// de zone.
+        ///
+        /// Ils étaient tous dans le même sac, et ce sac ne répondait à aucune question réelle. On
+        /// cherche soit « où est la boutique », soit « comment je sors d'ici » — jamais les deux
+        /// en même temps, et il fallait pourtant parcourir les deux mélangés à chaque fois.
+        ///
+        /// Le jeu fait déjà la distinction : chaque zone déclare `SceneSettings.interior`. Une
+        /// porte qui mène à un intérieur est une entrée de bâtiment ; une qui mène à l'extérieur
+        /// est une sortie vers une autre zone. Aucune liste à tenir, et la règle vaudra encore
+        /// pour les zones ajoutées plus tard.
+        ///
+        /// `Wish.ScenePortalSpot` est la VRAIE classe de ces passages — trouvée en décompilant
+        /// Wish.NPCManager/Player à la recherche de « sceneToLoadString ». `Wish.Door` et
+        /// `Wish.PortalSpot` sont des marqueurs quasi vides, sans texte d'interaction ; ils ne
+        /// savent pas où ils mènent, donc on ne peut pas les classer. On les laisse avec les
+        /// entrées de bâtiment, où ils sont le plus souvent, plutôt que de les faire disparaître.
+        /// </summary>
+        private static IEnumerable<Component> FindPortalsAndDoors(bool interiors)
         {
-            // Wish.ScenePortalSpot est la VRAIE classe des entrées de bâtiment (maison, grange,
-            // boutiques, donjons...) — trouvée en décompilant Wish.NPCManager/Player à la
-            // recherche de "sceneToLoadString". Wish.Door et Wish.PortalSpot (composants
-            // marqueurs quasi vides, sans texte d'interaction) sont conservés en repli mais ne
-            // décrivent presque jamais rien d'utile à eux seuls.
-            return Object.FindObjectsOfType<ScenePortalSpot>()
-                .Cast<Component>()
+            var portals = Object.FindObjectsOfType<ScenePortalSpot>()
+                .Where(p => p != null && LeadsInside(p) == interiors)
+                .Cast<Component>();
+
+            if (!interiors) return portals;
+
+            return portals
                 .Concat(Object.FindObjectsOfType<Door>())
                 .Concat(Object.FindObjectsOfType<PortalSpot>());
+        }
+
+        /// <summary>
+        /// Ce passage mène-t-il à un intérieur ? Faute de savoir — zone inconnue du jeu, table pas
+        /// encore chargée — on répond « intérieur » : c'est le cas de loin le plus fréquent, et
+        /// mieux vaut un passage rangé au mauvais endroit qu'un passage qui disparaît des deux.
+        /// </summary>
+        private static bool LeadsInside(ScenePortalSpot portal)
+        {
+            try
+            {
+                string destination = PortalDestination(portal);
+                if (string.IsNullOrWhiteSpace(destination)) return true;
+
+                var manager = SceneSettingsManager.Instance;
+                if (manager?.sceneNameDictionary == null) return true;
+
+                return !manager.sceneNameDictionary.TryGetValue(destination, out SceneSettings settings)
+                    || settings == null
+                    || settings.interior;
+            }
+            catch { return true; }
         }
 
         private static readonly FieldInfo SceneToLoadField =

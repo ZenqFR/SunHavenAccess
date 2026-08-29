@@ -75,11 +75,20 @@ namespace SunHavenAccess.Info
                 : $"{name}, {Localization.Language.T("à rendre à", "hand in to")} {who}";
         }
 
-        private static void OpenQuest(QuestBundle bundle)
+        private static void OpenQuest(QuestBundle bundle) => OpenQuest(bundle, announce: true);
+
+        /// <summary>Remet la liste de la quête sans la réannoncer, après une simple consultation.</summary>
+        private static void Reopen(QuestBundle bundle) => OpenQuest(bundle, announce: false);
+
+        private static void OpenQuest(QuestBundle bundle, bool announce)
         {
             QuestAsset asset = bundle.quest.questAsset;
             string name = TextUtil.Clean(asset.LocalizedQuestName);
-            bool hasDestination = !string.IsNullOrWhiteSpace(asset.turnInMap);
+            // Une destination, c'est un lieu OU une personne. Ne regarder que `turnInMap` faisait
+            // annoncer « pas de lieu de rendu » sur des quêtes qui en ont parfaitement un — celui
+            // où se tient la personne à qui rendre.
+            bool hasDestination = !string.IsNullOrWhiteSpace(asset.turnInMap)
+                                  || !string.IsNullOrWhiteSpace(asset.npcToTurnInTo);
 
             var actions = new List<string>
             {
@@ -95,15 +104,22 @@ namespace SunHavenAccess.Info
                 actions,
                 chosen =>
                 {
-                    switch (chosen)
-                    {
-                        case 0: GoTo(asset); break;
-                        case 1: TolkSpeech.Speak(Description(bundle, asset), true); break;
-                        default: TolkSpeech.Speak(Progress(bundle), true); break;
-                    }
+                    if (chosen == 0) { GoTo(asset); return; }
+
+                    // CONSULTER NE DOIT PAS FAIRE SORTIR.
+                    //
+                    // Une liste se referme quand on valide — c'est juste pour une action, qui
+                    // emmène ailleurs. Mais lire une description n'emmène nulle part : le menu
+                    // disparaissait, et il fallait tout rouvrir pour entendre la progression juste
+                    // après. Signalé en jeu : « je fais Entrée, le menu se ferme ».
+                    //
+                    // On énonce, puis on remet la liste EN SILENCE : elle est de nouveau là sous
+                    // les flèches, sans parler par-dessus ce qu'on vient de demander.
+                    TolkSpeech.Speak(chosen == 1 ? Description(bundle, asset) : Progress(bundle), true);
+                    Reopen(bundle);
                 },
                 onExitUp: Open,
-                owner: OwnerTag);
+                owner: OwnerTag, announce: announce);
         }
 
         /// <summary>
@@ -115,23 +131,79 @@ namespace SunHavenAccess.Info
         /// </summary>
         private static void GoTo(QuestAsset asset)
         {
-            if (string.IsNullOrWhiteSpace(asset.turnInMap))
+            string label = TurnInName(asset);
+
+            // UNE COORDONNÉE, OU À DÉFAUT UNE PERSONNE.
+            //
+            // `turnInMap` est vide bien plus souvent que prévu — la première quête du jeu, « va
+            // revoir Anne sur le pont », n'en a pas. Le mod répondait alors « cette quête n'a pas
+            // de lieu de rendu », ce qui est faux du point de vue de qui joue : le lieu, c'est là
+            // où se tient Anne. Signalé en jeu, et l'objection était juste.
+            //
+            // Le jeu sait où sont ses habitants : `NPCManager.GetNPC` rend le personnage, qui
+            // porte sa zone et sa position. On vise donc la personne quand la quête ne donne pas
+            // de point — ce qui est de toute façon plus fidèle, un habitant se déplaçant au fil
+            // de la journée.
+            if (!string.IsNullOrWhiteSpace(asset.turnInMap))
             {
-                TolkSpeech.Speak(Localization.Language.T(
-                    "Cette quête n'indique aucun lieu de rendu : elle se termine en faisant ce qu'elle demande.",
-                    "This quest gives no hand-in place: it completes by doing what it asks."), true);
+                var target = new Vector3(asset.turnInLocation.x, asset.turnInLocation.y, 0f);
+                string where = string.IsNullOrWhiteSpace(label) ? SceneNames.Translate(asset.turnInMap) : label;
+
+                if (Journey.Start(asset.turnInMap, where, target)) return;
+
+                Unknown(SceneNames.Translate(asset.turnInMap));
                 return;
             }
 
-            var target = new Vector3(asset.turnInLocation.x, asset.turnInLocation.y, 0f);
-            string label = TurnInName(asset);
-            if (string.IsNullOrWhiteSpace(label)) label = SceneNames.Translate(asset.turnInMap);
+            NPCAI npc = FindNpc(asset.npcToTurnInTo);
+            if (npc != null)
+            {
+                string who = string.IsNullOrWhiteSpace(label) ? TextUtil.Clean(npc.LocalizedActualNPCName) : label;
+                if (Journey.Start(npc.Scene, who, npc.transform.position)) return;
 
-            if (Journey.Start(asset.turnInMap, label, target)) return;
+                Unknown(SceneNames.Translate(npc.Scene));
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(label))
+            {
+                TolkSpeech.Speak(Localization.Language.T(
+                    $"{label} est introuvable pour l'instant. Les habitants se déplacent selon l'heure : réessayez plus tard.",
+                    $"{label} cannot be found right now. Villagers move about during the day: try again later."), true);
+                return;
+            }
 
             TolkSpeech.Speak(Localization.Language.T(
-                $"Je ne connais pas encore le chemin vers {SceneNames.Translate(asset.turnInMap)}. Allez-y une première fois, et il sera retenu.",
-                $"I don't know the way to {SceneNames.Translate(asset.turnInMap)} yet. Go there once, and it will be remembered."), true);
+                "Cette quête n'indique aucun lieu de rendu : elle se termine en faisant ce qu'elle demande.",
+                "This quest gives no hand-in place: it completes by doing what it asks."), true);
+        }
+
+        private static void Unknown(string place)
+        {
+            TolkSpeech.Speak(Localization.Language.T(
+                $"Je ne connais pas encore le chemin vers {place}. Allez-y une première fois, et il sera retenu.",
+                $"I don't know the way to {place} yet. Go there once, and it will be remembered."), true);
+        }
+
+        /// <summary>
+        /// L'habitant portant ce nom, où qu'il se trouve. Le nom stocké par la quête est celui du
+        /// jeu, non traduit : c'est justement la clé qu'attend `GetNPC`.
+        /// </summary>
+        private static NPCAI FindNpc(string npcName)
+        {
+            if (string.IsNullOrWhiteSpace(npcName)) return null;
+
+            try
+            {
+                NPCAI npc = SingletonBehaviour<NPCManager>.Instance?.GetNPC(npcName.Trim());
+                if (npc != null) return npc;
+
+                // Repli : le nom de la quête peut différer d'une majuscule ou d'un espace près.
+                return SingletonBehaviour<NPCManager>.Instance?._npcsList?
+                    .FirstOrDefault(n => n != null
+                        && string.Equals(n.ActualNPCName?.Trim(), npcName.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+            catch { return null; }
         }
 
         /// <summary>
