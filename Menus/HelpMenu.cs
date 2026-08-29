@@ -211,6 +211,14 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
+            "La boutique. Elle s'ouvre en liste : chaque article annonce son nom, son prix À L'UNITÉ " +
+            "et son stock. Valider un article ouvre les quantités — et chaque quantité annonce son " +
+            "prix TOTAL avant que vous la choisissiez : « acheter 20, 240 pièces ». Acheter n'est jamais " +
+            "une découverte. Une quantité libre existe aussi, et « Ce que je peux m'offrir » dit combien " +
+            "d'exemplaires votre bourse permet. " +
+            "Le mod annonce ce qui a RÉELLEMENT été acheté, pas ce qui était demandé : la boutique s'arrête " +
+            "dès qu'il manque de l'argent, du stock ou de la place, et vous le sauriez sinon en comptant votre sac.",
+
             "L'établi. Ouvrir un établi ouvre la liste des recettes, chacune annoncée avec son résultat " +
             "ET ses ingrédients dans la même phrase — c'est ce qu'on veut savoir avant de choisir, pas après. " +
             "Valider une recette propose d'en fabriquer un, cinq, vingt, une quantité que vous tapez, " +
