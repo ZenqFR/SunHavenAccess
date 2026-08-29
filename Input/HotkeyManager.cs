@@ -358,8 +358,6 @@ namespace SunHavenAccess.Input
             KeyCode.Alpha6, KeyCode.Alpha7, KeyCode.Alpha8, KeyCode.Alpha9, KeyCode.Alpha0,
         };
 
-        private static bool _navSuppressed;
-
         /// <summary>
         /// Neutralise la navigation clavier NATIVE d'Unity tant que le mod pilote les flèches.
         /// Indispensable : la boucle du mod tourne en Postfix sur `EventSystem.Update`, donc
@@ -375,16 +373,18 @@ namespace SunHavenAccess.Input
             EventSystem es = EventSystem.current;
             if (es == null) return;
 
-            if (suppress && !_navSuppressed)
-            {
-                es.sendNavigationEvents = false;
-                _navSuppressed = true;
-            }
-            else if (!suppress && _navSuppressed)
-            {
-                es.sendNavigationEvents = true;
-                _navSuppressed = false;
-            }
+            // ON LIT L'ÉTAT RÉEL, ON NE LE MÉMORISE PAS.
+            //
+            // Un drapeau statique retenait « c'est déjà neutralisé », et ce drapeau survivait au
+            // changement de zone alors que l'EventSystem, lui, était remplacé. Le nouveau arrivait
+            // avec la navigation native RÉACTIVÉE, le mod se croyait à jour et n'y touchait plus :
+            // chaque flèche déplaçait alors la sélection deux fois, une par le jeu et une par le
+            // mod. Un défaut qui n'apparaît qu'après un changement de zone — donc jamais pendant
+            // un essai rapide, toujours au bout de dix minutes de jeu.
+            //
+            // Comparer à la valeur réelle coûte une lecture de champ et ne peut pas se désynchroniser.
+            bool desired = !suppress;
+            if (es.sendNavigationEvents != desired) es.sendNavigationEvents = desired;
         }
 
 

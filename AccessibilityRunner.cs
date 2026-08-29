@@ -81,6 +81,7 @@ namespace SunHavenAccess
             ("SaveMenu", Menus.SaveMenu.Tick),
             ("PartyAnnouncer", PartyAnnouncer.Tick),
             ("Journey", Navigation.Journey.Tick),
+            ("KeyConflictCheck", KeyConflictCheck.RunOnce),
         };
 
         /// <summary>

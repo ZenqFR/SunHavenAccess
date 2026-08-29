@@ -25,6 +25,7 @@ namespace SunHavenAccess.Menus
     public static class MainMenuFocus
     {
         private static bool _placed;
+        private static bool _parked;
         private static float _nextAttempt;
 
         public static void Tick()
@@ -34,6 +35,7 @@ namespace SunHavenAccess.Menus
             if (menu == null || !menu.isActiveAndEnabled)
             {
                 _placed = false;
+                _parked = false;
                 return;
             }
 
@@ -41,9 +43,29 @@ namespace SunHavenAccess.Menus
             // empêcherait toute navigation.
             if (_placed) return;
 
+            if (EventSystem.current == null) return;
+
+            // ÉCARTER LA SOURIS AVANT DE REGARDER CE QUI EST SÉLECTIONNÉ.
+            //
+            // Unity donne le focus clavier à ce que la souris survole. Au lancement, un curseur
+            // resté sur « Quitter » plaçait donc la sélection sur « Quitter », et le mod, voyant
+            // « quelque chose est déjà sélectionné », s'en contentait poliment. D'où les rapports
+            // répétés — « le premier bouton était sur magasin », « en fait c'est sur quitté » —
+            // qu'on a longtemps attribués à l'ordre des boutons alors que le coupable était la
+            // souris.
+            //
+            // On l'écarte donc en premier, UNE SEULE FOIS par apparition de l'écran — pas à chaque
+            // image : ce serait reprendre la souris des mains de qui voudrait s'en servir, et
+            // payer un appel système soixante fois par seconde pour un geste qui n'a de sens
+            // qu'une fois.
+            if (!_parked)
+            {
+                _parked = true;
+                Navigation.MouseCursor.ParkAwayFromUi();
+            }
+
             // Quelque chose est déjà sélectionné — par le jeu, ou parce qu'on vient de naviguer :
             // on n'y touche pas.
-            if (EventSystem.current == null) return;
             if (EventSystem.current.currentSelectedGameObject != null) { _placed = true; return; }
 
             // Chercher où poser la sélection demande un balayage complet de la scène. Tant qu'un

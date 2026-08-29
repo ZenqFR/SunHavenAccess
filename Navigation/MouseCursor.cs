@@ -146,6 +146,34 @@ namespace SunHavenAccess.Navigation
             return _hWnd;
         }
 
+        /// <summary>
+        /// Écarte le curseur de tout élément d'interface, en le posant dans un coin.
+        ///
+        /// Unity donne le focus clavier à ce que la souris SURVOLE. Une souris oubliée sur
+        /// « Quitter » au lancement du jeu plaçait donc la navigation sur « Quitter », et il fallait
+        /// remonter plusieurs fois pour retrouver « Jouer » — signalé en jeu, à plusieurs reprises,
+        /// et longtemps mis sur le compte de l'ordre des boutons.
+        ///
+        /// En partie, la touche de verrouillage règle le problème en maintenant la souris dans le
+        /// monde. Hors partie il n'y a pas de monde où la maintenir : on l'écarte donc une fois, au
+        /// moment où le mod prend la main sur un écran. Qui joue à la souris la ramènera d'un
+        /// geste ; qui joue au clavier ne la reverra jamais.
+        /// </summary>
+        public static void ParkAwayFromUi()
+        {
+            try
+            {
+                IntPtr hWnd = WindowHandle();
+                Point pt = new Point { X = 2, Y = Screen.height - 2 };
+                if (hWnd != IntPtr.Zero) ClientToScreen(hWnd, ref pt);
+                SetCursorPos(pt.X, pt.Y);
+            }
+            catch (Exception e)
+            {
+                Plugin.Log?.LogWarning("MouseCursor.ParkAwayFromUi a échoué : " + e.Message);
+            }
+        }
+
         public static bool PointAt(Vector3 world)
         {
             try
