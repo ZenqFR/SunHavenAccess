@@ -407,12 +407,40 @@ namespace SunHavenAccess.Input
         /// le jeu répond normalement aux touches. On interroge donc aussi directement le
         /// clavier de Rewired, en repli.
         /// </summary>
+        /// <summary>
+        /// Le clavier Rewired, retrouvé une fois par image et non quarante-huit.
+        ///
+        /// `GetKeyDown` lui-même est une lecture de tableau, donc gratuite. Ce qui coûtait, c'est
+        /// tout ce qu'il fallait traverser pour y arriver : `ReInput.isReady`, puis
+        /// `ReInput.controllers.Keyboard`, refaits pour CHACUNE des quarante-huit touches
+        /// surveillées, à chaque image. Deux millisecondes par image d'après le chronomètre — pour
+        /// redemander quarante-huit fois de suite le même objet.
+        /// </summary>
+        private static int _keyboardFrame = -1;
+        private static Rewired.Keyboard _keyboard;
+
+        private static Rewired.Keyboard Keyboard()
+        {
+            if (_keyboardFrame == Time.frameCount) return _keyboard;
+            _keyboardFrame = Time.frameCount;
+
+            try
+            {
+                _keyboard = Rewired.ReInput.isReady ? Rewired.ReInput.controllers.Keyboard : null;
+            }
+            catch
+            {
+                _keyboard = null;
+            }
+
+            return _keyboard;
+        }
+
         private static bool RewiredKeyDown(KeyCode key)
         {
             try
             {
-                if (!Rewired.ReInput.isReady) return false;
-                Rewired.Keyboard kb = Rewired.ReInput.controllers.Keyboard;
+                Rewired.Keyboard kb = Keyboard();
                 return kb != null && kb.GetKeyDown(key);
             }
             catch

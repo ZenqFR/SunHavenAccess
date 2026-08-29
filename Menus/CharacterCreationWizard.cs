@@ -101,7 +101,7 @@ namespace SunHavenAccess.Menus
         {
             try
             {
-                NewCharacterCreator creator = SingletonBehaviour<NewCharacterCreator>.Instance;
+                NewCharacterCreator creator = Util.ScreenPresence<NewCharacterCreator>.Instance;
                 return creator != null && creator.isActiveAndEnabled ? creator : null;
             }
             catch { return null; }

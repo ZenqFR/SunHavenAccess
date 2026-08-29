@@ -53,6 +53,15 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static void Tick()
         {
+            // EN PARTIE, IL N'Y A RIEN À SURVEILLER. L'écran de chargement n'existe qu'avant
+            // d'entrer dans une partie ; une fois dedans, chercher des fiches de sauvegarde revient
+            // à balayer toute la scène pour n'y rien trouver, indéfiniment. Le chronomètre l'a
+            // chiffré : plus de trois millisecondes par image, pour rien.
+            //
+            // `Player.Instance` est un simple champ statique, pas un de ces singletons qui
+            // relancent une recherche complète quand ils sont vides : la garde est gratuite.
+            if (Wish.Player.Instance != null) return;
+
             // Un quart de seconde suffit : la réponse ne change qu'au changement d'écran, et le
             // délai reste imperceptible à l'arrivée.
             if (Time.unscaledTime < _nextCheck) return;

@@ -42,7 +42,7 @@ namespace SunHavenAccess.Info
 
             // Le jeu expose son singleton : le chercher dans toute la scène à chaque image coûterait
             // cher pour un écran qui n'existe qu'une fois.
-            NewCharacterCreator creator = SingletonBehaviour<NewCharacterCreator>.Instance;
+            NewCharacterCreator creator = Util.ScreenPresence<NewCharacterCreator>.Instance;
 
             if (creator == null || !creator.isActiveAndEnabled)
             {
