@@ -208,8 +208,11 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
-            $"La souris. {K(ModConfig.MouseFollowToggle)} active la souris qui pointe toujours la case devant vous. " +
-            $"{K(ModConfig.SimulateLeftClick)} fait un clic gauche, Contrôle plus {K(ModConfig.SimulateRightClick)} un clic droit.",
+            $"La souris. {K(ModConfig.MouseFollowToggle)} VERROUILLE la souris sur la case devant vous : elle y reste, " +
+            "et la bouger à la main n'a plus aucun effet tant que vous ne la libérez pas avec la même touche. " +
+            "C'est ce qui évite qu'une souris oubliée sur un bouton ne vole le curseur du clavier. " +
+            $"{K(ModConfig.SimulateLeftClick)} fait un clic gauche, Contrôle plus {K(ModConfig.SimulateRightClick)} un clic droit. " +
+            "En jeu et hors menu, Entrée fait aussi le clic gauche et Contrôle plus Entrée le clic droit.",
 
             "Les grands écrans, comme l'arbre de compétences. Les flèches seules suffisent : elles parcourent la grille rangée par rangée " +
             "et colonne par colonne, avec un bip aux quatre bords, et annoncent l'intitulé de chaque rangée — Mobilité, Bûcheronnage, " +
@@ -273,10 +276,17 @@ namespace SunHavenAccess.Menus
             $"{K(ModConfig.AnnounceFestivals)} liste les festivals de la saison en cours.",
 
             $"La carte du monde. Carte ouverte, {K(ModConfig.MapPreviousLocation)} ouvre la LISTE de tous les lieux : on la parcourt aux flèches " +
-            "et Entrée ouvre celui qu'on a choisi, avec sa description. " +
-            $"{K(ModConfig.MapNextLocation)} garde l'ancien parcours au coup par coup. " +
-            "La carte ne peut pas lancer de trajet à pied : ses lieux sont des icônes d'interface, sans position dans le monde. " +
-            "Pour se déplacer, c'est le scanner, qui vise de vrais objets.",
+            "et Entrée ouvre celui qu'on a choisi. Trois choix apparaissent alors : s'y rendre, lire la description, " +
+            "ou sortir vers une autre zone. " +
+            $"{K(ModConfig.MapNextLocation)} garde l'ancien parcours au coup par coup.",
+
+            "Se rendre à un lieu de la carte. « S'y rendre » fait le trajet ENTIER, même si le lieu est dans une autre zone : " +
+            "le personnage marche jusqu'à la bonne sortie, la franchit, et repart de l'autre côté, jusqu'à la porte du lieu. " +
+            "Le mod apprend le plan du monde en jouant, et le retient d'une partie à l'autre : il ne connaît donc que les zones " +
+            "où vous êtes déjà passé. Un lieu jamais visité vous le dira, au lieu de vous envoyer marcher au hasard. " +
+            "Deux refus viennent du jeu lui-même et non du mod : une boutique fermée à cette heure, et une zone pas encore débloquée. " +
+            "Dans ces cas le trajet s'arrête et vous prévient plutôt que de vous laisser planté devant une porte. " +
+            "Échap annule un trajet en cours.",
 
             "Les écrans en colonnes, comme la création de personnage : catégories à gauche, personnalisation au centre, informations à droite. " +
             "Contrôle plus gauche ou droite saute d'une colonne à l'autre, et annonce laquelle. Les flèches seules parcourent l'écran comme d'habitude.",

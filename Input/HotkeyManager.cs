@@ -269,9 +269,19 @@ namespace SunHavenAccess.Input
             // Échap annule un cheminement automatique en cours, où qu'on soit (ne fait rien si
             // aucun cheminement n'est en cours, donc n'interfère pas avec les autres usages
             // d'Échap ailleurs dans le jeu).
-            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape) && PathingController.IsPathing)
+            // Un trajet multi-zones s'annule EN ENTIER, pas étape par étape. Annuler le seul
+            // cheminement en cours n'aurait rien réglé : le trajet aurait constaté l'arrêt et
+            // relancé la marche vers la même porte, donnant l'impression d'un Échap ignoré.
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Escape) && (PathingController.IsPathing || Journey.InProgress))
             {
+                bool wasTravelling = Journey.InProgress;
+                Journey.Stop();
                 PathingController.Cancel();
+
+                if (wasTravelling && !PathingController.IsPathing)
+                {
+                    TolkSpeech.Speak(Language.T("Trajet annulé.", "Journey cancelled."), true);
+                }
             }
         }
 
