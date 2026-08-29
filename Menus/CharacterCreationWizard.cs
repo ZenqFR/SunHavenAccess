@@ -101,7 +101,7 @@ namespace SunHavenAccess.Menus
         {
             try
             {
-                NewCharacterCreator creator = Util.ScreenPresence<NewCharacterCreator>.Instance;
+                NewCharacterCreator creator = Patches.CharacterCreatorWatch.Current;
                 return creator != null && creator.isActiveAndEnabled ? creator : null;
             }
             catch { return null; }

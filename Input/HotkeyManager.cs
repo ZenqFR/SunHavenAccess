@@ -394,10 +394,35 @@ namespace SunHavenAccess.Input
         private static bool CtrlHeld() =>
             UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl);
 
+        /// <summary>
+        /// « Une touche a-t-elle été enfoncée cette image ? », demandé une fois et non quarante-huit.
+        ///
+        /// Le mod surveille quarante-huit touches, et interrogeait Unity sur chacune à chaque
+        /// image — quarante-huit appels natifs, alors que la réponse est non pour la quasi-totalité
+        /// des images d'une partie. `anyKeyDown` répond pour toutes d'un coup, et l'équivalence est
+        /// exacte : elle est vraie dès qu'une touche quelconque l'est, donc elle ne peut pas
+        /// masquer une touche que l'on guettait.
+        ///
+        /// Rewired n'offre pas d'équivalent, et son propre test reste une lecture de tableau : on
+        /// le laisse tel quel plutôt que de supposer que les deux systèmes voient toujours la même
+        /// chose. C'est précisément parce qu'ils ne la voient pas toujours que le mod consulte les
+        /// deux.
+        /// </summary>
+        private static int _anyKeyFrame = -1;
+        private static bool _anyKeyDown;
+
+        private static bool AnyUnityKeyDown()
+        {
+            if (_anyKeyFrame == Time.frameCount) return _anyKeyDown;
+            _anyKeyFrame = Time.frameCount;
+            _anyKeyDown = UnityEngine.Input.anyKeyDown;
+            return _anyKeyDown;
+        }
+
         private static bool Pressed(KeyCode key)
         {
             if (key == KeyCode.None) return false;
-            return UnityEngine.Input.GetKeyDown(key) || RewiredKeyDown(key);
+            return (AnyUnityKeyDown() && UnityEngine.Input.GetKeyDown(key)) || RewiredKeyDown(key);
         }
 
         /// <summary>
