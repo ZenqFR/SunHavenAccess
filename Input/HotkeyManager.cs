@@ -97,7 +97,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.Clock.Value)) ClockAnnouncer.Announce();
             if (Pressed(ModConfig.Status.Value)) StatusAnnouncer.Announce();
             if (Pressed(ModConfig.FishingToneToggle.Value)) FishingToneCue.ToggleEnabled();
-            if (Pressed(ModConfig.AnnounceQuests.Value)) QuestAnnouncer.AnnounceActiveQuests();
+            if (Pressed(ModConfig.AnnounceQuests.Value)) QuestMenu.Open();
             if (Pressed(ModConfig.AnnounceRelationships.Value)) RelationshipAnnouncer.AnnounceAll();
             if (Pressed(ModConfig.AnnounceProfessions.Value)) ProfessionAnnouncer.AnnounceAll();
             if (Pressed(ModConfig.MapPreviousLocation.Value)) MapNavigator.OpenList();

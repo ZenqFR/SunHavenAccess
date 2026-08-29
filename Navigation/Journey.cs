@@ -46,6 +46,9 @@ namespace SunHavenAccess.Navigation
         /// </summary>
         private static float _stepDeadline;
 
+        /// <summary>Point exact à rejoindre dans la zone d'arrivée, quand il est connu.</summary>
+        private static Vector3? _finalPosition;
+
         /// <summary>
         /// Marge par étape. Large : une traversée de ville prend du temps, et abandonner trop tôt
         /// serait plus pénible qu'attendre un peu.
@@ -58,7 +61,15 @@ namespace SunHavenAccess.Navigation
         /// Lance un trajet vers une zone, en traversant celles qu'il faut. Renvoie false si aucun
         /// chemin connu n'y mène — l'appelant explique alors, il en sait plus sur le contexte.
         /// </summary>
-        internal static bool Start(string targetScene, string label)
+        /// <param name="finalPosition">
+        /// Point précis à rejoindre une fois arrivé dans la zone, quand on le connaît.
+        ///
+        /// Une quête ne dit pas « va en ville », elle dit « rends ceci ICI » — le jeu range la
+        /// carte ET les coordonnées dans son propre descriptif. S'arrêter au seuil de la zone
+        /// serait s'arrêter juste avant la partie qu'on ne peut pas faire sans voir. Quand le
+        /// point est connu, le trajet va donc jusqu'au bout.
+        /// </param>
+        internal static bool Start(string targetScene, string label, Vector3? finalPosition = null)
         {
             Stop();
 
@@ -69,10 +80,13 @@ namespace SunHavenAccess.Navigation
             if (route == null) return false;
 
             _label = label;
+            _finalPosition = finalPosition;
 
             if (route.Count == 0)
             {
-                // Déjà sur place : rien à traverser, l'appelant fera marcher jusqu'à l'entrée.
+                // Déjà dans la bonne zone : plus rien à traverser. S'il reste un point précis à
+                // rejoindre, on marche directement ; sinon l'appelant prend le relais.
+                if (finalPosition.HasValue) PathingController.TravelTo(finalPosition.Value, label);
                 return true;
             }
 
@@ -93,6 +107,7 @@ namespace SunHavenAccess.Navigation
             _remaining = null;
             _label = null;
             _lastScene = null;
+            _finalPosition = null;
         }
 
         internal static void Tick()
@@ -132,10 +147,22 @@ namespace SunHavenAccess.Navigation
 
                 if (_remaining.Count == 0)
                 {
-                    TolkSpeech.Speak(Localization.Language.T(
-                        $"Arrivé dans la zone de {_label}.",
-                        $"Arrived in the area of {_label}."), true);
+                    // Dernière ligne droite : quand on sait OÙ exactement, on y va, plutôt que de
+                    // laisser quelqu'un chercher à tâtons dans la bonne zone. C'est le cas des
+                    // quêtes, qui rangent leurs coordonnées de rendu avec leur carte.
+                    Vector3? destination = _finalPosition;
+                    string label = _label;
                     Stop();
+
+                    if (destination.HasValue)
+                    {
+                        PathingController.TravelTo(destination.Value, label);
+                        return;
+                    }
+
+                    TolkSpeech.Speak(Localization.Language.T(
+                        $"Arrivé dans la zone de {label}.",
+                        $"Arrived in the area of {label}."), true);
                     return;
                 }
 

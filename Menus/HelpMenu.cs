@@ -208,6 +208,16 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
+            $"Les quêtes, et comment s'y rendre. {K(ModConfig.AnnounceQuests)} ouvre la liste des quêtes en cours ; " +
+            "chacune indique à qui la rendre quand elle le sait. Valider une quête ouvre ce qu'on peut en faire : " +
+            "s'y rendre, réécouter la description, connaître la progression. " +
+            "« S'y rendre » fait le trajet ENTIER et s'arrête sur le point exact du rendu, pas à l'entrée de la ville — " +
+            "le jeu range la carte et les coordonnées avec la quête, c'est ce qui lui sert à poser son marqueur, " +
+            "et ce marqueur ne vous servait à rien. " +
+            "Une quête sans lieu de rendu — tuer des créatures, récolter — vous le dira : elle se termine en faisant " +
+            "ce qu'elle demande. Un lieu où vous n'êtes jamais allé aussi, puisque le plan du monde ne connaît que " +
+            "ce que vous avez exploré.",
+
             $"Se déplacer case par case. {K(ModConfig.StepMovement)} active ce mode : une flèche, un pas, " +
             "et la case où vous arrivez est annoncée. Le jeu, lui, fait glisser le personnage tant qu'on tient " +
             "la touche — on dépasse, on revient, on redépasse. Ce mode existe pour se placer exactement : " +

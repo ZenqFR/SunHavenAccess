@@ -43,52 +43,5 @@ namespace SunHavenAccess.Info
             TolkSpeech.Speak($"Nouvelle quête : {name}.", interrupt: false);
         }
 
-        /// <summary>Touche dédiée : liste toutes les quêtes actives (nom, description, progression).</summary>
-        public static void AnnounceActiveQuests()
-        {
-            Player player = Player.Instance;
-            if (player == null || player.QuestList == null)
-            {
-                TolkSpeech.Speak("Le jeu n'est pas encore chargé.", true);
-                return;
-            }
-
-            List<QuestBundle> quests = player.QuestList.quests;
-            if (quests == null || quests.Count == 0)
-            {
-                TolkSpeech.Speak("Aucune quête active.", true);
-                return;
-            }
-
-            // Une LISTE parcourable plutôt qu'une tirade. Réciter dix quêtes d'affilée obligeait à
-            // tout écouter pour atteindre la dernière, et à tout reprendre en cas d'inattention.
-            // La position dans la liste est annoncée par le menu lui-même, donc pas de « quête 3
-            // sur 10 » à recopier ici.
-            var parts = new List<string>();
-            foreach (QuestBundle bundle in quests)
-            {
-                if (bundle?.quest?.questAsset == null) continue;
-
-                string name = TextUtil.Clean(bundle.quest.questAsset.LocalizedQuestName);
-                string sentence = name;
-
-                // Les quêtes "cachées" (QuestAsset.hidden) n'ont pas de panneau visuel — le jeu
-                // ne leur en crée jamais un (voir QuestList.StartQuest) — juste le nom dans ce cas.
-                if (bundle.questPanel != null)
-                {
-                    string description = TextUtil.Clean(bundle.questPanel.questDescription?.text);
-                    string progress = TextUtil.Clean(bundle.questPanel.questProgress?.text);
-                    string complete = TextUtil.Clean(bundle.questPanel.questCompleteTMP?.text);
-
-                    if (!string.IsNullOrWhiteSpace(description)) sentence += $" {description}.";
-                    if (!string.IsNullOrWhiteSpace(complete)) sentence += " " + Localization.Language.Pair(Localization.Language.T("Progression", "Progress"), complete) + ".";
-                    if (!string.IsNullOrWhiteSpace(progress)) sentence += $" {progress}.";
-                }
-
-                parts.Add(sentence);
-            }
-
-            Menus.ListMenu.Open("Quêtes actives", parts);
-        }
     }
 }

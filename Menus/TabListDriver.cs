@@ -126,7 +126,7 @@ namespace SunHavenAccess.Menus
             {
                 case 1: SkillTreeMenu.Open(); break;              // Arbre de compétences
                 case 2: RelationshipAnnouncer.AnnounceAll(); break; // Relations
-                case 3: QuestAnnouncer.AnnounceActiveQuests(); break; // Quêtes
+                case 3: Info.QuestMenu.Open(); break;               // Quêtes
                 case 4: MapNavigator.OpenList(); break;           // Carte
                 case 5: StatisticsMenu.Open(); break;             // Statistiques
                 case 6: SettingsMenu.Open(); break;               // Paramètres
