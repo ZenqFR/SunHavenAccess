@@ -74,6 +74,16 @@ namespace SunHavenAccess.Input
                 return;
             }
 
+            // Une saisie de texte du mod tient le clavier à elle seule, et pour la même raison que
+            // le champ de saisie du jeu juste en dessous : taper « p » dans un nom de point favori
+            // annoncerait la position, « o » l'horloge, « c » ouvrirait le tchat. On sort AVANT
+            // toute lecture de touche — c'est TextPrompt lui-même qui lit les caractères.
+            if (TextPrompt.IsOpen)
+            {
+                SuppressNativeNavigation(false);
+                return;
+            }
+
             // Pendant la frappe dans un champ de saisie, TOUTES les touches du mod sont
             // suspendues : sinon taper « p » dans le nom de son personnage annoncerait la
             // position, « o » l'horloge, « c » ouvrirait le tchat... Voir Menus/TextInputReader.cs.
@@ -128,6 +138,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.FreeCursorToggle.Value)) FreeTileCursor.Toggle();
             if (Pressed(ModConfig.FreeCursorRecenter.Value)) FreeTileCursor.Recenter();
             if (Pressed(ModConfig.StepMovement.Value)) StepMovement.Toggle();
+            if (Pressed(ModConfig.Favorites.Value)) FavoritesMenu.Open();
             if (Pressed(ModConfig.PlacementStatus.Value)) PlacementAssistant.AnnounceStatus();
             if (Pressed(ModConfig.HerdStatus.Value)) AnimalAnnouncer.AnnounceHerdStatus();
             if (Pressed(ModConfig.BundleStatus.Value)) BundleReader.AnnounceStatus();

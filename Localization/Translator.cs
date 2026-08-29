@@ -185,6 +185,8 @@ namespace SunHavenAccess.Localization
             { "Ressources", "Resources" },
             { "Entrées de bâtiment", "Building entrances" },
             { "Changements de zone", "Area exits" },
+            { "Favoris", "Favourites" },
+            { "Points favoris", "Favourite points" },
             { "Animaux et compagnons", "Animals and pets" },
             { "Ennemis", "Enemies" },
             { "Mobilier et rangement", "Furniture and storage" },

@@ -24,7 +24,7 @@ namespace SunHavenAccess.Navigation
         {
             "Personnages", "Plantations", "Ressources", "Entrées de bâtiment",
             "Animaux et compagnons", "Ennemis", "Mobilier et rangement", "Services et repères",
-            "Changements de zone"
+            "Changements de zone", "Favoris"
         };
 
         private const float Radius = 55f; // agrandi (était 40) : plusieurs objets légitimes tombaient hors champ
@@ -180,6 +180,7 @@ namespace SunHavenAccess.Navigation
                 2 => FindResources(),
                 3 => FindPortalsAndDoors(interiors: true),
                 8 => FindPortalsAndDoors(interiors: false),
+                9 => Favorites.MarkersHere(),
                 4 => FindAnimalsAndPets(),
                 5 => FindEnemies(),
                 6 => FindFurniture(),
@@ -327,6 +328,11 @@ namespace SunHavenAccess.Navigation
             // Le filtre de distance suffit à les cantonner : un partenaire sur une autre carte est
             // à des centaines de cases, donc hors rayon.
             if (c is Player) return true;
+
+            // Un repère de favori est CRÉÉ par le mod : il n'appartient à aucune scène du jeu, et
+            // le repli par nom l'écarterait systématiquement. Il n'est de toute façon construit
+            // que pour la zone courante.
+            if (c is FavoriteMarker) return true;
 
             return c.gameObject.scene.name == ScenePortalManager.ActiveSceneName;
         }
@@ -582,6 +588,7 @@ namespace SunHavenAccess.Navigation
                 return string.IsNullOrWhiteSpace(playerName) ? "Autre joueur" : $"{playerName}, joueur";
             }
 
+            if (c is FavoriteMarker favorite) return favorite.FavoriteName;
             if (c is NPCAI npc) return npc.LocalizedActualNPCName;
             if (c is Crop crop) return TileCursor.DescribeCrop(crop);
             if (c is ScenePortalSpot portal) return DescribeBuildingEntrance(portal);

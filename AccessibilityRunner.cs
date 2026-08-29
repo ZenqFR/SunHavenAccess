@@ -82,6 +82,7 @@ namespace SunHavenAccess
             ("PartyAnnouncer", PartyAnnouncer.Tick),
             ("Journey", Navigation.Journey.Tick),
             ("KeyConflictCheck", KeyConflictCheck.RunOnce),
+            ("TextPrompt", Menus.TextPrompt.Tick),
             ("DialogueChoiceMenu", Dialogue.DialogueChoiceMenu.Tick),
             ("StepMovement", StepMovement.Tick),
         };

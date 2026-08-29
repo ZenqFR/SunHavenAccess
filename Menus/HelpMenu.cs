@@ -208,6 +208,17 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
+            $"Vos points favoris. {K(ModConfig.Favorites)} ouvre la liste : « Ajouter un point ici » le pose " +
+            "à l'endroit exact où vous vous tenez, et vous demande son nom — tapez, Entrée pour valider, " +
+            "Échap pour annuler, F2 pour réentendre ce que vous avez écrit. " +
+            "Valider un point existant permet de s'y rendre, de le renommer ou de le supprimer. " +
+            "Le scanner a une catégorie Favoris : vos points y sont trouvés comme n'importe quoi d'autre, " +
+            "avec leur distance, et le trajet automatique y mène. " +
+            "Le scanner ne trouve que ce que le JEU connaît — un rocher, une porte, un habitant ; il ne sait rien " +
+            "de l'endroit où vous plantez vos navets ni du coin où vous pêchez. Ces points-là sont à vous. " +
+            "Ils sont conservés d'une partie à l'autre, et ceux des autres zones apparaissent aussi dans la liste, " +
+            "avec le nom de leur zone.",
+
             $"Les quêtes, et comment s'y rendre. {K(ModConfig.AnnounceQuests)} ouvre la liste des quêtes en cours ; " +
             "chacune indique à qui la rendre quand elle le sait. Valider une quête ouvre ce qu'on peut en faire : " +
             "s'y rendre, réécouter la description, connaître la progression. " +

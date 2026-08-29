@@ -66,6 +66,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> FreeCursorToggle;
         public static ConfigEntry<KeyCode> FreeCursorRecenter;
         public static ConfigEntry<KeyCode> StepMovement;
+        public static ConfigEntry<KeyCode> Favorites;
         public static ConfigEntry<KeyCode> PlacementStatus;
         public static ConfigEntry<KeyCode> HerdStatus;
         public static ConfigEntry<KeyCode> BundleStatus;
@@ -309,6 +310,9 @@ namespace SunHavenAccess.Config
             // même endroit. Une touche de LETTRE aurait été plus mnémonique, mais le jeu se
             // déplace en ZQSD/WASD et lance ses sorts sur des lettres : le pavé numérique est la
             // seule région du clavier dont on sait qu'elle ne heurte rien.
+            Favorites = Bind(config, section, "PointsFavoris", KeyCode.Keypad2,
+                "Ouvre les points favoris : en créer un ici, renommer, supprimer, ou s'y rendre.",
+                "Points favoris");
             StepMovement = Bind(config, section, "DeplacementCaseParCase", KeyCode.Keypad1,
                 "Active ou désactive le déplacement case par case : une flèche, un pas.",
                 "Activer/désactiver le déplacement case par case");
