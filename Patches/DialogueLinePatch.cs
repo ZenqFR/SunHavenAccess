@@ -38,44 +38,25 @@ namespace SunHavenAccess.Patches
             string speaker = GetSpeakerName(__instance);
             string toSpeak = string.IsNullOrWhiteSpace(speaker) ? clean : $"{speaker} : {clean}";
 
-            // Les réponses possibles étaient reçues ici depuis toujours et purement ignorées : le
-            // mod lisait la question sans jamais dire qu'il y avait un choix, ni lequel. On
-            // découvrait donc l'existence des options en tâtonnant aux flèches.
-            string choices = DescribeChoices(options);
-            if (choices != null) toSpeak += " " + choices;
-
-            TolkSpeech.Speak(toSpeak, interrupt: true);
-        }
-
-        /// <summary>
-        /// Énonce les réponses proposées à la suite de la question.
-        ///
-        /// Elles sont dites d'emblée, plutôt que découvertes une à une en naviguant : un joueur
-        /// voyant lit la question ET ses options d'un même regard, et deux ou trois réponses
-        /// courtes tiennent dans la même phrase. Les numéroter permet en outre de savoir combien
-        /// il y en a avant de commencer à choisir.
-        ///
-        /// `Response.responseText` est un délégué évalué à la demande (le jeu y met parfois du
-        /// texte dépendant de l'état de la partie) : chaque appel est donc protégé isolément,
-        /// pour qu'une seule réponse défaillante n'emporte pas toute la liste.
-        /// </summary>
-        private static string DescribeChoices(Dictionary<int, Response> options)
-        {
-            if (options == null || options.Count == 0) return null;
-
-            var texts = new List<string>();
-            foreach (KeyValuePair<int, Response> entry in options.OrderBy(o => o.Key))
+            // LES RÉPONSES NE SONT PLUS RÉCITÉES ICI.
+            //
+            // Elles l'ont été un temps, à la suite de la question, pour qu'on sache au moins
+            // qu'un choix existait. Mais un joueur voyant lit la question, puis baisse le regard
+            // quand il a fini ; à l'oreille, tout arrivait dans une seule phrase, et la question
+            // n'était pas terminée que les réponses défilaient déjà par-dessus. Signalé en jeu.
+            //
+            // Elles sont désormais dans une liste qu'on parcourt aux flèches, à son rythme, avec
+            // une entrée pour relire la question — voir Dialogue/DialogueChoiceMenu.cs. On annonce
+            // seulement COMBIEN il y en a, ce qui suffit à savoir qu'il faut répondre.
+            int count = options?.Count ?? 0;
+            if (count > 0)
             {
-                string label = null;
-                try { label = TextUtil.Clean(entry.Value?.responseText?.Invoke()); }
-                catch { }
-
-                if (string.IsNullOrWhiteSpace(label)) continue;
-                texts.Add($"{texts.Count + 1}, {label}");
+                toSpeak += Localization.Language.T(
+                    $" {count} réponse{(count > 1 ? "s" : "")}, flèches pour les parcourir.",
+                    $" {count} repl{(count > 1 ? "ies" : "y")}, arrows to browse them.");
             }
 
-            if (texts.Count == 0) return null;
-            return $"{texts.Count} choix : {string.Join(" ; ", texts)}.";
+            TolkSpeech.Speak(toSpeak, interrupt: true);
         }
 
         private static string GetSpeakerName(DialogueController dc)

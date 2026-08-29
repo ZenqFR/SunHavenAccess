@@ -100,7 +100,8 @@ namespace SunHavenAccess.Menus
                                 Action<int> onActivate = null,
                                 Func<int, int, string> onAdjust = null,
                                 Action onExitUp = null,
-                                string owner = null)
+                                string owner = null,
+                                bool announce = true)
         {
             if (entries == null || entries.Count == 0)
             {
@@ -121,6 +122,14 @@ namespace SunHavenAccess.Menus
             // choisir » sur une liste purement consultative ferait chercher une action qui
             // n'existe pas. Cette phrase est composée de trop de morceaux variables pour passer
             // par la traduction par motif : elle est donc écrite dans les deux langues ici.
+            // OUVRIR SANS PARLER, quand quelque chose d'autre a déjà la parole.
+            //
+            // Une bulle de dialogue en est le cas type : le message est en train d'être lu, et une
+            // liste qui s'annonce par-dessus le coupe net — exactement ce qui était signalé en jeu.
+            // La liste existe alors pour les flèches, pas pour prendre la parole ; qui veut savoir
+            // ce qu'elle contient appuie sur une flèche, et l'entend.
+            if (!announce) return;
+
             bool en = SunHavenAccess.Localization.Language.IsEnglish;
             string spokenTitle = SunHavenAccess.Localization.Translator.Translate(title);
 
