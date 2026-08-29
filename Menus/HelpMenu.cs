@@ -208,6 +208,14 @@ namespace SunHavenAccess.Menus
 
             $"Les personnages proches. {K(ModConfig.NextNpc)} passe au personnage suivant autour de vous, avec son nom, sa direction et sa distance.",
 
+            "Les objets tombés par terre. Le scanner a une catégorie « Objets au sol » : c'est ce qui tombe " +
+            "d'un arbre abattu, d'un rocher brisé, d'une créature vaincue — et ce qui disparaît si personne " +
+            "ne le ramasse. Chaque objet est annoncé avec sa quantité, « trois Pierre », de quoi décider si le " +
+            "détour vaut la peine. Contrôle plus Origine vous y conduit, et le ramassage se fait tout seul : " +
+            "dans Sun Haven, marcher dessus suffit. " +
+            "Pour qui voit, un tas d'objets par terre saute aux yeux ; sans la vue, on repart en laissant sa " +
+            "récolte derrière soi sans même le savoir.",
+
             $"Vos points favoris. {K(ModConfig.Favorites)} ouvre la liste : « Ajouter un point ici » le pose " +
             "à l'endroit exact où vous vous tenez, et vous demande son nom — tapez, Entrée pour valider, " +
             "Échap pour annuler, F2 pour réentendre ce que vous avez écrit. " +

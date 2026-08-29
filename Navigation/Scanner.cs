@@ -24,7 +24,7 @@ namespace SunHavenAccess.Navigation
         {
             "Personnages", "Plantations", "Ressources", "Entrées de bâtiment",
             "Animaux et compagnons", "Ennemis", "Mobilier et rangement", "Services et repères",
-            "Changements de zone", "Favoris"
+            "Changements de zone", "Favoris", "Objets au sol"
         };
 
         private const float Radius = 55f; // agrandi (était 40) : plusieurs objets légitimes tombaient hors champ
@@ -181,6 +181,7 @@ namespace SunHavenAccess.Navigation
                 3 => FindPortalsAndDoors(interiors: true),
                 8 => FindPortalsAndDoors(interiors: false),
                 9 => Favorites.MarkersHere(),
+                10 => Object.FindObjectsOfType<Pickup>(),
                 4 => FindAnimalsAndPets(),
                 5 => FindEnemies(),
                 6 => FindFurniture(),
@@ -630,6 +631,27 @@ namespace SunHavenAccess.Navigation
             }
 
             if (c is FavoriteMarker favorite) return favorite.FavoriteName;
+
+            // UN OBJET AU SOL SE DIT AVEC SA QUANTITÉ.
+            //
+            // C'est ce qui tombe d'un arbre abattu, d'un rocher brisé, d'une créature vaincue — et
+            // ce qui disparaît si l'on ne le ramasse pas. Pour qui voit, un tas d'objets par terre
+            // saute aux yeux ; sans la vue, on repart en laissant sa récolte derrière soi sans
+            // même le savoir. « Trois Pierre » dit à la fois quoi et combien, ce qui suffit à
+            // décider si le détour vaut la peine.
+            if (c is Pickup pickup)
+            {
+                try
+                {
+                    int id = pickup.Item?.ID() ?? 0;
+                    string name = Info.ItemNames.Get(id);
+                    if (string.IsNullOrWhiteSpace(name)) return Localization.Language.T("Objet au sol", "Item on the ground");
+
+                    int amount = pickup.Networkamount;
+                    return amount > 1 ? $"{amount} {name}" : name;
+                }
+                catch { return Localization.Language.T("Objet au sol", "Item on the ground"); }
+            }
             if (c is NPCAI npc) return npc.LocalizedActualNPCName;
             if (c is Crop crop) return TileCursor.DescribeCrop(crop);
             if (c is ScenePortalSpot portal) return DescribeBuildingEntrance(portal);
