@@ -197,6 +197,37 @@ namespace SunHavenAccess.Navigation
             }
 
             _items.Sort((a, b) => a.Distance.CompareTo(b.Distance));
+            KeepNearestOfEachKind();
+        }
+
+        /// <summary>
+        /// Un seul représentant par sorte : le plus proche.
+        ///
+        /// Une forêt donnait quarante entrées « Chêne », un filon en donnait douze « Pierre ». Pour
+        /// qui voit, c'est un décor qu'on embrasse d'un regard ; pour qui écoute, c'est une liste
+        /// qu'il faut parcourir jusqu'au bout pour découvrir qu'elle ne contenait qu'une seule
+        /// chose. Trouver le bois quand on cherche du bois devenait plus long que d'aller le
+        /// couper. Signalé en jeu : « n'afficher que le plus proche ».
+        ///
+        /// La liste est déjà triée par distance, donc le premier de chaque sorte EST le plus
+        /// proche : il suffit de ne garder que lui. On ne perd rien — une fois le chêne le plus
+        /// proche abattu, le suivant prend sa place au relevé d'après. La liste dit désormais ce
+        /// qu'il y a autour, une fois chaque, ce qui est la question qu'on lui pose.
+        /// </summary>
+        private static void KeepNearestOfEachKind()
+        {
+            // On parcourt du plus proche au plus loin et l'on garde la PREMIÈRE occurrence de
+            // chaque nom : la liste étant triée par distance, c'est bien la plus proche. Parcourir
+            // en sens inverse aurait gardé la plus lointaine — l'exact contraire de ce qu'on veut.
+            var seen = new HashSet<string>(System.StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < _items.Count; )
+            {
+                // On regroupe sur le NOM, pas sur le type : deux minerais différents restent deux
+                // entrées, alors qu'ils partagent la même classe. C'est bien ce qu'on cherche —
+                // savoir ce qu'il y a, pas combien d'exemplaires.
+                if (seen.Add(_items[i].Label)) i++;
+                else _items.RemoveAt(i);
+            }
         }
 
         /// <summary>
@@ -261,10 +292,21 @@ namespace SunHavenAccess.Navigation
 
         private static IEnumerable<Component> FindResources()
         {
-            // Wish.Ore (filons de minerai) manquait complètement à l'appel — trouvé en
-            // recherchant les classes proches de Rock/ForageTree dans le listing des types.
+            // LES ARBRES MANQUAIENT — les vrais, ceux qu'on abat.
+            //
+            // `ForageTree` était présent depuis le début et donnait l'illusion que les arbres
+            // étaient couverts : c'est l'arbre à cueillette, celui dont on ramasse les fruits. Les
+            // arbres à couper sont `Wish.Tree`, et les souches et rondins `Wish.Wood` — deux
+            // classes distinctes, absentes de cette liste. Le bûcheronnage était donc entièrement
+            // invisible au scanner, alors que le mod annonce « Arbre abattu » depuis toujours et
+            // corrige même les patches Wood.Hit et Wood.Die. La preuve était sous les yeux.
+            //
+            // Toutes héritent de `Decoration`, donc elles portent un identifiant, donc elles sont
+            // nommées en français par la base du jeu sans rien à ajouter.
             return Object.FindObjectsOfType<Rock>()
                 .Cast<Component>()
+                .Concat(Object.FindObjectsOfType<Tree>())
+                .Concat(Object.FindObjectsOfType<Wood>())
                 .Concat(Object.FindObjectsOfType<ForageTree>())
                 .Concat(Object.FindObjectsOfType<Forageable>())
                 .Concat(Object.FindObjectsOfType<Ore>());
@@ -416,7 +458,8 @@ namespace SunHavenAccess.Navigation
             if (c is Crop crop) return TileCursor.DescribeCrop(crop);
             if (c is ScenePortalSpot portal) return DescribeBuildingEntrance(portal);
             if (c is Animal animal) return Info.AnimalAnnouncer.Describe(animal);
-            if (c is EnemyAI enemy && !string.IsNullOrWhiteSpace(enemy.enemyName)) return UiNameTranslator.Translate(enemy.enemyName);
+            if (c is EnemyAI enemy && !string.IsNullOrWhiteSpace(enemy.enemyName))
+                return Info.ItemNames.ByEnglishName(enemy.enemyName) ?? UiNameTranslator.Translate(enemy.enemyName);
 
             // Le nom de la chose AVANT ce qu'on peut en faire.
             //
@@ -436,7 +479,16 @@ namespace SunHavenAccess.Navigation
                 string byId = Info.ItemNames.Get(decoration.id);
                 if (!string.IsNullOrWhiteSpace(byId)) return UiNameTranslator.Translate(byId);
 
-                string decorationName = UiNameTranslator.Translate(TextUtil.Clean(decoration.decorationName));
+                // Beaucoup d'objets du décor n'ont PAS d'identifiant : ceux que la carte contient
+                // d'origine valent -1, n'ayant jamais été posés par personne. Leur nom d'auteur est
+                // alors le seul point d'entrée — mais il est en anglais. On le repasse à la base du
+                // jeu, qui sait retrouver un identifiant depuis un nom, et donc rendre la version
+                // française. Sans ce détour, une forêt entière s'annonçait « Oak Tree ».
+                string raw = TextUtil.Clean(decoration.decorationName);
+                string byName = Info.ItemNames.ByEnglishName(raw);
+                if (!string.IsNullOrWhiteSpace(byName)) return byName;
+
+                string decorationName = UiNameTranslator.Translate(raw);
                 if (!string.IsNullOrWhiteSpace(decorationName)) return decorationName;
             }
 

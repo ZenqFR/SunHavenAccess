@@ -475,11 +475,27 @@ namespace SunHavenAccess.Cursor
                 //
                 // Filtrer par case supprime les voisins ; trier par distance rend l'annonce
                 // déterministe, au lieu de dépendre de l'ordre où le moteur a rangé ses objets.
-                var hits = Physics2D.OverlapCircleAll(frontPos, 0.45f)
+                var nearby = Physics2D.OverlapCircleAll(frontPos, 0.45f)
                     .Where(h => h != null && !h.isTrigger)
-                    .Where(h => TileGeometry.WorldToTile(h.ClosestPoint(frontPos)) == frontTile)
                     .OrderBy(h => Vector2.Distance(h.ClosestPoint(frontPos), frontPos))
                     .ToArray();
+
+                var onTile = nearby
+                    .Where(h => TileGeometry.WorldToTile(h.ClosestPoint(frontPos)) == frontTile)
+                    .ToArray();
+
+                // LE SILENCE ÉTAIT PIRE QUE L'APPROXIMATION.
+                //
+                // Le filtre par case écarte bien les voisins, mais il écartait aussi ce qui barre
+                // vraiment le passage : un arbre porte son collision au pied du tronc, et le point
+                // le plus proche tombe souvent juste de l'autre côté d'une frontière de case — le
+                // monde est isométrique, les arrondis ne pardonnent pas. On se retrouvait bloqué
+                // devant quelque chose dont le mod disait « rien devant vous ». Signalé en jeu.
+                //
+                // On garde donc la précision quand elle donne un résultat, et on retombe sur le
+                // plus proche des alentours quand elle n'en donne aucun. Nommer approximativement
+                // ce qui bloque vaut infiniment mieux que se taire devant un mur.
+                var hits = onTile.Length > 0 ? onTile : nearby;
 
                 foreach (Collider2D hit in hits)
                 {

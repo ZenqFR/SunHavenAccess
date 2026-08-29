@@ -70,6 +70,42 @@ namespace SunHavenAccess.Info
             return InternalName(id);
         }
 
+        /// <summary>
+        /// Le nom français d'un objet dont on ne connaît que le nom anglais.
+        ///
+        /// Beaucoup d'objets du décor portent un identifiant valant -1 : ce sont ceux que la carte
+        /// contient d'origine, jamais posés par un joueur, donc jamais enregistrés. Pour eux, la
+        /// recherche par identifiant ne donne rien et l'on retombait sur le nom d'auteur, resté en
+        /// anglais — d'où des rochers « Stone » et des arbres « Oak Tree » au milieu d'annonces
+        /// françaises. Signalé en jeu.
+        ///
+        /// `Database.GetID` fait le chemin inverse : d'un nom vers son identifiant. On repasse
+        /// alors par la traduction du jeu, et le trou se referme sans rien écrire à la main.
+        /// </summary>
+        internal static string ByEnglishName(string englishName)
+        {
+            if (string.IsNullOrWhiteSpace(englishName)) return null;
+
+            string key = englishName.Trim();
+            if (_byName.TryGetValue(key, out string known)) return known;
+
+            string found = null;
+            try
+            {
+                int id = Database.GetID(key);
+                if (id > 0) found = Get(id);
+            }
+            catch { }
+
+            // On retient même l'échec : redemander un nom que la base ignore, à chaque case
+            // survolée, coûterait pour toujours la même réponse vide.
+            _byName[key] = found;
+            return found;
+        }
+
+        private static readonly Dictionary<string, string> _byName =
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
         private static bool IsValid(int id)
         {
             try { return Database.ValidID(id); }
