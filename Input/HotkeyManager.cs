@@ -147,6 +147,7 @@ namespace SunHavenAccess.Input
             if (Pressed(ModConfig.StepMovement.Value)) StepMovement.Toggle();
             // Les favoris, ou — avec Ctrl — le geste du soir : aller au lit. Terminer sa journée
             // est l'action la plus répétée du jeu et l'une des plus pénibles à atteindre.
+            if (Pressed(ModConfig.Interactions.Value)) InteractionsMenu.Open();
             if (Pressed(ModConfig.Favorites.Value))
             {
                 if (ctrl) SleepAction.GoToBed(); else FavoritesMenu.Open();

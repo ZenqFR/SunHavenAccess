@@ -40,7 +40,7 @@ namespace SunHavenAccess.Menus
         public static class OpenPatch
         {
             private static void Postfix() =>
-                PatchGuard.Run("BoutiqueOuverte", () => _waitUntil = Time.unscaledTime + 2f);
+                PatchGuard.Run("BoutiqueOuverte", () => _waitUntil = Time.unscaledTime + 4f);
         }
 
         [HarmonyPatch(typeof(ShopUI), nameof(ShopUI.CloseUI))]
@@ -83,12 +83,34 @@ namespace SunHavenAccess.Menus
             Open(items);
         }
 
+        private static System.Reflection.FieldInfo _panelField;
+
+        /// <summary>
+        /// Les articles réellement en vente, lus DANS le panneau de la boutique.
+        ///
+        /// Un balayage global de la scène ne trouvait qu'UN `BuyableItem` : le MODÈLE de vignette
+        /// que la boutique garde de côté pour en fabriquer des copies. La liste s'ouvrait donc avec
+        /// une seule entrée, et chaque flèche butait sur un bord — d'où le bip signalé en jeu, et
+        /// l'impression d'être coincé dans un menu vide.
+        ///
+        /// Les vraies vignettes sont rangées sous `_shopPanel`, et elles seules. Y aller
+        /// directement écarte le modèle sans avoir à le reconnaître, et donne la liste complète
+        /// dans l'ordre où la boutique la présente.
+        /// </summary>
         private static List<BuyableItem> Items()
         {
             try
             {
-                return Object.FindObjectsOfType<BuyableItem>()
-                    .Where(b => b != null && b.gameObject.activeInHierarchy)
+                Shop shop = Object.FindObjectOfType<Shop>();
+                if (shop == null) return new List<BuyableItem>();
+
+                _panelField ??= typeof(Shop).GetField("_shopPanel",
+                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+                if (_panelField?.GetValue(shop) is not Transform panel) return new List<BuyableItem>();
+
+                return panel.GetComponentsInChildren<BuyableItem>(includeInactive: false)
+                    .Where(b => b != null)
                     .ToList();
             }
             catch { return new List<BuyableItem>(); }

@@ -67,6 +67,7 @@ namespace SunHavenAccess.Config
         public static ConfigEntry<KeyCode> FreeCursorRecenter;
         public static ConfigEntry<KeyCode> StepMovement;
         public static ConfigEntry<KeyCode> Favorites;
+        public static ConfigEntry<KeyCode> Interactions;
         public static ConfigEntry<KeyCode> PlacementStatus;
         public static ConfigEntry<KeyCode> HerdStatus;
         public static ConfigEntry<KeyCode> BundleStatus;
@@ -314,6 +315,12 @@ namespace SunHavenAccess.Config
             // même endroit. Une touche de LETTRE aurait été plus mnémonique, mais le jeu se
             // déplace en ZQSD/WASD et lance ses sorts sur des lettres : le pavé numérique est la
             // seule région du clavier dont on sait qu'elle ne heurte rien.
+            // Interagir SANS dépendre du ciblage du jeu. La touche F est libre côté mod, et « F
+            // pour interagir » est une convention si répandue qu'elle ne demande pas à être apprise.
+            // Le détecteur de conflits dira si le jeu la revendique.
+            Interactions = Bind(config, section, "ListeInteractions", KeyCode.F,
+                "Liste ce avec quoi vous pouvez interagir autour de vous ; valider déclenche l'interaction.",
+                "Interagir avec ce qui est autour");
             Favorites = Bind(config, section, "PointsFavoris", KeyCode.Keypad2,
                 "Ouvre les points favoris : en créer un ici, renommer, supprimer, ou s'y rendre.",
                 "Points favoris");
