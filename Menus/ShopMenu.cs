@@ -98,17 +98,23 @@ namespace SunHavenAccess.Menus
         {
             var entries = items.Select(Describe).ToList();
 
-            TolkSpeech.Speak(Localization.Language.T(
-                $"Boutique, {items.Count} article{(items.Count > 1 ? "s" : "")}. {Purse()}",
-                $"Shop, {items.Count} item{(items.Count > 1 ? "s" : "")}. {Purse()}"), true);
+            // LA LISTE S'ANNONCE. Elle s'ouvrait en silence, pour ne pas parler par-dessus le
+            // montant de la bourse. Résultat signalé en jeu : « j'ai rien, pas de liste ». Une
+            // liste muette est indiscernable d'une liste absente — on n'a aucune raison d'essayer
+            // les flèches sur quelque chose dont rien ne dit que ça existe.
+            //
+            // La bourse passe donc DANS le titre plutôt qu'avant lui : une seule phrase, qui dit à
+            // la fois ce qu'on a et qu'il y a quelque chose à parcourir.
+            Plugin.Log?.LogInfo($"Boutique : {items.Count} article(s) lu(s) à l'écran.");
 
-            ListMenu.Open(Localization.Language.T("Boutique", "Shop"), entries,
+            ListMenu.Open(
+                Localization.Language.T($"Boutique. {Purse()}", $"Shop. {Purse()}"),
+                entries,
                 chosen =>
                 {
                     if (chosen >= 0 && chosen < items.Count) OpenItem(items, items[chosen]);
                 },
-                owner: OwnerTag,
-                announce: false);
+                owner: OwnerTag);
         }
 
         /// <summary>

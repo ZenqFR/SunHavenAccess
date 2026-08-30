@@ -144,14 +144,14 @@ namespace SunHavenAccess.Menus
             };
             entries.AddRange(ordered.Select(r => Describe(table, r)));
 
-            if (!string.IsNullOrEmpty(_filter))
-            {
-                TolkSpeech.Speak(Localization.Language.T(
-                    $"{ordered.Count} recette{(ordered.Count > 1 ? "s" : "")} pour « {_filter} ».",
-                    $"{ordered.Count} recipe{(ordered.Count > 1 ? "s" : "")} for \"{_filter}\"."), true);
-            }
+            // Le terme cherché passe DANS le titre, plutôt qu'en phrase séparée suivie d'une liste
+            // muette : une liste qui ne s'annonce pas est indiscernable d'une liste absente, comme
+            // la boutique vient de le montrer. Une seule phrase dit le contexte et le contenu.
+            string title = string.IsNullOrEmpty(_filter)
+                ? Localization.Language.T("Fabrication", "Crafting")
+                : Localization.Language.T($"Fabrication, recherche {_filter}", $"Crafting, search {_filter}");
 
-            ListMenu.Open(Localization.Language.T("Fabrication", "Crafting"), entries,
+            ListMenu.Open(title, entries,
                 chosen =>
                 {
                     if (chosen == 0) { AskFilter(table, recipes); return; }
@@ -160,7 +160,7 @@ namespace SunHavenAccess.Menus
                     if (index >= 0 && index < ordered.Count) OpenRecipe(table, ordered, ordered[index]);
                 },
                 owner: OwnerTag,
-                announce: announce && string.IsNullOrEmpty(_filter));
+                announce: announce);
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace SunHavenAccess.Menus
                 typed =>
                 {
                     _filter = Flatten(typed);
-                    Open(table, recipes, announce: false);
+                    Open(table, recipes, announce: true);
                 },
                 allowEmpty: true);
         }
