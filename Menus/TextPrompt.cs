@@ -29,6 +29,7 @@ namespace SunHavenAccess.Menus
         private static readonly StringBuilder _text = new StringBuilder();
         private static string _question;
         private static Action<string> _onDone;
+        private static bool _allowEmpty;
 
         internal static bool IsOpen => _onDone != null;
 
@@ -36,10 +37,18 @@ namespace SunHavenAccess.Menus
         /// Ouvre la saisie. <paramref name="initial"/> pré-remplit le texte — c'est ce qui permet
         /// de RENOMMER sans tout retaper.
         /// </summary>
-        internal static void Ask(string question, string initial, Action<string> onDone)
+        /// <param name="allowEmpty">
+        /// Accepter une réponse vide comme une réponse.
+        ///
+        /// Un nom de point favori vide n'a aucun sens et doit être refusé. Un terme de recherche
+        /// vide, si : c'est ainsi qu'on efface un filtre et qu'on revoit tout. Refuser les deux
+        /// pareil obligerait à inventer un geste séparé pour dire « plus rien ».
+        /// </param>
+        internal static void Ask(string question, string initial, Action<string> onDone, bool allowEmpty = false)
         {
             _question = question;
             _onDone = onDone;
+            _allowEmpty = allowEmpty;
             _openedFrame = UnityEngine.Time.frameCount;
             _text.Length = 0;
             if (!string.IsNullOrEmpty(initial)) _text.Append(initial);
@@ -88,6 +97,7 @@ namespace SunHavenAccess.Menus
             LockGameInput(false);
 
             _onDone = null;
+            _allowEmpty = false;
             _question = null;
             _text.Length = 0;
         }
@@ -131,9 +141,12 @@ namespace SunHavenAccess.Menus
             {
                 string result = _text.ToString().Trim();
                 Action<string> done = _onDone;
+
+                // Retenu AVANT la fermeture, qui remet les champs à leur état de repos.
+                bool allowedEmpty = _allowEmpty;
                 Close();
 
-                if (string.IsNullOrWhiteSpace(result))
+                if (string.IsNullOrWhiteSpace(result) && !allowedEmpty)
                 {
                     TolkSpeech.Speak(Localization.Language.T(
                         "Texte vide, rien n'a été fait.", "Empty text, nothing was done."), true);

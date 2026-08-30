@@ -106,23 +106,121 @@ namespace SunHavenAccess.Menus
             catch { return new List<Recipe>(); }
         }
 
-        private static void Open(CraftingTable table, List<Recipe> recipes)
+        /// <summary>Terme de recherche en cours ; vide quand on voit tout.</summary>
+        private static string _filter = string.Empty;
+
+        private static void Open(CraftingTable table, List<Recipe> recipes) =>
+            Open(table, recipes, announce: true);
+
+        /// <summary>
+        /// UN ÉTABLI PEUT PORTER DES CENTAINES DE RECETTES.
+        ///
+        /// Les parcourir aux flèches pour en trouver une dont on connaît le nom, c'est écouter
+        /// cent annonces pour une seule qui compte. Un joueur voyant balaie la grille du regard et
+        /// s'arrête ; sans la vue, il n'existait aucun équivalent. Le jeu a d'ailleurs son propre
+        /// champ de recherche, dont on ne pouvait pas se servir.
+        ///
+        /// La recherche est donc la PREMIÈRE ligne de la liste, avant les recettes : c'est le geste
+        /// qu'on veut faire en arrivant, pas au bout de trois minutes de défilement. Elle porte sur
+        /// le résultat ET sur les ingrédients, ce qui permet aussi de demander « que puis-je faire
+        /// avec du bois ».
+        /// </summary>
+        private static void Open(CraftingTable table, List<Recipe> recipes, bool announce)
         {
             // Le réalisable d'abord : c'est ce qu'on cherche neuf fois sur dix, et le reste n'est
             // qu'un pense-bête pour la prochaine fois.
             var ordered = recipes
+                .Where(r => Matches(table, r))
                 .OrderByDescending(r => CanMake(table, r))
                 .ThenBy(Output)
                 .ToList();
 
-            var entries = ordered.Select(r => Describe(table, r)).ToList();
+            var entries = new List<string>
+            {
+                string.IsNullOrEmpty(_filter)
+                    ? Localization.Language.T("Rechercher une recette", "Search for a recipe")
+                    : Localization.Language.T($"Recherche : {_filter}. Entrée pour changer, Ctrl+Entrée pour tout revoir",
+                                              $"Search: {_filter}. Enter to change, Ctrl+Enter to show all"),
+            };
+            entries.AddRange(ordered.Select(r => Describe(table, r)));
+
+            if (!string.IsNullOrEmpty(_filter))
+            {
+                TolkSpeech.Speak(Localization.Language.T(
+                    $"{ordered.Count} recette{(ordered.Count > 1 ? "s" : "")} pour « {_filter} ».",
+                    $"{ordered.Count} recipe{(ordered.Count > 1 ? "s" : "")} for \"{_filter}\"."), true);
+            }
 
             ListMenu.Open(Localization.Language.T("Fabrication", "Crafting"), entries,
                 chosen =>
                 {
-                    if (chosen >= 0 && chosen < ordered.Count) OpenRecipe(table, ordered, ordered[chosen]);
+                    if (chosen == 0) { AskFilter(table, recipes); return; }
+
+                    int index = chosen - 1;
+                    if (index >= 0 && index < ordered.Count) OpenRecipe(table, ordered, ordered[index]);
                 },
-                owner: OwnerTag);
+                owner: OwnerTag,
+                announce: announce && string.IsNullOrEmpty(_filter));
+        }
+
+        /// <summary>
+        /// La recherche porte sur le nom du résultat ET sur celui des ingrédients : « que puis-je
+        /// faire avec du cuivre » est une question aussi légitime que « où est la planche ».
+        /// Accents et casse ignorés — taper « ble » doit trouver « Blé ».
+        /// </summary>
+        private static bool Matches(CraftingTable table, Recipe recipe)
+        {
+            if (string.IsNullOrEmpty(_filter)) return true;
+
+            try
+            {
+                if (Flatten(Output(recipe)).Contains(_filter)) return true;
+
+                foreach (SerializedItemDataNamedAmount input in recipe.Input ?? new List<SerializedItemDataNamedAmount>())
+                {
+                    if (input == null) continue;
+                    string name = ItemNames.Get(input.id) ?? input.name;
+                    if (!string.IsNullOrEmpty(name) && Flatten(name).Contains(_filter)) return true;
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
+        private static string Flatten(string s)
+        {
+            if (string.IsNullOrEmpty(s)) return string.Empty;
+
+            string normalised = s.Normalize(System.Text.NormalizationForm.FormD);
+            var builder = new System.Text.StringBuilder(normalised.Length);
+
+            foreach (char c in normalised)
+            {
+                // On retire les accents plutôt que de les exiger : personne ne tape « Blé » avec
+                // son accent dans un champ de recherche, et surtout pas en écoutant.
+                if (System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c)
+                    != System.Globalization.UnicodeCategory.NonSpacingMark)
+                {
+                    builder.Append(char.ToLowerInvariant(c));
+                }
+            }
+
+            return builder.ToString();
+        }
+
+        private static void AskFilter(CraftingTable table, List<Recipe> recipes)
+        {
+            TextPrompt.Ask(
+                Localization.Language.T("Rechercher quoi ? Entrée vide pour tout revoir.",
+                                        "Search for what? Empty to show all."),
+                null,
+                typed =>
+                {
+                    _filter = Flatten(typed);
+                    Open(table, recipes, announce: false);
+                },
+                allowEmpty: true);
         }
 
         private static bool CanMake(CraftingTable table, Recipe recipe)
@@ -138,7 +236,7 @@ namespace SunHavenAccess.Menus
         private static string Describe(CraftingTable table, Recipe recipe)
         {
             string output = Output(recipe);
-            string inputs = Ingredients(recipe);
+            string inputs = Ingredients(table, recipe);
 
             string state = CanMake(table, recipe)
                 ? string.Empty
@@ -162,7 +260,19 @@ namespace SunHavenAccess.Menus
             catch { return Localization.Language.T("Recette", "Recipe"); }
         }
 
-        private static string Ingredients(Recipe recipe)
+        /// <summary>
+        /// Les ingrédients, avec CE QU'ON A SUR CE QU'IL FAUT.
+        ///
+        /// « Ingrédients manquants » dit qu'on ne peut pas ; cela ne dit pas ce qui manque, ni
+        /// combien. On repartait donc chercher sans savoir quoi, ni quand s'arrêter. L'écran du jeu
+        /// l'affiche pourtant, en petit sous chaque case : « 3/5 ». Signalé en jeu.
+        ///
+        /// On reprend la règle du jeu à la lettre plutôt que d'en inventer une : le mana et la vie
+        /// se lisent sur le joueur, les monnaies dans la bourse, le reste se compte dans TOUS les
+        /// inventaires que l'établi accepte — y compris les coffres voisins quand l'option est
+        /// active. Une règle maison aurait annoncé « il vous en manque » devant un coffre plein.
+        /// </summary>
+        private static string Ingredients(CraftingTable table, Recipe recipe)
         {
             try
             {
@@ -177,7 +287,14 @@ namespace SunHavenAccess.Menus
                         if (string.IsNullOrWhiteSpace(name)) name = i.name;
                         if (string.IsNullOrWhiteSpace(name)) return null;
 
-                        return i.amount > 1 ? $"{i.amount} {name}" : name;
+                        int needed = Needed(recipe, i);
+                        int owned = Owned(table, i);
+
+                        // On ne dit « x sur y » que lorsqu'il en manque : quand tout est là, le
+                        // compte n'apprend rien et double la longueur de chaque ligne.
+                        return owned < needed
+                            ? Localization.Language.T($"{name} {owned} sur {needed}", $"{name} {owned} of {needed}")
+                            : (needed > 1 ? $"{needed} {name}" : name);
                     })
                     .Where(s => !string.IsNullOrWhiteSpace(s))
                     .ToArray();
@@ -185,6 +302,37 @@ namespace SunHavenAccess.Menus
                 return parts.Length == 0 ? null : string.Join(", ", parts);
             }
             catch { return null; }
+        }
+
+        private static int Needed(Recipe recipe, SerializedItemDataNamedAmount input)
+        {
+            try { return recipe.ModifiedAmount(input.amount, input.id, recipe.output2.id, recipe.isFood); }
+            catch { return input.amount; }
+        }
+
+        /// <summary>Ce qu'on possède de cet ingrédient, selon la règle exacte du jeu.</summary>
+        private static int Owned(CraftingTable table, SerializedItemDataNamedAmount input)
+        {
+            try
+            {
+                if (input.name == "Mana") return (int)Player.Instance.Mana;
+                if (input.name == "Health") return (int)Player.Instance.Health;
+
+                switch (input.id)
+                {
+                    case 60000: return GameSave.Coins;
+                    case 60001: return GameSave.Orbs;
+                    case 60002: return GameSave.Tickets;
+                }
+
+                int total = 0;
+                foreach (Inventory inventory in table.allInventories)
+                {
+                    if (inventory != null) total += inventory.GetAmount(input.id);
+                }
+                return total;
+            }
+            catch { return 0; }
         }
 
         /// <summary>
@@ -207,7 +355,7 @@ namespace SunHavenAccess.Menus
         private static void OpenRecipe(CraftingTable table, List<Recipe> all, Recipe recipe, bool announce)
         {
             string label = Output(recipe);
-            string inputs = Ingredients(recipe);
+            string inputs = Ingredients(table, recipe);
 
             var actions = new List<string>
             {
