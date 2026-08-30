@@ -304,6 +304,13 @@ namespace SunHavenAccess.Menus
             catch { return null; }
         }
 
+        /// <summary>Ce que le jeu dit du résultat de cette recette.</summary>
+        private static string Description(Recipe recipe)
+        {
+            try { return ItemNames.Description(recipe.output2.id); }
+            catch { return null; }
+        }
+
         private static int Needed(Recipe recipe, SerializedItemDataNamedAmount input)
         {
             try { return recipe.ModifiedAmount(input.amount, input.id, recipe.output2.id, recipe.isFood); }
@@ -357,6 +364,19 @@ namespace SunHavenAccess.Menus
             string label = Output(recipe);
             string inputs = Ingredients(table, recipe);
 
+            // LA DESCRIPTION DE CE QU'ON FABRIQUE.
+            //
+            // Le nom d'une recette ne dit pas à quoi sert ce qu'elle produit. Un joueur voyant
+            // survole la vignette et lit l'infobulle ; c'est ainsi qu'on apprend qu'un objet
+            // restaure de la vie, augmente une statistique, ou n'est qu'un ingrédient pour la
+            // suite. Sans cela, on fabrique sans savoir pourquoi.
+            //
+            // Elle est annoncée D'EMBLÉE en ouvrant la recette, pas cachée derrière une ligne de
+            // plus : c'est ce qu'on veut savoir au moment où l'on hésite, et une hésitation ne
+            // supporte pas trois gestes.
+            string description = Description(recipe);
+            if (!string.IsNullOrWhiteSpace(description)) TolkSpeech.Speak(description, true);
+
             var actions = new List<string>
             {
                 Localization.Language.T("Fabriquer 1", "Craft 1"),
@@ -364,6 +384,7 @@ namespace SunHavenAccess.Menus
                 Localization.Language.T("Fabriquer 20", "Craft 20"),
                 Localization.Language.T("Fabriquer une autre quantité", "Craft another amount"),
                 Localization.Language.T("Ingrédients", "Ingredients"),
+                Localization.Language.T("Description", "Description"),
             };
 
             ListMenu.Open(label, actions,
@@ -379,8 +400,13 @@ namespace SunHavenAccess.Menus
                         // connu : la rouvrir ici la refermerait aussitôt sous la saisie.
                         case 3: AskAmount(table, all, recipe, label); return;
 
-                        default:
+                        case 4:
                             TolkSpeech.Speak(inputs ?? Localization.Language.T("Aucun ingrédient.", "No ingredients."), true);
+                            break;
+
+                        default:
+                            TolkSpeech.Speak(Description(recipe)
+                                ?? Localization.Language.T("Pas de description.", "No description."), true);
                             break;
                     }
 

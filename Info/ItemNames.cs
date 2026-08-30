@@ -106,6 +106,36 @@ namespace SunHavenAccess.Info
         private static readonly Dictionary<string, string> _byName =
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
+        /// <summary>
+        /// La description que le jeu donne d'un objet, dans sa langue. Null tant qu'elle n'est pas
+        /// chargée ou si l'objet n'en a pas.
+        ///
+        /// Même mécanique que pour les noms : on demande, on retient, et l'on répond immédiatement
+        /// la fois suivante. La description n'est utile qu'à la demande — devant une recette, un
+        /// objet de boutique — jamais en continu, donc l'attente d'un premier chargement ne se
+        /// remarque pas.
+        /// </summary>
+        internal static string Description(int id)
+        {
+            if (id <= 0) return null;
+            if (_descriptions.TryGetValue(id, out string known)) return known;
+            if (!IsValid(id)) return null;
+
+            try
+            {
+                Database.GetData<ItemData>(id, data =>
+                {
+                    string text = data?.UnformattedDescription;
+                    _descriptions[id] = string.IsNullOrWhiteSpace(text) ? null : text.Trim();
+                });
+            }
+            catch { }
+
+            return _descriptions.TryGetValue(id, out string arrived) ? arrived : null;
+        }
+
+        private static readonly Dictionary<int, string> _descriptions = new Dictionary<int, string>();
+
         private static bool IsValid(int id)
         {
             try { return Database.ValidID(id); }

@@ -287,6 +287,30 @@ namespace SunHavenAccess.Cursor
             PlayerInteractions interactions = player.GetComponent<PlayerInteractions>();
             if (interactions != null && interactions.Interactables.Count > 0)
             {
+                // QUELQU'UN PASSE AVANT SON MOBILIER.
+                //
+                // Au magasin général, on arrive devant le guichet et le mod annonce le guichet : il
+                // est sur la case visée, la vendeuse se tient derrière. On repart donc sans savoir
+                // qu'on avait quelqu'un en face. Signalé en jeu.
+                //
+                // Le jeu tient lui-même la liste de ce qui est à portée d'interaction : si un
+                // habitant ou une bête s'y trouve, c'est LUI la réponse à « qu'est-ce qu'il y a
+                // devant moi », pas le meuble qui l'entoure. On ne devine rien — être dans cette
+                // liste, c'est précisément pouvoir lui parler tout de suite.
+                foreach (Interaction candidate in interactions.Interactables)
+                {
+                    if (candidate?.interactable is not Component living) continue;
+                    if (living is not NPCAI && living is not Animal) continue;
+
+                    string who = Navigation.Scanner.Describe(living, allowGenericName: false);
+                    if (string.IsNullOrWhiteSpace(who)) continue;
+
+                    string key = Input.GameKeys.NameFor(Button.Interact);
+                    return string.IsNullOrEmpty(key)
+                        ? who
+                        : Localization.Language.T($"{who}, {key} pour lui parler", $"{who}, {key} to talk");
+                }
+
                 Interaction first = interactions.Interactables[0];
                 IInteractable target = first.interactable;
 
