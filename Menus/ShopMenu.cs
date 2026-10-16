@@ -39,14 +39,18 @@ namespace SunHavenAccess.Menus
         [HarmonyPatch(typeof(ShopUI), nameof(ShopUI.OpenUI))]
         public static class OpenPatch
         {
-            private static void Postfix() =>
-                PatchGuard.Run("BoutiqueOuverte", () => _waitUntil = Time.unscaledTime + 4f);
+            private static void Postfix(ShopUI __instance) =>
+                PatchGuard.Run("BoutiqueOuverte", () =>
+                {
+                    _openUi = __instance;
+                    _waitUntil = Time.unscaledTime + 4f;
+                });
         }
 
         [HarmonyPatch(typeof(ShopUI), nameof(ShopUI.CloseUI))]
         public static class ClosePatch
         {
-            private static void Postfix() =>
+            private static void Postfix(ShopUI __instance) =>
                 PatchGuard.Run("BoutiqueFermee", () =>
                 {
                     _waitUntil = 0f;
@@ -94,6 +98,9 @@ namespace SunHavenAccess.Menus
 
         private static System.Reflection.FieldInfo _panelField;
 
+        /// <summary>L'écran qui vient de s'ouvrir : la boutique à lire est celle qui le porte.</summary>
+        private static ShopUI _openUi;
+
         /// <summary>
         /// Les articles réellement en vente, lus DANS le panneau de la boutique.
         ///
@@ -110,7 +117,10 @@ namespace SunHavenAccess.Menus
         {
             try
             {
-                Shop shop = Object.FindObjectOfType<Shop>();
+                // La boutique OUVERTE, pas la première trouvée : une zone peut en contenir plusieurs,
+                // et lire la mauvaise donnerait le stock d'un autre comptoir.
+                Shop shop = _openUi != null ? _openUi.GetComponentInParent<Shop>() : null;
+                shop ??= Object.FindObjectOfType<Shop>();
                 if (shop == null) return new List<BuyableItem>();
 
                 _panelField ??= typeof(Shop).GetField("_shopPanel",
