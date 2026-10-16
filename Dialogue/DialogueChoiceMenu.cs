@@ -115,7 +115,8 @@ namespace SunHavenAccess.Dialogue
 
             ListMenu.Open(Localization.Language.T("Réponse", "Reply"), entries,
                 chosen => Choose(controller, chosen, options.Count),
-                owner: OwnerTag, announce: false);
+                owner: OwnerTag, announce: false,
+                keepOpen: i => i == 0);
         }
 
         /// <summary>
@@ -127,8 +128,6 @@ namespace SunHavenAccess.Dialogue
             if (index <= 0)
             {
                 TolkSpeech.Speak(Message(controller), true);
-                // La liste se referme à la validation : on la rouvre pour rester dans la bulle.
-                _shownSignature = null;
                 return;
             }
 

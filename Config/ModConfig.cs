@@ -215,8 +215,8 @@ namespace SunHavenAccess.Config
             // touches dédiées pour les parcourir un par un, actives seulement carte ouverte.
             MapPreviousLocation = Bind(config, section, "CarteLieuPrecedent", KeyCode.X,
                 "Lieu précédent sur la carte du monde (carte ouverte uniquement).", "Carte : liste des lieux");
-            MapNextLocation = Bind(config, section, "CarteLieuSuivant", KeyCode.Y,
-                "Lieu suivant sur la carte du monde (carte ouverte uniquement).", "Carte : lieu suivant");
+            MapNextLocation = Bind(config, section, "CarteLieuSuivantV2", KeyCode.None,
+                "Lieu suivant sur la carte du monde (carte ouverte uniquement). Non assignée par défaut : Y était aussi le Sort 4 du jeu, et la liste des lieux remplace ce parcours.", "Carte : lieu suivant");
 
             // Apparence en création de personnage (Wish.ClothingImageButton, même problème que
             // la carte : pas de vrai Selectable). Convention Scanner : touche seule = option

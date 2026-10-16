@@ -409,12 +409,11 @@ namespace SunHavenAccess.Menus
                                 ?? Localization.Language.T("Pas de description.", "No description."), true);
                             break;
                     }
-
-                    Reopen(table, all, recipe);
                 },
                 onExitUp: () => Open(table, all),
                 owner: OwnerTag,
-                announce: announce);
+                announce: announce,
+                keepOpen: i => i != 3);
         }
 
         private static void AskAmount(CraftingTable table, List<Recipe> all, Recipe recipe, string label)

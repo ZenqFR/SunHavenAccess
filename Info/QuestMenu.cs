@@ -75,12 +75,9 @@ namespace SunHavenAccess.Info
                 : $"{name}, {Localization.Language.T("à rendre à", "hand in to")} {who}";
         }
 
-        private static void OpenQuest(QuestBundle bundle) => OpenQuest(bundle, announce: true);
 
-        /// <summary>Remet la liste de la quête sans la réannoncer, après une simple consultation.</summary>
-        private static void Reopen(QuestBundle bundle) => OpenQuest(bundle, announce: false);
 
-        private static void OpenQuest(QuestBundle bundle, bool announce)
+        private static void OpenQuest(QuestBundle bundle)
         {
             QuestAsset asset = bundle.quest.questAsset;
             string name = TextUtil.Clean(asset.LocalizedQuestName);
@@ -116,10 +113,10 @@ namespace SunHavenAccess.Info
                     // On énonce, puis on remet la liste EN SILENCE : elle est de nouveau là sous
                     // les flèches, sans parler par-dessus ce qu'on vient de demander.
                     TolkSpeech.Speak(chosen == 1 ? Description(bundle, asset) : Progress(bundle), true);
-                    Reopen(bundle);
                 },
                 onExitUp: Open,
-                owner: OwnerTag, announce: announce);
+                owner: OwnerTag,
+                keepOpen: i => i != 0);
         }
 
         /// <summary>

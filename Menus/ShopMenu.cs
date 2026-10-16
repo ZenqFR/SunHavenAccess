@@ -262,12 +262,11 @@ namespace SunHavenAccess.Menus
                             TolkSpeech.Speak(Affordable(item, name), true);
                             break;
                     }
-
-                    Reopen(all, item);
                 },
                 onExitUp: () => Open(all),
                 owner: OwnerTag,
-                announce: announce);
+                announce: announce,
+                keepOpen: i => i != 3);
         }
 
         private static string Affordable(BuyableItem item, string name)

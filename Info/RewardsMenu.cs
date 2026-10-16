@@ -115,13 +115,10 @@ namespace SunHavenAccess.Info
                 {
                     if (chosen >= 0 && chosen < actions.Count) actions[chosen]();
 
-                    // Consulter ne doit pas faire sortir : tant que la fenêtre du jeu est là, la
-                    // liste doit rester sous les flèches. Seul « Accepter » la referme, et c'est le
-                    // jeu qui s'en charge en fermant sa fenêtre.
-                    if (chosen < entries.Count - 1) Open(rewards);
                 },
                 owner: OwnerTag,
-                announce: choices.Count == 0);
+                announce: choices.Count == 0,
+                keepOpen: i => i < entries.Count - 1);
         }
 
         /// <summary>

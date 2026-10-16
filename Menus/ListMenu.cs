@@ -91,6 +91,14 @@ namespace SunHavenAccess.Menus
         /// </summary>
         public static string Owner { get; private set; }
 
+        /// <summary>
+        /// Lignes dont la validation CONSULTE ou répète au lieu de partir ailleurs : la liste y reste
+        /// ouverte, au même endroit. Une liste se referme par défaut, ce qui est juste pour une action
+        /// qui emmène ailleurs, et faux pour lire une description ou fabriquer un deuxième lot.
+        /// Cinq modules réimplémentaient chacun ce « rouvrir en silence » ; il vit ici, une fois.
+        /// </summary>
+        private static Func<int, bool> _keepOpen;
+
         /// <param name="owner">
         /// Étiquette du module qui ouvre. Laissée à null pour une SOUS-liste — le détail d'une
         /// sauvegarde, les compétences d'un métier — qui appartient alors au même module que
@@ -101,7 +109,8 @@ namespace SunHavenAccess.Menus
                                 Func<int, int, string> onAdjust = null,
                                 Action onExitUp = null,
                                 string owner = null,
-                                bool announce = true)
+                                bool announce = true,
+                                Func<int, bool> keepOpen = null)
         {
             if (entries == null || entries.Count == 0)
             {
@@ -114,6 +123,7 @@ namespace SunHavenAccess.Menus
             _onActivate = onActivate;
             _onAdjust = onAdjust;
             _onExitUp = onExitUp;
+            _keepOpen = keepOpen;
             if (owner != null) Owner = owner;
             _index = 0;
             IsOpen = true;
@@ -159,6 +169,7 @@ namespace SunHavenAccess.Menus
             _onActivate = null;
             _onAdjust = null;
             _onExitUp = null;
+            _keepOpen = null;
             Owner = null;
             if (announce) TolkSpeech.Speak($"{SunHavenAccess.Localization.Translator.Translate(_title)} fermé.", true);
         }
@@ -253,6 +264,15 @@ namespace SunHavenAccess.Menus
             if (_index < 0 || _index >= _entries.Count) return;
             Action<int> callback = _onActivate;
             int chosen = _index;
+
+            // Ligne de consultation : on agit sans rien refermer. L'action peut elle-même ouvrir
+            // une autre liste, qui remplace alors celle-ci de la façon habituelle.
+            if (_keepOpen != null && _keepOpen(chosen))
+            {
+                callback?.Invoke(chosen);
+                return;
+            }
+
             // La liste se ferme AVANT l'action : celle-ci peut ouvrir un autre menu, et deux listes
             // ouvertes en même temps se disputeraient les flèches. Sans annonce : ce qui suit
             // parle immédiatement.
