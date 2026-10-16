@@ -70,6 +70,8 @@ namespace SunHavenAccess.Menus
                 // dont le jeu ne construit que les quelques articles réellement visibles. Il
                 // faudra alors lire la boutique elle-même plutôt que son affichage.
                 _waitUntil = 0f;
+                List<BuyableItem> late = Items();
+                if (late.Count > 0) { Open(late); return; } // mieux vaut une liste imparfaite que rien
                 Plugin.Log?.LogInfo("Boutique : aucun article trouvé à l'écran.");
                 TolkSpeech.Speak(Localization.Language.T(
                     "Aucun article lu dans cette boutique.", "No item read in this shop."), true);
@@ -78,6 +80,13 @@ namespace SunHavenAccess.Menus
 
             List<BuyableItem> items = Items();
             if (items.Count == 0) return; // articles pas encore construits, on repasse
+
+            // ATTENDRE QUE CHAQUE VIGNETTE SOIT REMPLIE. La boutique crée ses vignettes tout de suite
+            // mais les remplit ensuite, une à une, à mesure que la base d'objets répond. Ouvrir la
+            // liste entre les deux donnait douze entrées affichant toutes le texte par défaut du
+            // modèle — « comme si c'était un seul item », signalé en jeu. Un objet encore vide a un
+            // identifiant nul : on repasse tant qu'il en reste, dans la limite de l'attente.
+            if (items.Any(i => IdOf(i) == 0)) return;
 
             _waitUntil = 0f;
             Open(items);
@@ -155,18 +164,29 @@ namespace SunHavenAccess.Menus
             return string.IsNullOrEmpty(price) ? name + stock : $"{name}, {price}{stock}";
         }
 
+        private static int IdOf(BuyableItem item)
+        {
+            try { return item.itemImage?.Item?.ID() ?? 0; }
+            catch { return 0; }
+        }
+
         private static string Name(BuyableItem item)
         {
+            // LE NOM QUE LA BOUTIQUE A DÉJÀ TRADUIT PASSE EN PREMIER. Elle écrit
+            // `UnformattedDisplayName` dans la vignette, c'est-à-dire le nom dans la langue du
+            // joueur. Notre base d'identifiants, elle, ne rend le nom traduit qu'une fois chargé et
+            // répond entre-temps par le nom interne anglais — d'où des articles en anglais.
+            string shown = TextUtil.Clean(item.itemNameTMP?.text);
+            if (!string.IsNullOrWhiteSpace(shown) && IdOf(item) != 0) return shown;
+
             try
             {
-                int id = item.itemImage?.Item?.ID() ?? 0;
-                string named = id != 0 ? ItemNames.Get(id) : null;
+                string named = ItemNames.Get(IdOf(item));
                 if (!string.IsNullOrWhiteSpace(named)) return named;
             }
             catch { }
 
-            string text = TextUtil.Clean(item.itemNameTMP?.text);
-            return string.IsNullOrWhiteSpace(text) ? Localization.Language.T("Article", "Item") : text;
+            return string.IsNullOrWhiteSpace(shown) ? Localization.Language.T("Article", "Item") : shown;
         }
 
         /// <summary>
